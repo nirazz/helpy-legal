@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Helpy - App Demo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0a0a1a;
+    color: #fff;
+    overflow-x: hidden;
+  }
+
+  /* ── Intro / Hero ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: radial-gradient(ellipse at 50% 0%, #2d1b69 0%, #0a0a1a 70%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+    top: -200px; left: 50%; transform: translateX(-50%);
+    animation: pulse 4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.5; }
+    50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
+  }
+
+  .hero-icon {
+    width: 120px; height: 120px; border-radius: 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 20px 60px rgba(99,102,241,0.4);
+    animation: floatIn 1s ease-out;
+    position: relative; z-index: 1;
+  }
+
+  .hero h1 {
+    font-size: 64px; font-weight: 900;
+    background: linear-gradient(135deg, #818cf8, #c084fc, #f472b6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+    animation: floatIn 1s ease-out 0.2s both;
+    position: relative; z-index: 1;
+  }
+
+  .hero .tagline {
+    font-size: 24px; color: #a5b4fc; font-weight: 300;
+    margin-bottom: 48px;
+    animation: floatIn 1s ease-out 0.4s both;
+    position: relative; z-index: 1;
+  }
+
+  .scroll-hint {
+    position: absolute; bottom: 40px;
+    animation: bounce 2s ease-in-out infinite;
+    color: #6366f1; font-size: 14px; letter-spacing: 2px; text-transform: uppercase;
+  }
+
+  .scroll-hint span { display: block; margin-top: 8px; font-size: 24px; }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(12px); }
+  }
+
+  @keyframes floatIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Sections ── */
+  .section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 40px;
+    position: relative;
+    opacity: 0;
+    transform: translateY(60px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .section-inner {
+    max-width: 1100px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 80px;
+  }
+
+  .section:nth-child(even) .section-inner {
+    flex-direction: row-reverse;
+  }
+
+  .section-text {
+    flex: 1;
+  }
+
+  .step-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    font-size: 14px; font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .section-text h2 {
+    font-size: 44px; font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+
+  .section-text h2 .gradient {
+    background: linear-gradient(135deg, #818cf8, #c084fc);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .section-text p {
+    font-size: 18px; color: #94a3b8;
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+
+  .feature-list {
+    list-style: none; margin-top: 20px;
+  }
+
+  .feature-list li {
+    font-size: 16px; color: #c4b5fd;
+    padding: 8px 0;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .feature-list li::before {
+    content: ''; display: inline-block;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #6366f1; flex-shrink: 0;
+  }
+
+  /* ── Phone Mockup ── */
+  .phone-wrapper {
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .phone-frame {
+    width: 280px;
+    background: #1a1a2e;
+    border-radius: 40px;
+    padding: 12px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 2px #333, inset 0 0 0 2px #222;
+    position: relative;
+  }
+
+  .phone-notch {
+    width: 120px; height: 28px;
+    background: #1a1a2e;
+    border-radius: 0 0 16px 16px;
+    position: absolute;
+    top: 12px; left: 50%; transform: translateX(-50%);
+    z-index: 10;
+  }
+
+  .phone-screen {
+    width: 100%;
+    border-radius: 30px;
+    display: block;
+  }
+
+  .phone-frame::after {
+    content: '';
+    position: absolute;
+    top: -10px; left: -10px; right: -10px; bottom: -10px;
+    border-radius: 48px;
+    background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.1), transparent);
+    z-index: -1;
+    filter: blur(20px);
+  }
+
+  /* ── Flow Section ── */
+  .flow-section {
+    min-height: 100vh;
+    padding: 100px 40px;
+    text-align: center;
+    background: radial-gradient(ellipse at 50% 50%, #1a1040 0%, #0a0a1a 70%);
+  }
+
+  .flow-section h2 {
+    font-size: 48px; font-weight: 800;
+    margin-bottom: 60px;
+  }
+
+  .flow-steps {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .flow-step {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 32px 24px;
+    width: 180px;
+    position: relative;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .flow-step:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(99,102,241,0.2);
+    border-color: #6366f1;
+  }
+
+  .flow-number {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 800;
+    margin: 0 auto 16px;
+  }
+
+  .flow-emoji {
+    font-size: 36px;
+    margin-bottom: 12px;
+  }
+
+  .flow-step h3 {
+    font-size: 16px; font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .flow-step p {
+    font-size: 13px; color: #94a3b8;
+    line-height: 1.5;
+  }
+
+  .flow-arrow {
+    display: flex; align-items: center;
+    color: #6366f1; font-size: 28px;
+    animation: arrowPulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes arrowPulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
+
+  /* ── Tech Section ── */
+  .tech-section {
+    padding: 100px 40px;
+    text-align: center;
+  }
+
+  .tech-section h2 {
+    font-size: 48px; font-weight: 800;
+    margin-bottom: 60px;
+  }
+
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .tech-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 32px 24px;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+
+  .tech-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(99,102,241,0.4);
+  }
+
+  .tech-card .icon {
+    font-size: 40px;
+    margin-bottom: 16px;
+  }
+
+  .tech-card h3 {
+    font-size: 18px; font-weight: 700;
+    margin-bottom: 8px;
+    color: #c4b5fd;
+  }
+
+  .tech-card p {
+    font-size: 14px; color: #64748b;
+    line-height: 1.6;
+  }
+
+  /* ── Stats Bar ── */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    padding: 60px 40px;
+    background: linear-gradient(180deg, transparent, rgba(99,102,241,0.05), transparent);
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat .number {
+    font-size: 48px; font-weight: 900;
+    background: linear-gradient(135deg, #818cf8, #c084fc);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .stat .label {
+    font-size: 14px; color: #64748b;
+    margin-top: 8px; text-transform: uppercase; letter-spacing: 2px;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center;
+    padding: 80px 40px;
+    background: radial-gradient(ellipse at 50% 100%, #1a1040 0%, #0a0a1a 70%);
+  }
+
+  .footer h2 {
+    font-size: 48px; font-weight: 800;
+    margin-bottom: 16px;
+  }
+
+  .footer p {
+    font-size: 18px; color: #94a3b8;
+    margin-bottom: 32px;
+  }
+
+  .badge-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .store-badge {
+    display: inline-block;
+    background: #fff;
+    color: #000;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 14px 28px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: transform 0.2s;
+  }
+
+  .store-badge:hover { transform: scale(1.05); }
+  .store-badge.apple { background: #000; color: #fff; border: 1px solid #333; }
+  .store-badge.android { background: #1a1a2e; color: #a5b4fc; border: 1px solid #6366f1; }
+
+  .footer .copyright {
+    font-size: 13px; color: #475569;
+    margin-top: 40px;
+  }
+
+  /* ── Language Badge ── */
+  .lang-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(99,102,241,0.15);
+    border: 1px solid rgba(99,102,241,0.3);
+    border-radius: 12px;
+    padding: 10px 16px;
+    margin-top: 16px;
+    font-size: 14px; color: #a5b4fc;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .section-inner, .section:nth-child(even) .section-inner {
+      flex-direction: column;
+      text-align: center;
+    }
+    .hero h1 { font-size: 40px; }
+    .hero .tagline { font-size: 18px; }
+    .section-text h2 { font-size: 32px; }
+    .phone-frame { width: 220px; }
+    .flow-steps { flex-direction: column; align-items: center; }
+    .flow-arrow { transform: rotate(90deg); }
+    .stats-bar { flex-wrap: wrap; gap: 30px; }
+    .stat .number { font-size: 36px; }
+  }
+
+  /* ── Auto-play timeline ── */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #6366f1, #c084fc, #f472b6);
+    z-index: 1000;
+    width: 0%;
+    transition: width 0.3s;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ═══════ HERO ═══════ -->
+<div class="hero">
+  <img src="app-icon-512.png" class="hero-icon" alt="Helpy Icon" onerror="this.style.display='none'">
+  <h1>Helpy</h1>
+  <p class="tagline">Neighbors Helping Neighbors</p>
+  <div class="scroll-hint">
+    Scroll to explore
+    <span>&#8595;</span>
+  </div>
+</div>
+
+<!-- ═══════ FLOW ═══════ -->
+<div class="flow-section" id="flow">
+  <h2>How <span style="background:linear-gradient(135deg,#818cf8,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Helpy</span> Works</h2>
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="flow-number">1</div>
+      <div class="flow-emoji">&#128221;</div>
+      <h3>Post a Request</h3>
+      <p>Describe what you need help with, add photos, pick a category</p>
+    </div>
+    <div class="flow-arrow">&#10132;</div>
+    <div class="flow-step">
+      <div class="flow-number">2</div>
+      <div class="flow-emoji">&#128064;</div>
+      <h3>Browse Nearby</h3>
+      <p>Helpers see requests within their radius on cards or map</p>
+    </div>
+    <div class="flow-arrow">&#10132;</div>
+    <div class="flow-step">
+      <div class="flow-number">3</div>
+      <div class="flow-emoji">&#9995;</div>
+      <h3>Tap to Help</h3>
+      <p>Tap "Offer Help" to express interest in a request</p>
+    </div>
+    <div class="flow-arrow">&#10132;</div>
+    <div class="flow-step">
+      <div class="flow-number">4</div>
+      <div class="flow-emoji">&#128172;</div>
+      <h3>Match & Chat</h3>
+      <p>Coordinate via real-time messaging with typing indicators</p>
+    </div>
+    <div class="flow-arrow">&#10132;</div>
+    <div class="flow-step">
+      <div class="flow-number">5</div>
+      <div class="flow-emoji">&#11088;</div>
+      <h3>Rate & Trust</h3>
+      <p>Build community reputation with star ratings</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ BROWSE ═══════ -->
+<div class="section" id="s1">
+  <div class="section-inner">
+    <div class="section-text">
+      <span class="step-badge">Browse</span>
+      <h2><span class="gradient">Discover</span> Nearby Requests</h2>
+      <p>Browse help requests from your neighbors as swipe cards or on a live map. Each card shows photos, distance, urgency, and the requester's profile.</p>
+      <ul class="feature-list">
+        <li>Pill buttons: "→ Skip" and "✋ Offer Help" (no dating-app hearts)</li>
+        <li>Cards/Map toggle — tap any pin to jump to that request</li>
+        <li>PostGIS distance filtering up to 10km radius</li>
+        <li>12 categories: Elderly Care, Moving, Tech Help, Tutoring, and more</li>
+        <li>3 urgency levels with color-coded indicators</li>
+        <li>Pinch-to-zoom image viewer (up to 4×) on request photos</li>
+        <li>Skeleton loading placeholders while fetching</li>
+      </ul>
+    </div>
+    <div class="phone-wrapper">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <img src="01-browse.png" class="phone-screen" alt="Browse Screen">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ POST ═══════ -->
+<div class="section" id="s2">
+  <div class="section-inner">
+    <div class="section-text">
+      <span class="step-badge">Post</span>
+      <h2>Ask for <span class="gradient">Help</span> in Seconds</h2>
+      <p>Create a help request with a title, description, category, and urgency. Preview your card before posting, and attach up to 3 photos from camera or gallery.</p>
+      <ul class="feature-list">
+        <li>12-category grid picker with emoji icons</li>
+        <li>Post Preview — see exactly how your card looks before submitting</li>
+        <li>Up to 3 photo uploads (camera or gallery, quality-compressed)</li>
+        <li>EN + HE content filter blocks inappropriate language</li>
+        <li>Phone verification required before first post</li>
+      </ul>
+    </div>
+    <div class="phone-wrapper">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <img src="02-post.png" class="phone-screen" alt="Post Screen">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ CHAT ═══════ -->
+<div class="section" id="s3">
+  <div class="section-inner">
+    <div class="section-text">
+      <span class="step-badge">Chat</span>
+      <h2><span class="gradient">Real-Time</span> Messaging</h2>
+      <p>Once matched, coordinate instantly through Supabase Realtime WebSocket messaging. See when your neighbor is typing, and mark sessions complete right from chat.</p>
+      <ul class="feature-list">
+        <li>Typing indicators — animated bouncing dots, 3s auto-clear</li>
+        <li>Read receipts — "Seen ✓" when the other person has replied</li>
+        <li>Unread badge on Chat tab for new messages</li>
+        <li>"I'm Helping" and "Helping Me" tabs</li>
+        <li>Report or block users directly from chat header</li>
+        <li>Load earlier messages — paginated 50-message history</li>
+      </ul>
+    </div>
+    <div class="phone-wrapper">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <img src="03-chat.png" class="phone-screen" alt="Chat Screen">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ REQUESTS ═══════ -->
+<div class="section" id="s4">
+  <div class="section-inner">
+    <div class="section-text">
+      <span class="step-badge">Manage</span>
+      <h2>Track Your <span class="gradient">Requests</span></h2>
+      <p>View all your active and past requests. Accept offers with a celebration animation, decline others, close when done, and rate your helper — all in one place.</p>
+      <ul class="feature-list">
+        <li>Active and History tabs</li>
+        <li>Accept or decline helper offers</li>
+        <li>Celebration animation 🎉 on accept + "Chat Now" CTA</li>
+        <li>Close request → automatic rating prompt</li>
+        <li>View request photos with pinch-to-zoom</li>
+      </ul>
+    </div>
+    <div class="phone-wrapper">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <img src="04-requests.png" class="phone-screen" alt="Requests Screen">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ PROFILE ═══════ -->
+<div class="section" id="s5">
+  <div class="section-inner">
+    <div class="section-text">
+      <span class="step-badge">Profile</span>
+      <h2>Your <span class="gradient">Community</span> Profile</h2>
+      <p>Track your community impact, set your search radius, manage blocked users, and toggle between English and Hebrew with full RTL support.</p>
+      <ul class="feature-list">
+        <li>Community stats: Helped, Got Help, ⭐ Rating, Posted</li>
+        <li>Verification badge for Google/Apple sign-in users</li>
+        <li>Edit name &amp; photo with iOS-style ActionSheet + EDIT overlay</li>
+        <li>Blocked Users list with one-tap Unblock</li>
+        <li>Account deletion and support contact</li>
+      </ul>
+      <div class="lang-badge">
+        &#127470;&#127473; Full Hebrew &amp; English &bull; RTL Support
+      </div>
+    </div>
+    <div class="phone-wrapper">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <img src="05-profile.png" class="phone-screen" alt="Profile Screen">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ STATS ═══════ -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="number">210+</div>
+    <div class="label">Translation Keys</div>
+  </div>
+  <div class="stat">
+    <div class="number">12</div>
+    <div class="label">Help Categories</div>
+  </div>
+  <div class="stat">
+    <div class="number">7</div>
+    <div class="label">DB Tables + RLS</div>
+  </div>
+  <div class="stat">
+    <div class="number">2</div>
+    <div class="label">Languages</div>
+  </div>
+</div>
+
+<!-- ═══════ TECH ═══════ -->
+<div class="tech-section" id="tech">
+  <h2>Built <span style="background:linear-gradient(135deg,#818cf8,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">With</span></h2>
+  <div class="tech-grid">
+    <div class="tech-card">
+      <div class="icon">&#9883;</div>
+      <h3>React Native + Expo</h3>
+      <p>Expo SDK 54 with TypeScript for cross-platform iOS &amp; Android development</p>
+    </div>
+    <div class="tech-card">
+      <div class="icon">&#9889;</div>
+      <h3>Supabase</h3>
+      <p>PostgreSQL + RLS on all tables, Realtime subscriptions, Storage, Edge Functions</p>
+    </div>
+    <div class="tech-card">
+      <div class="icon">&#128272;</div>
+      <h3>Authentication</h3>
+      <p>Google OAuth (primary), Apple Sign-In, email fallback — auto-profile creation</p>
+    </div>
+    <div class="tech-card">
+      <div class="icon">&#128241;</div>
+      <h3>Twilio Verify</h3>
+      <p>SMS phone verification via Edge Function with rate limiting before help or post</p>
+    </div>
+    <div class="tech-card">
+      <div class="icon">&#128276;</div>
+      <h3>Push Notifications</h3>
+      <p>Expo Push API with bilingual alerts for offers, messages, and ratings</p>
+    </div>
+    <div class="tech-card">
+      <div class="icon">&#127757;</div>
+      <h3>i18n + RTL</h3>
+      <p>210+ translation keys, Hebrew/English toggle, full right-to-left layout on all screens</p>
+    </div>
+    <div class="tech-card">
+      <div class="icon">&#128737;</div>
+      <h3>Safety &amp; UGC</h3>
+      <p>Content filter (EN+HE), report/block users, terms acceptance, RLS on all tables</p>
+    </div>
+    <div class="tech-card">
+      <div class="icon">&#128506;</div>
+      <h3>PostGIS + Geo</h3>
+      <p>expo-location, bounding-box pre-filter + exact Haversine, 10km max radius</p>
+    </div>
+    <div class="tech-card">
+      <div class="icon">&#127769;</div>
+      <h3>Dark Mode</h3>
+      <p>System-adaptive light/dark theme across all screens and components</p>
+    </div>
+    <div class="tech-card">
+      <div class="icon">&#127775;</div>
+      <h3>Animations</h3>
+      <p>Spring animations, haptic feedback, skeleton loaders, celebration effects — Reduce Motion aware</p>
+    </div>
+    <div class="tech-card">
+      <div class="icon">&#128202;</div>
+      <h3>PostHog Analytics</h3>
+      <p>Funnel tracking: sign_up → request_posted → swipe_right → match_created → help_completed</p>
+    </div>
+    <div class="tech-card">
+      <div class="icon">&#128657;</div>
+      <h3>Sentry</h3>
+      <p>Crash reporting with EU data residency — automatic error capture across all screens</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ HEBREW ═══════ -->
+<div class="section" id="s6">
+  <div class="section-inner">
+    <div class="section-text">
+      <span class="step-badge">&#127470;&#127473; Hebrew</span>
+      <h2>Full <span class="gradient">RTL</span> Support</h2>
+      <p>Every screen, button, and label is translated. The entire layout flips to right-to-left for Hebrew speakers. Distances automatically switch to kilometers.</p>
+      <ul class="feature-list">
+        <li>One-tap language toggle on Profile screen</li>
+        <li>All 5 tabs + headers fully translated</li>
+        <li>Navigation arrows flip for RTL (‹ → ›)</li>
+        <li>Hebrew uses km (ק״מ) instead of miles</li>
+        <li>Preference synced to Supabase across devices</li>
+      </ul>
+    </div>
+    <div class="phone-wrapper">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <img src="06-hebrew.png" class="phone-screen" alt="Hebrew RTL">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ FOOTER ═══════ -->
+<div class="footer">
+  <h2>Try <span style="background:linear-gradient(135deg,#818cf8,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Helpy</span> Today</h2>
+  <p>Join your community and start helping your neighbors.</p>
+  <div class="badge-row">
+    <a href="https://testflight.apple.com/join/P6uAfJsQ" class="store-badge apple">&#63743; TestFlight (iOS)</a>
+    <a href="https://expo.dev/accounts/nirs-organization/projects/helpy/builds/34aad864-3c9c-4fa3-8062-63a39fd49798" class="store-badge android">&#9654; Download APK (Android)</a>
+  </div>
+  <p class="copyright">&copy; 2026 Helpy. All rights reserved.</p>
+</div>
+
+<script>
+  // ── Scroll progress bar ──
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (scrollTop / docHeight) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+  });
+
+  // ── Reveal sections on scroll ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.section').forEach(el => observer.observe(el));
+
+  // ── Auto-scroll "video" mode ──
+  let autoPlaying = false;
+
+  function autoPlay() {
+    if (autoPlaying) return;
+    autoPlaying = true;
+    const sections = ['flow', 's1', 's2', 's3', 's4', 's5', 's6', 'tech'];
+    let i = 0;
+
+    function scrollNext() {
+      if (i >= sections.length) { autoPlaying = false; return; }
+      const el = document.getElementById(sections[i]);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      i++;
+      setTimeout(scrollNext, 3000);
+    }
+    scrollNext();
+  }
+
+  // Press Space to auto-play
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Space' && !autoPlaying) {
+      e.preventDefault();
+      autoPlay();
+    }
+  });
+</script>
+
+</body>
+</html>
