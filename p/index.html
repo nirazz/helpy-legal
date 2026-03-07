@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Helpy Profile</title>
-
-  <!-- Generic OG tags (social crawlers see these) -->
   <meta property="og:title" content="Helpy - Neighborly Help" />
   <meta property="og:description" content="Real neighbors helping each other — right in your neighborhood." />
   <meta property="og:image" content="https://help-y.com/app-icon-512.png" />
@@ -15,41 +13,157 @@
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
-      background: #f0f4ff;
+      background: linear-gradient(150deg, #1e1b4b 0%, #312e81 55%, #4338ca 100%);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 48px 20px 64px;
+      justify-content: center;
+      padding: 40px 20px;
+      gap: 20px;
     }
-    .wordmark { font-size: 15px; font-weight: 700; color: #6366f1; letter-spacing: -0.3px; margin-bottom: 24px; }
-    .card { background: #fff; border-radius: 28px; padding: 36px 28px 28px; max-width: 420px; width: 100%; box-shadow: 0 8px 32px rgba(99,102,241,0.1); text-align: center; }
-    .avatar { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; border: 3px solid #e0e7ff; margin-bottom: 16px; }
-    .avatar-ph { width: 96px; height: 96px; border-radius: 50%; background: linear-gradient(135deg,#6366f1,#8b5cf6); font-size: 40px; line-height: 96px; margin: 0 auto 16px; }
-    .name { font-size: 26px; font-weight: 700; color: #1e293b; letter-spacing: -0.5px; margin-bottom: 6px; }
-    .bio { font-size: 15px; color: #64748b; line-height: 1.55; margin-bottom: 16px; }
-    .rating-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 24px; }
-    .stars-display { color: #f59e0b; font-size: 20px; letter-spacing: 1px; }
-    .rating-num { font-size: 18px; font-weight: 700; color: #1e293b; }
-    .rating-sub { font-size: 14px; color: #94a3b8; }
-    .cta { display: block; background: linear-gradient(135deg,#6366f1,#8b5cf6); color: #fff; text-decoration: none; padding: 16px; border-radius: 16px; font-size: 17px; font-weight: 700; margin-bottom: 28px; transition: opacity 0.15s; }
-    .cta:hover { opacity: 0.9; }
-    .reviews { text-align: left; border-top: 1px solid #f1f5f9; padding-top: 20px; }
-    .reviews-label { font-size: 13px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px; }
-    .review { padding-bottom: 14px; margin-bottom: 14px; border-bottom: 1px solid #f8fafc; }
-    .review:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+    /* ── Card ── */
+    .card {
+      background: #ffffff;
+      border-radius: 28px;
+      padding: 36px 28px 32px;
+      max-width: 380px;
+      width: 100%;
+      box-shadow:
+        0 0 0 0.5px rgba(255,255,255,0.08),
+        0 8px 16px rgba(0,0,0,0.12),
+        0 32px 64px rgba(0,0,0,0.28);
+      text-align: center;
+    }
+
+    /* ── Wordmark ── */
+    .wordmark {
+      font-size: 13px;
+      font-weight: 600;
+      color: #6366f1;
+      letter-spacing: 0.2px;
+      margin-bottom: 28px;
+      opacity: 0.85;
+    }
+
+    /* ── Avatar ── */
+    .avatar {
+      width: 108px;
+      height: 108px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #fff;
+      box-shadow: 0 4px 20px rgba(99,102,241,0.25), 0 0 0 3px #e0e7ff;
+      margin-bottom: 18px;
+    }
+    .avatar-ph {
+      width: 108px;
+      height: 108px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      font-size: 44px;
+      line-height: 108px;
+      margin: 0 auto 18px;
+      box-shadow: 0 4px 20px rgba(99,102,241,0.3);
+    }
+
+    /* ── Name / Bio ── */
+    .name {
+      font-size: 26px;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: -0.6px;
+      margin-bottom: 6px;
+    }
+    .bio {
+      font-size: 15px;
+      color: #64748b;
+      line-height: 1.55;
+      margin-bottom: 20px;
+      padding: 0 8px;
+    }
+
+    /* ── Rating pill ── */
+    .rating-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fffbeb;
+      border: 1.5px solid #fde68a;
+      border-radius: 100px;
+      padding: 6px 16px;
+      margin-bottom: 22px;
+    }
+    .stars { color: #f59e0b; font-size: 13px; letter-spacing: 1.5px; }
+    .rating-num { font-size: 14px; font-weight: 700; color: #92400e; }
+    .rating-sub { font-size: 13px; color: #b45309; }
+
+    /* ── CTA ── */
+    .cta {
+      display: block;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: #fff;
+      text-decoration: none;
+      padding: 16px 24px;
+      border-radius: 16px;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      box-shadow: 0 8px 24px rgba(99,102,241,0.35);
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    .cta:hover { transform: translateY(-1px); box-shadow: 0 12px 28px rgba(99,102,241,0.4); }
+    .cta:active { transform: translateY(0) scale(0.98); box-shadow: 0 4px 12px rgba(99,102,241,0.25); }
+
+    /* ── Reviews ── */
+    .reviews { margin-top: 24px; text-align: left; }
+    .reviews-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #cbd5e1;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    .review {
+      background: #f8fafc;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 8px;
+    }
+    .review:last-child { margin-bottom: 0; }
     .review-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
     .reviewer { font-size: 14px; font-weight: 600; color: #1e293b; }
-    .review-stars { color: #f59e0b; font-size: 13px; }
+    .review-stars { color: #f59e0b; font-size: 12px; letter-spacing: 1px; }
     .review-body { font-size: 14px; color: #64748b; line-height: 1.5; }
-    .footer { margin-top: 24px; font-size: 13px; color: #94a3b8; }
-    .spinner-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; }
-    .spinner { width: 40px; height: 40px; border: 3px solid #e0e7ff; border-top-color: #6366f1; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 16px; }
+
+    /* ── Footer ── */
+    .footer {
+      font-size: 13px;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.1px;
+    }
+
+    /* ── Loading / Error ── */
+    .spinner-wrap {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      min-height: 50vh; gap: 16px;
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid rgba(255,255,255,0.15);
+      border-top-color: rgba(255,255,255,0.8);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-text { font-size: 15px; color: #64748b; }
-    .error-text { font-size: 15px; color: #94a3b8; text-align: center; padding: 40px 20px; }
+    .loading-text { font-size: 15px; color: rgba(255,255,255,0.6); }
+    .error-text { font-size: 15px; color: rgba(255,255,255,0.5); text-align: center; padding: 40px 20px; }
   </style>
 </head>
 <body>
@@ -68,25 +182,15 @@
     var id = window.location.hash.slice(1);
     if (!id) { window.location.href = 'https://help-y.com'; return; }
 
-    var apiUrl = 'https://lwomstzzmyegpbidibfm.supabase.co/functions/v1/profile-page'
-      + '?apikey=' + ANON_KEY
-      + '&id=' + encodeURIComponent(id)
-      + '&format=json';
-
-    fetch(apiUrl)
+    fetch('https://lwomstzzmyegpbidibfm.supabase.co/functions/v1/profile-page'
+      + '?apikey=' + ANON_KEY + '&id=' + encodeURIComponent(id) + '&format=json')
       .then(function (r) { return r.json(); })
-      .then(function (data) {
-        if (data.error) { showError('Profile not found.'); return; }
-        render(data);
-      })
+      .then(function (d) { d.error ? showError('Profile not found.') : render(d); })
       .catch(function () { showError('Could not load profile. Please try again.'); });
 
     function esc(s) {
-      return String(s || '')
-        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
-
     function stars(r) {
       var f = Math.round(r);
       return '&#9733;'.repeat(f) + '&#9734;'.repeat(5 - f);
@@ -100,10 +204,10 @@
         : '<div class="avatar-ph">&#x1F3D8;&#xFE0F;</div>';
 
       var ratingHtml = (p.rating && p.ratingCount >= 1)
-        ? '<div class="rating-row">'
-          + '<span class="stars-display">' + stars(p.rating) + '</span>'
+        ? '<div class="rating-pill">'
+          + '<span class="stars">' + stars(p.rating) + '</span>'
           + '<span class="rating-num">' + p.rating.toFixed(1) + '</span>'
-          + '<span class="rating-sub">' + p.ratingCount + ' review' + (p.ratingCount !== 1 ? 's' : '') + '</span>'
+          + '<span class="rating-sub">&middot; ' + p.ratingCount + ' review' + (p.ratingCount !== 1 ? 's' : '') + '</span>'
           + '</div>'
         : '';
 
@@ -111,7 +215,8 @@
       if (p.reviews && p.reviews.length > 0) {
         reviewsHtml = '<div class="reviews"><p class="reviews-label">What neighbors say</p>';
         p.reviews.forEach(function (r) {
-          reviewsHtml += '<div class="review">'
+          reviewsHtml +=
+            '<div class="review">'
             + '<div class="review-top">'
             + '<span class="reviewer">' + esc(r.rater_name) + '</span>'
             + '<span class="review-stars">' + stars(r.rating) + '</span>'
@@ -123,8 +228,8 @@
       }
 
       document.getElementById('root').innerHTML =
-        '<p class="wordmark">&#x1F3D8;&#xFE0F; Helpy</p>'
-        + '<div class="card">'
+        '<div class="card">'
+        + '<p class="wordmark">&#x1F3D8;&#xFE0F; Helpy</p>'
         + avatarHtml
         + '<h1 class="name">' + esc(p.name) + '</h1>'
         + (p.bio ? '<p class="bio">' + esc(p.bio) + '</p>' : '')
@@ -136,7 +241,7 @@
     }
 
     function showError(msg) {
-      document.getElementById('root').innerHTML = '<p class="error-text">' + msg + '</p>';
+      document.getElementById('root').innerHTML = '<p class="error-text">' + esc(msg) + '</p>';
     }
   })();
   </script>
