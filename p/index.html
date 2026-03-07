@@ -26,12 +26,22 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    /* Root container — centered column */
+    #root {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+    }
+
     /* Wordmark */
     .wordmark {
       font-size: 13px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.4);
-      letter-spacing: 0.8px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 2.5px;
       text-transform: uppercase;
       margin-bottom: 32px;
     }
@@ -44,7 +54,6 @@
       border: 3.5px solid rgba(255,255,255,0.85);
       box-shadow: 0 0 0 8px rgba(255,255,255,0.07), 0 16px 48px rgba(0,0,0,0.5);
       margin-bottom: 20px;
-      display: block;
     }
     .avatar-ph {
       width: 120px; height: 120px;
@@ -62,13 +71,11 @@
       font-size: 30px; font-weight: 700;
       color: #ffffff;
       letter-spacing: -0.7px;
-      text-align: center;
       margin-bottom: 8px;
     }
     .bio {
       font-size: 16px;
       color: rgba(255,255,255,0.58);
-      text-align: center;
       line-height: 1.5;
       max-width: 280px;
       margin-bottom: 28px;
@@ -84,7 +91,6 @@
       border-radius: 18px;
       overflow: hidden;
       width: 100%;
-      max-width: 340px;
       margin-bottom: 28px;
     }
     .stat {
@@ -93,9 +99,10 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 16px 8px;
+      padding: 16px 6px;
       background: rgba(255,255,255,0.06);
-      gap: 4px;
+      gap: 5px;
+      min-height: 80px;
     }
     .stat + .stat { border-left: 1px solid rgba(255,255,255,0.1); }
     .stat-num {
@@ -104,18 +111,23 @@
       letter-spacing: -0.5px;
       line-height: 1;
     }
-    .stat-stars { color: #fbbf24; font-size: 14px; }
+    .stat-star {
+      color: #fbbf24;
+      font-size: 14px;
+      margin-left: 2px;
+    }
     .stat-label {
-      font-size: 11px; font-weight: 500;
+      font-size: 10px; font-weight: 500;
       color: rgba(255,255,255,0.4);
-      text-align: center;
       line-height: 1.3;
+      text-align: center;
     }
 
     /* Reviews */
     .reviews {
-      width: 100%; max-width: 340px;
+      width: 100%;
       margin-bottom: 28px;
+      text-align: left;
     }
     .reviews-label {
       font-size: 11px; font-weight: 700;
@@ -123,7 +135,6 @@
       text-transform: uppercase;
       letter-spacing: 1.2px;
       margin-bottom: 10px;
-      text-align: left;
     }
     .review {
       background: rgba(255,255,255,0.07);
@@ -140,30 +151,33 @@
     .review-stars { color: #fbbf24; font-size: 12px; letter-spacing: 1.5px; }
     .review-body { font-size: 14px; color: rgba(255,255,255,0.52); line-height: 1.5; }
 
-    /* CTA - at bottom */
+    /* CTA */
     .cta {
       display: block;
-      width: 100%; max-width: 340px;
+      width: 100%;
       background: #ffffff;
       color: #312e81;
       text-decoration: none;
       padding: 17px 24px;
       border-radius: 18px;
       font-size: 17px; font-weight: 700;
-      text-align: center;
       letter-spacing: -0.2px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.25);
       transition: transform 0.12s ease, box-shadow 0.12s ease;
-      margin-bottom: 28px;
+      margin-bottom: 12px;
     }
     .cta:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(0,0,0,0.3); }
     .cta:active { transform: scale(0.97); }
+    .cta-hint {
+      font-size: 12px;
+      color: rgba(255,255,255,0.25);
+      margin-bottom: 28px;
+    }
 
     /* Footer */
     .footer {
       font-size: 13px;
       color: rgba(255,255,255,0.22);
-      text-align: center;
     }
 
     /* Loading */
@@ -177,7 +191,7 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-text { font-size: 15px; color: rgba(255,255,255,0.4); }
-    .error-text { font-size: 15px; color: rgba(255,255,255,0.4); text-align: center; padding: 40px 20px; }
+    .error-text { font-size: 15px; color: rgba(255,255,255,0.4); padding: 40px 20px; }
   </style>
 </head>
 <body>
@@ -217,10 +231,10 @@
         ? '<img class="avatar" src="' + esc(p.avatar) + '" alt="' + esc(p.name) + '" />'
         : '<div class="avatar-ph">&#x1F9CA;</div>';
 
-      // Stats row — always show all three
+      // Stats — separate .stat-num and .stat-star to avoid font-size conflicts
       var ratingDisplay = (p.rating && p.ratingCount >= 1)
-        ? '<span class="stat-num stat-stars">' + p.rating.toFixed(1) + ' &#9733;</span>'
-        : '<span class="stat-num stat-stars">&mdash;</span>';
+        ? '<span class="stat-num">' + p.rating.toFixed(1) + '</span><span class="stat-star">&#9733;</span>'
+        : '<span class="stat-num">&mdash;</span>';
       var reviewDisplay = '<span class="stat-num">' + (p.ratingCount || 0) + '</span>';
       var helpedDisplay = '<span class="stat-num">' + (p.helpedCount || 0) + '</span>';
 
@@ -228,7 +242,7 @@
         '<div class="stats-row">'
         + '<div class="stat">' + ratingDisplay + '<span class="stat-label">Rating</span></div>'
         + '<div class="stat">' + reviewDisplay + '<span class="stat-label">Reviews</span></div>'
-        + '<div class="stat">' + helpedDisplay + '<span class="stat-label">Neighbors helped</span></div>'
+        + '<div class="stat">' + helpedDisplay + '<span class="stat-label">Neighbors<br>helped</span></div>'
         + '</div>';
 
       var reviewsHtml = '';
@@ -254,7 +268,8 @@
         + (p.bio ? '<p class="bio">' + esc(p.bio) + '</p>' : '')
         + statsHtml
         + reviewsHtml
-        + '<a class="cta" href="' + APP_STORE + '">Open in Helpy &nbsp;&rarr;</a>'
+        + '<a class="cta" href="' + APP_STORE + '">Get Helpy on the App Store &nbsp;&rarr;</a>'
+        + '<p class="cta-hint">Free &middot; iOS &middot; Connect with neighbors in your area</p>'
         + '<p class="footer">Real neighbors helping each other</p>';
     }
 
