@@ -30,39 +30,36 @@
     .wordmark {
       font-size: 13px;
       font-weight: 600;
-      color: rgba(255,255,255,0.45);
-      letter-spacing: 0.5px;
-      margin-bottom: 36px;
-      text-align: center;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      margin-bottom: 32px;
     }
 
     /* Avatar */
     .avatar {
-      width: 120px;
-      height: 120px;
+      width: 120px; height: 120px;
       border-radius: 50%;
       object-fit: cover;
       border: 3.5px solid rgba(255,255,255,0.85);
-      box-shadow: 0 0 0 8px rgba(255,255,255,0.08), 0 16px 48px rgba(0,0,0,0.5);
-      margin-bottom: 22px;
+      box-shadow: 0 0 0 8px rgba(255,255,255,0.07), 0 16px 48px rgba(0,0,0,0.5);
+      margin-bottom: 20px;
       display: block;
     }
     .avatar-ph {
-      width: 120px;
-      height: 120px;
+      width: 120px; height: 120px;
       border-radius: 50%;
       background: linear-gradient(135deg, #6366f1, #a78bfa);
       font-size: 48px;
       display: flex; align-items: center; justify-content: center;
       border: 3.5px solid rgba(255,255,255,0.85);
-      box-shadow: 0 0 0 8px rgba(255,255,255,0.08), 0 16px 48px rgba(0,0,0,0.5);
-      margin-bottom: 22px;
+      box-shadow: 0 0 0 8px rgba(255,255,255,0.07), 0 16px 48px rgba(0,0,0,0.5);
+      margin-bottom: 20px;
     }
 
     /* Name & Bio */
     .name {
-      font-size: 30px;
-      font-weight: 700;
+      font-size: 30px; font-weight: 700;
       color: #ffffff;
       letter-spacing: -0.7px;
       text-align: center;
@@ -70,92 +67,107 @@
     }
     .bio {
       font-size: 16px;
-      color: rgba(255,255,255,0.6);
+      color: rgba(255,255,255,0.58);
       text-align: center;
       line-height: 1.5;
       max-width: 280px;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
     }
 
-    /* Rating */
-    .rating-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
+    /* Stats row */
+    .stats-row {
+      display: flex;
+      align-items: stretch;
+      gap: 1px;
       background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.18);
-      border-radius: 100px;
-      padding: 8px 18px;
-      margin-bottom: 40px;
-    }
-    .stars { color: #fbbf24; font-size: 13px; letter-spacing: 2px; }
-    .rating-num { font-size: 15px; font-weight: 700; color: #fde68a; }
-    .rating-sub { font-size: 13px; color: rgba(255,255,255,0.45); }
-
-    /* CTA */
-    .cta {
-      display: block;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 18px;
+      overflow: hidden;
       width: 100%;
       max-width: 340px;
-      background: #ffffff;
-      color: #312e81;
-      text-decoration: none;
-      padding: 18px 24px;
-      border-radius: 20px;
-      font-size: 17px;
-      font-weight: 700;
-      text-align: center;
-      letter-spacing: -0.2px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.15);
-      transition: transform 0.12s ease, box-shadow 0.12s ease;
-      margin-bottom: 36px;
+      margin-bottom: 28px;
     }
-    .cta:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(0,0,0,0.3); }
-    .cta:active { transform: scale(0.97); box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+    .stat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 8px;
+      background: rgba(255,255,255,0.06);
+      gap: 4px;
+    }
+    .stat + .stat { border-left: 1px solid rgba(255,255,255,0.1); }
+    .stat-num {
+      font-size: 22px; font-weight: 700;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+    .stat-stars { color: #fbbf24; font-size: 14px; }
+    .stat-label {
+      font-size: 11px; font-weight: 500;
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      line-height: 1.3;
+    }
 
     /* Reviews */
     .reviews {
-      width: 100%;
-      max-width: 340px;
-      margin-bottom: 36px;
+      width: 100%; max-width: 340px;
+      margin-bottom: 28px;
     }
     .reviews-label {
-      font-size: 11px;
-      font-weight: 700;
+      font-size: 11px; font-weight: 700;
       color: rgba(255,255,255,0.28);
       text-transform: uppercase;
       letter-spacing: 1.2px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       text-align: left;
     }
     .review {
       background: rgba(255,255,255,0.07);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 16px;
-      padding: 16px 18px;
+      padding: 14px 16px;
       margin-bottom: 8px;
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
     }
     .review:last-child { margin-bottom: 0; }
-    .review-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .reviewer { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.9); }
+    .review-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+    .reviewer { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.88); }
     .review-stars { color: #fbbf24; font-size: 12px; letter-spacing: 1.5px; }
-    .review-body { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.5; }
+    .review-body { font-size: 14px; color: rgba(255,255,255,0.52); line-height: 1.5; }
+
+    /* CTA - at bottom */
+    .cta {
+      display: block;
+      width: 100%; max-width: 340px;
+      background: #ffffff;
+      color: #312e81;
+      text-decoration: none;
+      padding: 17px 24px;
+      border-radius: 18px;
+      font-size: 17px; font-weight: 700;
+      text-align: center;
+      letter-spacing: -0.2px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      transition: transform 0.12s ease, box-shadow 0.12s ease;
+      margin-bottom: 28px;
+    }
+    .cta:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(0,0,0,0.3); }
+    .cta:active { transform: scale(0.97); }
 
     /* Footer */
     .footer {
       font-size: 13px;
-      color: rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.22);
       text-align: center;
-      letter-spacing: 0.1px;
     }
 
     /* Loading */
-    .spinner-wrap {
-      display: flex; flex-direction: column;
-      align-items: center; gap: 16px;
-    }
+    .spinner-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
     .spinner {
       width: 36px; height: 36px;
       border: 2.5px solid rgba(255,255,255,0.12);
@@ -164,7 +176,7 @@
       animation: spin 0.7s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-text { font-size: 15px; color: rgba(255,255,255,0.45); }
+    .loading-text { font-size: 15px; color: rgba(255,255,255,0.4); }
     .error-text { font-size: 15px; color: rgba(255,255,255,0.4); text-align: center; padding: 40px 20px; }
   </style>
 </head>
@@ -203,15 +215,21 @@
 
       var avatarHtml = p.avatar
         ? '<img class="avatar" src="' + esc(p.avatar) + '" alt="' + esc(p.name) + '" />'
-        : '<div class="avatar-ph">&#x1F3D8;&#xFE0F;</div>';
+        : '<div class="avatar-ph">&#x1F9CA;</div>';
 
-      var ratingHtml = (p.rating && p.ratingCount >= 1)
-        ? '<div class="rating-pill">'
-          + '<span class="stars">' + stars(p.rating) + '</span>'
-          + '<span class="rating-num">' + p.rating.toFixed(1) + '</span>'
-          + '<span class="rating-sub">&middot; ' + p.ratingCount + ' review' + (p.ratingCount !== 1 ? 's' : '') + '</span>'
-          + '</div>'
-        : '';
+      // Stats row — always show all three
+      var ratingDisplay = (p.rating && p.ratingCount >= 1)
+        ? '<span class="stat-num stat-stars">' + p.rating.toFixed(1) + ' &#9733;</span>'
+        : '<span class="stat-num stat-stars">&mdash;</span>';
+      var reviewDisplay = '<span class="stat-num">' + (p.ratingCount || 0) + '</span>';
+      var helpedDisplay = '<span class="stat-num">' + (p.helpedCount || 0) + '</span>';
+
+      var statsHtml =
+        '<div class="stats-row">'
+        + '<div class="stat">' + ratingDisplay + '<span class="stat-label">Rating</span></div>'
+        + '<div class="stat">' + reviewDisplay + '<span class="stat-label">Reviews</span></div>'
+        + '<div class="stat">' + helpedDisplay + '<span class="stat-label">Neighbors helped</span></div>'
+        + '</div>';
 
       var reviewsHtml = '';
       if (p.reviews && p.reviews.length > 0) {
@@ -230,13 +248,13 @@
       }
 
       document.getElementById('root').innerHTML =
-        '<p class="wordmark">&#x1F3D8;&#xFE0F;&nbsp; Helpy</p>'
+        '<p class="wordmark">Helpy</p>'
         + avatarHtml
         + '<h1 class="name">' + esc(p.name) + '</h1>'
         + (p.bio ? '<p class="bio">' + esc(p.bio) + '</p>' : '')
-        + ratingHtml
-        + '<a class="cta" href="' + APP_STORE + '">Open in Helpy &nbsp;&rarr;</a>'
+        + statsHtml
         + reviewsHtml
+        + '<a class="cta" href="' + APP_STORE + '">Open in Helpy &nbsp;&rarr;</a>'
         + '<p class="footer">Real neighbors helping each other</p>';
     }
 
