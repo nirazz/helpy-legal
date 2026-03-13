@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helpy Product Roadmap</title>
+  <style>
+    :root {
+      --brand: #6366f1;
+      --brand-dark: #4f46e5;
+      --brand-light: #eef2ff;
+      --green: #10b981;
+      --green-light: #d1fae5;
+      --amber: #f59e0b;
+      --amber-light: #fef3c7;
+      --red: #ef4444;
+      --pink: #ec4899;
+      --pink-light: #fce7f3;
+      --slate: #64748b;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Reading progress bar */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, var(--brand), var(--pink));
+      width: 0%; z-index: 1000; transition: width 0.1s;
+    }
+
+    /* Header */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px; gap: 16px;
+    }
+    .header-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 17px; color: var(--brand);
+      flex-shrink: 0;
+    }
+    .header-logo .logo-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--brand), var(--pink));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .header-badge {
+      background: var(--green); color: #fff; font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+    .header-right {
+      display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+    }
+    .header-meta { font-size: 12px; color: var(--text-muted); }
+
+    /* View toggle */
+    .view-toggle {
+      display: flex; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 3px; gap: 2px;
+    }
+    .view-btn {
+      padding: 5px 14px; border-radius: 6px; border: none;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      transition: all 0.15s; color: var(--text-muted); background: transparent;
+    }
+    .view-btn.active {
+      background: white; color: var(--brand);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    /* Main layout */
+    .page-wrap { max-width: 960px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+      border-radius: 20px; padding: 44px 40px; color: #fff;
+      margin-bottom: 40px; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -50px; right: -50px;
+      width: 220px; height: 220px; background: rgba(255,255,255,0.07);
+      border-radius: 50%;
+    }
+    .hero::after {
+      content: ''; position: absolute; bottom: -60px; left: 25%;
+      width: 160px; height: 160px; background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+    .hero-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; opacity: 0.7; margin-bottom: 10px;
+    }
+    .hero h1 { font-size: 32px; font-weight: 800; line-height: 1.2; margin-bottom: 12px; }
+    .hero p { font-size: 15px; opacity: 0.85; max-width: 540px; line-height: 1.7; margin-bottom: 24px; }
+    .hero-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .hero-chip {
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px; padding: 4px 12px; font-size: 12px; font-weight: 600;
+    }
+
+    /* North star progress */
+    .north-star {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 28px 32px; margin-bottom: 32px;
+    }
+    .north-star-label {
+      font-size: 11px; font-weight: 700; color: var(--text-muted);
+      letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .north-star-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+    .north-star-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+    .progress-track {
+      position: relative; height: 10px; background: var(--border);
+      border-radius: 99px; overflow: visible; margin-bottom: 12px;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 99px;
+      background: linear-gradient(90deg, var(--brand), var(--pink));
+      transition: width 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+    .progress-fill::after {
+      content: ''; position: absolute; right: -1px; top: 50%;
+      transform: translateY(-50%);
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--brand); border: 3px solid white;
+      box-shadow: 0 2px 8px rgba(99,102,241,0.5);
+    }
+    .progress-milestones {
+      display: flex; justify-content: space-between; font-size: 11px;
+      color: var(--text-muted); font-weight: 600;
+    }
+    .milestone-now { color: var(--brand); }
+    .milestone-90d { color: var(--amber); }
+    .milestone-6m { color: var(--green); }
+
+    /* Filter bar */
+    .filter-bar {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-bottom: 28px; align-items: center;
+    }
+    .filter-label {
+      font-size: 12px; font-weight: 600; color: var(--text-muted);
+      margin-right: 4px;
+    }
+    .filter-btn {
+      padding: 6px 14px; border-radius: 20px; border: 1.5px solid var(--border);
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      background: white; color: var(--text-muted);
+      transition: all 0.15s; display: flex; align-items: center; gap: 5px;
+    }
+    .filter-btn:hover { border-color: var(--brand); color: var(--brand); }
+    .filter-btn.active {
+      background: var(--brand-light); border-color: var(--brand);
+      color: var(--brand);
+    }
+    .filter-btn.f-shipped.active { background: var(--green-light); border-color: var(--green); color: #065f46; }
+    .filter-btn.f-progress.active { background: var(--brand-light); border-color: var(--brand); color: var(--brand-dark); }
+    .filter-btn.f-planned.active { background: var(--amber-light); border-color: var(--amber); color: #92400e; }
+
+    /* Legend */
+    .legend {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      margin-bottom: 28px; padding: 14px 18px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); font-size: 12px;
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-weight: 500; color: var(--text-muted); }
+
+    /* Quarter cards (Timeline view) */
+    .quarter-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); margin-bottom: 20px;
+      overflow: hidden; transition: box-shadow 0.2s;
+      border-left: 5px solid var(--border);
+    }
+    .quarter-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.07); }
+    .quarter-card.q-shipped { border-left-color: var(--green); }
+    .quarter-card.q-progress { border-left-color: var(--brand); }
+    .quarter-card.q-planned { border-left-color: var(--amber); }
+    .quarter-card.q-explore { border-left-color: var(--pink); }
+
+    .quarter-header {
+      display: flex; align-items: center; gap: 14px;
+      padding: 20px 24px; cursor: pointer;
+      user-select: none; transition: background 0.15s;
+    }
+    .quarter-header:hover { background: var(--bg); }
+    .quarter-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .q-shipped .quarter-icon { background: var(--green-light); }
+    .q-progress .quarter-icon { background: var(--brand-light); }
+    .q-planned .quarter-icon { background: var(--amber-light); }
+    .q-explore .quarter-icon { background: var(--pink-light); }
+
+    .quarter-meta { flex: 1; }
+    .quarter-title { font-size: 17px; font-weight: 700; margin-bottom: 3px; }
+    .quarter-sub { font-size: 13px; color: var(--text-muted); }
+    .quarter-badge {
+      font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
+      letter-spacing: 0.3px; flex-shrink: 0;
+    }
+    .badge-shipped { background: var(--green-light); color: #065f46; }
+    .badge-progress { background: var(--brand-light); color: var(--brand-dark); }
+    .badge-planned { background: var(--amber-light); color: #92400e; }
+    .badge-explore { background: var(--pink-light); color: #9d174d; }
+
+    .quarter-toggle {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--bg); border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0; transition: transform 0.2s;
+      color: var(--text-muted);
+    }
+    .quarter-card.open .quarter-toggle { transform: rotate(180deg); }
+
+    .quarter-body {
+      padding: 0 24px 24px;
+      display: none;
+    }
+    .quarter-card.open .quarter-body { display: block; }
+
+    .items-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 10px;
+    }
+    .roadmap-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 12px 14px; border-radius: 10px;
+      border: 1.5px solid var(--border); background: var(--bg);
+      transition: all 0.15s; font-size: 13px;
+    }
+    .roadmap-item:hover { border-color: var(--brand); background: var(--brand-light); }
+    .item-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; line-height: 1.4; }
+    .item-text { font-weight: 500; line-height: 1.4; }
+    .item-tag {
+      margin-left: auto; font-size: 10px; font-weight: 700;
+      padding: 2px 7px; border-radius: 10px; flex-shrink: 0;
+      letter-spacing: 0.3px;
+    }
+    .tag-infra { background: #e0e7ff; color: #3730a3; }
+    .tag-growth { background: #d1fae5; color: #065f46; }
+    .tag-ux { background: #fce7f3; color: #9d174d; }
+    .tag-safety { background: #fef3c7; color: #92400e; }
+
+    /* Count chip on quarter header */
+    .item-count {
+      font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 20px;
+      background: rgba(0,0,0,0.05); color: var(--text-muted); flex-shrink: 0;
+    }
+
+    /* By Theme view */
+    #theme-view { display: none; }
+    .theme-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .theme-col {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .theme-col-header {
+      padding: 16px 18px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .theme-col-title { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+    .theme-col-sub { font-size: 11px; color: var(--text-muted); }
+    .theme-items { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+    .theme-item {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-size: 12px; padding: 8px 10px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--bg);
+      transition: all 0.15s;
+    }
+    .theme-item:hover { border-color: var(--brand); background: var(--brand-light); }
+    .theme-item-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      flex-shrink: 0; margin-top: 4px;
+    }
+    .dot-q2 { background: var(--brand); }
+    .dot-q3 { background: var(--amber); }
+    .dot-h2 { background: var(--pink); }
+    .theme-item-body { flex: 1; }
+    .theme-item-quarter {
+      font-size: 10px; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1px;
+    }
+    .theme-item-text { font-weight: 500; line-height: 1.35; color: var(--text); }
+    .theme-col-header .col-icon { font-size: 22px; margin-bottom: 6px; }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .quarter-card {
+      animation: fadeUp 0.4s ease both;
+    }
+    .quarter-card:nth-child(2) { animation-delay: 0.06s; }
+    .quarter-card:nth-child(3) { animation-delay: 0.12s; }
+    .quarter-card:nth-child(4) { animation-delay: 0.18s; }
+
+    /* Hidden item (for filter) */
+    .roadmap-item.hidden { display: none; }
+    .quarter-card.all-hidden .quarter-body { display: none !important; }
+    .quarter-card.all-hidden { opacity: 0.45; }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .hero { padding: 32px 24px; }
+      .hero h1 { font-size: 24px; }
+      .north-star { padding: 20px; }
+      .quarter-header { padding: 16px 18px; }
+      .quarter-body { padding: 0 18px 18px; }
+      .items-grid { grid-template-columns: 1fr; }
+      header { padding: 0 16px; }
+      .header-meta { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<header>
+  <div class="header-logo">
+    <div class="logo-icon">✋</div>
+    Helpy
+  </div>
+  <div class="header-right">
+    <span class="header-badge">LIVE v1.0.2</span>
+    <div class="view-toggle">
+      <button class="view-btn active" id="btn-timeline" onclick="switchView('timeline')">Timeline</button>
+      <button class="view-btn" id="btn-theme" onclick="switchView('theme')">By Theme</button>
+    </div>
+  </div>
+</header>
+
+<div class="page-wrap">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">Product Roadmap</div>
+    <h1>Helpy Product Roadmap</h1>
+    <p>From 16 users to product-market fit - Q1 2026 onward. Every feature is a bet on the north star: more neighbors helped, more often.</p>
+    <div class="hero-chips">
+      <span class="hero-chip">🏠 Tel Aviv-First</span>
+      <span class="hero-chip">📱 iOS + Android</span>
+      <span class="hero-chip">🎯 North Star: WAU</span>
+      <span class="hero-chip">🌍 Hebrew + English</span>
+    </div>
+  </div>
+
+  <!-- North Star Progress -->
+  <div class="north-star">
+    <div class="north-star-label">⭐ North Star Metric</div>
+    <div class="north-star-title">Weekly Active Users (WAU)</div>
+    <div class="north-star-sub">Every shipped feature is evaluated by its impact on WAU. We don't ship vanity features.</div>
+    <div class="progress-track">
+      <div class="progress-fill" id="ns-bar" style="width: 0%"></div>
+    </div>
+    <div class="progress-milestones">
+      <span class="milestone-now">16 today</span>
+      <span class="milestone-90d">200 in 90 days</span>
+      <span class="milestone-6m">1,000 in 6 months</span>
+    </div>
+  </div>
+
+  <!-- Timeline view -->
+  <div id="timeline-view">
+
+    <!-- Status legend -->
+    <div class="legend">
+      <span style="font-size:12px; font-weight:700; color:var(--text-muted); letter-spacing:0.5px; text-transform:uppercase;">Status key</span>
+      <span class="legend-item">✅ <span>Shipped</span></span>
+      <span class="legend-item">🔨 <span>In Progress</span></span>
+      <span class="legend-item">📋 <span>Planned</span></span>
+      <span class="legend-item">💭 <span>Exploring</span></span>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+      <span class="filter-label">Show:</span>
+      <button class="filter-btn active" onclick="setFilter('all', this)">All Items</button>
+      <button class="filter-btn f-shipped" onclick="setFilter('shipped', this)">✅ Shipped</button>
+      <button class="filter-btn f-progress" onclick="setFilter('progress', this)">🔨 In Progress</button>
+      <button class="filter-btn f-planned" onclick="setFilter('planned', this)">📋 Planned</button>
+    </div>
+
+    <!-- Q1 2026 -->
+    <div class="quarter-card q-shipped open" id="q1">
+      <div class="quarter-header" onclick="toggleQuarter('q1')">
+        <div class="quarter-icon">🚀</div>
+        <div class="quarter-meta">
+          <div class="quarter-title">Q1 2026 (Jan - Mar) - Foundation</div>
+          <div class="quarter-sub">Ship the core loop. Get on the App Store. Build the trust layer.</div>
+        </div>
+        <span class="item-count">18 shipped</span>
+        <span class="quarter-badge badge-shipped">SHIPPED</span>
+        <div class="quarter-toggle">&#9660;</div>
+      </div>
+      <div class="quarter-body">
+        <div class="items-grid">
+          <div class="roadmap-item" data-status="shipped">
+            <span class="item-icon">✅</span>
+            <span class="item-text">Auth: Google, Apple, Email (hidden)</span>
+            <span class="item-tag tag-infra">Infra</span>
+          </div>
+          <div class="roadmap-item" data-status="shipped">
+            <span class="item-icon">✅</span>
+            <span class="item-text">Phone verification gate (Twilio)</span>
+            <span class="item-tag tag-safety">Safety</span>
+          </div>
+          <div class="roadmap-item" data-status="shipped">
+            <span class="item-icon">✅</span>
+            <span class="item-text">Post help request with images</span>
+            <span class="item-tag tag-ux">UX</span>
+          </div>
+          <div class="roadmap-item" data-status="shipped">
+            <span class="item-icon">✅</span>
+            <span class="item-text">Browse feed with distance filter (PostGIS)</span>
+            <span class="item-tag tag-infra">Infra</span>
+          </div>
+          <div class="roadmap-item" data-status="shipped">
+            <span class="item-icon">✅</span>
+            <span class="item-text">Swipe / Offer Help interface</span>
+            <span class="item-tag tag-ux">UX</span>
+          </div>
+          <div class="roadmap-item" data-status="shipped">
+            <span class="item-icon">✅</span>
+            <span class="item-text">Accept / Decline offers</span>
+            <span class="item-tag tag-ux">UX</span>
+          </div>
+          <div class="roadmap-item" data-status="shipped">
+            <span class="item-icon">✅</span>
+            <span class="item-text">Real-time chat (Supabase Realtime)</span>
+            <span class="item-tag tag-infra">Infra</span>
+          </div>
+          <div class="roadmap-item" data-status="shipped">
+            <span class="item-icon">✅</span>
+            <span class="item-text">Rating system (1-5 stars)</span>
+            <span class="item-tag tag-ux">UX</span>
+          </div>
+          <div class="roadmap-item" data-status="shipped">
+            <span class="item-icon">✅</span>
+            <span class="item-text">Push notifications (5 types)</span>
+            <span class="item-tag tag-infra">Infra</span>
+          </div>
+          <div class="roadmap-item" data-status="shipped">
+            <span class="item-icon">✅</span>
+            <span class="item-text">Report and Block users</span>
+            <span class="item-tag tag-safety">Safety</span>
+          </div>
+          <div class="roadmap-item" data-status="shipped">
+            <span class="item-icon">✅</span>
+            <span class="item-text">Hebrew / English + RTL (200+ keys)</span>
+            <span class="item-tag tag-ux">UX</span>
+          </div>
+          <div class="roadmap-item" data-status="shipped">
+            <span class="item-icon">✅</span>
+            <span class="item-text">Dark mode</span>
+            <span class="item-tag tag-ux">UX</span>
+          </div>
+          <div class="roadmap-item" data-status="shipped">
+            <span class="item-icon">✅</span>
+            <span class="item-text">Map view (Cards / Map toggle)</span>
+            <span class="item-tag tag-ux">UX</span>
+          </div>
+          <div class="roadmap-item" data-status="shipped">
+            <span class="item-icon">✅</span>
+            <span class="item-text">Streak counter + Invite neighbors</span>
+            <span class="item-tag tag-growth">Growth</span>
+          </div>
+          <div class="roadmap-item" data-status="shipped">
+            <span class="item-icon">✅</span>
+            <span class="item-text">Re-engagement + weekly digest push</span>
+            <span class="item-tag tag-growth">Growth</span>
+          </div>
+          <div class="roadmap-item" data-status="shipped">
+            <span class="item-icon">✅</span>
+            <span class="item-text">Social proof + fast responder badge</span>
+            <span class="item-tag tag-growth">Growth</span>
+          </div>
+          <div class="roadmap-item" data-status="shipped">
+            <span class="item-icon">✅</span>
+            <span class="item-text">App Store LIVE (after 5 rejections)</span>
+            <span class="item-tag tag-infra">Infra</span>
+          </div>
+          <div class="roadmap-item" data-status="shipped">
+            <span class="item-icon">✅</span>
+            <span class="item-text">Edit request</span>
+            <span class="item-tag tag-ux">UX</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 2026 -->
+    <div class="quarter-card q-progress open" id="q2">
+      <div class="quarter-header" onclick="toggleQuarter('q2')">
+        <div class="quarter-icon">📈</div>
+        <div class="quarter-meta">
+          <div class="quarter-title">Q2 2026 (Apr - Jun) - Growth</div>
+          <div class="quarter-sub">Get to 200 WAU. Validate the match loop. Land three pilot neighborhoods.</div>
+        </div>
+        <span class="item-count">9 items</span>
+        <span class="quarter-badge badge-progress">IN PROGRESS</span>
+        <div class="quarter-toggle">&#9660;</div>
+      </div>
+      <div class="quarter-body">
+        <div class="items-grid">
+          <div class="roadmap-item" data-status="progress">
+            <span class="item-icon">🔨</span>
+            <span class="item-text">Push notifications - physical device test</span>
+            <span class="item-tag tag-infra">Infra</span>
+          </div>
+          <div class="roadmap-item" data-status="progress">
+            <span class="item-icon">🔨</span>
+            <span class="item-text">TestFlight v1.0.2 external beta</span>
+            <span class="item-tag tag-infra">Infra</span>
+          </div>
+          <div class="roadmap-item" data-status="planned">
+            <span class="item-icon">📋</span>
+            <span class="item-text">ASO optimization (keywords, screenshots A/B)</span>
+            <span class="item-tag tag-growth">Growth</span>
+          </div>
+          <div class="roadmap-item" data-status="planned">
+            <span class="item-icon">📋</span>
+            <span class="item-text">Google Play Store launch (trigger: 200 iOS WAU)</span>
+            <span class="item-tag tag-growth">Growth</span>
+          </div>
+          <div class="roadmap-item" data-status="planned">
+            <span class="item-icon">📋</span>
+            <span class="item-text">Analytics dashboard (PostHog funnels, retention cohorts)</span>
+            <span class="item-tag tag-infra">Infra</span>
+          </div>
+          <div class="roadmap-item" data-status="planned">
+            <span class="item-icon">📋</span>
+            <span class="item-text">Neighborhood ambassador program (3 pilot neighborhoods in Tel Aviv)</span>
+            <span class="item-tag tag-growth">Growth</span>
+          </div>
+          <div class="roadmap-item" data-status="planned">
+            <span class="item-icon">📋</span>
+            <span class="item-text">In-app notification center</span>
+            <span class="item-tag tag-ux">UX</span>
+          </div>
+          <div class="roadmap-item" data-status="planned">
+            <span class="item-icon">📋</span>
+            <span class="item-text">Request templates / quick-post suggestions</span>
+            <span class="item-tag tag-ux">UX</span>
+          </div>
+          <div class="roadmap-item" data-status="planned">
+            <span class="item-icon">📋</span>
+            <span class="item-text">Helper tiers v1 (Bronze / Silver / Gold based on match count)</span>
+            <span class="item-tag tag-growth">Growth</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 2026 -->
+    <div class="quarter-card q-planned" id="q3">
+      <div class="quarter-header" onclick="toggleQuarter('q3')">
+        <div class="quarter-icon">🔄</div>
+        <div class="quarter-meta">
+          <div class="quarter-title">Q3 2026 (Jul - Sep) - Retention</div>
+          <div class="quarter-sub">D30 retention 12% to 20%. Match rate 40% to 60%. Make helping a habit.</div>
+        </div>
+        <span class="item-count">7 items</span>
+        <span class="quarter-badge badge-planned">PLANNED</span>
+        <div class="quarter-toggle">&#9660;</div>
+      </div>
+      <div class="quarter-body">
+        <div class="items-grid">
+          <div class="roadmap-item" data-status="planned">
+            <span class="item-icon">📋</span>
+            <span class="item-text">Typing indicators in chat</span>
+            <span class="item-tag tag-ux">UX</span>
+          </div>
+          <div class="roadmap-item" data-status="planned">
+            <span class="item-icon">📋</span>
+            <span class="item-text">Read receipts</span>
+            <span class="item-tag tag-ux">UX</span>
+          </div>
+          <div class="roadmap-item" data-status="planned">
+            <span class="item-icon">📋</span>
+            <span class="item-text">Scheduled / recurring help requests</span>
+            <span class="item-tag tag-ux">UX</span>
+          </div>
+          <div class="roadmap-item" data-status="planned">
+            <span class="item-icon">📋</span>
+            <span class="item-text">Neighborhood leaderboard (top helpers this month)</span>
+            <span class="item-tag tag-growth">Growth</span>
+          </div>
+          <div class="roadmap-item" data-status="planned">
+            <span class="item-icon">📋</span>
+            <span class="item-text">Referral program with incentives</span>
+            <span class="item-tag tag-growth">Growth</span>
+          </div>
+          <div class="roadmap-item" data-status="planned">
+            <span class="item-icon">📋</span>
+            <span class="item-text">Category-specific onboarding (elderly care flow vs. tech help flow)</span>
+            <span class="item-tag tag-ux">UX</span>
+          </div>
+          <div class="roadmap-item" data-status="planned">
+            <span class="item-icon">📋</span>
+            <span class="item-text">ML content moderation (proactive vs. reactive)</span>
+            <span class="item-tag tag-safety">Safety</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- H2 2026 -->
+    <div class="quarter-card q-explore" id="h2">
+      <div class="quarter-header" onclick="toggleQuarter('h2')">
+        <div class="quarter-icon">🌍</div>
+        <div class="quarter-meta">
+          <div class="quarter-title">H2 2026 - Scale</div>
+          <div class="quarter-sub">Expand beyond Tel Aviv. Explore monetization. Build the trust moat.</div>
+        </div>
+        <span class="item-count">6 ideas</span>
+        <span class="quarter-badge badge-explore">EXPLORING</span>
+        <div class="quarter-toggle">&#9660;</div>
+      </div>
+      <div class="quarter-body">
+        <div class="items-grid">
+          <div class="roadmap-item" data-status="explore">
+            <span class="item-icon">💭</span>
+            <span class="item-text">Multi-city expansion (Jerusalem, Haifa, Beer Sheva)</span>
+            <span class="item-tag tag-growth">Growth</span>
+          </div>
+          <div class="roadmap-item" data-status="explore">
+            <span class="item-icon">💭</span>
+            <span class="item-text">Verified ID option for high-trust categories (elderly care)</span>
+            <span class="item-tag tag-safety">Safety</span>
+          </div>
+          <div class="roadmap-item" data-status="explore">
+            <span class="item-icon">💭</span>
+            <span class="item-text">Freemium model exploration (boosted requests, featured helper)</span>
+            <span class="item-tag tag-infra">Monetize</span>
+          </div>
+          <div class="roadmap-item" data-status="explore">
+            <span class="item-icon">💭</span>
+            <span class="item-text">Group requests (1 request - multiple helpers)</span>
+            <span class="item-tag tag-ux">UX</span>
+          </div>
+          <div class="roadmap-item" data-status="explore">
+            <span class="item-icon">💭</span>
+            <span class="item-text">Community events / meetups feature</span>
+            <span class="item-tag tag-growth">Growth</span>
+          </div>
+          <div class="roadmap-item" data-status="explore">
+            <span class="item-icon">💭</span>
+            <span class="item-text">API for municipality partnerships</span>
+            <span class="item-tag tag-infra">Infra</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /timeline-view -->
+
+  <!-- By Theme view -->
+  <div id="theme-view">
+    <p style="font-size:13px; color:var(--text-muted); margin-bottom:20px;">Viewing unshipped items organized by product theme. Q1 shipped items are collapsed for clarity.</p>
+    <div class="theme-grid">
+
+      <!-- Growth & Acquisition -->
+      <div class="theme-col">
+        <div class="theme-col-header">
+          <div class="col-icon">🚀</div>
+          <div class="theme-col-title">Growth and Acquisition</div>
+          <div class="theme-col-sub">Get more users, faster</div>
+        </div>
+        <div class="theme-items">
+          <div class="theme-item">
+            <div class="theme-item-dot dot-q2"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">Q2</div>
+              <div class="theme-item-text">ASO optimization (keywords, screenshots A/B)</div>
+            </div>
+          </div>
+          <div class="theme-item">
+            <div class="theme-item-dot dot-q2"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">Q2</div>
+              <div class="theme-item-text">Google Play Store launch (trigger: 200 iOS WAU)</div>
+            </div>
+          </div>
+          <div class="theme-item">
+            <div class="theme-item-dot dot-q2"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">Q2</div>
+              <div class="theme-item-text">Neighborhood ambassador program (3 Tel Aviv pilots)</div>
+            </div>
+          </div>
+          <div class="theme-item">
+            <div class="theme-item-dot dot-q3"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">Q3</div>
+              <div class="theme-item-text">Referral program with incentives</div>
+            </div>
+          </div>
+          <div class="theme-item">
+            <div class="theme-item-dot dot-h2"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">H2</div>
+              <div class="theme-item-text">Multi-city expansion (Jerusalem, Haifa, Beer Sheva)</div>
+            </div>
+          </div>
+          <div class="theme-item">
+            <div class="theme-item-dot dot-h2"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">H2</div>
+              <div class="theme-item-text">Community events / meetups feature</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Retention & Engagement -->
+      <div class="theme-col">
+        <div class="theme-col-header">
+          <div class="col-icon">🔄</div>
+          <div class="theme-col-title">Retention and Engagement</div>
+          <div class="theme-col-sub">Keep users coming back</div>
+        </div>
+        <div class="theme-items">
+          <div class="theme-item">
+            <div class="theme-item-dot dot-q2"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">Q2</div>
+              <div class="theme-item-text">Analytics dashboard (PostHog funnels, cohorts)</div>
+            </div>
+          </div>
+          <div class="theme-item">
+            <div class="theme-item-dot dot-q2"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">Q2</div>
+              <div class="theme-item-text">In-app notification center</div>
+            </div>
+          </div>
+          <div class="theme-item">
+            <div class="theme-item-dot dot-q2"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">Q2</div>
+              <div class="theme-item-text">Helper tiers v1 (Bronze / Silver / Gold)</div>
+            </div>
+          </div>
+          <div class="theme-item">
+            <div class="theme-item-dot dot-q3"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">Q3</div>
+              <div class="theme-item-text">Typing indicators in chat</div>
+            </div>
+          </div>
+          <div class="theme-item">
+            <div class="theme-item-dot dot-q3"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">Q3</div>
+              <div class="theme-item-text">Read receipts</div>
+            </div>
+          </div>
+          <div class="theme-item">
+            <div class="theme-item-dot dot-q3"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">Q3</div>
+              <div class="theme-item-text">Neighborhood leaderboard (top helpers this month)</div>
+            </div>
+          </div>
+          <div class="theme-item">
+            <div class="theme-item-dot dot-q3"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">Q3</div>
+              <div class="theme-item-text">Scheduled / recurring help requests</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trust & Safety -->
+      <div class="theme-col">
+        <div class="theme-col-header">
+          <div class="col-icon">🛡️</div>
+          <div class="theme-col-title">Trust and Safety</div>
+          <div class="theme-col-sub">Safety is not a feature, it's a baseline</div>
+        </div>
+        <div class="theme-items">
+          <div class="theme-item">
+            <div class="theme-item-dot dot-q2"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">Q2</div>
+              <div class="theme-item-text">Push notifications - physical device test</div>
+            </div>
+          </div>
+          <div class="theme-item">
+            <div class="theme-item-dot dot-q3"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">Q3</div>
+              <div class="theme-item-text">ML content moderation (proactive vs. reactive)</div>
+            </div>
+          </div>
+          <div class="theme-item">
+            <div class="theme-item-dot dot-h2"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">H2</div>
+              <div class="theme-item-text">Verified ID option (high-trust categories)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monetization -->
+      <div class="theme-col">
+        <div class="theme-col-header">
+          <div class="col-icon">💰</div>
+          <div class="theme-col-title">Monetization</div>
+          <div class="theme-col-sub">Exploring - not before product-market fit</div>
+        </div>
+        <div class="theme-items">
+          <div class="theme-item">
+            <div class="theme-item-dot dot-h2"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">H2</div>
+              <div class="theme-item-text">Freemium model exploration (boosted requests, featured helper)</div>
+            </div>
+          </div>
+          <div class="theme-item">
+            <div class="theme-item-dot dot-h2"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">H2</div>
+              <div class="theme-item-text">API for municipality partnerships</div>
+            </div>
+          </div>
+          <div class="theme-item">
+            <div class="theme-item-dot dot-h2"></div>
+            <div class="theme-item-body">
+              <div class="theme-item-quarter">H2</div>
+              <div class="theme-item-text">Group requests (1 request - multiple helpers)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /theme-view -->
+
+</div><!-- /page-wrap -->
+
+<script>
+  // Reading progress bar
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const scrollTop = doc.scrollTop;
+    const scrollHeight = doc.scrollHeight - doc.clientHeight;
+    const pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+    document.getElementById('progress-bar').style.width = pct + '%';
+  });
+
+  // Animate north star bar on load
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      // 16 / 200 = 8% toward Q2 goal
+      document.getElementById('ns-bar').style.width = '8%';
+    }, 300);
+  });
+
+  // Toggle quarter card open/closed
+  function toggleQuarter(id) {
+    const card = document.getElementById(id);
+    card.classList.toggle('open');
+  }
+
+  // View switch: Timeline / By Theme
+  function switchView(view) {
+    const tlView = document.getElementById('timeline-view');
+    const thView = document.getElementById('theme-view');
+    const btnTl = document.getElementById('btn-timeline');
+    const btnTh = document.getElementById('btn-theme');
+
+    if (view === 'timeline') {
+      tlView.style.display = 'block';
+      thView.style.display = 'none';
+      btnTl.classList.add('active');
+      btnTh.classList.remove('active');
+    } else {
+      tlView.style.display = 'none';
+      thView.style.display = 'block';
+      btnTl.classList.remove('active');
+      btnTh.classList.add('active');
+    }
+  }
+
+  // Filter by status
+  let activeFilter = 'all';
+  function setFilter(filter, btn) {
+    activeFilter = filter;
+
+    // Update button states
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Show/hide items
+    const allItems = document.querySelectorAll('.roadmap-item');
+    allItems.forEach(item => {
+      const status = item.getAttribute('data-status');
+      if (filter === 'all') {
+        item.classList.remove('hidden');
+      } else if (filter === 'shipped' && status !== 'shipped') {
+        item.classList.add('hidden');
+      } else if (filter === 'progress' && status !== 'progress') {
+        item.classList.add('hidden');
+      } else if (filter === 'planned' && status !== 'planned') {
+        item.classList.add('hidden');
+      } else {
+        item.classList.remove('hidden');
+      }
+    });
+
+    // Auto-expand quarters with visible items, collapse empty ones
+    ['q1', 'q2', 'q3', 'h2'].forEach(qid => {
+      const card = document.getElementById(qid);
+      if (!card) return;
+      const visibleItems = card.querySelectorAll('.roadmap-item:not(.hidden)');
+      if (visibleItems.length === 0) {
+        card.classList.add('all-hidden');
+        card.classList.remove('open');
+      } else {
+        card.classList.remove('all-hidden');
+        card.classList.add('open');
+      }
+    });
+  }
+</script>
+
+</body>
+</html>
