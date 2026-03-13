@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helpy - Product Docs</title>
+  <style>
+    :root {
+      --brand: #6366f1;
+      --brand-dark: #4f46e5;
+      --brand-light: #eef2ff;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --pink: #ec4899;
+      --slate: #64748b;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: #0f172a;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      margin-bottom: 52px;
+    }
+    .hero-icon {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, #6366f1, #ec4899);
+      border-radius: 22px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 36px;
+      margin: 0 auto 20px;
+      box-shadow: 0 12px 32px rgba(99,102,241,0.3);
+    }
+    .hero h1 {
+      font-size: 34px; font-weight: 800;
+      background: linear-gradient(135deg, #6366f1, #ec4899);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    .hero p {
+      font-size: 16px; color: var(--slate);
+      max-width: 420px; margin: 0 auto 20px; line-height: 1.6;
+    }
+    .hero-chips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .hero-chip {
+      background: var(--brand-light); color: var(--brand);
+      font-size: 12px; font-weight: 600;
+      padding: 4px 12px; border-radius: 20px;
+    }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 960px;
+    }
+
+    /* Doc card */
+    .doc-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .doc-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    }
+    .doc-card:nth-child(1)::before { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
+    .doc-card:nth-child(2)::before { background: linear-gradient(90deg, #10b981, #06b6d4); }
+    .doc-card:nth-child(3)::before { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+    .doc-card:nth-child(4)::before { background: linear-gradient(90deg, #ec4899, #f43f5e); }
+
+    .doc-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+      border-color: transparent;
+    }
+    .doc-card:nth-child(1):hover { box-shadow: 0 16px 40px rgba(99,102,241,0.15); }
+    .doc-card:nth-child(2):hover { box-shadow: 0 16px 40px rgba(16,185,129,0.15); }
+    .doc-card:nth-child(3):hover { box-shadow: 0 16px 40px rgba(245,158,11,0.15); }
+    .doc-card:nth-child(4):hover { box-shadow: 0 16px 40px rgba(236,72,153,0.15); }
+
+    .doc-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; flex-shrink: 0;
+    }
+    .doc-card:nth-child(1) .doc-icon { background: #eef2ff; }
+    .doc-card:nth-child(2) .doc-icon { background: #d1fae5; }
+    .doc-card:nth-child(3) .doc-icon { background: #fef3c7; }
+    .doc-card:nth-child(4) .doc-icon { background: #fce7f3; }
+
+    .doc-header { display: flex; align-items: center; gap: 14px; }
+    .doc-title { font-size: 18px; font-weight: 700; }
+    .doc-subtitle { font-size: 13px; color: var(--slate); line-height: 1.5; }
+
+    .doc-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .doc-tag {
+      font-size: 11px; font-weight: 600;
+      padding: 3px 10px; border-radius: 20px;
+      background: var(--bg); color: var(--slate);
+      border: 1px solid var(--border);
+    }
+
+    .doc-arrow {
+      margin-top: auto;
+      display: flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 600;
+    }
+    .doc-card:nth-child(1) .doc-arrow { color: var(--brand); }
+    .doc-card:nth-child(2) .doc-arrow { color: var(--green); }
+    .doc-card:nth-child(3) .doc-arrow { color: var(--amber); }
+    .doc-card:nth-child(4) .doc-arrow { color: var(--pink); }
+
+    .arrow-icon { font-size: 16px; transition: transform 0.2s; }
+    .doc-card:hover .arrow-icon { transform: translateX(4px); }
+
+    /* Footer */
+    footer {
+      margin-top: 48px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--slate);
+    }
+    footer a { color: var(--brand); text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 26px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="hero-icon">🤝</div>
+    <h1>Helpy Product Docs</h1>
+    <p>The full PM document suite for Helpy - Neighborly Help. Strategy, roadmap, market, and growth - all in one place.</p>
+    <div class="hero-chips">
+      <span class="hero-chip">📱 iOS Live</span>
+      <span class="hero-chip">v1.0.2</span>
+      <span class="hero-chip">🇮🇱 Tel Aviv</span>
+      <span class="hero-chip">March 2026</span>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <a class="doc-card" href="prd.html">
+      <div class="doc-header">
+        <div class="doc-icon">📋</div>
+        <div>
+          <div class="doc-title">PRD</div>
+        </div>
+      </div>
+      <div class="doc-subtitle">Product Requirements Document - user stories, acceptance criteria, MoSCoW features, non-functional requirements, and open questions.</div>
+      <div class="doc-tags">
+        <span class="doc-tag">11 sections</span>
+        <span class="doc-tag">10 user stories</span>
+        <span class="doc-tag">MoSCoW</span>
+        <span class="doc-tag">KPIs</span>
+      </div>
+      <div class="doc-arrow">Read PRD <span class="arrow-icon">→</span></div>
+    </a>
+
+    <a class="doc-card" href="roadmap.html">
+      <div class="doc-header">
+        <div class="doc-icon">🗺️</div>
+        <div>
+          <div class="doc-title">Roadmap</div>
+        </div>
+      </div>
+      <div class="doc-subtitle">Quarter-by-quarter plan from launch through scale - what shipped, what's next, and what's being explored for H2 2026.</div>
+      <div class="doc-tags">
+        <span class="doc-tag">Q1-Q4 2026</span>
+        <span class="doc-tag">Timeline view</span>
+        <span class="doc-tag">By theme</span>
+        <span class="doc-tag">Status filter</span>
+      </div>
+      <div class="doc-arrow">View Roadmap <span class="arrow-icon">→</span></div>
+    </a>
+
+    <a class="doc-card" href="competitive.html">
+      <div class="doc-header">
+        <div class="doc-icon">🏆</div>
+        <div>
+          <div class="doc-title">Competitive Analysis</div>
+        </div>
+      </div>
+      <div class="doc-subtitle">How Helpy stacks up against WhatsApp, Facebook, Nextdoor, TaskRabbit, and Yad2 - feature matrix, positioning map, and strategic implications.</div>
+      <div class="doc-tags">
+        <span class="doc-tag">6 competitors</span>
+        <span class="doc-tag">Feature matrix</span>
+        <span class="doc-tag">Positioning map</span>
+        <span class="doc-tag">Gaps</span>
+      </div>
+      <div class="doc-arrow">See Analysis <span class="arrow-icon">→</span></div>
+    </a>
+
+    <a class="doc-card" href="gtm.html">
+      <div class="doc-header">
+        <div class="doc-icon">🚀</div>
+        <div>
+          <div class="doc-title">Go-to-Market Plan</div>
+        </div>
+      </div>
+      <div class="doc-subtitle">16 to 200 WAU in 90 days - neighborhood strategy, activation funnel, acquisition channels, bilingual messaging, and PMF checkpoint.</div>
+      <div class="doc-tags">
+        <span class="doc-tag">30/60/90 days</span>
+        <span class="doc-tag">Tel Aviv focus</span>
+        <span class="doc-tag">Funnel</span>
+        <span class="doc-tag">PMF checklist</span>
+      </div>
+      <div class="doc-arrow">See GTM Plan <span class="arrow-icon">→</span></div>
+    </a>
+
+  </div>
+
+  <footer>
+    <p>Helpy - Neighborly Help &nbsp;·&nbsp; <a href="index.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="terms.html">Terms of Service</a> &nbsp;·&nbsp; <a href="https://apps.apple.com/app/id6758919822">App Store</a></p>
+  </footer>
+
+</body>
+</html>
