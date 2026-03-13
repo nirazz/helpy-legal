@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helpy PRD — Product Requirements Document</title>
+  <style>
+    :root {
+      --brand: #6366f1;
+      --brand-dark: #4f46e5;
+      --brand-light: #eef2ff;
+      --green: #10b981;
+      --amber: #f59e0b;
+      --red: #ef4444;
+      --pink: #ec4899;
+      --slate: #64748b;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Progress bar */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, var(--brand), var(--pink));
+      width: 0%; z-index: 1000; transition: width 0.1s;
+    }
+
+    /* Top nav */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px;
+    }
+    .header-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; color: var(--brand); }
+    .header-logo span { font-size: 22px; }
+    .header-badge {
+      background: var(--green); color: #fff; font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px;
+    }
+    .header-meta { font-size: 12px; color: var(--text-muted); }
+
+    /* Layout */
+    .layout { display: flex; max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+
+    /* Sidebar */
+    nav {
+      width: 220px; flex-shrink: 0; position: sticky; top: 72px;
+      height: calc(100vh - 72px); overflow-y: auto; padding: 24px 0 24px 0;
+    }
+    nav::-webkit-scrollbar { width: 0; }
+    .nav-label {
+      font-size: 10px; font-weight: 700; color: var(--text-muted);
+      letter-spacing: 1px; text-transform: uppercase;
+      padding: 0 8px 8px; margin-top: 16px;
+    }
+    nav a {
+      display: flex; align-items: center; gap: 8px;
+      padding: 7px 10px; border-radius: 8px;
+      text-decoration: none; font-size: 13px; font-weight: 500;
+      color: var(--text-muted); transition: all 0.15s;
+    }
+    nav a:hover { background: var(--brand-light); color: var(--brand); }
+    nav a.active { background: var(--brand-light); color: var(--brand); font-weight: 600; }
+    nav a .nav-num {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--border); display: flex; align-items: center;
+      justify-content: center; font-size: 10px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    nav a.active .nav-num { background: var(--brand); color: #fff; }
+
+    /* Main content */
+    main { flex: 1; padding: 40px 0 40px 40px; min-width: 0; }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+      border-radius: 20px; padding: 48px 40px; color: #fff;
+      margin-bottom: 48px; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -40px; right: -40px;
+      width: 200px; height: 200px; background: rgba(255,255,255,0.08);
+      border-radius: 50%;
+    }
+    .hero::after {
+      content: ''; position: absolute; bottom: -60px; left: 20%;
+      width: 150px; height: 150px; background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+    .hero-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; opacity: 0.7; margin-bottom: 12px; }
+    .hero h1 { font-size: 36px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
+    .hero h1 span { opacity: 0.7; font-weight: 400; }
+    .hero p { font-size: 16px; opacity: 0.85; max-width: 580px; line-height: 1.7; margin-bottom: 28px; }
+    .hero-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+    .hero-chip {
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 600;
+    }
+
+    /* Sections */
+    section { margin-bottom: 56px; scroll-margin-top: 80px; }
+    .section-header {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px solid var(--border);
+    }
+    .section-icon {
+      width: 40px; height: 40px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .section-header h2 { font-size: 22px; font-weight: 700; }
+    .section-header .section-num { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+
+    /* Cards */
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px;
+      margin-bottom: 16px;
+    }
+    .card-sm { padding: 16px 20px; }
+
+    /* KPI grid */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 24px; }
+    .kpi-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px 16px; text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+    .kpi-icon { font-size: 28px; margin-bottom: 8px; }
+    .kpi-val { font-size: 26px; font-weight: 800; color: var(--brand); line-height: 1; margin-bottom: 4px; }
+    .kpi-label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .kpi-target { font-size: 11px; color: var(--green); font-weight: 600; margin-top: 4px; }
+
+    /* Metrics table */
+    .metrics-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .metrics-table th {
+      background: var(--brand-light); color: var(--brand);
+      font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+      text-transform: uppercase; padding: 10px 14px; text-align: left;
+    }
+    .metrics-table th:first-child { border-radius: 8px 0 0 8px; }
+    .metrics-table th:last-child { border-radius: 0 8px 8px 0; }
+    .metrics-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); }
+    .metrics-table tr:last-child td { border-bottom: none; }
+    .metrics-table tr:hover td { background: #fafafa; }
+    .highlight-row td { font-weight: 700; }
+
+    /* Personas */
+    .persona-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+    .persona-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 24px; position: relative; overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .persona-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.1); }
+    .persona-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    }
+    .persona-card:nth-child(1)::before { background: var(--brand); }
+    .persona-card:nth-child(2)::before { background: var(--green); }
+    .persona-card:nth-child(3)::before { background: var(--amber); }
+    .persona-avatar { font-size: 40px; margin-bottom: 12px; }
+    .persona-name { font-size: 18px; font-weight: 700; margin-bottom: 2px; }
+    .persona-meta { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
+    .persona-bio { font-size: 13px; color: var(--slate); line-height: 1.6; margin-bottom: 14px; }
+    .persona-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .persona-tag {
+      font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+    }
+    .tag-pain { background: #fee2e2; color: #dc2626; }
+    .tag-goal { background: #d1fae5; color: #059669; }
+
+    /* User stories */
+    .story-list { display: flex; flex-direction: column; gap: 12px; }
+    .story-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .story-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 20px; cursor: pointer;
+      transition: background 0.15s; user-select: none;
+    }
+    .story-header:hover { background: var(--bg); }
+    .story-num {
+      background: var(--brand-light); color: var(--brand);
+      font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .story-title { font-size: 14px; font-weight: 600; flex: 1; }
+    .story-chevron { color: var(--text-muted); transition: transform 0.2s; font-size: 12px; }
+    .story-card.open .story-chevron { transform: rotate(90deg); }
+    .story-body {
+      display: none; padding: 0 20px 20px; border-top: 1px solid var(--border);
+    }
+    .story-card.open .story-body { display: block; }
+    .story-statement {
+      font-size: 13px; color: var(--slate); font-style: italic;
+      padding: 12px 0 16px; line-height: 1.6;
+    }
+    .story-statement strong { color: var(--brand); font-style: normal; }
+    .ac-title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .ac-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .ac-list li { font-size: 13px; display: flex; gap: 8px; }
+    .ac-list li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+    /* MoSCoW */
+    .moscow-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .moscow-tab {
+      padding: 7px 18px; border-radius: 20px; font-size: 13px; font-weight: 600;
+      cursor: pointer; border: 2px solid transparent; transition: all 0.15s;
+    }
+    .moscow-tab[data-tab="must"] { background: #fee2e2; color: #dc2626; border-color: #fee2e2; }
+    .moscow-tab[data-tab="should"] { background: #fef3c7; color: #d97706; border-color: #fef3c7; }
+    .moscow-tab[data-tab="nice"] { background: #d1fae5; color: #059669; border-color: #d1fae5; }
+    .moscow-tab.active[data-tab="must"] { border-color: #dc2626; }
+    .moscow-tab.active[data-tab="should"] { border-color: #d97706; }
+    .moscow-tab.active[data-tab="nice"] { border-color: #059669; }
+    .moscow-panel { display: none; }
+    .moscow-panel.active { display: block; }
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 10px; }
+    .feature-pill {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 10px; padding: 12px 14px;
+      display: flex; align-items: flex-start; gap: 10px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .feature-pill:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+    .feature-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+    .feature-pill-text { font-size: 13px; font-weight: 500; }
+    .feature-pill-note { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    /* Flow */
+    .flow-steps { display: flex; flex-direction: column; gap: 0; }
+    .flow-step {
+      display: flex; gap: 16px; position: relative;
+    }
+    .flow-step:not(:last-child)::after {
+      content: ''; position: absolute; left: 19px; top: 44px;
+      width: 2px; height: calc(100% - 16px);
+      background: linear-gradient(to bottom, var(--brand), var(--brand-light));
+    }
+    .flow-num {
+      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+      background: var(--brand); color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; z-index: 1;
+    }
+    .flow-content { padding-bottom: 28px; flex: 1; }
+    .flow-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .flow-desc { font-size: 13px; color: var(--slate); line-height: 1.6; }
+
+    /* Risk cards */
+    .risk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; }
+    .risk-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px; position: relative; overflow: hidden;
+    }
+    .risk-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .risk-icon { font-size: 22px; }
+    .risk-title { font-size: 14px; font-weight: 700; }
+    .risk-badges { display: flex; gap: 6px; margin-bottom: 10px; }
+    .risk-badge {
+      font-size: 10px; font-weight: 700; padding: 2px 8px;
+      border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .badge-high { background: #fee2e2; color: #dc2626; }
+    .badge-med { background: #fef3c7; color: #d97706; }
+    .badge-low { background: #d1fae5; color: #059669; }
+    .badge-critical { background: #fce7f3; color: #be185d; }
+    .risk-desc { font-size: 12px; color: var(--slate); line-height: 1.5; margin-bottom: 10px; }
+    .risk-mitigation { font-size: 12px; background: var(--brand-light); border-radius: 8px; padding: 10px 12px; color: var(--brand-dark); line-height: 1.5; }
+    .risk-mitigation strong { display: block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+
+    /* Open questions */
+    .oq-list { display: flex; flex-direction: column; gap: 10px; }
+    .oq-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 16px 20px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .oq-num {
+      width: 28px; height: 28px; border-radius: 8px; background: var(--brand-light);
+      color: var(--brand); font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .oq-content { flex: 1; }
+    .oq-q { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .oq-meta { display: flex; gap: 8px; }
+    .oq-owner { font-size: 11px; color: var(--text-muted); }
+    .priority-badge {
+      font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 4px;
+    }
+    .p1 { background: #fee2e2; color: #dc2626; }
+    .p2 { background: #fef3c7; color: #d97706; }
+    .p3 { background: #d1fae5; color: #059669; }
+
+    /* NFR */
+    .nfr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+    .nfr-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px;
+    }
+    .nfr-title { font-size: 13px; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .nfr-icon { font-size: 18px; }
+    .nfr-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .nfr-list li { font-size: 12px; color: var(--slate); display: flex; gap: 6px; line-height: 1.5; }
+    .nfr-list li::before { content: '→'; color: var(--brand); flex-shrink: 0; font-size: 11px; margin-top: 2px; }
+
+    /* Out of scope */
+    .oos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+    .oos-item {
+      background: #f8fafc; border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start;
+    }
+    .oos-x { color: var(--red); font-weight: 700; flex-shrink: 0; font-size: 14px; }
+    .oos-text { font-size: 12px; }
+    .oos-reason { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    /* Footer */
+    .prd-footer {
+      margin-top: 48px; padding: 32px; background: var(--brand-light);
+      border-radius: var(--radius); text-align: center;
+    }
+    .prd-footer p { font-size: 13px; color: var(--text-muted); }
+    .prd-footer strong { color: var(--brand); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav { display: none; }
+      main { padding: 24px 0; }
+      .hero { padding: 32px 24px; }
+      .hero h1 { font-size: 26px; }
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    section { animation: fadeUp 0.4s ease both; }
+
+    /* Callout */
+    .callout {
+      border-left: 3px solid var(--brand); background: var(--brand-light);
+      padding: 14px 18px; border-radius: 0 8px 8px 0; margin-bottom: 20px;
+    }
+    .callout p { font-size: 13px; color: var(--brand-dark); }
+    .callout strong { font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<header>
+  <div class="header-logo">
+    <span>🤝</span>
+    <span>Helpy PRD</span>
+    <span class="header-badge">LIVE v1.0.2</span>
+  </div>
+  <div class="header-meta">March 2026 · Nir Razz (PM) · Claude (Dev)</div>
+</header>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <nav id="sidebar">
+    <div class="nav-label">Document</div>
+    <a href="#summary" class="active"><span class="nav-num">1</span> Summary</a>
+    <a href="#problem"><span class="nav-num">2</span> Problem</a>
+    <a href="#goals"><span class="nav-num">3</span> Goals & KPIs</a>
+    <a href="#personas"><span class="nav-num">4</span> Personas</a>
+    <a href="#stories"><span class="nav-num">5</span> User Stories</a>
+    <a href="#features"><span class="nav-num">6</span> Features</a>
+    <a href="#nfr"><span class="nav-num">7</span> Non-Functional</a>
+    <a href="#flow"><span class="nav-num">8</span> User Flow</a>
+    <a href="#oos"><span class="nav-num">9</span> Out of Scope</a>
+    <a href="#risks"><span class="nav-num">10</span> Risks</a>
+    <a href="#questions"><span class="nav-num">11</span> Open Questions</a>
+  </nav>
+
+  <!-- Main -->
+  <main>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-eyebrow">Product Requirements Document</div>
+      <h1>Helpy — Neighbors Helping Neighbors<br><span>v1.0.2 · March 2026</span></h1>
+      <p>A community help-matching app that turns the cold, transactional nature of neighborhood classifieds into a warm, trust-based experience — one swipe at a time.</p>
+      <div class="hero-chips">
+        <span class="hero-chip">📱 iOS Live</span>
+        <span class="hero-chip">🇮🇱 Hebrew + English</span>
+        <span class="hero-chip">⚡ Real-time Chat</span>
+        <span class="hero-chip">🗺️ Location-aware</span>
+        <span class="hero-chip">🔒 Phone Verified</span>
+        <span class="hero-chip">🌙 Dark Mode</span>
+      </div>
+    </div>
+
+    <!-- 1. Executive Summary -->
+    <section id="summary">
+      <div class="section-header">
+        <div class="section-icon" style="background:#eef2ff">💡</div>
+        <div>
+          <div class="section-num">Section 01</div>
+          <h2>Executive Summary</h2>
+        </div>
+      </div>
+      <div class="callout">
+        <p><strong>North Star Metric:</strong> Matches created per week — the moment two neighbors connect is when Helpy delivers its core value.</p>
+      </div>
+      <div class="card">
+        <p style="font-size:15px; line-height:1.8; color: var(--slate)">Helpy is a community help-matching mobile app that connects neighbors who need help with neighbors who can provide it. Using a swipe-based interface, Helpy reduces the friction of asking for and offering help within a local radius — turning everyday needs like moving furniture, tech support, or grocery runs into opportunities for genuine community connection. The app is live on the iOS App Store as <strong>"Helpy - Neighborly Help,"</strong> free to use, and designed for dense urban neighborhoods starting with Tel Aviv. Unlike WhatsApp groups (too noisy), Facebook Marketplace (too transactional), or TaskRabbit (requires payment), Helpy is built specifically for the informal, trust-first exchange that actually happens between neighbors.</p>
+      </div>
+    </section>
+
+    <!-- 2. Problem -->
+    <section id="problem">
+      <div class="section-header">
+        <div class="section-icon" style="background:#fce7f3">🔍</div>
+        <div>
+          <div class="section-num">Section 02</div>
+          <h2>Problem Statement</h2>
+        </div>
+      </div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:12px; margin-bottom:20px">
+        <div class="card card-sm" style="border-left:3px solid #ef4444">
+          <div style="font-size:20px; margin-bottom:6px">💬</div>
+          <div style="font-size:13px; font-weight:700; margin-bottom:4px">WhatsApp Groups</div>
+          <div style="font-size:12px; color:var(--slate)">Noisy, ephemeral, socially awkward to post in repeatedly</div>
+        </div>
+        <div class="card card-sm" style="border-left:3px solid #ef4444">
+          <div style="font-size:20px; margin-bottom:6px">🛒</div>
+          <div style="font-size:13px; font-weight:700; margin-bottom:4px">Facebook / Craigslist</div>
+          <div style="font-size:12px; color:var(--slate)">Transactional, anonymous, optimized for commerce not favors</div>
+        </div>
+        <div class="card card-sm" style="border-left:3px solid #ef4444">
+          <div style="font-size:20px; margin-bottom:6px">💳</div>
+          <div style="font-size:13px; font-weight:700; margin-bottom:4px">TaskRabbit / Fiverr</div>
+          <div style="font-size:12px; color:var(--slate)">Payment required — creates a barrier for simple neighborly favors</div>
+        </div>
+        <div class="card card-sm" style="border-left:3px solid #ef4444">
+          <div style="font-size:20px; margin-bottom:6px">🤐</div>
+          <div style="font-size:13px; font-weight:700; margin-bottom:4px">Not Asking at All</div>
+          <div style="font-size:12px; color:var(--slate)">Most people default to this — even when a neighbor could easily help</div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="font-size:13px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px">Why Now</div>
+        <p style="font-size:14px; color:var(--slate); line-height:1.7">Urban isolation is a growing social problem. Post-COVID, people are more geographically aware of their neighbors yet more socially disconnected. Mobile-first, location-aware apps have normalized the "swipe to match" pattern. The timing is right for a trust-based community help layer on top of where people already live.</p>
+      </div>
+    </section>
+
+    <!-- 3. Goals -->
+    <section id="goals">
+      <div class="section-header">
+        <div class="section-icon" style="background:#d1fae5">🎯</div>
+        <div>
+          <div class="section-num">Section 03</div>
+          <h2>Goals & Success Metrics</h2>
+        </div>
+      </div>
+      <div style="margin-bottom:8px; font-size:12px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px">Current Baseline (Launch)</div>
+      <div class="kpi-grid" style="margin-bottom:28px">
+        <div class="kpi-card"><div class="kpi-icon">👥</div><div class="kpi-val">16</div><div class="kpi-label">Active Users</div><div class="kpi-target">→ 200 in 90d</div></div>
+        <div class="kpi-card"><div class="kpi-icon">🤝</div><div class="kpi-val">~2</div><div class="kpi-label">Matches/Week</div><div class="kpi-target">→ 30 in 90d</div></div>
+        <div class="kpi-card"><div class="kpi-icon">📊</div><div class="kpi-val">?</div><div class="kpi-label">D7 Retention</div><div class="kpi-target">→ 25% in 90d</div></div>
+        <div class="kpi-card"><div class="kpi-icon">⭐</div><div class="kpi-val">?</div><div class="kpi-label">Match Rate</div><div class="kpi-target">→ 40% in 90d</div></div>
+      </div>
+      <div class="card" style="padding:0; overflow:hidden">
+        <table class="metrics-table">
+          <thead><tr><th>KPI</th><th>Baseline</th><th>90 Days</th><th>6 Months</th></tr></thead>
+          <tbody>
+            <tr class="highlight-row"><td>⭐ Weekly Active Users</td><td>~16</td><td>200</td><td>1,000</td></tr>
+            <tr class="highlight-row"><td>🤝 Matches / week</td><td>~2</td><td>30</td><td>150</td></tr>
+            <tr><td>📈 Match rate (offers → accepted)</td><td>Unknown</td><td>40%</td><td>60%</td></tr>
+            <tr><td>📅 D7 retention</td><td>Unknown</td><td>25%</td><td>35%</td></tr>
+            <tr><td>📅 D30 retention</td><td>Unknown</td><td>12%</td><td>20%</td></tr>
+            <tr><td>⭐ Average rating given</td><td>Unknown</td><td>4.2+</td><td>4.5+</td></tr>
+            <tr><td>📱 App Store rating</td><td>n/a</td><td>4.0+</td><td>4.5+</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4. Personas -->
+    <section id="personas">
+      <div class="section-header">
+        <div class="section-icon" style="background:#fef3c7">👤</div>
+        <div>
+          <div class="section-num">Section 04</div>
+          <h2>User Personas</h2>
+        </div>
+      </div>
+      <div class="persona-grid">
+        <div class="persona-card">
+          <div class="persona-avatar">👩‍🍼</div>
+          <div class="persona-name">Dana, 32</div>
+          <div class="persona-meta">Tel Aviv, Florentin · Hebrew · New Mom</div>
+          <div class="persona-bio">Moved in 8 months ago with a newborn. Knows a few neighbors by face but has never had a real conversation. Needs a drill, a 20-minute baby-sitter, a ride to the pediatrician. Feels awkward posting in WhatsApp groups — "I don't want to be the needy one."</div>
+          <div class="persona-tags">
+            <span class="persona-tag tag-pain">😬 Social friction of asking</span>
+            <span class="persona-tag tag-pain">❓ Doesn't know who to ask</span>
+            <span class="persona-tag tag-goal">✅ Quick help, no money</span>
+            <span class="persona-tag tag-goal">🏘️ Feel part of community</span>
+          </div>
+        </div>
+        <div class="persona-card">
+          <div class="persona-avatar">👴</div>
+          <div class="persona-name">Moshe, 67</div>
+          <div class="persona-meta">Tel Aviv, Ramat Aviv · Hebrew · Retired Engineer</div>
+          <div class="persona-bio">Retired, has time and skills to spare. Good with tech, can fix basic plumbing, loves feeling useful. Checks the news on his phone every morning. Would happily spend 30 minutes helping a neighbor — if only he knew they needed it.</div>
+          <div class="persona-tags">
+            <span class="persona-tag tag-pain">🔍 No discovery for neighbors' needs</span>
+            <span class="persona-tag tag-pain">😅 Fears being presumptuous</span>
+            <span class="persona-tag tag-goal">💪 Stay active & connected</span>
+            <span class="persona-tag tag-goal">🔨 Use skills, feel valued</span>
+          </div>
+        </div>
+        <div class="persona-card">
+          <div class="persona-avatar">👨‍💻</div>
+          <div class="persona-name">Amir, 27</div>
+          <div class="persona-meta">Tel Aviv, Dizengoff · EN/HE · Tech Professional</div>
+          <div class="persona-bio">Works in tech, moved to the city 2 years ago, doesn't know his neighbors. Has posted in Facebook groups but found it slow and impersonal. Needs help occasionally — moving, borrowing tools, signing for deliveries. Wants something that "just works."</div>
+          <div class="persona-tags">
+            <span class="persona-tag tag-pain">🐌 Slow response on generic platforms</span>
+            <span class="persona-tag tag-pain">📍 Can't filter by distance</span>
+            <span class="persona-tag tag-goal">⚡ Get help fast</span>
+            <span class="persona-tag tag-goal">🌐 Build a local network</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. User Stories -->
+    <section id="stories">
+      <div class="section-header">
+        <div class="section-icon" style="background:#ede9fe">📝</div>
+        <div>
+          <div class="section-num">Section 05</div>
+          <h2>User Stories</h2>
+        </div>
+      </div>
+      <div class="story-list">
+
+        <div class="story-card">
+          <div class="story-header" onclick="toggleStory(this)">
+            <span class="story-num">US-01</span>
+            <span class="story-title">Post a Help Request</span>
+            <span class="story-chevron">▶</span>
+          </div>
+          <div class="story-body">
+            <div class="story-statement">As a <strong>user who needs help</strong>, I want to <strong>post a request with title, category, urgency, and photos</strong>, so that <strong>nearby neighbors can discover and offer to help me.</strong></div>
+            <div class="ac-title">Acceptance Criteria</div>
+            <ul class="ac-list">
+              <li>Title & description min 10 characters; category & urgency required</li>
+              <li>Up to 3 photos can be attached</li>
+              <li>High urgency capped at 2/week; Medium at 5/week — quota shown to user</li>
+              <li>Request appears in Browse feed for nearby helpers within 10km</li>
+              <li>Push notification sent to nearby available users for High urgency</li>
+              <li>Request auto-expires after 7 days with no accepted match</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="story-card">
+          <div class="story-header" onclick="toggleStory(this)">
+            <span class="story-num">US-02</span>
+            <span class="story-title">Browse and Offer Help</span>
+            <span class="story-chevron">▶</span>
+          </div>
+          <div class="story-body">
+            <div class="story-statement">As a <strong>helper</strong>, I want to <strong>swipe through nearby requests filtered by my radius</strong>, so that <strong>I can quickly find and offer help for what I can fulfill.</strong></div>
+            <div class="ac-title">Acceptance Criteria</div>
+            <ul class="ac-list">
+              <li>Feed shows requests within configured radius (default 5km, max 10km)</li>
+              <li>Excludes: own requests, blocked users, reported users</li>
+              <li>Sorted by urgency tier first, then distance within tier</li>
+              <li>Tapping "Offer Help" requires phone verification</li>
+              <li>Celebratory bottom sheet confirms offer sent; Undo available for 4 seconds</li>
+              <li>Map view toggle shows all requests as pins; tap pin to inspect</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="story-card">
+          <div class="story-header" onclick="toggleStory(this)">
+            <span class="story-num">US-03</span>
+            <span class="story-title">Manage Incoming Offers</span>
+            <span class="story-chevron">▶</span>
+          </div>
+          <div class="story-body">
+            <div class="story-statement">As a <strong>requester</strong>, I want to <strong>see who has offered to help and accept or decline them</strong>, so that <strong>I can choose the right helper.</strong></div>
+            <div class="ac-title">Acceptance Criteria</div>
+            <ul class="ac-list">
+              <li>MyRequests tab shows Active and History tabs with pending offer count</li>
+              <li>Each offer shows helper name, avatar, rating, and verification badge</li>
+              <li>Accepting an offer creates a match and opens chat immediately</li>
+              <li>Only one offer can be accepted per request</li>
+              <li>Declining removes offer silently (helper not notified)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="story-card">
+          <div class="story-header" onclick="toggleStory(this)">
+            <span class="story-num">US-04</span>
+            <span class="story-title">Real-Time Chat</span>
+            <span class="story-chevron">▶</span>
+          </div>
+          <div class="story-body">
+            <div class="story-statement">As a <strong>matched user</strong>, I want to <strong>chat in real time with my match</strong>, so that <strong>we can coordinate the details of the exchange.</strong></div>
+            <div class="ac-title">Acceptance Criteria</div>
+            <ul class="ac-list">
+              <li>Chat opens automatically after offer is accepted</li>
+              <li>Optimistic send: message appears instantly before server confirms</li>
+              <li>Quick reply suggestions shown above input bar</li>
+              <li>Pending helpers see status card; cannot message until accepted</li>
+              <li>Chat persists in History after request is closed</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="story-card">
+          <div class="story-header" onclick="toggleStory(this)">
+            <span class="story-num">US-05</span>
+            <span class="story-title">Complete & Rate the Helper</span>
+            <span class="story-chevron">▶</span>
+          </div>
+          <div class="story-body">
+            <div class="story-statement">As a <strong>requester</strong>, I want to <strong>mark my request complete and rate the helper</strong>, so that <strong>helpers build trusted reputations.</strong></div>
+            <div class="ac-title">Acceptance Criteria</div>
+            <ul class="ac-list">
+              <li>RatingModal opens on "Mark Complete" — 1-5 stars + optional comment</li>
+              <li>Rating immediately updates helper's average_rating and rating_count</li>
+              <li>Match moved to History; helper streak counter increments</li>
+              <li>Review wall on helper's public profile updated instantly</li>
+              <li>Rating cannot be edited after submission</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="story-card">
+          <div class="story-header" onclick="toggleStory(this)">
+            <span class="story-num">US-06</span>
+            <span class="story-title">Phone Verification Gate</span>
+            <span class="story-chevron">▶</span>
+          </div>
+          <div class="story-body">
+            <div class="story-statement">As a <strong>new user</strong>, I want to <strong>verify my phone before posting or helping</strong>, so that <strong>the community knows I'm a real, accountable person.</strong></div>
+            <div class="ac-title">Acceptance Criteria</div>
+            <ul class="ac-list">
+              <li>Required before: posting a request OR tapping "Offer Help"</li>
+              <li>Two-step flow: Israeli phone → SMS OTP via Twilio</li>
+              <li>Auto E.164 formatting (0528... → +97252...)</li>
+              <li>phone_verified = true saved to profile; shown once ever</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="story-card">
+          <div class="story-header" onclick="toggleStory(this)">
+            <span class="story-num">US-07</span>
+            <span class="story-title">View Public Profile & Reviews</span>
+            <span class="story-chevron">▶</span>
+          </div>
+          <div class="story-body">
+            <div class="story-statement">As a <strong>requester considering an offer</strong>, I want to <strong>view the helper's public profile and ratings</strong>, so that <strong>I can make an informed trust decision.</strong></div>
+            <div class="ac-title">Acceptance Criteria</div>
+            <ul class="ac-list">
+              <li>Tappable avatar/name on Browse cards, offers, and Chat</li>
+              <li>Shows: name, avatar, verification badge, rating, help count, review wall</li>
+              <li>No PII exposed (no email, phone, exact coordinates)</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="story-card">
+          <div class="story-header" onclick="toggleStory(this)">
+            <span class="story-num">US-08</span>
+            <span class="story-title">Report and Block a User</span>
+            <span class="story-chevron">▶</span>
+          </div>
+          <div class="story-body">
+            <div class="story-statement">As a <strong>user encountering bad behavior</strong>, I want to <strong>report or block someone</strong>, so that <strong>I feel safe and the community stays trustworthy.</strong></div>
+            <div class="ac-title">Acceptance Criteria</div>
+            <ul class="ac-list">
+              <li>"..." menu on Browse cards and Chat header</li>
+              <li>Block auto-fires alongside report submission</li>
+              <li>Blocked users immediately disappear from feed (bidirectional)</li>
+              <li>Blocked users list on ProfileScreen with Unblock option</li>
+              <li>Reports reviewed by support; 24hr response SLA communicated</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="story-card">
+          <div class="story-header" onclick="toggleStory(this)">
+            <span class="story-num">US-09</span>
+            <span class="story-title">Full Hebrew / RTL Experience</span>
+            <span class="story-chevron">▶</span>
+          </div>
+          <div class="story-body">
+            <div class="story-statement">As a <strong>Hebrew-speaking user</strong>, I want the <strong>app to display fully in Hebrew with RTL layout</strong>, so that <strong>I can use it comfortably in my native language.</strong></div>
+            <div class="ac-title">Acceptance Criteria</div>
+            <ul class="ac-list">
+              <li>All UI text, alerts, and navigation have Hebrew translations (200+ keys)</li>
+              <li>RTL layout applied globally when Hebrew is selected</li>
+              <li>Distance shown in km in Hebrew mode, miles in English</li>
+              <li>Language preference persisted to Supabase profile</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="story-card">
+          <div class="story-header" onclick="toggleStory(this)">
+            <span class="story-num">US-10</span>
+            <span class="story-title">Account Deletion</span>
+            <span class="story-chevron">▶</span>
+          </div>
+          <div class="story-body">
+            <div class="story-statement">As a <strong>user leaving the platform</strong>, I want to <strong>permanently delete my account and all data</strong>, so that <strong>my information is not retained.</strong></div>
+            <div class="ac-title">Acceptance Criteria</div>
+            <ul class="ac-list">
+              <li>Two-step confirmation alert before deletion</li>
+              <li>Cascades: profile, requests, matches, messages, ratings, reports</li>
+              <li>User signed out immediately; auth account deleted from Supabase</li>
+              <li>Irreversible; no grace period (MVP)</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 6. Features -->
+    <section id="features">
+      <div class="section-header">
+        <div class="section-icon" style="background:#fce7f3">⚙️</div>
+        <div>
+          <div class="section-num">Section 06</div>
+          <h2>Feature Requirements (MoSCoW)</h2>
+        </div>
+      </div>
+      <div class="moscow-tabs">
+        <div class="moscow-tab active" data-tab="must" onclick="switchTab('must')">🔴 Must Have · v1.0</div>
+        <div class="moscow-tab" data-tab="should" onclick="switchTab('should')">🟡 Should Have · v1.0.1</div>
+        <div class="moscow-tab" data-tab="nice" onclick="switchTab('nice')">🟢 Nice to Have · Backlog</div>
+      </div>
+
+      <div class="moscow-panel active" id="panel-must">
+        <div class="feature-grid">
+          <div class="feature-pill"><span class="feature-dot" style="background:#dc2626"></span><div><div class="feature-pill-text">Auth (Google, Apple, Email)</div><div class="feature-pill-note">Google primary; Apple required for iOS</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#dc2626"></span><div><div class="feature-pill-text">Phone Verification Gate</div><div class="feature-pill-note">Via Twilio before help/post</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#dc2626"></span><div><div class="feature-pill-text">Post Help Request</div><div class="feature-pill-note">Text + up to 3 photos + urgency</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#dc2626"></span><div><div class="feature-pill-text">Browse Feed with Distance Filter</div><div class="feature-pill-note">PostGIS / Haversine, up to 10km</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#dc2626"></span><div><div class="feature-pill-text">Swipe / Offer Help Interface</div><div class="feature-pill-note">PanResponder + button tap</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#dc2626"></span><div><div class="feature-pill-text">Accept / Decline Offers</div><div class="feature-pill-note">MyRequests tab</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#dc2626"></span><div><div class="feature-pill-text">Real-Time Chat</div><div class="feature-pill-note">Supabase Realtime subscriptions</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#dc2626"></span><div><div class="feature-pill-text">Rating System (1-5 stars)</div><div class="feature-pill-note">Auto-updates average on profile</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#dc2626"></span><div><div class="feature-pill-text">Push Notifications (5 types)</div><div class="feature-pill-note">Expo Push API</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#dc2626"></span><div><div class="feature-pill-text">Report & Block</div><div class="feature-pill-note">Required for App Store compliance</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#dc2626"></span><div><div class="feature-pill-text">Terms Acceptance Modal</div><div class="feature-pill-note">First sign-in; all auth methods</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#dc2626"></span><div><div class="feature-pill-text">Account Deletion</div><div class="feature-pill-note">Cascading RPC; App Store required</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#dc2626"></span><div><div class="feature-pill-text">Hebrew / English + RTL</div><div class="feature-pill-note">200+ translation keys</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#dc2626"></span><div><div class="feature-pill-text">Dark Mode</div><div class="feature-pill-note">System-default support</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#dc2626"></span><div><div class="feature-pill-text">Request Auto-Expiry</div><div class="feature-pill-note">7 days no match → pg_cron</div></div></div>
+        </div>
+      </div>
+
+      <div class="moscow-panel" id="panel-should">
+        <div class="feature-grid">
+          <div class="feature-pill"><span class="feature-dot" style="background:#d97706"></span><div><div class="feature-pill-text">Map View Toggle</div><div class="feature-pill-note">Cards / Map with react-native-maps</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#d97706"></span><div><div class="feature-pill-text">Edit Request</div><div class="feature-pill-note">Post tab pre-filled with existing data</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#d97706"></span><div><div class="feature-pill-text">Streak Counter</div><div class="feature-pill-note">Daily help streaks, 🔥 on profile</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#d97706"></span><div><div class="feature-pill-text">Invite Neighbors</div><div class="feature-pill-note">Native share sheet + App Store link</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#d97706"></span><div><div class="feature-pill-text">Weekly Digest Push</div><div class="feature-pill-note">pg_cron Sunday 9am UTC</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#d97706"></span><div><div class="feature-pill-text">Re-engagement Push</div><div class="feature-pill-note">14-day inactive users</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#d97706"></span><div><div class="feature-pill-text">Social Proof Pill</div><div class="feature-pill-note">"N neighbors helped this week"</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#d97706"></span><div><div class="feature-pill-text">Fast Responder Badge</div><div class="feature-pill-note">≥80% response rate on profile</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#d97706"></span><div><div class="feature-pill-text">First-time Helper Nudge</div><div class="feature-pill-note">Animated tooltip; AsyncStorage suppressed</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#d97706"></span><div><div class="feature-pill-text">Urgency Quota System</div><div class="feature-pill-note">High: 2/week, Medium: 5/week</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#d97706"></span><div><div class="feature-pill-text">Feed Priority Sort</div><div class="feature-pill-note">High urgency first, then distance</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#d97706"></span><div><div class="feature-pill-text">Public Profile & Review Wall</div><div class="feature-pill-note">Tappable from all screens</div></div></div>
+        </div>
+      </div>
+
+      <div class="moscow-panel" id="panel-nice">
+        <div class="feature-grid">
+          <div class="feature-pill"><span class="feature-dot" style="background:#059669"></span><div><div class="feature-pill-text">Google Play Store</div><div class="feature-pill-note">P1 · Deferred until iOS traction</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#059669"></span><div><div class="feature-pill-text">Helper Tiers (Bronze/Silver/Gold)</div><div class="feature-pill-note">P2 · Needs user base to be meaningful</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#059669"></span><div><div class="feature-pill-text">In-App Notification Center</div><div class="feature-pill-note">P2 · Currently push-only</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#059669"></span><div><div class="feature-pill-text">Request Templates</div><div class="feature-pill-note">P3 · Reduce friction for first posts</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#059669"></span><div><div class="feature-pill-text">Neighborhood Leaderboard</div><div class="feature-pill-note">P3 · Top helpers this month</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#059669"></span><div><div class="feature-pill-text">Video Messages in Chat</div><div class="feature-pill-note">P3 · v2</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#059669"></span><div><div class="feature-pill-text">Scheduling / Calendar Integration</div><div class="feature-pill-note">P3 · v2</div></div></div>
+          <div class="feature-pill"><span class="feature-dot" style="background:#059669"></span><div><div class="feature-pill-text">Tip / Payment Option</div><div class="feature-pill-note">P4 · May conflict with community ethos</div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. NFR -->
+    <section id="nfr">
+      <div class="section-header">
+        <div class="section-icon" style="background:#f0fdf4">🛡️</div>
+        <div>
+          <div class="section-num">Section 07</div>
+          <h2>Non-Functional Requirements</h2>
+        </div>
+      </div>
+      <div class="nfr-grid">
+        <div class="nfr-card">
+          <div class="nfr-title"><span class="nfr-icon">⚡</span>Performance</div>
+          <ul class="nfr-list">
+            <li>Browse feed load: &lt;2s on 4G</li>
+            <li>Chat send (optimistic): instant; server &lt;500ms</li>
+            <li>Image upload (3 photos): &lt;5s</li>
+            <li>Auth timeout: 15s max (Google Sign-In)</li>
+            <li>Cold start to usable screen: &lt;3s</li>
+          </ul>
+        </div>
+        <div class="nfr-card">
+          <div class="nfr-title"><span class="nfr-icon">🔒</span>Security (CISO Baseline)</div>
+          <ul class="nfr-list">
+            <li>RLS on all 7 DB tables; no unauth data access</li>
+            <li>Service role key only in Edge Functions (server-side)</li>
+            <li>Phone verification enforced server-side via Twilio</li>
+            <li>Content filter on all UGC before insert</li>
+            <li>No PII in public API responses</li>
+            <li>Account deletion cascades all user data</li>
+          </ul>
+        </div>
+        <div class="nfr-card">
+          <div class="nfr-title"><span class="nfr-icon">🔐</span>Privacy</div>
+          <ul class="nfr-list">
+            <li>Phone not exposed in public profile</li>
+            <li>Distance shown rounded (not exact coords)</li>
+            <li>Push tokens cleared on sign-out</li>
+            <li>GDPR-aware: EU Frankfurt data center</li>
+            <li>User can delete all data at any time</li>
+          </ul>
+        </div>
+        <div class="nfr-card">
+          <div class="nfr-title"><span class="nfr-icon">🏗️</span>Reliability</div>
+          <ul class="nfr-list">
+            <li>RPC failures fall back to direct table queries</li>
+            <li>Auth state persisted via AsyncStorage</li>
+            <li>5-15s timeouts on all critical async ops</li>
+            <li>Error boundaries with graceful fallback UI</li>
+            <li>Sentry crash reporting in production</li>
+          </ul>
+        </div>
+        <div class="nfr-card">
+          <div class="nfr-title"><span class="nfr-icon">♿</span>Accessibility</div>
+          <ul class="nfr-list">
+            <li>Min touch target: 44x44pt (Apple HIG)</li>
+            <li>accessibilityLabel on all interactive elements</li>
+            <li>Full RTL layout support</li>
+            <li>WCAG AA color contrast (light + dark mode)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Flow -->
+    <section id="flow">
+      <div class="section-header">
+        <div class="section-icon" style="background:#e0f2fe">🗺️</div>
+        <div>
+          <div class="section-num">Section 08</div>
+          <h2>User Flow (Happy Path)</h2>
+        </div>
+      </div>
+      <div class="card">
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-num">1</div>
+            <div class="flow-content">
+              <div class="flow-title">Download & Onboard</div>
+              <div class="flow-desc">User downloads app → 3 onboarding slides (skippable) → Auth screen</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">2</div>
+            <div class="flow-content">
+              <div class="flow-title">Sign In</div>
+              <div class="flow-desc">Tap "Continue with Google" (or Apple) → OAuth completes → TermsModal on first sign-in → Auto-profile created → Location fetched → Lands on Browse tab</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">3</div>
+            <div class="flow-content">
+              <div class="flow-title">Phone Verification</div>
+              <div class="flow-desc">First time tapping "Offer Help" or Post tab → PhoneVerifyModal → Enter number → SMS OTP → Verified once, never shown again</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">4</div>
+            <div class="flow-content">
+              <div class="flow-title">Post a Request (Requester)</div>
+              <div class="flow-desc">Post tab → Title, description, category, urgency, 0-3 photos → Submit → Inserted to DB → Redirected to MyRequests → Push sent to nearby helpers if High urgency</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">5</div>
+            <div class="flow-content">
+              <div class="flow-title">Browse & Offer Help (Helper)</div>
+              <div class="flow-desc">Browse tab → Swipe cards or use map view → Tap "Offer Help" → Celebration sheet ("Offer Sent!") + 4s Undo → match record created (status: pending)</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">6</div>
+            <div class="flow-content">
+              <div class="flow-title">Accept an Offer (Requester)</div>
+              <div class="flow-desc">Offer badge on MyRequests → Tap request → View helpers → Tap heart (accept) → match status = accepted → Push to helper → Chat opens automatically</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">7</div>
+            <div class="flow-content">
+              <div class="flow-title">Coordinate via Chat</div>
+              <div class="flow-desc">Both users message in real time → Arrange logistics and details → Helper shows up and helps</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num">8</div>
+            <div class="flow-content">
+              <div class="flow-title">Complete & Rate</div>
+              <div class="flow-desc">Requester taps "Mark Complete" → RatingModal (1-5 stars + comment) → Rating saved → average_rating updated → Request moves to History → Helper streak increments</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-num" style="background: linear-gradient(135deg, #6366f1, #ec4899)">✨</div>
+            <div class="flow-content">
+              <div class="flow-title">Build Reputation</div>
+              <div class="flow-desc">Helper's public profile shows updated rating + completed count → Future requesters see trust signals → Virtuous cycle begins</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. Out of Scope -->
+    <section id="oos">
+      <div class="section-header">
+        <div class="section-icon" style="background:#fee2e2">🚫</div>
+        <div>
+          <div class="section-num">Section 09</div>
+          <h2>Out of Scope</h2>
+        </div>
+      </div>
+      <div class="callout">
+        <p>The following are explicitly <strong>not</strong> in v1.0 or v1.0.1. Scope creep kills early-stage products — these are intentional deferrals, not omissions.</p>
+      </div>
+      <div class="oos-grid">
+        <div class="oos-item"><div class="oos-x">✕</div><div><div class="oos-text">Payment / Monetization</div><div class="oos-reason">Conflicts with community ethos; deferred to v2</div></div></div>
+        <div class="oos-item"><div class="oos-x">✕</div><div><div class="oos-text">In-App Video Calls</div><div class="oos-reason">Complexity out of scope for coordination use case</div></div></div>
+        <div class="oos-item"><div class="oos-x">✕</div><div><div class="oos-text">Scheduled Recurring Help</div><div class="oos-reason">Most requests are one-time; out for v1</div></div></div>
+        <div class="oos-item"><div class="oos-x">✕</div><div><div class="oos-text">Background Checks</div><div class="oos-reason">Regulatory complexity; phone verification is v1 proxy</div></div></div>
+        <div class="oos-item"><div class="oos-x">✕</div><div><div class="oos-text">Multi-Country Localization</div><div class="oos-reason">Validate PMF in Tel Aviv first</div></div></div>
+        <div class="oos-item"><div class="oos-x">✕</div><div><div class="oos-text">Web App</div><div class="oos-reason">Archived as prototype; mobile-only going forward</div></div></div>
+        <div class="oos-item"><div class="oos-x">✕</div><div><div class="oos-text">Android / Google Play</div><div class="oos-reason">Deferred until iOS has traction</div></div></div>
+        <div class="oos-item"><div class="oos-x">✕</div><div><div class="oos-text">Group Requests (1→N helpers)</div><div class="oos-reason">Scope creep; out for v1</div></div></div>
+        <div class="oos-item"><div class="oos-x">✕</div><div><div class="oos-text">Notification Preferences</div><div class="oos-reason">Nice to have; not P0</div></div></div>
+        <div class="oos-item"><div class="oos-x">✕</div><div><div class="oos-text">End-to-End Encrypted Chat</div><div class="oos-reason">Not legally required in Israel for this use case; v2</div></div></div>
+        <div class="oos-item"><div class="oos-x">✕</div><div><div class="oos-text">In-App Payment to Helpers</div><div class="oos-reason">Not a marketplace; peer-to-peer favors model</div></div></div>
+      </div>
+    </section>
+
+    <!-- 10. Risks -->
+    <section id="risks">
+      <div class="section-header">
+        <div class="section-icon" style="background:#fef3c7">⚠️</div>
+        <div>
+          <div class="section-num">Section 10</div>
+          <h2>Risks & Mitigations</h2>
+        </div>
+      </div>
+      <div class="risk-grid">
+        <div class="risk-card">
+          <div class="risk-header"><span class="risk-icon">📭</span><span class="risk-title">Cold Start / Empty Feed</span></div>
+          <div class="risk-badges"><span class="risk-badge badge-high">Likelihood: High</span><span class="risk-badge badge-high">Impact: High</span></div>
+          <div class="risk-desc">New users open Browse to an empty feed. Zero value delivered, user churns immediately. Especially acute at 16 users.</div>
+          <div class="risk-mitigation"><strong>Mitigation</strong>Seed feed with sample requests at launch. Social proof pill shows activity. First-time nudge on empty state. Invite feature drives supply + demand together.</div>
+        </div>
+        <div class="risk-card">
+          <div class="risk-header"><span class="risk-icon">⚠️</span><span class="risk-title">Trust & Safety Incident</span></div>
+          <div class="risk-badges"><span class="risk-badge badge-med">Likelihood: Medium</span><span class="risk-badge badge-critical">Impact: Critical</span></div>
+          <div class="risk-desc">Bad actor uses platform to scam, harass, or harm a neighbor. One incident at this scale could end the app.</div>
+          <div class="risk-mitigation"><strong>Mitigation</strong>Phone verification (real identity). Report & Block live. ToS with zero-tolerance. Age gate 18+. Content filter. 24hr support response SLA. Bidirectional blocking.</div>
+        </div>
+        <div class="risk-card">
+          <div class="risk-header"><span class="risk-icon">📉</span><span class="risk-title">Low Match Rate</span></div>
+          <div class="risk-badges"><span class="risk-badge badge-high">Likelihood: Med-High</span><span class="risk-badge badge-high">Impact: High</span></div>
+          <div class="risk-desc">Requests posted but no helper offers within radius. Requesters lose faith and stop posting — breaking the core loop.</div>
+          <div class="risk-mitigation"><strong>Mitigation</strong>Urgency push to nearby helpers. Re-engagement after 12h no-offer. Feed priority sort for high-urgency. Auto-expiry prevents stale feed.</div>
+        </div>
+        <div class="risk-card">
+          <div class="risk-header"><span class="risk-icon">🔌</span><span class="risk-title">Infrastructure Failure</span></div>
+          <div class="risk-badges"><span class="risk-badge badge-low">Likelihood: Low</span><span class="risk-badge badge-med">Impact: Medium</span></div>
+          <div class="risk-desc">Supabase outage causes app to hang. Users associate reliability issues with the product.</div>
+          <div class="risk-mitigation"><strong>Mitigation</strong>All network calls have 5-15s timeouts. RPC falls back to table queries. Offline detection banner. Sentry captures prod errors. AsyncStorage caches auth.</div>
+        </div>
+        <div class="risk-card">
+          <div class="risk-header"><span class="risk-icon">🍎</span><span class="risk-title">App Store Policy Change</span></div>
+          <div class="risk-badges"><span class="risk-badge badge-med">Likelihood: Medium</span><span class="risk-badge badge-med">Impact: Medium</span></div>
+          <div class="risk-desc">Apple / Google policy change requires significant rework. Already rejected 5x by Apple before approval.</div>
+          <div class="risk-mitigation"><strong>Mitigation</strong>UGC safety already robust. Privacy nutrition labels current. ToS legally reviewed (19 sections). Subscribe to policy newsletters.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11. Open Questions -->
+    <section id="questions">
+      <div class="section-header">
+        <div class="section-icon" style="background:#f0f9ff">❓</div>
+        <div>
+          <div class="section-num">Section 11</div>
+          <h2>Open Questions</h2>
+        </div>
+      </div>
+      <div class="oq-list">
+        <div class="oq-card"><div class="oq-num">Q1</div><div class="oq-content"><div class="oq-q">Will Helpy remain free forever, or is there a freemium/subscription path? Does charging undermine the community ethos?</div><div class="oq-meta"><span class="oq-owner">Owner: PM</span><span class="priority-badge p2">P2</span></div></div></div>
+        <div class="oq-card"><div class="oq-num">Q2</div><div class="oq-content"><div class="oq-q">Is the goal to scale in Tel Aviv deeply first, or expand to other cities quickly? What's the minimum density needed for the product to work?</div><div class="oq-meta"><span class="oq-owner">Owner: PM</span><span class="priority-badge p1">P1</span></div></div></div>
+        <div class="oq-card"><div class="oq-num">Q3</div><div class="oq-content"><div class="oq-q">Should helpers remain semi-anonymous or should there be a verified ID option for higher-trust requests (e.g., elderly care, childcare)?</div><div class="oq-meta"><span class="oq-owner">Owner: PM + Legal</span><span class="priority-badge p1">P1</span></div></div></div>
+        <div class="oq-card"><div class="oq-num">Q4</div><div class="oq-content"><div class="oq-q">What motivates sustained helping beyond intrinsic motivation? Is gamification (streaks, badges) enough, or do we need tangible rewards?</div><div class="oq-meta"><span class="oq-owner">Owner: PM</span><span class="priority-badge p2">P2</span></div></div></div>
+        <div class="oq-card"><div class="oq-num">Q5</div><div class="oq-content"><div class="oq-q">At what user volume do we need proactive moderation (ML classifier, moderator queue) vs. the current reactive report-based model?</div><div class="oq-meta"><span class="oq-owner">Owner: Dev + PM</span><span class="priority-badge p2">P2</span></div></div></div>
+        <div class="oq-card"><div class="oq-num">Q6</div><div class="oq-content"><div class="oq-q">What % of users will grant push notification permission? If low, does the re-engagement strategy still work?</div><div class="oq-meta"><span class="oq-owner">Owner: PM</span><span class="priority-badge p1">P1</span></div></div></div>
+        <div class="oq-card"><div class="oq-num">Q7</div><div class="oq-content"><div class="oq-q">What's the escalation path if a safety incident occurs outside business hours? Should we commit to 24hr SLA publicly?</div><div class="oq-meta"><span class="oq-owner">Owner: PM + Legal</span><span class="priority-badge p1">P1</span></div></div></div>
+        <div class="oq-card"><div class="oq-num">Q8</div><div class="oq-content"><div class="oq-q">What iOS WAU threshold triggers Android launch? 500? 1,000? Who recruits the 20 required Google Play internal testers?</div><div class="oq-meta"><span class="oq-owner">Owner: PM</span><span class="priority-badge p2">P2</span></div></div></div>
+      </div>
+    </section>
+
+    <div class="prd-footer">
+      <p>🤝 <strong>Helpy PRD v1.0</strong> · March 2026 · help-y.com</p>
+      <p style="margin-top:6px">This is a living document. Update at the start of each sprint or major feature cycle.</p>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const scrollTop = document.documentElement.scrollTop;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    document.getElementById('progress-bar').style.width = (scrollTop / docHeight * 100) + '%';
+  });
+
+  // Active nav highlight
+  const sections = document.querySelectorAll('section');
+  const navLinks = document.querySelectorAll('nav a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 100) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+
+  // User story accordion
+  function toggleStory(header) {
+    const card = header.parentElement;
+    card.classList.toggle('open');
+  }
+
+  // MoSCoW tabs
+  function switchTab(tab) {
+    document.querySelectorAll('.moscow-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.moscow-panel').forEach(p => p.classList.remove('active'));
+    document.querySelector(`.moscow-tab[data-tab="${tab}"]`).classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+  }
+</script>
+</body>
+</html>
