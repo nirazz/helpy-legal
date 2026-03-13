@@ -1,0 +1,1516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Helpy - Go-to-Market Plan</title>
+<style>
+  :root {
+    --brand: #6366f1;
+    --brand-dark: #4f46e5;
+    --brand-light: #eef2ff;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --pink: #ec4899;
+    --slate: #64748b;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* Progress Bar */
+  #progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--brand), var(--pink));
+    z-index: 1000;
+    transition: width 0.1s ease;
+    width: 0%;
+  }
+
+  /* Sticky Header */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--brand-dark);
+  }
+
+  .header-logo .logo-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+  }
+
+  .header-tag {
+    font-size: 13px;
+    color: var(--slate);
+    font-weight: 500;
+  }
+
+  /* Main Layout */
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+  }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 64px 20px 48px;
+  }
+
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--brand-dark), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+    line-height: 1.2;
+  }
+
+  .hero .subtitle {
+    font-size: 18px;
+    color: var(--slate);
+    margin-bottom: 28px;
+    font-weight: 400;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .chip {
+    background: var(--brand-light);
+    color: var(--brand-dark);
+    border: 1px solid #c7d2fe;
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* Sections */
+  section {
+    margin-bottom: 56px;
+  }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .section-number {
+    width: 28px;
+    height: 28px;
+    background: var(--brand);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .section-label h2 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(99,102,241,0.1);
+  }
+
+  .card-grid {
+    display: grid;
+    gap: 16px;
+  }
+
+  .card-grid-3 {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+
+  /* Philosophy block */
+  .philosophy-block {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 32px;
+    border-left: 4px solid var(--brand);
+    font-size: 16px;
+    line-height: 1.75;
+    color: #334155;
+  }
+
+  .philosophy-block strong {
+    color: var(--brand-dark);
+  }
+
+  /* Neighborhood cards */
+  .neighborhood-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .neighborhood-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(99,102,241,0.1);
+  }
+
+  .neighborhood-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .neighborhood-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .neighborhood-pop {
+    background: var(--brand-light);
+    color: var(--brand-dark);
+    border-radius: 100px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .neighborhood-desc {
+    font-size: 14px;
+    color: var(--slate);
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+
+  .neighborhood-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .meta-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    font-size: 13px;
+  }
+
+  .meta-label {
+    color: var(--slate);
+    font-weight: 600;
+    min-width: 80px;
+    flex-shrink: 0;
+  }
+
+  .meta-value {
+    color: var(--text);
+  }
+
+  .tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tag {
+    background: #f1f5f9;
+    color: #475569;
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  /* Funnel */
+  .funnel {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    align-items: center;
+  }
+
+  .funnel-step {
+    width: 100%;
+    max-width: 700px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .funnel-step.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .funnel-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 24px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .funnel-bar::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    border-radius: var(--radius) 0 0 var(--radius);
+    opacity: 0.08;
+    transition: width 0.8s ease;
+  }
+
+  .funnel-step:nth-child(1) .funnel-bar::before { background: var(--brand); width: 100%; }
+  .funnel-step:nth-child(2) .funnel-bar::before { background: var(--brand); width: 83%; }
+  .funnel-step:nth-child(3) .funnel-bar::before { background: var(--green); width: 60%; }
+  .funnel-step:nth-child(4) .funnel-bar::before { background: var(--amber); width: 42%; }
+  .funnel-step:nth-child(5) .funnel-bar::before { background: var(--pink); width: 28%; }
+  .funnel-step:nth-child(6) .funnel-bar::before { background: var(--green); width: 18%; }
+
+  .funnel-icon {
+    font-size: 22px;
+    width: 36px;
+    text-align: center;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .funnel-content {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+  }
+
+  .funnel-title {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text);
+  }
+
+  .funnel-action {
+    font-size: 13px;
+    color: var(--slate);
+    margin-top: 2px;
+  }
+
+  .funnel-metric {
+    text-align: right;
+    position: relative;
+    z-index: 1;
+    flex-shrink: 0;
+  }
+
+  .funnel-target {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--brand-dark);
+  }
+
+  .funnel-label {
+    font-size: 11px;
+    color: var(--slate);
+    font-weight: 500;
+  }
+
+  .funnel-connector {
+    width: 2px;
+    height: 10px;
+    background: var(--border);
+    margin: 0 auto 8px;
+  }
+
+  /* Channels */
+  .tier-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 12px;
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .tier-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .tier-1 { color: var(--green); }
+  .tier-2 { color: var(--amber); }
+  .tier-3 { color: var(--slate); }
+
+  .channel-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    margin-bottom: 12px;
+  }
+
+  .channel-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+  }
+
+  .channel-icon {
+    font-size: 24px;
+    width: 40px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  .channel-body { flex: 1; }
+
+  .channel-title {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .roi-badge {
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 100px;
+    padding: 2px 8px;
+  }
+
+  .roi-free { background: #dcfce7; color: #166534; }
+  .roi-low { background: #fef3c7; color: #92400e; }
+  .roi-later { background: #f1f5f9; color: #475569; }
+
+  .channel-desc {
+    font-size: 13px;
+    color: var(--slate);
+    line-height: 1.6;
+  }
+
+  .template-block {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #334155;
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  /* Messaging */
+  .message-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 14px;
+  }
+
+  .message-card.primary { border-left: 4px solid var(--brand); }
+  .message-card.warning { border-left: 4px solid var(--red); }
+
+  .message-number {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--slate);
+    margin-bottom: 10px;
+  }
+
+  .message-he {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--brand-dark);
+    margin-bottom: 6px;
+    direction: rtl;
+    text-align: right;
+  }
+
+  .message-en {
+    font-size: 15px;
+    color: var(--slate);
+    font-style: italic;
+  }
+
+  .dont-say {
+    margin-top: 14px;
+  }
+
+  .dont-say-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--red);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .dont-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .dont-item {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .dont-reason {
+    font-size: 12px;
+    color: var(--slate);
+    margin-left: 4px;
+    font-weight: 400;
+  }
+
+  /* 30/60/90 Plan */
+  .phase-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .phase-tab {
+    padding: 8px 20px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 2px solid var(--border);
+    background: var(--white);
+    color: var(--slate);
+    transition: all 0.15s ease;
+  }
+
+  .phase-tab.active {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: white;
+  }
+
+  .phase-tab:hover:not(.active) {
+    border-color: var(--brand);
+    color: var(--brand);
+  }
+
+  .phase-content {
+    display: none;
+  }
+
+  .phase-content.active {
+    display: block;
+    animation: fadeIn 0.2s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .phase-badge {
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 100px;
+    padding: 6px 16px;
+    flex-shrink: 0;
+  }
+
+  .phase-seed { background: #e0f2fe; color: #075985; }
+  .phase-validate { background: #fef3c7; color: #92400e; }
+  .phase-amplify { background: #f0fdf4; color: #166534; }
+
+  .phase-goal {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+  }
+
+  .task-bullet {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: white;
+  }
+
+  .seed-bullet { background: #0ea5e9; }
+  .validate-bullet { background: var(--amber); }
+  .amplify-bullet { background: var(--green); }
+
+  .task-text {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  /* PMF Checklist */
+  .pmf-intro {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 24px;
+    border-left: 4px solid var(--green);
+    font-size: 15px;
+    color: #334155;
+    line-height: 1.7;
+  }
+
+  .pmf-intro strong { color: var(--green); }
+
+  .checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+  }
+
+  .check-item:hover {
+    border-color: var(--green);
+  }
+
+  .check-item.checked {
+    background: #f0fdf4;
+    border-color: #86efac;
+  }
+
+  .check-box {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+    font-size: 13px;
+  }
+
+  .check-item.checked .check-box {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+
+  .check-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .check-item.checked .check-label {
+    color: #166534;
+  }
+
+  .check-metric {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--brand-dark);
+    background: var(--brand-light);
+    border-radius: 100px;
+    padding: 3px 10px;
+  }
+
+  .check-item.checked .check-metric {
+    background: #dcfce7;
+    color: #166534;
+  }
+
+  /* Risks */
+  .risk-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    border-top: 3px solid;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .risk-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+  }
+
+  .risk-card-1 { border-top-color: var(--red); }
+  .risk-card-2 { border-top-color: var(--amber); }
+  .risk-card-3 { border-top-color: var(--pink); }
+
+  .risk-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .risk-icon { font-size: 20px; }
+
+  .risk-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .risk-desc {
+    font-size: 13px;
+    color: var(--slate);
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+
+  .risk-mitigation {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    font-size: 13px;
+    color: var(--green);
+    font-weight: 500;
+    background: #f0fdf4;
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+
+  .risk-mitigation::before {
+    content: '→';
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 32px 20px;
+    color: var(--slate);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .phase-tabs { gap: 6px; }
+    .phase-tab { padding: 7px 14px; font-size: 13px; }
+    .neighborhood-header { flex-direction: column; gap: 6px; }
+    .funnel-bar { padding: 12px 16px; gap: 10px; }
+    .funnel-target { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<header>
+  <div class="header-logo">
+    <div class="logo-icon">✋</div>
+    Helpy
+  </div>
+  <div class="header-tag">Go-to-Market Plan - 2026</div>
+</header>
+
+<main>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>Helpy - Go-to-Market Plan</h1>
+    <p class="subtitle">16 users to 200 WAU in 90 days - Tel Aviv first</p>
+    <div class="chips">
+      <span class="chip">Tel Aviv Focus</span>
+      <span class="chip">Word of Mouth</span>
+      <span class="chip">Ambassador Program</span>
+      <span class="chip">App Store Growth</span>
+    </div>
+  </div>
+
+  <!-- Section 1: Philosophy -->
+  <section id="s1">
+    <div class="section-label">
+      <div class="section-number">1</div>
+      <h2>GTM Philosophy</h2>
+    </div>
+    <div class="philosophy-block">
+      Helpy is a hyper-local product. Growth in a neighborhood app doesn't come from Facebook ads - it comes from <strong>density</strong>. One fully activated neighborhood (50+ users within 1km) is worth more than 500 scattered installs across the city. The strategy is <strong>neighborhood-by-neighborhood activation</strong>, not city-wide spray. You win when a critical mass of people in a small area all know the app exists - and the only way to get there is to show up in the places where those people already talk: WhatsApp groups, Facebook communities, and trusted word of mouth. Every growth dollar and every hour of founder time should be concentrated until one neighborhood reaches escape velocity.
+    </div>
+  </section>
+
+  <!-- Section 2: Target Market -->
+  <section id="s2">
+    <div class="section-label">
+      <div class="section-number">2</div>
+      <h2>Target Market - Who We Go After First</h2>
+    </div>
+    <div class="card-grid card-grid-3">
+
+      <div class="neighborhood-card">
+        <div class="neighborhood-header">
+          <div class="neighborhood-name">📍 Florentin</div>
+          <div class="neighborhood-pop">~15,000 residents</div>
+        </div>
+        <div class="neighborhood-desc">
+          Young professionals, families, dense housing, tech-savvy crowd with an active community vibe. High WhatsApp group activity validates the pain point - people already ask for help there.
+        </div>
+        <div class="neighborhood-meta">
+          <div class="meta-row">
+            <span class="meta-label">Persona</span>
+            <span class="meta-value">Yael (29, renter, works in tech, knows her neighbors by face but not name)</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Top categories</span>
+            <div class="tag-list">
+              <span class="tag">Moving help</span>
+              <span class="tag">Borrowing tools</span>
+              <span class="tag">Rides</span>
+            </div>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Why first</span>
+            <span class="meta-value">Densest mix of potential helpers + requesters. Launch neighborhood.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="neighborhood-card">
+        <div class="neighborhood-header">
+          <div class="neighborhood-name">📍 Dizengoff / TLV Center</div>
+          <div class="neighborhood-pop">~25,000 residents</div>
+        </div>
+        <div class="neighborhood-desc">
+          Mix of young professionals and long-term residents. High density, lots of renters who need help but don't know their neighbors. Lots of foot traffic and community energy.
+        </div>
+        <div class="neighborhood-meta">
+          <div class="meta-row">
+            <span class="meta-label">Persona</span>
+            <span class="meta-value">Dan (34, moved in 2 years ago, barely knows anyone in his building)</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Top categories</span>
+            <div class="tag-list">
+              <span class="tag">Giveaways</span>
+              <span class="tag">Language help</span>
+              <span class="tag">Pro advice</span>
+            </div>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Why second</span>
+            <span class="meta-value">Larger pool for scale testing. Validate Florentin learnings.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="neighborhood-card">
+        <div class="neighborhood-header">
+          <div class="neighborhood-name">📍 Ramat Aviv</div>
+          <div class="neighborhood-pop">~30,000 residents</div>
+        </div>
+        <div class="neighborhood-desc">
+          Older demographics, families, professors from Tel Aviv University. High need for elderly care, tech help, and activity categories. Community bonds are stronger here.
+        </div>
+        <div class="neighborhood-meta">
+          <div class="meta-row">
+            <span class="meta-label">Persona</span>
+            <span class="meta-value">Moshe (62, retired, active, wants to contribute but lacks the channel)</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Top categories</span>
+            <div class="tag-list">
+              <span class="tag">Elderly care</span>
+              <span class="tag">Tech help</span>
+              <span class="tag">Tutoring</span>
+            </div>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Why third</span>
+            <span class="meta-value">Different demo = different use case. Tests category breadth.</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Section 3: Activation Funnel -->
+  <section id="s3">
+    <div class="section-label">
+      <div class="section-number">3</div>
+      <h2>Activation Funnel</h2>
+    </div>
+    <div class="funnel" id="funnel">
+
+      <div class="funnel-step">
+        <div class="funnel-bar">
+          <div class="funnel-icon">👀</div>
+          <div class="funnel-content">
+            <div class="funnel-title">Awareness</div>
+            <div class="funnel-action">Hears about Helpy via WhatsApp group, friend, or App Store search</div>
+          </div>
+          <div class="funnel-metric">
+            <div class="funnel-target">2,000</div>
+            <div class="funnel-label">impressions / neighborhood</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="funnel-connector"></div>
+
+      <div class="funnel-step">
+        <div class="funnel-bar">
+          <div class="funnel-icon">📲</div>
+          <div class="funnel-content">
+            <div class="funnel-title">Install</div>
+            <div class="funnel-action">Downloads from App Store - improve with ASO + screenshots + rating</div>
+          </div>
+          <div class="funnel-metric">
+            <div class="funnel-target">200</div>
+            <div class="funnel-label">total installs</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="funnel-connector"></div>
+
+      <div class="funnel-step">
+        <div class="funnel-bar">
+          <div class="funnel-icon">✅</div>
+          <div class="funnel-content">
+            <div class="funnel-title">Onboarding</div>
+            <div class="funnel-action">Completes sign-in + phone verification - reduce OTP friction</div>
+          </div>
+          <div class="funnel-metric">
+            <div class="funnel-target">120</div>
+            <div class="funnel-label">onboarded (60%)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="funnel-connector"></div>
+
+      <div class="funnel-step">
+        <div class="funnel-bar">
+          <div class="funnel-icon">🚀</div>
+          <div class="funnel-content">
+            <div class="funnel-title">Activation</div>
+            <div class="funnel-action">Posts first request OR makes first offer - key "aha moment"</div>
+          </div>
+          <div class="funnel-metric">
+            <div class="funnel-target">60</div>
+            <div class="funnel-label">activated (50%)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="funnel-connector"></div>
+
+      <div class="funnel-step">
+        <div class="funnel-bar">
+          <div class="funnel-icon">🤝</div>
+          <div class="funnel-content">
+            <div class="funnel-title">Match</div>
+            <div class="funnel-action">First successful match - request + offer + acceptance + chat</div>
+          </div>
+          <div class="funnel-metric">
+            <div class="funnel-target">24</div>
+            <div class="funnel-label">matched (40%)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="funnel-connector"></div>
+
+      <div class="funnel-step">
+        <div class="funnel-bar">
+          <div class="funnel-icon">🔄</div>
+          <div class="funnel-content">
+            <div class="funnel-title">Retention</div>
+            <div class="funnel-action">Returns within 7 days - streak nudges, re-engagement push, new nearby requests</div>
+          </div>
+          <div class="funnel-metric">
+            <div class="funnel-target">D7 25%</div>
+            <div class="funnel-label">return rate</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Section 4: Acquisition Channels -->
+  <section id="s4">
+    <div class="section-label">
+      <div class="section-number">4</div>
+      <h2>Acquisition Channels</h2>
+    </div>
+
+    <div class="tier-label tier-1">Tier 1 - High ROI (Free)</div>
+
+    <div class="channel-card">
+      <div class="channel-icon">🗣️</div>
+      <div class="channel-body">
+        <div class="channel-title">
+          Word of Mouth / Invite Feature
+          <span class="roi-badge roi-free">CAC = $0</span>
+        </div>
+        <div class="channel-desc">
+          Every user gets a bilingual share card via the native share sheet. The invite card reads "I'm on Helpy - your neighbors can help with almost anything. Join me:" + App Store link. Best acquisition channel bar none - a trusted referral converts 3-5x better than any ad. The streak and helper tier systems create natural reasons to invite ("help me reach my weekly goal").
+        </div>
+      </div>
+    </div>
+
+    <div class="channel-card">
+      <div class="channel-icon">💬</div>
+      <div class="channel-body">
+        <div class="channel-title">
+          WhatsApp Group Seeding
+          <span class="roi-badge roi-free">Free</span>
+        </div>
+        <div class="channel-desc">
+          Post in 5-10 neighborhood WhatsApp groups per target neighborhood. Message must be personal, not spammy. One post per group, never spam. Get a local contact to post it - "neighbor introducing app" converts far better than "founder pitching app."
+        </div>
+        <div class="template-block">
+          "שלום לכולם! מצאתי אפליקציה שנראית מעולה לשכונה שלנו - Helpy. בסיסית היא ענה על הבקשות האלה שתמיד מופיעות פה בקבוצה. אפשר לבקש עזרה מהשכנים ולהציע עזרה בקלות, בלי להציף את הקבוצה. מנסה אתכם? 👉 [App Store link]"
+        </div>
+      </div>
+    </div>
+
+    <div class="channel-card">
+      <div class="channel-icon">👥</div>
+      <div class="channel-body">
+        <div class="channel-title">
+          Neighborhood Facebook Groups
+          <span class="roi-badge roi-free">Free</span>
+        </div>
+        <div class="channel-desc">
+          Same core message as WhatsApp but adapted for Facebook's longer-form format. Include 2-3 app screenshots directly in the post. Tag the post with relevant community keywords. Visual posts with real screenshots consistently outperform text-only posts in community groups - lead with the browse screen so people can see real requests.
+        </div>
+      </div>
+    </div>
+
+    <div class="tier-label tier-2">Tier 2 - Medium ROI (Low cost)</div>
+
+    <div class="channel-card">
+      <div class="channel-icon">🔍</div>
+      <div class="channel-body">
+        <div class="channel-title">
+          App Store Optimization (ASO)
+          <span class="roi-badge roi-low">Low effort</span>
+        </div>
+        <div class="channel-desc">
+          Hebrew keywords: עזרה שכנים, עזרה שכנותית, עזרה בשכונה, שכנות, קהילה מקומית. English keywords: neighbors help, community help, local help app, neighborhood assistance, mutual aid. Subtitle should rotate seasonally. Respond to all reviews within 24 hours - review velocity signals App Store algorithm.
+        </div>
+      </div>
+    </div>
+
+    <div class="channel-card">
+      <div class="channel-icon">🏅</div>
+      <div class="channel-body">
+        <div class="channel-title">
+          Ambassador Program - Neighborhood Captains
+          <span class="roi-badge roi-low">No cost</span>
+        </div>
+        <div class="channel-desc">
+          Recruit 1 "neighborhood captain" per target neighborhood. They don't get paid - they get recognition, early access, and the identity of "the person who brought Helpy to Florentin." Ask them to seed 10 friends personally and post in WhatsApp groups. Identity-based motivation ("I'm a community leader") is more durable than cash. Look for: active community Facebook group members, HOA participants, or local business owners.
+        </div>
+      </div>
+    </div>
+
+    <div class="channel-card">
+      <div class="channel-icon">📰</div>
+      <div class="channel-body">
+        <div class="channel-title">
+          Local Community Blogs and Forums
+          <span class="roi-badge roi-low">Low cost</span>
+        </div>
+        <div class="channel-desc">
+          Reach out to local Tel Aviv community writers and bloggers. Offer an exclusive "first look" story framed as "local founder builds neighborhood app in Tel Aviv." Target: Geektime (Israeli tech blog), CTech, local Tel Aviv neighborhood blogs. A single feature article can drive 50-100 targeted installs from the right audience.
+        </div>
+      </div>
+    </div>
+
+    <div class="tier-label tier-3">Tier 3 - Later (Paid, after PMF)</div>
+
+    <div class="channel-card" style="opacity: 0.7;">
+      <div class="channel-icon">📱</div>
+      <div class="channel-body">
+        <div class="channel-title">
+          Instagram / TikTok Organic Content
+          <span class="roi-badge roi-later">Defer</span>
+        </div>
+        <div class="channel-desc">
+          User stories in "before/after" format: "I needed help moving a couch at 7pm - my neighbor showed up in 20 minutes." Build social proof before running ads. Don't invest here until you have 5+ genuine user stories to share.
+        </div>
+      </div>
+    </div>
+
+    <div class="channel-card" style="opacity: 0.7;">
+      <div class="channel-icon">🍎</div>
+      <div class="channel-body">
+        <div class="channel-title">
+          Apple Search Ads
+          <span class="roi-badge roi-later">After ASO</span>
+        </div>
+        <div class="channel-desc">
+          Only after ASO keyword targeting is dialed in. Start with exact-match on proven organic keywords. Cap at $5/day per keyword while learning CAC. Do not run broad match without budget controls.
+        </div>
+      </div>
+    </div>
+
+    <div class="channel-card" style="opacity: 0.7;">
+      <div class="channel-icon">🎯</div>
+      <div class="channel-body">
+        <div class="channel-title">
+          Paid Social
+          <span class="roi-badge roi-later">Defer</span>
+        </div>
+        <div class="channel-desc">
+          Defer until CAC/LTV ratio is understood from organic channels. A neighborhood app with no density in the target area will show negative ROAS no matter how good the creative. Earn your density first.
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Section 5: Messaging Framework -->
+  <section id="s5">
+    <div class="section-label">
+      <div class="section-number">5</div>
+      <h2>Messaging Framework</h2>
+    </div>
+
+    <div class="message-card primary">
+      <div class="message-number">Message 1 - For Requesters</div>
+      <div class="message-he">שכן שלך יכול לעזור - פשוט תבקש</div>
+      <div class="message-en">"Your neighbor can help - just ask"</div>
+    </div>
+
+    <div class="message-card primary">
+      <div class="message-number">Message 2 - For Helpers</div>
+      <div class="message-he">שכנים שצריכים עזרה - ממש ליד</div>
+      <div class="message-en">"Neighbors who need help - right next door"</div>
+    </div>
+
+    <div class="message-card primary">
+      <div class="message-number">Message 3 - Against WhatsApp</div>
+      <div class="message-he">בלי הודעות בקבוצה. בלי מבוכה. רק עזרה.</div>
+      <div class="message-en">"No group messages. No awkwardness. Just help."</div>
+    </div>
+
+    <div class="card">
+      <div class="dont-say">
+        <div class="dont-say-title">What NOT to say</div>
+        <div class="dont-list">
+          <div class="dont-item">"Tinder for help" <span class="dont-reason">- dating app connotations</span></div>
+          <div class="dont-item">"marketplace" <span class="dont-reason">- implies payment</span></div>
+          <div class="dont-item">"platform" <span class="dont-reason">- too cold, corporate</span></div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Section 6: 30/60/90 Day Plan -->
+  <section id="s6">
+    <div class="section-label">
+      <div class="section-number">6</div>
+      <h2>30 / 60 / 90 Day Plan</h2>
+    </div>
+
+    <div class="phase-tabs">
+      <button class="phase-tab active" onclick="switchPhase('seed', this)">Day 1-30: Seed</button>
+      <button class="phase-tab" onclick="switchPhase('validate', this)">Day 31-60: Validate</button>
+      <button class="phase-tab" onclick="switchPhase('amplify', this)">Day 61-90: Amplify</button>
+    </div>
+
+    <!-- Seed Phase -->
+    <div class="phase-content active" id="phase-seed">
+      <div class="phase-header">
+        <span class="phase-badge phase-seed">Seed - Florentin only</span>
+        <span class="phase-goal">Goal: 50 installs, 10 matches</span>
+      </div>
+      <div class="task-list">
+        <div class="task-item">
+          <div class="task-bullet seed-bullet">1</div>
+          <div class="task-text"><strong>Launch in Florentin only</strong> - one neighborhood, full focus, no spreading thin to other areas</div>
+        </div>
+        <div class="task-item">
+          <div class="task-bullet seed-bullet">2</div>
+          <div class="task-text"><strong>Personally invite 20 people</strong> - friends, family, actual neighbors. Your first 20 users are your product research partners, not just vanity metrics</div>
+        </div>
+        <div class="task-item">
+          <div class="task-bullet seed-bullet">3</div>
+          <div class="task-text"><strong>Post in 3 Florentin WhatsApp groups</strong> - use the template in Section 4. Get a trusted local contact to post if possible. One post per group, no spam</div>
+        </div>
+        <div class="task-item">
+          <div class="task-bullet seed-bullet">4</div>
+          <div class="task-text"><strong>Recruit 1 neighborhood ambassador</strong> - find someone active in the Florentin Facebook group or community events. Brief them, give them talking points, ask for 10 invites</div>
+        </div>
+        <div class="task-item">
+          <div class="task-bullet seed-bullet">5</div>
+          <div class="task-text"><strong>Monitor and respond to every request</strong> - in early days, you should personally offer to help on any unanswered request. Show the product works</div>
+        </div>
+        <div class="task-item">
+          <div class="task-bullet seed-bullet">6</div>
+          <div class="task-text"><strong>Track funnel weekly:</strong> installs, verified users, posts, offers, matches. Fix the biggest drop-off first</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Validate Phase -->
+    <div class="phase-content" id="phase-validate">
+      <div class="phase-header">
+        <span class="phase-badge phase-validate">Validate - Add Dizengoff</span>
+        <span class="phase-goal">Goal: 100 WAU, 20 matches/week</span>
+      </div>
+      <div class="task-list">
+        <div class="task-item">
+          <div class="task-bullet validate-bullet">1</div>
+          <div class="task-text"><strong>Expand to Dizengoff</strong> - only after Florentin has at least 30 active users and 5+ matches completed</div>
+        </div>
+        <div class="task-item">
+          <div class="task-bullet validate-bullet">2</div>
+          <div class="task-text"><strong>Interview 5 active users</strong> - call them, not survey. Ask: "What brought you back?" and "What almost made you quit?" These answers shape everything</div>
+        </div>
+        <div class="task-item">
+          <div class="task-bullet validate-bullet">3</div>
+          <div class="task-text"><strong>Fix top 3 friction points from feedback</strong> - ship fast. Users who see their feedback implemented become evangelists</div>
+        </div>
+        <div class="task-item">
+          <div class="task-bullet validate-bullet">4</div>
+          <div class="task-text"><strong>Optimize ASO with real keyword data</strong> - look at App Store analytics for search terms that brought organic installs. Double down on what works</div>
+        </div>
+        <div class="task-item">
+          <div class="task-bullet validate-bullet">5</div>
+          <div class="task-text"><strong>Send first Sean Ellis survey</strong> - to all users with at least 1 completed match. Baseline the "very disappointed" score before Day 90</div>
+        </div>
+        <div class="task-item">
+          <div class="task-bullet validate-bullet">6</div>
+          <div class="task-text"><strong>Post first user story on Instagram</strong> - one real story, real photo (with permission), real outcome. No stock photos, no fake testimonials</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Amplify Phase -->
+    <div class="phase-content" id="phase-amplify">
+      <div class="phase-header">
+        <span class="phase-badge phase-amplify">Amplify - All 3 Neighborhoods</span>
+        <span class="phase-goal">Goal: 200 WAU, 30 matches/week - PMF checkpoint</span>
+      </div>
+      <div class="task-list">
+        <div class="task-item">
+          <div class="task-bullet amplify-bullet">1</div>
+          <div class="task-text"><strong>Expand to Ramat Aviv</strong> - with ambassador seeding. Different demographic = different use cases. Confirm product works across age groups</div>
+        </div>
+        <div class="task-item">
+          <div class="task-bullet amplify-bullet">2</div>
+          <div class="task-text"><strong>Launch ambassador program formally</strong> - 3 neighborhoods x 1 captain each. Create a simple "neighborhood captain" WhatsApp group. Share wins, give them community recognition</div>
+        </div>
+        <div class="task-item">
+          <div class="task-bullet amplify-bullet">3</div>
+          <div class="task-text"><strong>First press outreach</strong> - Geektime, CTech, local Tel Aviv neighborhood blogs. Angle: "Tel Aviv founder builds app to replace neighborhood WhatsApp groups." Have 3 user stories ready to share</div>
+        </div>
+        <div class="task-item">
+          <div class="task-bullet amplify-bullet">4</div>
+          <div class="task-text"><strong>A/B test onboarding flow</strong> - specifically the phone verification timing. Test: gate at sign-in vs gate at first action. Measure conversion at each step</div>
+        </div>
+        <div class="task-item">
+          <div class="task-bullet amplify-bullet">5</div>
+          <div class="task-text"><strong>Run PMF checkpoint (Day 90)</strong> - Sean Ellis survey to all users with 1+ match. If below 40% very disappointed, go back to interviews before scaling further</div>
+        </div>
+        <div class="task-item">
+          <div class="task-bullet amplify-bullet">6</div>
+          <div class="task-text"><strong>Decide on Android launch</strong> - if iOS has traction (100+ active users, PMF signals positive), greenlight Google Play. Don't split focus until iOS is stable</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Section 7: PMF Checkpoint -->
+  <section id="s7">
+    <div class="section-label">
+      <div class="section-number">7</div>
+      <h2>PMF Checkpoint - Day 90</h2>
+    </div>
+
+    <div class="pmf-intro">
+      The <strong>"40% rule" (Sean Ellis test)</strong>: Ask active users "How would you feel if you could no longer use Helpy?" If more than 40% say "very disappointed," you have product-market fit. Below 40% means you need more discovery before scaling spend. Check all boxes below before declaring PMF.
+    </div>
+
+    <div class="checklist" id="pmf-checklist">
+      <div class="check-item" onclick="toggleCheck(this, 'pmf1')">
+        <div class="check-box">✓</div>
+        <div class="check-label">Weekly Active Users at target</div>
+        <div class="check-metric">WAU 200+</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, 'pmf2')">
+        <div class="check-box">✓</div>
+        <div class="check-label">Sean Ellis survey result - "very disappointed"</div>
+        <div class="check-metric">&gt;40%</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, 'pmf3')">
+        <div class="check-box">✓</div>
+        <div class="check-label">Day 7 retention rate</div>
+        <div class="check-metric">D7 &gt;25%</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, 'pmf4')">
+        <div class="check-box">✓</div>
+        <div class="check-label">Match rate (offers that convert to accepted match)</div>
+        <div class="check-metric">&gt;40%</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, 'pmf5')">
+        <div class="check-box">✓</div>
+        <div class="check-label">Organic installs exceed paid / seeded installs</div>
+        <div class="check-metric">Organic wins</div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this, 'pmf6')">
+        <div class="check-box">✓</div>
+        <div class="check-label">At least 1 unsolicited press mention or viral social post</div>
+        <div class="check-metric">1+ mention</div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Section 8: Key Risks -->
+  <section id="s8">
+    <div class="section-label">
+      <div class="section-number">8</div>
+      <h2>Key Risks</h2>
+    </div>
+
+    <div class="card-grid card-grid-3">
+
+      <div class="risk-card risk-card-1">
+        <div class="risk-header">
+          <span class="risk-icon">🚫</span>
+          <span class="risk-title">WhatsApp Groups Fight Back</span>
+        </div>
+        <div class="risk-desc">
+          Community admins may resist or remove posts promoting outside apps. Some groups have strict no-promotion rules. A ban from a key neighborhood group could block a major acquisition channel.
+        </div>
+        <div class="risk-mitigation">
+          Position as complement, not replacement: "For the requests that flood your group, now they have a home." Use a neighbor as your proxy poster - not you, the founder.
+        </div>
+      </div>
+
+      <div class="risk-card risk-card-2">
+        <div class="risk-header">
+          <span class="risk-icon">📵</span>
+          <span class="risk-title">Phone Verification Drop-off</span>
+        </div>
+        <div class="risk-desc">
+          Users abandon at OTP step - especially on Android or older iOS. High drop-off between install and verified user tanks every downstream metric. Current flow: sign-in then verify on first action.
+        </div>
+        <div class="risk-mitigation">
+          A/B test verification timing: gate at sign-in vs gate at first swipe right. Measure which version has higher D3 retention. Also test SMS copy - Hebrew vs English OTP message.
+        </div>
+      </div>
+
+      <div class="risk-card risk-card-3">
+        <div class="risk-header">
+          <span class="risk-icon">🏜️</span>
+          <span class="risk-title">Empty Neighborhood (No Critical Mass)</span>
+        </div>
+        <div class="risk-desc">
+          If users open the browse feed and see 0-2 nearby requests, they leave and don't return. A cold-start neighborhood with no density kills retention before the product gets a fair chance.
+        </div>
+        <div class="risk-mitigation">
+          Focus 100% on Florentin first. Don't expand to Dizengoff until Florentin has 30+ active users. Seed with realistic sample requests if needed to show early adopters the intended experience.
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<div class="footer">
+  Helpy - Neighbors Helping Neighbors - GTM Plan 2026 - Tel Aviv First
+</div>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    document.getElementById('progress-bar').style.width = progress + '%';
+  });
+
+  // Funnel animation on scroll
+  const funnelSteps = document.querySelectorAll('.funnel-step');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const steps = entry.target.querySelectorAll ? [] : [];
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  funnelSteps.forEach((step, i) => {
+    step.style.transitionDelay = (i * 0.1) + 's';
+    observer.observe(step);
+  });
+
+  // Phase tabs
+  function switchPhase(phase, btn) {
+    document.querySelectorAll('.phase-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.phase-tab').forEach(el => el.classList.remove('active'));
+    document.getElementById('phase-' + phase).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // PMF checklist with localStorage
+  function toggleCheck(el, key) {
+    el.classList.toggle('checked');
+    const isChecked = el.classList.contains('checked');
+    localStorage.setItem('helpy-pmf-' + key, isChecked ? '1' : '0');
+  }
+
+  // Restore checklist state on load
+  document.addEventListener('DOMContentLoaded', () => {
+    const items = document.querySelectorAll('#pmf-checklist .check-item');
+    const keys = ['pmf1','pmf2','pmf3','pmf4','pmf5','pmf6'];
+    items.forEach((item, i) => {
+      const saved = localStorage.getItem('helpy-pmf-' + keys[i]);
+      if (saved === '1') item.classList.add('checked');
+    });
+  });
+</script>
+
+</body>
+</html>
