@@ -169,7 +169,16 @@
   .tracker-check { width: 18px; height: 18px; border-radius: 5px; border: 2px solid var(--border);  cursor: pointer; transition: all 0.15s; flex-shrink: 0; background: white; }
   .tracker-check.checked { background: var(--green); border-color: var(--green); }
   .retro-badge { font-size: 11px; font-weight: 600; background: var(--brand-light); color: var(--brand); padding: 2px 7px; border-radius: 20px; }
-</style>
+    .header-nav {
+      display: flex; align-items: center; gap: 4px; flex: 1; justify-content: center;
+    }
+    .header-nav a {
+      font-size: 13px; font-weight: 600; color: var(--text-muted);
+      text-decoration: none; padding: 6px 12px; border-radius: 8px; transition: all 0.15s;
+    }
+    .header-nav a:hover { background: var(--brand-light); color: var(--brand); }
+    .header-nav a.active { background: var(--brand-light); color: var(--brand); }
+  </style>
 </head>
 <body>
 <div id="progress-bar"></div>
@@ -183,6 +192,13 @@
     </div>
   </div>
   <div style="font-size:12px;color:var(--slate);">Mar 2026</div>
+  <nav class="header-nav">
+    <a href="vision.html">Vision</a>
+    <a href="okrs.html">OKRs</a>
+    <a href="premortem.html">Pre-Mortem</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="prd.html">PRD</a>
+  </nav>
 </header>
 
 <main>
