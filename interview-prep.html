@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Helpy - PM Interview Prep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --brand: #6366f1;
@@ -28,13 +30,13 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: var(--bg); color: var(--text); line-height: 1.6;
     }
 
     #progress-bar {
-      position: fixed; top: 0; left: 0; height: 3px;
-      background: linear-gradient(90deg, var(--brand), var(--pink));
+      position: fixed; top: 0; left: 0; height: 2px;
+      background: var(--brand);
       width: 0%; z-index: 1000; transition: width 0.1s;
     }
 
@@ -51,9 +53,10 @@
       flex-shrink: 0; text-decoration: none;
     }
     .header-logo .logo-icon {
-      width: 32px; height: 32px; border-radius: 8px;
-      background: linear-gradient(135deg, var(--brand), var(--pink));
-      display: flex; align-items: center; justify-content: center; font-size: 16px;
+      width: 28px; height: 28px; border-radius: 7px;
+      background: var(--brand);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 800; color: #fff; letter-spacing: -0.5px;
     }
     .header-nav {
       display: flex; align-items: center; gap: 4px;
@@ -72,47 +75,40 @@
 
     /* Hero */
     .hero {
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
-      border-radius: 20px; padding: 48px 44px; color: #fff;
-      margin-bottom: 40px; position: relative; overflow: hidden;
-    }
-    .hero::before {
-      content: ''; position: absolute; top: -60px; right: -60px;
-      width: 240px; height: 240px; background: rgba(255,255,255,0.07); border-radius: 50%;
-    }
-    .hero::after {
-      content: ''; position: absolute; bottom: -40px; left: 40%;
-      width: 180px; height: 180px; background: rgba(255,255,255,0.04); border-radius: 50%;
+      background: #0f172a;
+      border-radius: 16px; padding: 48px 44px; color: #fff;
+      margin-bottom: 40px;
     }
     .hero-eyebrow {
-      font-size: 11px; font-weight: 700; letter-spacing: 2px;
-      text-transform: uppercase; opacity: 0.7; margin-bottom: 10px;
+      font-size: 11px; font-weight: 600; letter-spacing: 1.5px;
+      text-transform: uppercase; color: #6366f1; margin-bottom: 12px;
     }
-    .hero h1 { font-size: 36px; font-weight: 800; line-height: 1.2; margin-bottom: 14px; }
-    .hero p { font-size: 16px; opacity: 0.85; max-width: 560px; line-height: 1.7; margin-bottom: 24px; }
+    .hero h1 { font-size: 34px; font-weight: 800; line-height: 1.15; margin-bottom: 14px; letter-spacing: -0.5px; }
+    .hero p { font-size: 15px; color: #94a3b8; max-width: 560px; line-height: 1.75; margin-bottom: 28px; }
     .hero-chips { display: flex; gap: 8px; flex-wrap: wrap; }
     .hero-chip {
-      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 600;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 6px; padding: 4px 12px; font-size: 12px; font-weight: 500;
+      color: #cbd5e1; letter-spacing: 0.2px;
     }
 
     /* Section label */
     .section-label {
-      font-size: 11px; font-weight: 700; color: var(--text-muted);
-      letter-spacing: 1.5px; text-transform: uppercase;
-      display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
+      font-size: 10.5px; font-weight: 700; color: #94a3b8;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
     }
     .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
     /* Callout */
     .callout {
-      border-radius: var(--radius); padding: 20px 24px;
-      margin-bottom: 32px; display: flex; align-items: flex-start; gap: 16px;
+      border-radius: 10px; padding: 16px 20px;
+      margin-bottom: 32px;
     }
-    .callout-info { background: var(--brand-light); border: 1.5px solid #c7d2fe; }
-    .callout-green { background: var(--green-light); border: 1.5px solid #6ee7b7; }
-    .callout-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
-    .callout-text h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .callout-info { background: var(--brand-light); border-left: 3px solid var(--brand); }
+    .callout-green { background: var(--green-light); border-left: 3px solid var(--green); }
+    .callout-icon { display: none; }
+    .callout-text h4 { font-size: 13.5px; font-weight: 700; margin-bottom: 5px; color: var(--text); }
     .callout-text p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
 
     /* Elevator pitch card */
@@ -247,7 +243,7 @@
       overflow: hidden; margin-bottom: 24px;
     }
     .fc-progress-bar-fill {
-      height: 100%; background: linear-gradient(90deg, var(--brand), var(--pink));
+      height: 100%; background: var(--brand);
       border-radius: 99px; transition: width 0.4s ease;
     }
     .fc-counter { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 20px; }
@@ -393,7 +389,7 @@
       <span class="hero-chip">Real Users</span>
       <span class="hero-chip">5 Rejections Survived</span>
       <span class="hero-chip">Full PM Lifecycle</span>
-      <span class="hero-chip">🔧 Technical Depth</span>
+      <span class="hero-chip">Technical Depth</span>
     </div>
   </div>
 
@@ -418,7 +414,7 @@
   </div>
 
   <!-- SECTION 1: ELEVATOR PITCH -->
-  <div class="section-label">01 - Your Story in 2 Minutes</div>
+  <div class="section-label">Your Story in 2 Minutes</div>
 
   <div class="callout callout-info">
     <span class="callout-icon">💡</span>
@@ -453,7 +449,7 @@
   </div>
 
   <!-- SECTION 2: QUESTION BANKS -->
-  <div class="section-label">02 - Interview Question Banks</div>
+  <div class="section-label">Interview Question Banks</div>
 
   <div class="callout callout-green">
     <span class="callout-icon">🎯</span>
@@ -469,7 +465,7 @@
     <button class="tab-btn" onclick="switchTab('prioritization', this)">Prioritization</button>
     <button class="tab-btn" onclick="switchTab('strategy', this)">Strategy</button>
     <button class="tab-btn" onclick="switchTab('execution', this)">Execution</button>
-    <button class="tab-btn" onclick="switchTab('technical', this)" style="background:#0f172a;border-color:#0f172a;color:#fff;">🔧 Technical</button>
+    <button class="tab-btn" onclick="switchTab('technical', this)">Technical</button>
     <button class="tab-btn" onclick="switchTab('star', this)">STAR Stories</button>
   </div>
 
@@ -1123,7 +1119,7 @@
   </div>
 
   <!-- SECTION 3: FLASHCARD DRILL -->
-  <div class="section-label" style="margin-top:48px">03 - Quick-Fire Drill</div>
+  <div class="section-label" style="margin-top:48px">Quick-Fire Drill</div>
 
   <div class="callout callout-info" style="margin-bottom:24px">
     <span class="callout-icon">🃏</span>
@@ -1167,7 +1163,7 @@
   </div>
 
   <!-- SECTION 4: CHEAT SHEET -->
-  <div class="section-label">04 - The Cheat Sheet</div>
+  <div class="section-label">The Cheat Sheet</div>
 
   <div class="cheat-grid">
 
@@ -1233,7 +1229,7 @@
   </div>
 
   <!-- SECTION 5: PM VOCABULARY -->
-  <div class="section-label">05 - PM Vocabulary</div>
+  <div class="section-label">PM Vocabulary</div>
 
   <div class="callout callout-info" style="margin-bottom:24px">
     <span class="callout-icon">📖</span>
@@ -1267,7 +1263,7 @@
   <div id="vocab-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:40px;"></div>
 
   <!-- SECTION 6: QUESTIONS TO ASK -->
-  <div class="section-label">06 - Questions to Ask the Interviewer</div>
+  <div class="section-label">Questions to Ask the Interviewer</div>
 
   <div class="callout callout-green" style="margin-bottom:24px">
     <span class="callout-icon">🙋</span>
