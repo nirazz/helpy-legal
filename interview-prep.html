@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helpy - PM Interview Prep</title>
+  <style>
+    :root {
+      --brand: #6366f1;
+      --brand-dark: #4f46e5;
+      --brand-light: #eef2ff;
+      --green: #10b981;
+      --green-light: #d1fae5;
+      --amber: #f59e0b;
+      --amber-light: #fef3c7;
+      --red: #ef4444;
+      --red-light: #fee2e2;
+      --pink: #ec4899;
+      --pink-light: #fce7f3;
+      --slate: #64748b;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6;
+    }
+
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, var(--brand), var(--pink));
+      width: 0%; z-index: 1000; transition: width 0.1s;
+    }
+
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px; gap: 16px;
+    }
+    .header-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 17px; color: var(--brand);
+      flex-shrink: 0; text-decoration: none;
+    }
+    .header-logo .logo-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--brand), var(--pink));
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+    .header-nav {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .header-nav a {
+      font-size: 13px; font-weight: 600; color: var(--text-muted);
+      text-decoration: none; padding: 6px 12px; border-radius: 8px; transition: all 0.15s;
+    }
+    .header-nav a:hover { background: var(--brand-light); color: var(--brand); }
+    .header-badge {
+      background: var(--green); color: #fff; font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px; flex-shrink: 0;
+    }
+
+    .page-wrap { max-width: 960px; margin: 0 auto; padding: 40px 20px 100px; }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+      border-radius: 20px; padding: 48px 44px; color: #fff;
+      margin-bottom: 40px; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -60px; right: -60px;
+      width: 240px; height: 240px; background: rgba(255,255,255,0.07); border-radius: 50%;
+    }
+    .hero::after {
+      content: ''; position: absolute; bottom: -40px; left: 40%;
+      width: 180px; height: 180px; background: rgba(255,255,255,0.04); border-radius: 50%;
+    }
+    .hero-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; opacity: 0.7; margin-bottom: 10px;
+    }
+    .hero h1 { font-size: 36px; font-weight: 800; line-height: 1.2; margin-bottom: 14px; }
+    .hero p { font-size: 16px; opacity: 0.85; max-width: 560px; line-height: 1.7; margin-bottom: 24px; }
+    .hero-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .hero-chip {
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 600;
+    }
+
+    /* Section label */
+    .section-label {
+      font-size: 11px; font-weight: 700; color: var(--text-muted);
+      letter-spacing: 1.5px; text-transform: uppercase;
+      display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* Callout */
+    .callout {
+      border-radius: var(--radius); padding: 20px 24px;
+      margin-bottom: 32px; display: flex; align-items: flex-start; gap: 16px;
+    }
+    .callout-info { background: var(--brand-light); border: 1.5px solid #c7d2fe; }
+    .callout-green { background: var(--green-light); border: 1.5px solid #6ee7b7; }
+    .callout-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+    .callout-text h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .callout-text p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+    /* Elevator pitch card */
+    .pitch-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; margin-bottom: 32px;
+    }
+    .pitch-header {
+      background: linear-gradient(135deg, var(--brand-light), #f5f3ff);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 24px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .pitch-header h3 { font-size: 15px; font-weight: 700; color: var(--brand); }
+    .pitch-header span { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+    .pitch-body { padding: 28px; }
+    .pitch-body p {
+      font-size: 15px; line-height: 1.8; color: var(--text);
+    }
+    .pitch-body p + p { margin-top: 16px; }
+    .pitch-highlight {
+      background: var(--brand-light); border-left: 3px solid var(--brand);
+      border-radius: 0 8px 8px 0; padding: 12px 16px; margin-top: 20px;
+      font-size: 13px; color: var(--brand-dark); font-style: italic; font-weight: 500;
+    }
+
+    /* Tabs */
+    .tab-bar {
+      display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .tab-btn {
+      padding: 8px 16px; border-radius: 20px; border: 1.5px solid var(--border);
+      background: var(--card); font-size: 13px; font-weight: 600;
+      color: var(--text-muted); cursor: pointer; transition: all 0.15s;
+    }
+    .tab-btn:hover { border-color: var(--brand); color: var(--brand); }
+    .tab-btn.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Q&A cards */
+    .qa-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
+    .qa-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .qa-question {
+      padding: 18px 22px; display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 16px; cursor: pointer;
+      user-select: none; transition: background 0.15s;
+    }
+    .qa-question:hover { background: var(--bg); }
+    .qa-q-text {
+      font-size: 14px; font-weight: 700; color: var(--text); flex: 1; line-height: 1.5;
+    }
+    .qa-tag {
+      font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px;
+      flex-shrink: 0; letter-spacing: 0.3px;
+    }
+    .tag-brand { background: var(--brand-light); color: var(--brand); }
+    .tag-green { background: var(--green-light); color: #065f46; }
+    .tag-amber { background: var(--amber-light); color: #78350f; }
+    .tag-pink { background: var(--pink-light); color: #9d174d; }
+    .reveal-btn {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; font-weight: 700; color: var(--brand);
+      background: var(--brand-light); border: none; border-radius: 8px;
+      padding: 5px 12px; cursor: pointer; transition: all 0.15s; flex-shrink: 0;
+    }
+    .reveal-btn:hover { background: var(--brand); color: #fff; }
+    .reveal-btn .arrow { transition: transform 0.25s; display: inline-block; }
+    .reveal-btn.open .arrow { transform: rotate(90deg); }
+    .qa-answer {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      border-top: 0px solid var(--border);
+    }
+    .qa-answer.open {
+      max-height: 800px;
+      border-top: 1px solid var(--border);
+    }
+    .qa-answer-inner { padding: 20px 22px; }
+    .qa-answer-inner p { font-size: 13.5px; line-height: 1.75; color: var(--text); }
+    .qa-answer-inner p + p { margin-top: 12px; }
+    .qa-answer-inner ul { padding-left: 20px; margin: 10px 0; }
+    .qa-answer-inner li { font-size: 13.5px; line-height: 1.75; color: var(--text); margin-bottom: 4px; }
+    .qa-answer-inner strong { color: var(--brand-dark); }
+    .answer-note {
+      margin-top: 14px; padding: 10px 14px;
+      background: var(--brand-light); border-radius: 8px;
+      font-size: 12px; color: var(--brand-dark); font-weight: 600;
+    }
+
+    /* STAR cards */
+    .star-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; margin-bottom: 16px;
+    }
+    .star-header {
+      padding: 16px 22px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .star-title { font-size: 14px; font-weight: 700; flex: 1; }
+    .star-body { padding: 22px; display: none; }
+    .star-body.open { display: block; }
+    .star-segment { margin-bottom: 18px; }
+    .star-segment:last-child { margin-bottom: 0; }
+    .star-seg-label {
+      font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--brand); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+    }
+    .star-seg-label .seg-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--brand);
+    }
+    .star-seg-text { font-size: 13.5px; line-height: 1.75; color: var(--text); }
+    .copy-btn {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; font-weight: 700; color: var(--text-muted);
+      background: var(--bg); border: 1.5px solid var(--border); border-radius: 8px;
+      padding: 5px 12px; cursor: pointer; transition: all 0.15s; flex-shrink: 0;
+    }
+    .copy-btn:hover { border-color: var(--brand); color: var(--brand); }
+    .copy-btn.copied { background: var(--green-light); border-color: var(--green); color: #065f46; }
+
+    /* Flashcard drill */
+    .flashcard-container {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 32px; text-align: center; margin-bottom: 32px;
+    }
+    .fc-progress-bar-track {
+      height: 6px; background: var(--border); border-radius: 99px;
+      overflow: hidden; margin-bottom: 24px;
+    }
+    .fc-progress-bar-fill {
+      height: 100%; background: linear-gradient(90deg, var(--brand), var(--pink));
+      border-radius: 99px; transition: width 0.4s ease;
+    }
+    .fc-counter { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-bottom: 20px; }
+    .fc-category-chip {
+      display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 12px;
+      border-radius: 20px; letter-spacing: 0.5px; margin-bottom: 16px;
+      background: var(--brand-light); color: var(--brand);
+    }
+    .fc-question {
+      font-size: 20px; font-weight: 700; color: var(--text); line-height: 1.4;
+      min-height: 60px; margin-bottom: 28px; display: flex; align-items: center; justify-content: center;
+    }
+    .fc-answer-box {
+      background: var(--bg); border: 1.5px solid var(--border);
+      border-radius: var(--radius); padding: 20px; text-align: left;
+      font-size: 13.5px; line-height: 1.75; color: var(--text);
+      margin-bottom: 24px; display: none;
+    }
+    .fc-answer-box.visible { display: block; }
+    .fc-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .fc-btn {
+      padding: 10px 24px; border-radius: 20px; font-size: 14px; font-weight: 700;
+      cursor: pointer; transition: all 0.15s; border: 2px solid transparent;
+    }
+    .fc-reveal { background: var(--brand); color: #fff; }
+    .fc-reveal:hover { background: var(--brand-dark); }
+    .fc-got-it { background: var(--green); color: #fff; }
+    .fc-got-it:hover { background: #059669; }
+    .fc-review { background: var(--card); color: var(--text); border-color: var(--border); }
+    .fc-review:hover { border-color: var(--amber); color: var(--amber); }
+    .fc-shuffle { background: var(--card); color: var(--brand); border-color: var(--brand); }
+    .fc-shuffle:hover { background: var(--brand-light); }
+    .fc-done-state { display: none; }
+    .fc-done-state.visible { display: block; }
+    .fc-score { font-size: 48px; font-weight: 800; color: var(--green); margin: 12px 0; }
+    .fc-score-label { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+
+    /* Cheat sheet */
+    .cheat-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px;
+    }
+    @media (max-width: 640px) { .cheat-grid { grid-template-columns: 1fr; } }
+    .cheat-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px 22px;
+    }
+    .cheat-card-title {
+      font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 14px; display: flex; align-items: center; gap: 6px;
+    }
+    .cheat-row {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border);
+    }
+    .cheat-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .cheat-label { font-size: 12px; color: var(--text-muted); font-weight: 600; flex-shrink: 0; }
+    .cheat-val { font-size: 13px; font-weight: 700; color: var(--text); text-align: right; }
+    .cheat-val-brand { color: var(--brand); }
+    .cheat-list { list-style: none; padding: 0; }
+    .cheat-list li {
+      font-size: 13px; padding: 7px 0; border-bottom: 1px solid var(--border);
+      line-height: 1.5; color: var(--text);
+    }
+    .cheat-list li:last-child { border-bottom: none; padding-bottom: 0; }
+    .cheat-list li strong { color: var(--brand-dark); }
+    .metric-hero {
+      background: linear-gradient(135deg, var(--brand-light), #f5f3ff);
+      border-radius: 10px; padding: 16px; text-align: center; margin-bottom: 12px;
+    }
+    .metric-hero-value { font-size: 28px; font-weight: 800; color: var(--brand); }
+    .metric-hero-label { font-size: 12px; color: var(--text-muted); font-weight: 600; }
+
+    /* Questions to ask */
+    .ask-section { margin-bottom: 32px; }
+    .ask-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+    }
+    @media (max-width: 640px) { .ask-grid { grid-template-columns: 1fr; } }
+    .ask-category-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .ask-category-header {
+      padding: 14px 18px; border-bottom: 1px solid var(--border);
+      font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+      color: var(--text-muted); background: var(--bg); display: flex; align-items: center; gap: 8px;
+    }
+    .ask-list { padding: 16px 18px; list-style: none; }
+    .ask-list li {
+      font-size: 13px; line-height: 1.6; color: var(--text);
+      padding: 7px 0; border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .ask-list li:last-child { border-bottom: none; padding-bottom: 0; }
+    .ask-bullet { color: var(--brand); font-weight: 700; flex-shrink: 0; font-size: 14px; }
+
+    /* Summary stats row */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 32px;
+    }
+    @media (max-width: 640px) { .stats-row { grid-template-columns: 1fr 1fr; } }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px 16px; text-align: center;
+    }
+    .stat-value { font-size: 28px; font-weight: 800; color: var(--brand); line-height: 1; margin-bottom: 6px; }
+    .stat-label { font-size: 11px; font-weight: 600; color: var(--text-muted); line-height: 1.3; }
+
+    @media (max-width: 600px) {
+      .hero { padding: 32px 24px; }
+      .hero h1 { font-size: 26px; }
+      .page-wrap { padding: 24px 16px 80px; }
+      .tab-btn { font-size: 12px; padding: 6px 12px; }
+    }
+  </style>
+</head>
+<body>
+<div id="progress-bar"></div>
+
+<header>
+  <a class="header-logo" href="index.html">
+    <div class="logo-icon">H</div>
+    Helpy
+  </a>
+  <nav class="header-nav">
+    <a href="prd.html">PRD</a>
+    <a href="okrs.html">OKRs</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="interview-prep.html" style="background:var(--brand-light);color:var(--brand)">Interview</a>
+  </nav>
+  <div class="header-badge">LIVE ON APP STORE</div>
+</header>
+
+<div class="page-wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">PM Interview Prep</div>
+    <h1>Your Helpy Story, Ready for Any Interview</h1>
+    <p>Everything you need to walk confidently into any PM interview and tell a compelling, specific, data-backed story about building a real product from zero to App Store.</p>
+    <div class="hero-chips">
+      <span class="hero-chip">iOS Live</span>
+      <span class="hero-chip">Real Users</span>
+      <span class="hero-chip">5 Rejections Survived</span>
+      <span class="hero-chip">Full PM Lifecycle</span>
+      <span class="hero-chip">175 Countries</span>
+    </div>
+  </div>
+
+  <!-- SUMMARY STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value">0 to 1</div>
+      <div class="stat-label">Built from scratch - idea to live app</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">5x</div>
+      <div class="stat-label">Apple rejections navigated and fixed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">175</div>
+      <div class="stat-label">Countries available at launch</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">37</div>
+      <div class="stat-label">Dev sessions - Mar 4 2026 live</div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: ELEVATOR PITCH -->
+  <div class="section-label">01 - Your Story in 2 Minutes</div>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">💡</span>
+    <div class="callout-text">
+      <h4>Use this for: "Tell me about yourself" / "Walk me through a product you built"</h4>
+      <p>Read it out loud 3 times. Internalize the structure. Then say it in your own words - don't recite word-for-word.</p>
+    </div>
+  </div>
+
+  <div class="pitch-card">
+    <div class="pitch-header">
+      <h3>The Elevator Pitch (~90 seconds)</h3>
+      <span>~200 words</span>
+    </div>
+    <div class="pitch-body">
+      <p>
+        "I built Helpy - a community help-matching app live on the App Store in 175 countries. The core insight was simple: neighbors genuinely want to help each other, but there's no frictionless way to connect. You can post to a Facebook group and hope, or just not ask at all. I wanted to fix that.
+      </p>
+      <p>
+        The mechanic I settled on is what I call 'Tinder for community help.' Neighbors post requests - rides, moving boxes, grocery runs, tech help. Helpers browse nearby requests and swipe to offer. If the requester accepts, they match and can coordinate over in-app chat. The whole flow is under 60 seconds.
+      </p>
+      <p>
+        I owned the full lifecycle - from defining the problem and writing the PRD, to prioritizing the backlog, designing the schema, and managing the entire App Store submission process. That included five Apple rejections, each one requiring me to diagnose the exact guideline violation, prioritize the fix, rebuild, and resubmit. We shipped UGC safety features, account deletion, phone verification, and a proper Terms of Service - not because I wanted to, but because Apple required it, and honestly they made the product safer.
+      </p>
+      <p>
+        Launch day was March 4th, 2026. The north star metric I track is Weekly Active Helpers - because a helper who helps once is nice, but a helper who comes back is the product working."
+      </p>
+      <div class="pitch-highlight">
+        Pro tip: End with the north star metric line. It signals you think like a PM, not a builder.
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: QUESTION BANKS -->
+  <div class="section-label">02 - Interview Question Banks</div>
+
+  <div class="callout callout-green">
+    <span class="callout-icon">🎯</span>
+    <div class="callout-text">
+      <h4>Click a category to see questions. Click "Reveal Answer" to see a strong sample response.</h4>
+      <p>Answers use real Helpy details and numbers. Customize them with your voice - the structure is the guide.</p>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('product-sense', this)">Product Sense</button>
+    <button class="tab-btn" onclick="switchTab('metrics', this)">Metrics</button>
+    <button class="tab-btn" onclick="switchTab('prioritization', this)">Prioritization</button>
+    <button class="tab-btn" onclick="switchTab('strategy', this)">Strategy</button>
+    <button class="tab-btn" onclick="switchTab('execution', this)">Execution</button>
+    <button class="tab-btn" onclick="switchTab('star', this)">STAR Stories</button>
+  </div>
+
+  <!-- PRODUCT SENSE -->
+  <div id="tab-product-sense" class="tab-panel active">
+    <div class="qa-list">
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">How would you design a feature to increase re-engagement for Helpy?</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag tag-brand">Product Sense</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>Framework I'd use:</strong> Understand why users churn first. Re-engagement is a symptom of a weak activation or habit loop, not a problem to solve with a single feature.</p>
+            <p>For Helpy, I segmented the problem into two user types: helpers who swiped right once but never came back, and requesters who got help but never posted again. The failure mode is different for each.</p>
+            <p><strong>For helpers,</strong> the core issue is "nothing new to see." I shipped a streak counter - a daily help streak with a 🔥 chip on the profile. It gives helpers a reason to open the app even on days they don't intend to help. I also shipped a re-engagement push notification that fires after 14 days of inactivity with a personalized message about nearby requests.</p>
+            <p><strong>For requesters,</strong> the loop breaks when their request expires unanswered. I shipped auto-expiry at 7 days - rather than leaving stale requests to discourage helpers, expired requests prompt the user to re-post with a one-tap refill. I also added a weekly digest push on Sundays summarizing nearby activity - low cost, high relevance.</p>
+            <p>The metric I'd track: D14 retention by cohort, segmented by whether the user has at least one completed match. Users with a completed match retain 3x better - so the real re-engagement strategy is completing the first match faster, not just sending more notifications.</p>
+            <div class="answer-note">Note: All these features are live in Helpy. Name-drop specific feature names to show depth.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">How would you improve Helpy's onboarding?</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag tag-brand">Product Sense</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>I'd start with the "aha moment" definition.</strong> For Helpy, I believe the aha moment is "seeing a real request from someone near you within 60 seconds of opening the app." The onboarding job is to get there as fast as possible.</p>
+            <p>The current flow is: sign in with Google or Apple, accept terms, grant location, browse. That's already pretty lean. But I'd test two hypotheses:</p>
+            <ul>
+              <li><strong>Hypothesis 1 (Value-before-signup):</strong> Show 3 real nearby requests as a "preview" before asking for sign-in. The ask becomes "Sign in to see more and start helping" - much more motivated. Expect 20-30% better activation.</li>
+              <li><strong>Hypothesis 2 (First action nudge):</strong> After first sign-in, surface a single "Welcome" request from a neighbor that's been open for 6+ hours. Call it "Your first neighbor needs help." Completing the first swipe-right in session 1 is the strongest predictor of D7 retention.</li>
+            </ul>
+            <p>I'd measure: % of users who complete at least one swipe-right in their first session. That's the activation metric - not "account created."</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">Design a trust and safety feature for a community help app.</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag tag-brand">Product Sense</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>Trust and safety is especially critical for Helpy</strong> because we're facilitating in-person meetings between strangers. The stakes are higher than a social media comment.</p>
+            <p>I built a layered system with multiple defenses:</p>
+            <ul>
+              <li><strong>Phone verification gate:</strong> Before you can help anyone or post a request, you must verify your phone number via SMS OTP. This prevents anonymous bad actors and creates real-world accountability.</li>
+              <li><strong>Identity signals:</strong> Google/Apple sign-in users get a verification badge. Their profile picture comes from their real Google/Apple account - harder to fake than a custom upload.</li>
+              <li><strong>Post-match rating:</strong> 1-5 star ratings after each completed session. Ratings are public on profiles. A bad actor's rating declines quickly.</li>
+              <li><strong>Report + Block:</strong> One-tap report with 5 categories. Block hides the user from your feed bidirectionally. Reported users are also filtered from your browse feed.</li>
+              <li><strong>Content filter:</strong> EN+HE profanity blocklist on request posts before they go live.</li>
+              <li><strong>Account deletion:</strong> GDPR-compliant cascading delete RPC.</li>
+            </ul>
+            <p>The metric I'd watch: report rate per 1,000 matches. If it's rising, the system is being abused faster than we can moderate. If it's falling, trust is compounding.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- METRICS -->
+  <div id="tab-metrics" class="tab-panel">
+    <div class="qa-list">
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">Helpy's match rate dropped 20% week-over-week. Walk me through how you'd diagnose it.</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag tag-green">Metrics</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>Step 1 - Sanity check the data.</strong> Is this a real signal or a data pipeline issue? Check if the tracking event (match_created) is firing correctly in PostHog. Look at raw Supabase rows. Rule out instrumentation errors before sounding any alarms.</p>
+            <p><strong>Step 2 - Segment the funnel.</strong> A "match" requires two things: a helper swipes right, and a requester accepts. The drop could be in either step. I'd check: (a) swipe-right rate per session - are helpers swiping less? (b) acceptance rate - are requesters accepting fewer offers?</p>
+            <p><strong>Step 3 - Check input quality.</strong> Fewer requests in the feed = fewer chances to match. Did the number of active requests drop? Did we ship auto-expiry too aggressively? Are requests in categories helpers don't care about?</p>
+            <p><strong>Step 4 - External factors.</strong> Did we push a new build? Did the onboarding change? Is there a localized issue (all the drop is in Tel Aviv, not general)?</p>
+            <p><strong>Step 5 - Hypothesis and test.</strong> If it's requester acceptance rate, I'd test: sending requesters a push when they have a pending offer ("Someone wants to help you!"). In Helpy, this is already in the push notification system. I'd check if that trigger is firing.</p>
+            <div class="answer-note">Key signal: split the funnel at swipe-right vs acceptance. The root cause lives in one of those two steps, not both.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">What is Helpy's north star metric and why did you choose it?</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag tag-green">Metrics</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>North star metric: Weekly Active Helpers (WAH).</strong></p>
+            <p>I spent time deliberating between three candidates: Daily Active Users (too broad - opens don't prove value), completed matches (good but lags and requires two users to coordinate), and Weekly Active Helpers.</p>
+            <p>I landed on WAH for three reasons:</p>
+            <ul>
+              <li><strong>Supply-side health indicator:</strong> Helpy is a marketplace. Supply (helpers) is the scarce resource. If helpers are active weekly, requesters will always get served. The reverse isn't necessarily true.</li>
+              <li><strong>Weekly granularity is right:</strong> People help neighbors weekly, not daily. A daily metric would show false churn. A monthly metric would be too slow to react to.</li>
+              <li><strong>Leads revenue (if we ever monetize):</strong> A helper who helps consistently is the one we'd offer a "Pro Helper" tier to. WAH is the foundation of every monetization path.</li>
+            </ul>
+            <p>Supporting metrics I track alongside it: new request creation rate (demand side health), D7 and D30 helper retention, average time-to-first-offer per request (speed of response = value delivered to requester).</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">How would you set up an A/B test to validate the urgency notification feature?</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag tag-green">Metrics</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>Context:</strong> Helpy sends a push notification to nearby helpers when a "high urgency" request is posted. The hypothesis is this increases time-to-first-offer for urgent requests.</p>
+            <p><strong>Test design:</strong> Randomly assign high-urgency requests to two buckets at post time. Bucket A gets the urgency push to nearby helpers. Bucket B gets no push (helpers only see it when they open the app). The unit of randomization is the request, not the user, because we're measuring response speed per request.</p>
+            <p><strong>Primary metric:</strong> Median time-to-first-offer for urgent requests. Secondary: offer rate within 1 hour.</p>
+            <p><strong>Guardrails:</strong> Push unsubscribe rate (we don't want to burn notification permissions), overall swipe-right rate (don't want urgency push to crowd out browsing behavior).</p>
+            <p><strong>Sample size and duration:</strong> With roughly 5-10 urgent requests/week at launch, we'd need 4-6 weeks to reach significance. At scale, we could run it faster.</p>
+            <p><strong>Caveat I'd flag to stakeholders:</strong> At very small scale, any A/B test result is directionally useful but not statistically conclusive. I shipped it as a bet with clear success criteria (reduce time-to-first-offer by 30%+), not as a proven fact.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PRIORITIZATION -->
+  <div id="tab-prioritization" class="tab-panel">
+    <div class="qa-list">
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">You have 10 features in your backlog. Walk me through how you prioritize them.</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag tag-amber">Prioritization</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>I use a two-pass approach: first filter by strategy alignment, then score by RICE.</strong></p>
+            <p><strong>Pass 1 - Strategic filter:</strong> Does this feature serve the north star (Weekly Active Helpers)? If a feature doesn't plausibly move WAH or protect core functionality, it goes to v2 regardless of effort. This kills scope creep before it starts.</p>
+            <p><strong>Pass 2 - RICE scoring:</strong></p>
+            <ul>
+              <li><strong>Reach:</strong> How many users does this affect in the next quarter?</li>
+              <li><strong>Impact:</strong> What's the magnitude of change? (1 = minimal, 3 = massive)</li>
+              <li><strong>Confidence:</strong> How sure am I the impact estimate is right? (based on user research or analogous data)</li>
+              <li><strong>Effort:</strong> In engineer-weeks</li>
+            </ul>
+            <p><strong>Real example from Helpy:</strong> I had "helper tiers" (gamification) and "streak counter" competing for the same sprint. Streak counter scored higher - it affected 100% of helpers (reach), required 1 sprint (low effort), and I had strong analogous evidence from fitness apps. Helper tiers required enough users for tiers to feel meaningful - I couldn't validate Impact yet, so Confidence was low. Deferred to v1.1.</p>
+            <p>The other signal I use: P0 vs P1 vs P2. P0 = required for launch or regulatory (Apple UGC guidelines). P1 = directly moves north star. P2 = nice to have. P0s jump the queue by definition.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">Why did you defer helper tiers to v1.1?</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag tag-amber">Prioritization</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>Simple answer: the feature needs a community to work, and we don't have one yet.</strong></p>
+            <p>Helper tiers - "Gold Helper," "Community Champion," etc. - only create meaningful motivation when users can see others with higher tiers and feel social pressure to rank up. With a very small early user base, there's no social proof to drive the behavior. You'd be adding feature complexity for zero behavioral impact.</p>
+            <p>The classic prioritization trap is building motivational systems before you have the underlying loop working. I'd rather ship streaks (which work at any scale - it's you vs your own history) than tiers (which need a leaderboard context to be compelling).</p>
+            <p>My criteria for re-evaluating: when Weekly Active Helpers is consistently above 50 in at least one city. At that point, helper tiers become a meaningful social artifact, not just a badge.</p>
+            <div class="answer-note">This is a great answer because it shows you can say no with a clear, measurable re-evaluation trigger - not just "we'll do it later."</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">How do you say no to a stakeholder who wants a feature you've deprioritized?</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag tag-amber">Prioritization</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>"No for now, because of this, and here's when I'd revisit."</strong> That's the formula I use.</p>
+            <p>The key is making the deprioritization legible. I don't say "we're not doing that." I say: "Here's the current priority stack. Here's where your feature scores on RICE. Here's what it would need to displace to get into this sprint, and what we'd be trading off. Do you want to make that trade?"</p>
+            <p>Most stakeholders, when confronted with a real trade-off, either agree with the deprioritization or bring new data that legitimately changes the score. Both outcomes are fine.</p>
+            <p><strong>Real Helpy example:</strong> The Android build was ready. Google Play Console was set up. The internal pressure was "why not just ship it?" My answer: iOS-first focus preserves eng bandwidth for quality and iteration. Android launch needs 20 internal testers (Google's requirement), which is hard to recruit before we have any users. And split-platform support increases bug surface area by 40% before we've validated the core loop. Deferred until iOS has traction. The stakeholder (me) agreed.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- STRATEGY -->
+  <div id="tab-strategy" class="tab-panel">
+    <div class="qa-list">
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">How would you grow Helpy to 10,000 weekly active users?</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag tag-pink">Strategy</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>The core challenge is the cold start problem in a specific geography.</strong> Helpy is hyperlocal - 10,000 global users is less useful than 500 users in one neighborhood. So growth strategy phase 1 is all about geographic density, not global scale.</p>
+            <p><strong>Phase 1 - Seed one city (0 to 500 WAH):</strong></p>
+            <ul>
+              <li>Pick Tel Aviv/Ramat Gan as the seed market - Hebrew is built in, it's dense, community culture is strong</li>
+              <li>Neighborhood-level seeding: post 5 genuine help requests in a WhatsApp group for one neighborhood. When those get fulfilled, the story spreads organically</li>
+              <li>Invite-a-neighbor feature is already live - each user gets a branded share card with a referral message. The K-factor just needs to be above 1.0 in a tight geography</li>
+            </ul>
+            <p><strong>Phase 2 - City flywheel (500 to 2,000 WAH):</strong></p>
+            <ul>
+              <li>Partner with 2-3 neighborhood community admins (the "mayor" of the WhatsApp group). Give them early access + recognition. They bring 50-100 users each</li>
+              <li>Press: "App Store-approved neighborhood help app built by a local developer" is a genuine story for Israeli tech media</li>
+            </ul>
+            <p><strong>Phase 3 - Replicate playbook (2,000 to 10,000 WAH):</strong></p>
+            <ul>
+              <li>Once the Tel Aviv flywheel has positive unit economics (helpers return weekly), find the next dense community. London, NYC neighborhoods with strong WhatsApp cultures</li>
+              <li>Hebrew is a differentiator in Israel. English is already shipped. Arabic is the natural next language</li>
+            </ul>
+            <p>The one metric I'd watch as a leading indicator: number of requests per neighborhood per week. If it's growing, the flywheel is spinning.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">Who are Helpy's competitors and what's the differentiation?</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag tag-pink">Strategy</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>Three real competitors, three distinct gaps Helpy fills:</strong></p>
+            <ul>
+              <li><strong>Nextdoor:</strong> Neighborhood social network with help requests buried in a noisy feed. Helpy wins on focus - it's a dedicated help marketplace, not a social network with a help feature. Nextdoor's engagement is driven by drama and neighbor debates, not actual help transactions.</li>
+              <li><strong>TaskRabbit / Thumbtack:</strong> Professional paid services. Helpy is community-first and free. The value proposition is mutual trust between neighbors, not a service transaction with a stranger. Helpy fills the "can you help me move a couch" gap that people don't want to pay $80/hr for.</li>
+              <li><strong>WhatsApp neighborhood groups:</strong> The real incumbent. Everyone already posts in their neighborhood WhatsApp group. But requests get buried, there's no structured matching, and there's zero accountability on whether someone actually helped. Helpy's match + rating system creates accountability WhatsApp never can.</li>
+            </ul>
+            <p><strong>The wedge:</strong> Helpy is the only app that has (1) a dedicated browse-and-swipe UX, (2) structured matching, (3) in-app chat after match, and (4) ratings - all for free, neighbor-to-neighbor. No money changes hands.</p>
+            <p><strong>Defensibility:</strong> Network effects within a neighborhood. Once a neighborhood has 20+ active helpers, the flywheel runs without marketing spend. That density is very hard for a new entrant to replicate neighborhood by neighborhood.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">What is the biggest risk to Helpy's success, and how do you mitigate it?</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag tag-pink">Strategy</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>The single biggest risk: failing to reach density in any one geography before running out of motivation to keep building.</strong></p>
+            <p>Helpy is a two-sided marketplace. Both sides need to be present for either side to get value. If helpers open the app and see no requests, they churn. If requesters post and get no offers, they never return. The cold start problem is existential at small scale.</p>
+            <p><strong>Mitigations already shipped:</strong></p>
+            <ul>
+              <li>Auto-expiry prevents stale requests from polluting the feed (helpers see fresh, actionable requests)</li>
+              <li>Re-engagement push after 14 days of inactivity nudges lapsed helpers back</li>
+              <li>Urgency notifications alert nearby helpers within seconds of a high-urgency post - the highest-value requests get served fastest</li>
+              <li>"No offers in 12 hours" push to the requester so they don't feel abandoned</li>
+            </ul>
+            <p><strong>Secondary risk:</strong> A safety incident. One bad interaction can end community trust in a hyperlocal app. Mitigation: layered trust system (phone verification, ratings, report/block, terms acceptance, content filter). The goal is not zero incidents but rapid detection and recovery.</p>
+            <p><strong>Third risk I'd flag:</strong> WhatsApp just ships a structured help-request feature. That's a real competitive threat. Mitigation: focus on completing the match loop (structured acceptance + in-app chat + ratings) which WhatsApp will never prioritize.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- EXECUTION -->
+  <div id="tab-execution" class="tab-panel">
+    <div class="qa-list">
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">How did you handle the Apple App Store rejection process?</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag tag-brand">Execution</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>Five rejections, five sprint cycles, shipped on rejection six.</strong></p>
+            <p>Each rejection came with a set of specific guideline citations. My process was: read every cited guideline carefully, categorize each issue as P0 (blocking) or P1 (won't block but should fix), fix all P0s in the same build, never submit with known open issues.</p>
+            <p><strong>What I shipped as a direct result of rejections (that made the product better):</strong></p>
+            <ul>
+              <li>Full UGC safety system: report modal, block users, bidirectional block RLS, content filter, auto-block on report</li>
+              <li>Phone verification gate before any help action</li>
+              <li>Proper Terms of Service with 19 sections including limitation of liability and arbitration clause</li>
+              <li>GDPR-compliant account deletion with cascading delete</li>
+              <li>TermsModal on first sign-in for all auth methods - all users now formally accept before using the app</li>
+            </ul>
+            <p><strong>The honest reframe:</strong> Apple was an unpaid product manager who forced me to ship features I would have deprioritized for v1. The product is safer and more legally defensible because of it. That's not a failure story - it's a story about how external constraints can improve your product when you treat them as requirements, not obstacles.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">Walk me through how you worked with engineering on Helpy.</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag tag-brand">Execution</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>On Helpy, I was both PM and the engineering stakeholder - so I had a very direct view into the PM-engineering dynamic.</strong></p>
+            <p>The key tension I managed was between "ship fast" and "build right." As PM I wanted features out quickly to validate. As the technical decision-maker I knew some shortcuts would create compounding debt.</p>
+            <p><strong>Three things that worked well:</strong></p>
+            <ul>
+              <li><strong>Clear acceptance criteria before building:</strong> Every feature had a specific "definition of done" - not just "build the rating system" but "user can submit a 1-5 star rating after a completed match, rating saves to the ratings table, triggers update to average_rating on the profile, shows on public profile within 60 seconds." Ambiguous specs are the #1 source of rework.</li>
+              <li><strong>Separate discovery from delivery:</strong> I never let spec work and build work happen in the same sprint. If I was still figuring out what to build, we'd build something already specced. Avoids building the wrong thing quickly.</li>
+              <li><strong>Tech debt as a first-class backlog item:</strong> I kept a running list of known shortcuts (e.g., "RLS not implemented on core tables - P0 before scaling"). Engineers don't fight for time to fix debt if the PM never prioritizes it.</li>
+            </ul>
+            <p>The hardest part: knowing when a technical tradeoff is a PM problem vs an engineering problem. The RLS gap (Row Level Security missing on core tables) looked like an engineering implementation detail but was actually a P0 security risk that the PM had to own and champion.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">Describe a situation where you had to balance user needs against business or regulatory constraints.</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag tag-brand">Execution</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>The EU Digital Services Act (DSA) compliance requirement at launch is a perfect example.</strong></p>
+            <p>When Helpy was approved by Apple, I discovered it was only available in the US - not in the 27 EU countries I wanted to reach. The DSA requires any digital marketplace operating in the EU to make a formal "trader/non-trader" declaration through the App Store Connect compliance system.</p>
+            <p><strong>The tension:</strong> Users just want to download the app. Regulatory compliance feels invisible to them, but failing to complete it meant 27 countries were unavailable on day one.</p>
+            <p><strong>What I did:</strong> Navigated to the DSA compliance section (buried under "Business" in App Store Connect), declared as a "Non-Trader" (individual developer, not a business entity), and submitted the form. Within hours, all 27 EU countries went from "Not Available" to "Active."</p>
+            <p><strong>The PM lesson:</strong> Regulatory requirements are user experience problems in disguise. An app that isn't available in your country is a UX failure, even if the failure is legal rather than technical. My job as PM is to make the regulatory path as smooth as the product path. I added DSA compliance to the launch checklist so it never gets skipped again.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- STAR STORIES -->
+  <div id="tab-star" class="tab-panel">
+
+    <div class="callout callout-info">
+      <span class="callout-icon">⭐</span>
+      <div class="callout-text">
+        <h4>STAR format: Situation - Task - Action - Result</h4>
+        <p>Expand each story to see the full structured answer. Use "Copy" to grab the full text for practice. Keep each story under 2 minutes when spoken.</p>
+      </div>
+    </div>
+
+    <div class="star-card">
+      <div class="star-header">
+        <span class="star-title">"Tell me about a time you failed and learned from it."</span>
+        <button class="reveal-btn" onclick="toggleStar(this)">Expand <span class="arrow">›</span></button>
+        <button class="copy-btn" onclick="copyStarText(this, 'star1')">Copy</button>
+      </div>
+      <div class="star-body" id="star1">
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Situation</div>
+          <div class="star-seg-text">I submitted Helpy to the App Store for the first time feeling confident - the app was working end-to-end, sign-in worked, chat worked, swipe worked. I expected approval within 3-5 business days. Instead, I got rejected.</div>
+        </div>
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Task</div>
+          <div class="star-seg-text">What I had underestimated was the non-functional requirements Apple enforces: UGC moderation, account deletion, explicit terms acceptance, and proper safety mechanisms. My app had great features but no safety infrastructure.</div>
+        </div>
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Action</div>
+          <div class="star-seg-text">I treated each rejection as a structured bug report. I read every cited Apple guideline in full, categorized each issue as P0 or P1, and built a sprint around the P0s. Over 5 rejection cycles I shipped: a full report and block system, phone verification gate, bidirectional block with RLS policies, a 19-section Terms of Service, GDPR account deletion, content filtering, and a TermsModal on first sign-in. Each sprint was 2-4 days of focused work.</div>
+        </div>
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Result</div>
+          <div class="star-seg-text">Approved on the 6th submission, launched March 4 2026, live in 175 countries. The features I shipped under pressure from Apple made the product meaningfully safer than my original v1. The failure taught me: always read the platform guidelines before you build, not after. I now have a pre-submission checklist that includes every guideline I was cited for.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="star-card">
+      <div class="star-header">
+        <span class="star-title">"Tell me about a time you made a hard tradeoff."</span>
+        <button class="reveal-btn" onclick="toggleStar(this)">Expand <span class="arrow">›</span></button>
+        <button class="copy-btn" onclick="copyStarText(this, 'star2')">Copy</button>
+      </div>
+      <div class="star-body" id="star2">
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Situation</div>
+          <div class="star-seg-text">Three weeks into development, Helpy was running as a React web app and a React Native mobile app simultaneously. I had built both, and both were functional. The question was: which do we invest in for launch?</div>
+        </div>
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Task</div>
+          <div class="star-seg-text">The web app had a nicer UI (faster to build) but the product's value - nearby requests, geolocation, swipe interactions, push notifications - was fundamentally mobile-first. Maintaining both would split every hour of future development.</div>
+        </div>
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Action</div>
+          <div class="star-seg-text">I made the call to archive the web app as a reference prototype and go mobile-only. Similarly, I had a working Android build but deferred it to focus exclusively on iOS. The reasoning: iOS users have higher LTV in consumer apps, App Store review creates a quality signal, and supporting two platforms before validating the core loop doubles bug surface area without doubling learning speed. I documented both decisions in a decision log with explicit "re-evaluate when" criteria.</div>
+        </div>
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Result</div>
+          <div class="star-seg-text">The mobile app shipped. The web app would still be unfinished if I had tried to maintain both. The Android decision is still deferred - correctly so, as we have not yet validated the core loop with enough users to justify split-platform support. Hard tradeoffs feel wrong when you make them. They feel right in retrospect.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="star-card">
+      <div class="star-header">
+        <span class="star-title">"Tell me about a time you used data to make a decision."</span>
+        <button class="reveal-btn" onclick="toggleStar(this)">Expand <span class="arrow">›</span></button>
+        <button class="copy-btn" onclick="copyStarText(this, 'star3')">Copy</button>
+      </div>
+      <div class="star-body" id="star3">
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Situation</div>
+          <div class="star-seg-text">While planning the v1.1 growth features, I had a backlog of 9 items: streaks, invite flow, weekly digest push, re-engagement notifications, urgency quotas, social proof, auto-expiry, fast responder badge, and helper tiers. I had one sprint to ship the highest-impact items.</div>
+        </div>
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Task</div>
+          <div class="star-seg-text">Decide which growth features to ship first based on expected impact on Weekly Active Helpers, not intuition about what sounds exciting.</div>
+        </div>
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Action</div>
+          <div class="star-seg-text">I ran a RICE scoring exercise. I had analogous data from consumer apps: push notifications for re-engagement typically recover 8-15% of churned users. Streak mechanics in fitness apps increase D30 retention by 20-35% (Duolingo data is public). Social proof ("N neighbors helped this week") reduced bounce rate in comparable community apps. Helper tiers had no analogous data I could trust at our scale - I scored Confidence at 20% and it dropped to the bottom of the list. I ranked the remaining 8 by RICE score and shipped all 8 in one focused sprint.</div>
+        </div>
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Result</div>
+          <div class="star-seg-text">All 8 growth features shipped in the v1.1 milestone. Helper tiers remain correctly deferred. The data discipline wasn't about having perfect numbers - it was about having explicit assumptions that could be challenged and updated as we got real usage data post-launch.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="star-card">
+      <div class="star-header">
+        <span class="star-title">"Tell me about shipping something you're proud of."</span>
+        <button class="reveal-btn" onclick="toggleStar(this)">Expand <span class="arrow">›</span></button>
+        <button class="copy-btn" onclick="copyStarText(this, 'star4')">Copy</button>
+      </div>
+      <div class="star-body" id="star4">
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Situation</div>
+          <div class="star-seg-text">The full Helpy lifecycle - from a blank Notion doc to a live App Store app in 175 countries - ran across roughly 37 development sessions over 5 weeks.</div>
+        </div>
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Task</div>
+          <div class="star-seg-text">Build and launch a two-sided marketplace mobile app as a solo PM/builder, navigate a complex App Store review process, and ship a product that is genuinely safe and useful for community members.</div>
+        </div>
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Action</div>
+          <div class="star-seg-text">I defined the problem from user research (neighbors want to help but have no structured way to connect), wrote a full PRD with user stories and acceptance criteria, set OKRs with a north star metric, built the React Native app with Supabase, designed and ran the full submission process, fixed 5 Apple rejections, set up PostHog and Sentry for analytics and error tracking, shipped 9 growth and retention features, and launched globally. Every major decision went through a written decision log with alternatives considered and trade-offs documented.</div>
+        </div>
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Result</div>
+          <div class="star-seg-text">Helpy is live on the App Store, available globally, with a full trust and safety system, real-time chat, phone verification, bilingual Hebrew/English support, PostGIS-powered geolocation matching, and a complete ratings system. The part I'm most proud of: every rejection made the product better. The app that shipped was significantly safer and more complete than the one I first submitted. Constraint drove quality.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="star-card">
+      <div class="star-header">
+        <span class="star-title">"Tell me about dealing with ambiguity."</span>
+        <button class="reveal-btn" onclick="toggleStar(this)">Expand <span class="arrow">›</span></button>
+        <button class="copy-btn" onclick="copyStarText(this, 'star5')">Copy</button>
+      </div>
+      <div class="star-body" id="star5">
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Situation</div>
+          <div class="star-seg-text">Early in Helpy's discovery phase, I had a core mechanic question with no clear answer: should helpers see all requests and apply to help (task board model), or should we do mutual swiping (dating app model), or should requesters post and wait for the app to automatically assign a helper (algorithm model)?</div>
+        </div>
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Task</div>
+          <div class="star-seg-text">Pick a core mechanic to build toward with high uncertainty and no existing user data on what community members would prefer.</div>
+        </div>
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Action</div>
+          <div class="star-seg-text">I used analogies from adjacent spaces. Task board (TaskRabbit model) works well for paid professional services but creates anxiety for free exchanges - "am I qualified? will I be rejected?" The algorithm model removes human agency which destroys trust in a physical-world context. The swipe model (from dating apps) solves both: helpers self-select based on their own judgment, requesters maintain control over who enters their home/life, and the mechanic is already understood by users. I documented my reasoning in an assumptions log with explicit "this will break if..." conditions - e.g., "this breaks if helpers aren't motivated to browse" - and built around that assumption.</div>
+        </div>
+        <div class="star-segment">
+          <div class="star-seg-label"><span class="seg-dot"></span>Result</div>
+          <div class="star-seg-text">The swipe mechanic shipped and became the defining interaction of the app. The assumptions log became valuable later - when diagnosing a potential browse drop, I could go back and ask "is the core assumption still true?" Dealing with ambiguity well means making your assumptions explicit so you can falsify them later, not just making a confident decision and hoping for the best.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SECTION 3: FLASHCARD DRILL -->
+  <div class="section-label" style="margin-top:48px">03 - Quick-Fire Drill</div>
+
+  <div class="callout callout-info" style="margin-bottom:24px">
+    <span class="callout-icon">🃏</span>
+    <div class="callout-text">
+      <h4>Think of your answer, then reveal. Mark honestly.</h4>
+      <p>Progress is saved in your browser. Shuffle to randomize order.</p>
+    </div>
+  </div>
+
+  <div class="flashcard-container">
+    <div class="fc-progress-bar-track">
+      <div class="fc-progress-bar-fill" id="fc-progress-fill" style="width:0%"></div>
+    </div>
+    <div class="fc-counter" id="fc-counter">Question 1 of 10</div>
+
+    <div id="fc-card-view">
+      <div class="fc-category-chip" id="fc-category">Product Sense</div>
+      <div class="fc-question" id="fc-question">Loading...</div>
+      <div class="fc-answer-box" id="fc-answer"></div>
+      <div class="fc-actions" id="fc-actions-reveal">
+        <button class="fc-btn fc-reveal" onclick="fcReveal()">Reveal Answer</button>
+      </div>
+      <div class="fc-actions" id="fc-actions-grade" style="display:none">
+        <button class="fc-btn fc-got-it" onclick="fcGrade(true)">Got it</button>
+        <button class="fc-btn fc-review" onclick="fcGrade(false)">Review Again</button>
+      </div>
+    </div>
+
+    <div class="fc-done-state" id="fc-done">
+      <div class="fc-score" id="fc-score-val">0/10</div>
+      <div class="fc-score-label">Questions marked "Got it"</div>
+      <div class="fc-actions" style="margin-top:16px">
+        <button class="fc-btn fc-shuffle" onclick="fcRestart(false)">Retry Wrong Ones</button>
+        <button class="fc-btn fc-reveal" onclick="fcRestart(true)">Restart All</button>
+      </div>
+    </div>
+
+    <div class="fc-actions" style="margin-top:20px">
+      <button class="fc-btn fc-shuffle" onclick="fcShuffle()">Shuffle</button>
+    </div>
+  </div>
+
+  <!-- SECTION 4: CHEAT SHEET -->
+  <div class="section-label">04 - The Cheat Sheet</div>
+
+  <div class="cheat-grid">
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">North Star + Key Numbers</div>
+      <div class="metric-hero">
+        <div class="metric-hero-value">Weekly Active Helpers</div>
+        <div class="metric-hero-label">North Star Metric - supply-side health indicator</div>
+      </div>
+      <div class="cheat-row">
+        <span class="cheat-label">Launch date</span>
+        <span class="cheat-val">Mar 4, 2026</span>
+      </div>
+      <div class="cheat-row">
+        <span class="cheat-label">Countries at launch</span>
+        <span class="cheat-val cheat-val-brand">175</span>
+      </div>
+      <div class="cheat-row">
+        <span class="cheat-label">Apple rejections</span>
+        <span class="cheat-val">5 - approved on 6th</span>
+      </div>
+      <div class="cheat-row">
+        <span class="cheat-label">Development sessions</span>
+        <span class="cheat-val">37 sessions (5 weeks)</span>
+      </div>
+      <div class="cheat-row">
+        <span class="cheat-label">TAM signal</span>
+        <span class="cheat-val">$15B+ gig/community economy</span>
+      </div>
+      <div class="cheat-row">
+        <span class="cheat-label">Age rating</span>
+        <span class="cheat-val">18+ (UGC safety)</span>
+      </div>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">Top 3 RICE Items (Shipped)</div>
+      <ul class="cheat-list">
+        <li><strong>#1 Phone verification gate</strong> - Reach: 100% of helpers. Impact: 3 (trust + Apple requirement). Effort: 3 days. RICE: ~1,000. P0 for launch.</li>
+        <li><strong>#2 Re-engagement push</strong> - Reach: all lapsed users (14d inactive). Impact: 2 (8-15% recovery rate). Effort: 2 days. RICE: ~800. P1.</li>
+        <li><strong>#3 Streak counter</strong> - Reach: 100% of helpers. Impact: 2 (D30 retention lift). Effort: 1.5 days. RICE: ~600. P1.</li>
+      </ul>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">Competitors - One-Line Diff</div>
+      <ul class="cheat-list">
+        <li><strong>Nextdoor:</strong> Social network where help is buried - Helpy is a focused marketplace</li>
+        <li><strong>TaskRabbit:</strong> Paid professionals - Helpy is free neighbor-to-neighbor with structured trust</li>
+        <li><strong>WhatsApp groups:</strong> Unstructured, no accountability - Helpy has matching + ratings + safety</li>
+      </ul>
+    </div>
+
+    <div class="cheat-card">
+      <div class="cheat-card-title">Q2 OKR Summary</div>
+      <ul class="cheat-list">
+        <li><strong>O1 Validate core loop:</strong> KR - 50 completed matches in Tel Aviv. KR - D7 helper retention above 25%.</li>
+        <li><strong>O2 Trust at scale:</strong> KR - report rate under 0.5% of matches. KR - zero critical safety incidents in 90 days.</li>
+        <li><strong>O3 Growth engine:</strong> KR - 20% of new users via invite-neighbor referral. KR - WAH growing 15% week-over-week by day 60.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- SECTION 5: QUESTIONS TO ASK -->
+  <div class="section-label">05 - Questions to Ask the Interviewer</div>
+
+  <div class="callout callout-green" style="margin-bottom:24px">
+    <span class="callout-icon">🙋</span>
+    <div class="callout-text">
+      <h4>Ask 2-3 from different categories. Questions signal PM instincts.</h4>
+      <p>The best questions show you're thinking about metrics, team dynamics, and product strategy - not just "what's the culture like."</p>
+    </div>
+  </div>
+
+  <div class="ask-grid">
+
+    <div class="ask-category-card">
+      <div class="ask-category-header">About the Role</div>
+      <ul class="ask-list">
+        <li><span class="ask-bullet">›</span>What does success look like for this role in the first 90 days, and what metric would tell you I'm succeeding?</li>
+        <li><span class="ask-bullet">›</span>How much time is this role expected to spend on discovery vs delivery, and how has that balance shifted recently?</li>
+        <li><span class="ask-bullet">›</span>What's the hardest decision the person in this role will face in the next 6 months?</li>
+      </ul>
+    </div>
+
+    <div class="ask-category-card">
+      <div class="ask-category-header">About the Team</div>
+      <ul class="ask-list">
+        <li><span class="ask-bullet">›</span>How does your team decide when a hypothesis needs a spec vs when engineers just ship and measure?</li>
+        <li><span class="ask-bullet">›</span>How does the PM role interact with design here - are PMs writing detailed specs or are designers owning interaction?</li>
+        <li><span class="ask-bullet">›</span>What's the most recent example of engineering pushing back on a PM request, and how was it resolved?</li>
+      </ul>
+    </div>
+
+    <div class="ask-category-card">
+      <div class="ask-category-header">About the Product</div>
+      <ul class="ask-list">
+        <li><span class="ask-bullet">›</span>What is the north star metric for this product area, and is it currently trending in the right direction?</li>
+        <li><span class="ask-bullet">›</span>What's the feature your users most ask for that you've consciously decided not to build, and why?</li>
+        <li><span class="ask-bullet">›</span>If you could change one product decision made in the last year, what would it be?</li>
+      </ul>
+    </div>
+
+    <div class="ask-category-card">
+      <div class="ask-category-header">About Success</div>
+      <ul class="ask-list">
+        <li><span class="ask-bullet">›</span>What does your best PM do that your average PM doesn't?</li>
+        <li><span class="ask-bullet">›</span>Can you tell me about a PM who excelled in this role and what they did in their first 6 months?</li>
+        <li><span class="ask-bullet">›</span>What's the most common reason PMs underperform here - is it usually analytical, execution, or stakeholder dynamics?</li>
+      </ul>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop || document.body.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+  });
+
+  // Tab switching
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // Q&A toggle
+  function toggleQA(el) {
+    const card = el.closest('.qa-card');
+    const answer = card.querySelector('.qa-answer');
+    const revealBtn = card.querySelector('.reveal-btn');
+    const isOpen = answer.classList.contains('open');
+    answer.classList.toggle('open', !isOpen);
+    if (revealBtn) revealBtn.classList.toggle('open', !isOpen);
+  }
+
+  // STAR toggle
+  function toggleStar(btn) {
+    const card = btn.closest('.star-card');
+    const body = card.querySelector('.star-body');
+    const isOpen = body.classList.contains('open');
+    body.classList.toggle('open', !isOpen);
+    btn.classList.toggle('open', !isOpen);
+    btn.innerHTML = isOpen ? 'Expand <span class="arrow">›</span>' : 'Collapse <span class="arrow" style="transform:rotate(90deg)">›</span>';
+  }
+
+  // Copy STAR story
+  function copyStarText(btn, id) {
+    const body = document.getElementById(id);
+    let text = '';
+    body.querySelectorAll('.star-segment').forEach(seg => {
+      const label = seg.querySelector('.star-seg-label').textContent.trim().replace(/\s+/g, ' ');
+      const content = seg.querySelector('.star-seg-text').textContent.trim();
+      text += label + '\n' + content + '\n\n';
+    });
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+
+  // Flashcard system
+  const FC_STORAGE_KEY = 'helpy_fc_progress_v1';
+  const flashcards = [
+    { cat: 'Product Sense', q: "What's the aha moment for Helpy, and how do you get users there faster?", a: "The aha moment is seeing a real nearby request within 60 seconds of opening the app. Get there faster by showing 3 preview requests before sign-in (value before friction), and surfacing one Welcome request on first session with a nudge to swipe right." },
+    { cat: 'Metrics', q: "What is Helpy's north star metric and why?", a: "Weekly Active Helpers (WAH). It measures supply-side health in a two-sided marketplace. If helpers are active weekly, requesters always get served. WAH is also the foundation of any future monetization (helper tiers, Pro status)." },
+    { cat: 'Prioritization', q: "Why was phone verification a P0 for launch and not a v1.1 feature?", a: "Two reasons: (1) Apple required it under their UGC safety guidelines - it was blocking launch. (2) It creates real-world accountability that the trust model depends on. Without it, anonymous bad actors face zero consequences. Non-negotiable." },
+    { cat: 'Strategy', q: "How do you solve the cold start problem for a hyperlocal app?", a: "Focus on geographic density, not global scale. Seed one neighborhood with 5 real requests via an existing community channel (WhatsApp group). When those get fulfilled, organic word-of-mouth starts. Invite-neighbor feature needs K-factor above 1.0 in a tight area." },
+    { cat: 'Metrics', q: "Match rate dropped 20%. What do you check first?", a: "Segment the funnel: is swipe-right rate down (helpers browsing less) or is requester acceptance rate down (requesters ignoring offers)? Those are different root causes. Also check: data pipeline first, then input quality (fewer requests in feed?), then was there a recent deploy?" },
+    { cat: 'Behavioral', q: "Why did you defer Android and go iOS-first?", a: "iOS users have higher LTV, App Store review signals quality, and supporting two platforms pre-product-market-fit doubles bug surface area without doubling learning speed. Android also requires 20 internal testers to move to closed testing - hard to recruit before any users exist. Re-evaluate when iOS has traction." },
+    { cat: 'Product Sense', q: "How does Helpy differ from Nextdoor?", a: "Nextdoor is a neighborhood social network where help requests are buried in a noisy feed alongside complaints and drama. Helpy is a focused help marketplace with structured matching, in-app chat after match, ratings, and phone verification. It's a dedicated tool, not a feature inside a social network." },
+    { cat: 'Execution', q: "What did the Apple rejection process teach you as a PM?", a: "Read the platform guidelines before you build, not after. Every rejection was a structured requirements document I hadn't read. The features I shipped under pressure made the product safer. Apple was an unpaid PM who forced me to ship UGC safety, account deletion, and proper ToS - all net positives." },
+    { cat: 'Prioritization', q: "How do you score helper tiers in RICE vs a streak counter?", a: "Streak: Reach 100%, Impact 2 (D30 retention lift), Confidence 80% (fitness app analogs), Effort 1.5 days. Score ~600. Tiers: Reach 100%, Impact 3 (potential), Confidence 20% (no analogous data at our scale), Effort 4 days. Score ~150. Streak wins by ~4x. Tiers deferred until we have enough users for tiers to be meaningful." },
+    { cat: 'Strategy', q: "What's the single biggest risk to Helpy and how do you mitigate it?", a: "Failing to reach density in any one geography before motivation runs dry. The cold start problem is existential for a two-sided marketplace. Mitigations: auto-expiry keeps feed fresh, re-engagement push recovers lapsed helpers, urgency notifications rush-deliver high-value requests, invite-neighbor drives referral growth." },
+  ];
+
+  let fcState = { deck: [], current: 0, gotIt: 0, reviewAgain: [] };
+
+  function loadFcState() {
+    try {
+      const saved = localStorage.getItem(FC_STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.deck && parsed.deck.length > 0) {
+          fcState = parsed;
+          return true;
+        }
+      }
+    } catch(e) {}
+    return false;
+  }
+
+  function saveFcState() {
+    try { localStorage.setItem(FC_STORAGE_KEY, JSON.stringify(fcState)); } catch(e) {}
+  }
+
+  function fcInit() {
+    if (!loadFcState()) {
+      fcState = { deck: flashcards.map((_, i) => i), current: 0, gotIt: 0, reviewAgain: [] };
+    }
+    fcRender();
+  }
+
+  function fcRender() {
+    const total = fcState.deck.length;
+    const cur = fcState.current;
+    if (cur >= total) {
+      fcShowDone();
+      return;
+    }
+    const card = flashcards[fcState.deck[cur]];
+    document.getElementById('fc-category').textContent = card.cat;
+    document.getElementById('fc-question').textContent = card.q;
+    document.getElementById('fc-answer').textContent = card.a;
+    document.getElementById('fc-answer').classList.remove('visible');
+    document.getElementById('fc-actions-reveal').style.display = 'flex';
+    document.getElementById('fc-actions-grade').style.display = 'none';
+    document.getElementById('fc-counter').textContent = 'Question ' + (cur + 1) + ' of ' + total;
+    const pct = (cur / total) * 100;
+    document.getElementById('fc-progress-fill').style.width = pct + '%';
+  }
+
+  function fcReveal() {
+    document.getElementById('fc-answer').classList.add('visible');
+    document.getElementById('fc-actions-reveal').style.display = 'none';
+    document.getElementById('fc-actions-grade').style.display = 'flex';
+  }
+
+  function fcGrade(gotIt) {
+    if (!gotIt) {
+      fcState.reviewAgain.push(fcState.deck[fcState.current]);
+    } else {
+      fcState.gotIt++;
+    }
+    fcState.current++;
+    saveFcState();
+    fcRender();
+  }
+
+  function fcShowDone() {
+    document.getElementById('fc-card-view').style.display = 'none';
+    const done = document.getElementById('fc-done');
+    done.classList.add('visible');
+    document.getElementById('fc-score-val').textContent = fcState.gotIt + '/' + fcState.deck.length;
+    const pct = 100;
+    document.getElementById('fc-progress-fill').style.width = pct + '%';
+    document.getElementById('fc-counter').textContent = 'Complete!';
+  }
+
+  function fcRestart(all) {
+    if (all) {
+      fcState = { deck: flashcards.map((_, i) => i), current: 0, gotIt: 0, reviewAgain: [] };
+    } else {
+      const deck = fcState.reviewAgain.length > 0 ? fcState.reviewAgain : flashcards.map((_, i) => i);
+      fcState = { deck: deck, current: 0, gotIt: 0, reviewAgain: [] };
+    }
+    document.getElementById('fc-card-view').style.display = 'block';
+    document.getElementById('fc-done').classList.remove('visible');
+    saveFcState();
+    fcRender();
+  }
+
+  function fcShuffle() {
+    const remaining = fcState.deck.slice(fcState.current);
+    for (let i = remaining.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [remaining[i], remaining[j]] = [remaining[j], remaining[i]];
+    }
+    fcState.deck = fcState.deck.slice(0, fcState.current).concat(remaining);
+    fcState.current = 0;
+    fcState.gotIt = 0;
+    fcState.reviewAgain = [];
+    saveFcState();
+    fcRender();
+  }
+
+  fcInit();
+</script>
+</body>
+</html>
