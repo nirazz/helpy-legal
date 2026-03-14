@@ -6,44 +6,24 @@
   <title>Helpy - Product Docs</title>
   <style>
     :root {
-      --brand: #6366f1;
-      --brand-dark: #4f46e5;
-      --brand-light: #eef2ff;
-      --green: #10b981;
-      --amber: #f59e0b;
-      --pink: #ec4899;
-      --slate: #64748b;
-      --border: #e2e8f0;
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --radius: 16px;
+      --brand: #6366f1; --brand-dark: #4f46e5; --brand-light: #eef2ff;
+      --green: #10b981; --amber: #f59e0b; --red: #ef4444; --pink: #ec4899;
+      --slate: #64748b; --border: #e2e8f0; --bg: #f8fafc; --card: #ffffff; --radius: 14px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      color: #0f172a;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
+      background: var(--bg); color: #0f172a;
+      min-height: 100vh; padding: 48px 20px 64px;
     }
 
     /* Hero */
-    .hero {
-      text-align: center;
-      margin-bottom: 52px;
-    }
+    .hero { text-align: center; margin-bottom: 52px; }
     .hero-icon {
       width: 72px; height: 72px;
       background: linear-gradient(135deg, #6366f1, #ec4899);
-      border-radius: 22px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 36px;
-      margin: 0 auto 20px;
+      border-radius: 22px; display: flex; align-items: center; justify-content: center;
+      font-size: 36px; margin: 0 auto 20px;
       box-shadow: 0 12px 32px rgba(99,102,241,0.3);
     }
     .hero h1 {
@@ -52,102 +32,59 @@
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       margin-bottom: 10px;
     }
-    .hero p {
-      font-size: 16px; color: var(--slate);
-      max-width: 420px; margin: 0 auto 20px; line-height: 1.6;
-    }
+    .hero p { font-size: 16px; color: var(--slate); max-width: 440px; margin: 0 auto 20px; line-height: 1.6; }
     .hero-chips { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-    .hero-chip {
-      background: var(--brand-light); color: var(--brand);
-      font-size: 12px; font-weight: 600;
-      padding: 4px 12px; border-radius: 20px;
+    .hero-chip { background: var(--brand-light); color: var(--brand); font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; }
+
+    /* Sections */
+    .section-label {
+      max-width: 1080px; margin: 0 auto 14px;
+      font-size: 11px; font-weight: 700; color: var(--slate);
+      text-transform: uppercase; letter-spacing: 1px;
+      display: flex; align-items: center; gap: 10px;
     }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
     /* Grid */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      width: 100%;
-      max-width: 960px;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px; max-width: 1080px; margin: 0 auto 40px;
     }
 
     /* Doc card */
     .doc-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 28px;
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px;
+      text-decoration: none; color: inherit;
+      display: flex; flex-direction: column; gap: 12px;
       transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
-    .doc-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 4px;
-    }
-    .doc-card:nth-child(1)::before { background: linear-gradient(90deg, #6366f1, #8b5cf6); }
-    .doc-card:nth-child(2)::before { background: linear-gradient(90deg, #10b981, #06b6d4); }
-    .doc-card:nth-child(3)::before { background: linear-gradient(90deg, #f59e0b, #ef4444); }
-    .doc-card:nth-child(4)::before { background: linear-gradient(90deg, #ec4899, #f43f5e); }
+    .doc-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+    .doc-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.09); border-color: transparent; }
 
-    .doc-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 16px 40px rgba(0,0,0,0.1);
-      border-color: transparent;
-    }
-    .doc-card:nth-child(1):hover { box-shadow: 0 16px 40px rgba(99,102,241,0.15); }
-    .doc-card:nth-child(2):hover { box-shadow: 0 16px 40px rgba(16,185,129,0.15); }
-    .doc-card:nth-child(3):hover { box-shadow: 0 16px 40px rgba(245,158,11,0.15); }
-    .doc-card:nth-child(4):hover { box-shadow: 0 16px 40px rgba(236,72,153,0.15); }
+    /* Color themes per category */
+    .cat-core::before     { background: linear-gradient(90deg,#6366f1,#8b5cf6); }
+    .cat-discovery::before { background: linear-gradient(90deg,#06b6d4,#10b981); }
+    .cat-strategy::before  { background: linear-gradient(90deg,#f59e0b,#ef4444); }
+    .cat-growth::before    { background: linear-gradient(90deg,#ec4899,#f43f5e); }
+    .cat-delivery::before  { background: linear-gradient(90deg,#8b5cf6,#6366f1); }
+    .cat-measure::before   { background: linear-gradient(90deg,#10b981,#06b6d4); }
 
-    .doc-icon {
-      width: 48px; height: 48px; border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 24px; flex-shrink: 0;
-    }
-    .doc-card:nth-child(1) .doc-icon { background: #eef2ff; }
-    .doc-card:nth-child(2) .doc-icon { background: #d1fae5; }
-    .doc-card:nth-child(3) .doc-icon { background: #fef3c7; }
-    .doc-card:nth-child(4) .doc-icon { background: #fce7f3; }
+    .doc-icon { font-size: 28px; margin-bottom: 2px; }
+    .doc-title { font-size: 16px; font-weight: 700; }
+    .doc-subtitle { font-size: 12px; color: var(--slate); line-height: 1.5; flex: 1; }
 
-    .doc-header { display: flex; align-items: center; gap: 14px; }
-    .doc-title { font-size: 18px; font-weight: 700; }
-    .doc-subtitle { font-size: 13px; color: var(--slate); line-height: 1.5; }
+    .doc-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+    .doc-tag { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: var(--bg); color: var(--slate); border: 1px solid var(--border); }
 
-    .doc-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-    .doc-tag {
-      font-size: 11px; font-weight: 600;
-      padding: 3px 10px; border-radius: 20px;
-      background: var(--bg); color: var(--slate);
-      border: 1px solid var(--border);
-    }
-
-    .doc-arrow {
-      margin-top: auto;
-      display: flex; align-items: center; gap: 6px;
-      font-size: 13px; font-weight: 600;
-    }
-    .doc-card:nth-child(1) .doc-arrow { color: var(--brand); }
-    .doc-card:nth-child(2) .doc-arrow { color: var(--green); }
-    .doc-card:nth-child(3) .doc-arrow { color: var(--amber); }
-    .doc-card:nth-child(4) .doc-arrow { color: var(--pink); }
-
-    .arrow-icon { font-size: 16px; transition: transform 0.2s; }
+    .doc-arrow { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: var(--brand); margin-top: 2px; }
+    .arrow-icon { transition: transform 0.2s; }
     .doc-card:hover .arrow-icon { transform: translateX(4px); }
 
     /* Footer */
-    footer {
-      margin-top: 48px;
-      text-align: center;
-      font-size: 12px;
-      color: var(--slate);
-    }
+    footer { text-align: center; font-size: 12px; color: var(--slate); margin-top: 16px; }
     footer a { color: var(--brand); text-decoration: none; }
 
     @media (max-width: 600px) {
@@ -161,89 +98,199 @@
   <div class="hero">
     <div class="hero-icon">🤝</div>
     <h1>Helpy Product Docs</h1>
-    <p>The full PM document suite for Helpy - Neighborly Help. Strategy, roadmap, market, and growth - all in one place.</p>
+    <p>The full PM document suite - strategy, discovery, execution, delivery, growth, and measurement - all in one place.</p>
     <div class="hero-chips">
       <span class="hero-chip">📱 iOS Live</span>
       <span class="hero-chip">v1.0.2</span>
       <span class="hero-chip">🇮🇱 Tel Aviv</span>
-      <span class="hero-chip">March 2026</span>
+      <span class="hero-chip">18 documents</span>
     </div>
   </div>
 
+  <!-- Core -->
+  <div class="section-label">Core</div>
   <div class="grid">
-
-    <a class="doc-card" href="prd.html">
-      <div class="doc-header">
-        <div class="doc-icon">📋</div>
-        <div>
-          <div class="doc-title">PRD</div>
-        </div>
-      </div>
-      <div class="doc-subtitle">Product Requirements Document - user stories, acceptance criteria, MoSCoW features, non-functional requirements, and open questions.</div>
-      <div class="doc-tags">
-        <span class="doc-tag">11 sections</span>
-        <span class="doc-tag">10 user stories</span>
-        <span class="doc-tag">MoSCoW</span>
-        <span class="doc-tag">KPIs</span>
-      </div>
-      <div class="doc-arrow">Read PRD <span class="arrow-icon">→</span></div>
+    <a class="doc-card cat-core" href="prd.html">
+      <div class="doc-icon">📋</div>
+      <div class="doc-title">PRD</div>
+      <div class="doc-subtitle">Product Requirements - user stories, acceptance criteria, MoSCoW features, KPIs.</div>
+      <div class="doc-tags"><span class="doc-tag">11 sections</span><span class="doc-tag">10 user stories</span><span class="doc-tag">MoSCoW</span></div>
+      <div class="doc-arrow">Read <span class="arrow-icon">→</span></div>
     </a>
-
-    <a class="doc-card" href="roadmap.html">
-      <div class="doc-header">
-        <div class="doc-icon">🗺️</div>
-        <div>
-          <div class="doc-title">Roadmap</div>
-        </div>
-      </div>
-      <div class="doc-subtitle">Quarter-by-quarter plan from launch through scale - what shipped, what's next, and what's being explored for H2 2026.</div>
-      <div class="doc-tags">
-        <span class="doc-tag">Q1-Q4 2026</span>
-        <span class="doc-tag">Timeline view</span>
-        <span class="doc-tag">By theme</span>
-        <span class="doc-tag">Status filter</span>
-      </div>
-      <div class="doc-arrow">View Roadmap <span class="arrow-icon">→</span></div>
+    <a class="doc-card cat-core" href="roadmap.html">
+      <div class="doc-icon">🗺️</div>
+      <div class="doc-title">Roadmap</div>
+      <div class="doc-subtitle">Q1-H2 2026 plan - what shipped, what's next, what's being explored.</div>
+      <div class="doc-tags"><span class="doc-tag">Timeline view</span><span class="doc-tag">By theme</span><span class="doc-tag">Status filter</span></div>
+      <div class="doc-arrow">View <span class="arrow-icon">→</span></div>
     </a>
+  </div>
 
-    <a class="doc-card" href="competitive.html">
-      <div class="doc-header">
-        <div class="doc-icon">🏆</div>
-        <div>
-          <div class="doc-title">Competitive Analysis</div>
-        </div>
-      </div>
-      <div class="doc-subtitle">How Helpy stacks up against WhatsApp, Facebook, Nextdoor, TaskRabbit, and Yad2 - feature matrix, positioning map, and strategic implications.</div>
-      <div class="doc-tags">
-        <span class="doc-tag">6 competitors</span>
-        <span class="doc-tag">Feature matrix</span>
-        <span class="doc-tag">Positioning map</span>
-        <span class="doc-tag">Gaps</span>
-      </div>
-      <div class="doc-arrow">See Analysis <span class="arrow-icon">→</span></div>
+  <!-- Discovery -->
+  <div class="section-label">Discovery</div>
+  <div class="grid">
+    <a class="doc-card cat-discovery" href="user-interviews.html">
+      <div class="doc-icon">🎤</div>
+      <div class="doc-title">User Interview Script</div>
+      <div class="doc-subtitle">45-60 min discovery questions for real users. Copy-to-clipboard, print-ready.</div>
+      <div class="doc-tags"><span class="doc-tag">25 questions</span><span class="doc-tag">PMF question</span><span class="doc-tag">Notes template</span></div>
+      <div class="doc-arrow">Open <span class="arrow-icon">→</span></div>
     </a>
-
-    <a class="doc-card" href="gtm.html">
-      <div class="doc-header">
-        <div class="doc-icon">🚀</div>
-        <div>
-          <div class="doc-title">Go-to-Market Plan</div>
-        </div>
-      </div>
-      <div class="doc-subtitle">16 to 200 WAU in 90 days - neighborhood strategy, activation funnel, acquisition channels, bilingual messaging, and PMF checkpoint.</div>
-      <div class="doc-tags">
-        <span class="doc-tag">30/60/90 days</span>
-        <span class="doc-tag">Tel Aviv focus</span>
-        <span class="doc-tag">Funnel</span>
-        <span class="doc-tag">PMF checklist</span>
-      </div>
-      <div class="doc-arrow">See GTM Plan <span class="arrow-icon">→</span></div>
+    <a class="doc-card cat-discovery" href="assumptions.html">
+      <div class="doc-icon">🗂️</div>
+      <div class="doc-title">Assumption Map</div>
+      <div class="doc-subtitle">What we believe vs. what we've proven. Danger zone, validated, watch, safe.</div>
+      <div class="doc-tags"><span class="doc-tag">2x2 matrix</span><span class="doc-tag">Interactive</span><span class="doc-tag">Top 3 to test</span></div>
+      <div class="doc-arrow">Open <span class="arrow-icon">→</span></div>
     </a>
+    <a class="doc-card cat-discovery" href="jtbd.html">
+      <div class="doc-icon">💼</div>
+      <div class="doc-title">Jobs to Be Done</div>
+      <div class="doc-subtitle">What job do users hire Helpy to do? Functional, emotional, and social dimensions.</div>
+      <div class="doc-tags"><span class="doc-tag">6 core jobs</span><span class="doc-tag">3 underserved</span><span class="doc-tag">North star</span></div>
+      <div class="doc-arrow">Open <span class="arrow-icon">→</span></div>
+    </a>
+  </div>
 
+  <!-- Strategy -->
+  <div class="section-label">Strategy</div>
+  <div class="grid">
+    <a class="doc-card cat-strategy" href="vision.html">
+      <div class="doc-icon">🌍</div>
+      <div class="doc-title">Vision & Mission</div>
+      <div class="doc-subtitle">Why Helpy exists, the narrative, market sizing (TAM/SAM/SOM), and 3-year milestones.</div>
+      <div class="doc-tags"><span class="doc-tag">TAM $15B</span><span class="doc-tag">2.7M SAM</span><span class="doc-tag">Biz model</span></div>
+      <div class="doc-arrow">Read <span class="arrow-icon">→</span></div>
+    </a>
+    <a class="doc-card cat-strategy" href="competitive.html">
+      <div class="doc-icon">🏆</div>
+      <div class="doc-title">Competitive Analysis</div>
+      <div class="doc-subtitle">Helpy vs. WhatsApp, Facebook, Nextdoor, TaskRabbit, Yad2 - feature matrix and positioning.</div>
+      <div class="doc-tags"><span class="doc-tag">6 competitors</span><span class="doc-tag">Feature matrix</span><span class="doc-tag">Positioning map</span></div>
+      <div class="doc-arrow">Read <span class="arrow-icon">→</span></div>
+    </a>
+    <a class="doc-card cat-strategy" href="okrs.html">
+      <div class="doc-icon">🎯</div>
+      <div class="doc-title">OKR Tracker</div>
+      <div class="doc-subtitle">Q1 graded, Q2 in progress. Interactive sliders with live grade calculation.</div>
+      <div class="doc-tags"><span class="doc-tag">Q1 graded</span><span class="doc-tag">Q2 live sliders</span><span class="doc-tag">localStorage</span></div>
+      <div class="doc-arrow">Track <span class="arrow-icon">→</span></div>
+    </a>
+    <a class="doc-card cat-strategy" href="premortem.html">
+      <div class="doc-icon">💀</div>
+      <div class="doc-title">Pre-Mortem</div>
+      <div class="doc-subtitle">It's 2027. Helpy failed. 6 vivid failure scenarios with prevention plans and optimistic flips.</div>
+      <div class="doc-tags"><span class="doc-tag">6 scenarios</span><span class="doc-tag">Prevention plan</span><span class="doc-tag">Optimistic flip</span></div>
+      <div class="doc-arrow">Read <span class="arrow-icon">→</span></div>
+    </a>
+  </div>
+
+  <!-- Growth -->
+  <div class="section-label">Growth & GTM</div>
+  <div class="grid">
+    <a class="doc-card cat-growth" href="gtm.html">
+      <div class="doc-icon">🚀</div>
+      <div class="doc-title">Go-to-Market Plan</div>
+      <div class="doc-subtitle">16 to 200 WAU in 90 days. Neighborhood strategy, funnel, channels, bilingual messaging.</div>
+      <div class="doc-tags"><span class="doc-tag">30/60/90 days</span><span class="doc-tag">Tel Aviv first</span><span class="doc-tag">PMF checklist</span></div>
+      <div class="doc-arrow">Read <span class="arrow-icon">→</span></div>
+    </a>
+    <a class="doc-card cat-growth" href="experiments.html">
+      <div class="doc-icon">🧪</div>
+      <div class="doc-title">A/B Experiment Log</div>
+      <div class="doc-subtitle">Every experiment Helpy runs - hypothesis, variants, success metric, decision.</div>
+      <div class="doc-tags"><span class="doc-tag">4 planned</span><span class="doc-tag">2 completed</span><span class="doc-tag">SHIP/KILL</span></div>
+      <div class="doc-arrow">Open <span class="arrow-icon">→</span></div>
+    </a>
+  </div>
+
+  <!-- Measurement -->
+  <div class="section-label">Measurement</div>
+  <div class="grid">
+    <a class="doc-card cat-measure" href="tracking.html">
+      <div class="doc-icon">📡</div>
+      <div class="doc-title">Analytics Tracking Plan</div>
+      <div class="doc-subtitle">Every PostHog event Helpy fires - what, when, why, and which product question it answers.</div>
+      <div class="doc-tags"><span class="doc-tag">27 events</span><span class="doc-tag">3 funnels</span><span class="doc-tag">Searchable</span></div>
+      <div class="doc-arrow">Open <span class="arrow-icon">→</span></div>
+    </a>
+    <a class="doc-card cat-measure" href="nps.html">
+      <div class="doc-icon">⭐</div>
+      <div class="doc-title">NPS & PMF Survey</div>
+      <div class="doc-subtitle">Sean Ellis test + NPS. When to run, how to read results, interactive results tracker.</div>
+      <div class="doc-tags"><span class="doc-tag">Sean Ellis</span><span class="doc-tag">NPS scale</span><span class="doc-tag">Results log</span></div>
+      <div class="doc-arrow">Open <span class="arrow-icon">→</span></div>
+    </a>
+  </div>
+
+  <!-- Delivery -->
+  <div class="section-label">Delivery & Communication</div>
+  <div class="grid">
+    <a class="doc-card cat-delivery" href="backlog.html">
+      <div class="doc-icon">📊</div>
+      <div class="doc-title">Product Backlog</div>
+      <div class="doc-subtitle">15 items scored and ranked by RICE. Filterable by priority. Sortable by any column.</div>
+      <div class="doc-tags"><span class="doc-tag">RICE scored</span><span class="doc-tag">15 items</span><span class="doc-tag">P0-P3 filter</span></div>
+      <div class="doc-arrow">Open <span class="arrow-icon">→</span></div>
+    </a>
+    <a class="doc-card cat-delivery" href="launch-checklist.html">
+      <div class="doc-icon">✅</div>
+      <div class="doc-title">Launch Checklist</div>
+      <div class="doc-subtitle">33 checks across Pre-Build, Pre-Submit, and Post-Launch. All state saved to browser.</div>
+      <div class="doc-tags"><span class="doc-tag">33 checks</span><span class="doc-tag">3 phases</span><span class="doc-tag">localStorage</span></div>
+      <div class="doc-arrow">Open <span class="arrow-icon">→</span></div>
+    </a>
+    <a class="doc-card cat-delivery" href="postmortem.html">
+      <div class="doc-icon">🔍</div>
+      <div class="doc-title">Post-Mortem Template</div>
+      <div class="doc-subtitle">Blameless incident analysis. Editable template with 5 Whys, timeline, action items.</div>
+      <div class="doc-tags"><span class="doc-tag">Editable</span><span class="doc-tag">5 Whys</span><span class="doc-tag">2 examples</span></div>
+      <div class="doc-arrow">Open <span class="arrow-icon">→</span></div>
+    </a>
+    <a class="doc-card cat-delivery" href="retro.html">
+      <div class="doc-icon">🔄</div>
+      <div class="doc-title">Sprint Retrospective</div>
+      <div class="doc-subtitle">Drag-and-drop Kanban retro board. Save to history. Commitment tracker with localStorage.</div>
+      <div class="doc-tags"><span class="doc-tag">Kanban board</span><span class="doc-tag">Drag & drop</span><span class="doc-tag">Commitment log</span></div>
+      <div class="doc-arrow">Open <span class="arrow-icon">→</span></div>
+    </a>
+  </div>
+
+  <!-- Execution -->
+  <div class="section-label">Execution</div>
+  <div class="grid">
+    <a class="doc-card cat-delivery" href="sprint.html">
+      <div class="doc-icon">🏃</div>
+      <div class="doc-title">Sprint Planning</div>
+      <div class="doc-subtitle">Ticket table, velocity tracker, scope creep counter, sprint goal, blockers.</div>
+      <div class="doc-tags"><span class="doc-tag">Ticket table</span><span class="doc-tag">Health metrics</span><span class="doc-tag">localStorage</span></div>
+      <div class="doc-arrow">Plan <span class="arrow-icon">→</span></div>
+    </a>
+    <a class="doc-card cat-delivery" href="decisions.html">
+      <div class="doc-icon">⚖️</div>
+      <div class="doc-title">Decision Log</div>
+      <div class="doc-subtitle">Why we built what we built. 8 real Helpy decisions - context, options, rationale, owner.</div>
+      <div class="doc-tags"><span class="doc-tag">8 decisions</span><span class="doc-tag">Filterable</span><span class="doc-tag">Expandable</span></div>
+      <div class="doc-arrow">Open <span class="arrow-icon">→</span></div>
+    </a>
+    <a class="doc-card cat-delivery" href="eng-brief.html">
+      <div class="doc-icon">🔧</div>
+      <div class="doc-title">Engineering Brief</div>
+      <div class="doc-subtitle">PM-to-engineer handoff. User story, AC, out of scope, tech notes, edge cases, DoD.</div>
+      <div class="doc-tags"><span class="doc-tag">3 pre-filled</span><span class="doc-tag">10 sections</span><span class="doc-tag">Print/PDF</span></div>
+      <div class="doc-arrow">Open <span class="arrow-icon">→</span></div>
+    </a>
+    <a class="doc-card cat-delivery" href="stakeholder-update.html">
+      <div class="doc-icon">📢</div>
+      <div class="doc-title">Stakeholder Update</div>
+      <div class="doc-subtitle">Weekly status - shipped, in progress, blocked, next week, metrics snapshot, ask.</div>
+      <div class="doc-tags"><span class="doc-tag">2x2 grid</span><span class="doc-tag">Metrics</span><span class="doc-tag">History log</span></div>
+      <div class="doc-arrow">Open <span class="arrow-icon">→</span></div>
+    </a>
   </div>
 
   <footer>
-    <p>Helpy - Neighborly Help &nbsp;·&nbsp; <a href="index.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="terms.html">Terms of Service</a> &nbsp;·&nbsp; <a href="https://apps.apple.com/app/id6758919822">App Store</a></p>
+    <p>Helpy - Neighborly Help &nbsp;·&nbsp; <a href="index.html">Privacy</a> &nbsp;·&nbsp; <a href="terms.html">Terms</a> &nbsp;·&nbsp; <a href="https://apps.apple.com/app/id6758919822">App Store</a></p>
   </footer>
 
 </body>

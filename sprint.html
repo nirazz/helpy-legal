@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helpy - Sprint Planning</title>
+  <style>
+    :root {
+      --brand: #6366f1;
+      --brand-dark: #4f46e5;
+      --brand-light: #eef2ff;
+      --green: #10b981;
+      --green-light: #d1fae5;
+      --amber: #f59e0b;
+      --amber-light: #fef3c7;
+      --red: #ef4444;
+      --red-light: #fee2e2;
+      --pink: #ec4899;
+      --pink-light: #fce7f3;
+      --purple: #8b5cf6;
+      --purple-light: #f3e8ff;
+      --slate: #64748b;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6;
+    }
+
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, var(--brand), var(--pink));
+      width: 0%; z-index: 1000; transition: width 0.1s;
+    }
+
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px; gap: 16px;
+    }
+    .header-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 17px; color: var(--brand);
+      flex-shrink: 0; text-decoration: none;
+    }
+    .header-logo .logo-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--brand), var(--pink));
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+    .header-nav {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .header-nav a {
+      font-size: 13px; font-weight: 600; color: var(--text-muted);
+      text-decoration: none; padding: 6px 12px; border-radius: 8px; transition: all 0.15s;
+    }
+    .header-nav a:hover { background: var(--brand-light); color: var(--brand); }
+    .header-nav a.active { background: var(--brand-light); color: var(--brand); }
+    .header-badge {
+      background: var(--green); color: #fff; font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px; flex-shrink: 0;
+    }
+
+    .page-wrap { max-width: 1000px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+      border-radius: 20px; padding: 44px 44px 36px; color: #fff;
+      margin-bottom: 36px; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -60px; right: -60px;
+      width: 240px; height: 240px; background: rgba(255,255,255,0.07); border-radius: 50%;
+    }
+    .hero::after {
+      content: ''; position: absolute; bottom: -40px; left: 40%;
+      width: 160px; height: 160px; background: rgba(255,255,255,0.05); border-radius: 50%;
+    }
+    .hero-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; opacity: 0.7; margin-bottom: 10px;
+    }
+    .hero-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .hero-title-block h1 { font-size: 32px; font-weight: 800; line-height: 1.2; margin-bottom: 6px; }
+    .hero-sprint-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+    .hero-sprint-num {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 10px; padding: 6px 14px;
+    }
+    .hero-sprint-num label { font-size: 12px; font-weight: 700; opacity: 0.8; }
+    .hero-sprint-num input[type="number"] {
+      background: transparent; border: none; outline: none; color: #fff;
+      font-size: 18px; font-weight: 800; width: 48px; text-align: center;
+      font-family: inherit;
+    }
+    .hero-sprint-num input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .hero-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .hero-chip {
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 600;
+    }
+    .hero-goal-block { flex: 1; min-width: 260px; }
+    .hero-goal-block label {
+      display: block; font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; opacity: 0.7; margin-bottom: 8px;
+    }
+    .hero-goal-block input {
+      width: 100%; background: rgba(255,255,255,0.15);
+      border: 1.5px solid rgba(255,255,255,0.3); border-radius: 10px;
+      padding: 10px 14px; color: #fff; font-size: 15px; font-weight: 600;
+      font-family: inherit; outline: none; transition: border-color 0.2s;
+    }
+    .hero-goal-block input::placeholder { color: rgba(255,255,255,0.5); }
+    .hero-goal-block input:focus { border-color: rgba(255,255,255,0.7); }
+
+    .section-label {
+      font-size: 11px; font-weight: 700; color: var(--text-muted);
+      letter-spacing: 1.5px; text-transform: uppercase;
+      display: flex; align-items: center; gap: 8px; margin-bottom: 16px;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* Sprint details row */
+    .details-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+      margin-bottom: 32px;
+    }
+    .detail-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px 18px;
+    }
+    .detail-card label {
+      display: block; font-size: 11px; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px;
+    }
+    .detail-card input {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 8px;
+      padding: 8px 10px; font-size: 14px; font-weight: 600; color: var(--text);
+      font-family: inherit; outline: none; background: var(--bg); transition: border-color 0.2s;
+    }
+    .detail-card input:focus { border-color: var(--brand); background: #fff; }
+    .detail-card .detail-icon { font-size: 18px; margin-bottom: 6px; }
+
+    /* Health panel */
+    .health-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+      margin-bottom: 32px;
+    }
+    .health-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px 20px 16px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .health-card .h-label {
+      font-size: 11px; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.8px;
+    }
+    .health-card .h-value {
+      font-size: 36px; font-weight: 800; line-height: 1;
+    }
+    .health-card .h-sub {
+      font-size: 12px; color: var(--text-muted); font-weight: 500;
+    }
+    .health-card.hc-velocity .h-value { color: var(--brand); }
+    .health-card.hc-scope .h-value { color: var(--amber); }
+    .health-card.hc-completion .h-value { color: var(--green); }
+    .h-stepper { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+    .stepper-btn {
+      width: 28px; height: 28px; border-radius: 8px; border: 1.5px solid var(--border);
+      background: var(--bg); color: var(--text); font-size: 16px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s; line-height: 1;
+    }
+    .stepper-btn:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
+    .completion-bar-track {
+      width: 100%; height: 8px; background: var(--border); border-radius: 99px;
+      overflow: hidden; margin-top: 6px;
+    }
+    .completion-bar-fill {
+      height: 100%; background: var(--green); border-radius: 99px;
+      transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    /* Ticket table */
+    .table-wrap {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; margin-bottom: 12px;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      background: var(--bg); padding: 11px 14px; text-align: left;
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--slate); border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+    tbody tr:hover { background: #fafbff; }
+    tbody tr.totals-row { background: var(--brand-light); border-bottom: none; }
+    tbody tr.totals-row:hover { background: var(--brand-light); }
+    td { padding: 11px 14px; font-size: 13px; vertical-align: middle; }
+
+    .td-id { font-weight: 700; color: var(--slate); font-size: 12px; white-space: nowrap; }
+    .td-title input {
+      width: 100%; border: none; background: transparent; font-size: 13px;
+      font-weight: 600; color: var(--text); font-family: inherit; outline: none;
+      padding: 2px 4px; border-radius: 4px; min-width: 180px;
+    }
+    .td-title input:focus { background: var(--brand-light); }
+
+    /* Type badge */
+    .type-select {
+      border: none; background: transparent; font-size: 11px; font-weight: 700;
+      border-radius: 20px; padding: 3px 10px; cursor: pointer; outline: none;
+      font-family: inherit; -webkit-appearance: none; appearance: none;
+    }
+    .type-Feature { background: #e0e7ff; color: #3730a3; }
+    .type-Bug { background: var(--red-light); color: #991b1b; }
+    .type-Tech-Debt { background: var(--amber-light); color: #78350f; }
+    .type-Discovery { background: var(--purple-light); color: #6b21a8; }
+
+    /* Priority badge */
+    .prio-select {
+      border: none; background: transparent; font-size: 11px; font-weight: 700;
+      border-radius: 20px; padding: 3px 10px; cursor: pointer; outline: none;
+      font-family: inherit; -webkit-appearance: none; appearance: none;
+    }
+    .prio-P0 { background: var(--red-light); color: #991b1b; }
+    .prio-P1 { background: var(--amber-light); color: #78350f; }
+    .prio-P2 { background: var(--brand-light); color: #3730a3; }
+    .prio-P3 { background: #f1f5f9; color: var(--slate); }
+
+    /* Estimate input */
+    .est-input {
+      width: 52px; border: 1.5px solid var(--border); border-radius: 6px;
+      padding: 4px 6px; font-size: 13px; font-weight: 700; color: var(--brand);
+      text-align: center; background: var(--bg); font-family: inherit; outline: none;
+    }
+    .est-input:focus { border-color: var(--brand); background: #fff; }
+
+    /* Status badge - clickable cycling */
+    .status-badge {
+      display: inline-block; font-size: 11px; font-weight: 700; padding: 4px 11px;
+      border-radius: 20px; white-space: nowrap; cursor: pointer;
+      user-select: none; transition: transform 0.1s, opacity 0.1s;
+      border: none; font-family: inherit;
+    }
+    .status-badge:hover { opacity: 0.8; transform: scale(1.04); }
+    .status-badge:active { transform: scale(0.97); }
+    .status-Todo { background: #f1f5f9; color: var(--slate); }
+    .status-In-Progress { background: var(--amber-light); color: #78350f; }
+    .status-Done { background: var(--green-light); color: #065f46; }
+    .status-Blocked { background: var(--red-light); color: #991b1b; }
+
+    .td-delete {
+      text-align: center; width: 36px;
+    }
+    .delete-btn {
+      background: none; border: none; cursor: pointer; color: #cbd5e1;
+      font-size: 15px; padding: 2px 4px; border-radius: 4px; transition: color 0.15s;
+      line-height: 1;
+    }
+    .delete-btn:hover { color: var(--red); }
+
+    .totals-label {
+      font-size: 12px; font-weight: 700; color: var(--brand); text-align: right;
+    }
+    .totals-points {
+      font-size: 15px; font-weight: 800; color: var(--brand);
+    }
+
+    .add-row-btn {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--card); border: 1.5px dashed var(--border);
+      border-radius: 10px; padding: 10px 18px; cursor: pointer;
+      color: var(--text-muted); font-size: 13px; font-weight: 600;
+      font-family: inherit; transition: all 0.15s; margin-bottom: 32px;
+    }
+    .add-row-btn:hover {
+      border-color: var(--brand); color: var(--brand); background: var(--brand-light);
+    }
+    .add-row-btn .plus { font-size: 18px; font-weight: 300; line-height: 1; }
+
+    /* Commitment + Notes */
+    .bottom-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+      margin-bottom: 0;
+    }
+    .commitment-card, .notes-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px;
+    }
+    .card-title {
+      font-size: 15px; font-weight: 700; margin-bottom: 4px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
+    .commitment-card textarea, .notes-card textarea {
+      width: 100%; border: 1.5px solid var(--border); border-radius: 10px;
+      padding: 12px 14px; font-size: 13px; font-family: inherit; color: var(--text);
+      resize: vertical; outline: none; background: var(--bg); min-height: 110px;
+      line-height: 1.6; transition: border-color 0.2s;
+    }
+    .commitment-card textarea:focus, .notes-card textarea:focus {
+      border-color: var(--brand); background: #fff;
+    }
+    .blocker-hint {
+      font-size: 11px; color: var(--text-muted); margin-top: 8px;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    /* Save indicator */
+    .save-toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: #1e293b; color: #fff; font-size: 12px; font-weight: 600;
+      padding: 9px 18px; border-radius: 20px; opacity: 0;
+      transition: opacity 0.3s; pointer-events: none; z-index: 999;
+    }
+    .save-toast.visible { opacity: 1; }
+
+    @media (max-width: 800px) {
+      .details-grid { grid-template-columns: 1fr 1fr; }
+      .health-grid { grid-template-columns: 1fr; }
+      .bottom-grid { grid-template-columns: 1fr; }
+      .hero { padding: 28px 22px 24px; }
+      .hero-top { flex-direction: column; }
+      .hero-title-block h1 { font-size: 26px; }
+    }
+    @media (max-width: 560px) {
+      .details-grid { grid-template-columns: 1fr 1fr; }
+      .header-nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<header>
+  <a class="header-logo" href="index.html">
+    <div class="logo-icon">✋</div>
+    Helpy
+  </a>
+  <nav class="header-nav">
+    <a href="vision.html">Vision</a>
+    <a href="okrs.html">OKRs</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="backlog.html">Backlog</a>
+    <a href="sprint.html" class="active">Sprint</a>
+  </nav>
+  <div class="header-badge">LIVE ON APP STORE</div>
+</header>
+
+<div class="page-wrap">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">Agile Delivery</div>
+    <div class="hero-top">
+      <div class="hero-title-block">
+        <div class="hero-sprint-meta">
+          <h1 style="font-size:32px;font-weight:800;line-height:1.2;margin-bottom:0;">Sprint Planning</h1>
+          <div class="hero-sprint-num">
+            <label>SPRINT</label>
+            <input type="number" id="sprint-num" min="1" max="99" value="1" title="Sprint number" />
+          </div>
+        </div>
+        <div class="hero-chips">
+          <span class="hero-chip" id="chip-dates">Set start + end dates below</span>
+          <span class="hero-chip" id="chip-pts">0 pts committed</span>
+          <span class="hero-chip">State saved to localStorage</span>
+        </div>
+      </div>
+      <div class="hero-goal-block">
+        <label>Sprint Goal</label>
+        <input type="text" id="sprint-goal" placeholder="e.g. Ship push notifications to TestFlight and close critical bugs" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Sprint Details -->
+  <div class="section-label">Sprint Details</div>
+  <div class="details-grid">
+    <div class="detail-card">
+      <div class="detail-icon">📅</div>
+      <label for="start-date">Start Date</label>
+      <input type="date" id="start-date" />
+    </div>
+    <div class="detail-card">
+      <div class="detail-icon">🏁</div>
+      <label for="end-date">End Date</label>
+      <input type="date" id="end-date" />
+    </div>
+    <div class="detail-card">
+      <div class="detail-icon">⚡</div>
+      <label for="capacity">Capacity (points)</label>
+      <input type="number" id="capacity" min="0" max="999" placeholder="e.g. 21" />
+    </div>
+    <div class="detail-card">
+      <div class="detail-icon">👥</div>
+      <label for="team-size">Team Size</label>
+      <input type="number" id="team-size" min="1" max="99" placeholder="e.g. 2" />
+    </div>
+  </div>
+
+  <!-- Sprint Health -->
+  <div class="section-label">Sprint Health</div>
+  <div class="health-grid">
+    <div class="health-card hc-velocity">
+      <div class="h-label">Velocity (committed)</div>
+      <div class="h-value" id="velocity-val">0</div>
+      <div class="h-sub">story points in sprint</div>
+    </div>
+    <div class="health-card hc-scope">
+      <div class="h-label">Scope Creep</div>
+      <div class="h-value" id="scope-val">0</div>
+      <div class="h-sub">tickets added mid-sprint</div>
+      <div class="h-stepper">
+        <button class="stepper-btn" onclick="adjustScope(-1)">-</button>
+        <button class="stepper-btn" onclick="adjustScope(1)">+</button>
+      </div>
+    </div>
+    <div class="health-card hc-completion">
+      <div class="h-label">Completion</div>
+      <div class="h-value" id="completion-val">0%</div>
+      <div class="h-sub" id="completion-sub">0 of 0 tickets done</div>
+      <div class="completion-bar-track">
+        <div class="completion-bar-fill" id="completion-bar" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ticket Breakdown -->
+  <div class="section-label">Ticket Breakdown</div>
+  <div class="table-wrap">
+    <table id="ticket-table">
+      <thead>
+        <tr>
+          <th style="width:80px;">Ticket</th>
+          <th>Title</th>
+          <th style="width:110px;">Type</th>
+          <th style="width:80px;">Priority</th>
+          <th style="width:70px; text-align:center;">Points</th>
+          <th style="width:110px;">Status</th>
+          <th style="width:36px;"></th>
+        </tr>
+      </thead>
+      <tbody id="ticket-body">
+        <!-- rows injected by JS -->
+      </tbody>
+    </table>
+  </div>
+  <button class="add-row-btn" onclick="addRow()">
+    <span class="plus">+</span> Add Ticket
+  </button>
+
+  <!-- Commitment + Notes -->
+  <div class="section-label">Commitment and Notes</div>
+  <div class="bottom-grid">
+    <div class="commitment-card">
+      <div class="card-title">🎯 Sprint Commitment</div>
+      <div class="card-subtitle">What does success look like at the end of this sprint?</div>
+      <textarea id="commitment-text" placeholder="e.g. Push notifications confirmed working on a physical device. Helper tiers discovery doc written and reviewed. BrowseScreen card layout bug closed..."></textarea>
+    </div>
+    <div class="notes-card">
+      <div class="card-title">🚧 Blockers and Notes</div>
+      <div class="card-subtitle">Risks, dependencies, decisions, open questions</div>
+      <textarea id="notes-text" placeholder="e.g. Blocked: EAS build credits almost out (1 remaining this month). Need physical iOS device for push notification test. Google Play deferred - focus on iOS first..."></textarea>
+      <div class="blocker-hint">
+        <span>💡</span> Flag blockers early - surface them in standup, not at sprint review.
+      </div>
+    </div>
+  </div>
+
+</div><!-- end page-wrap -->
+
+<div class="save-toast" id="save-toast">Saved</div>
+
+<script>
+  // ---- Data model ----
+  const DEFAULT_TICKETS = [
+    { id: 'HLP-38', title: 'Test push notifications on physical device', type: 'Feature', priority: 'P0', points: 3, status: 'Todo' },
+    { id: 'HLP-39', title: 'Google Play store listing and AAB build', type: 'Feature', priority: 'P1', points: 5, status: 'Todo' },
+    { id: 'HLP-40', title: 'Helper tiers - discovery and design doc', type: 'Discovery', priority: 'P2', points: 2, status: 'Todo' },
+    { id: 'HLP-41', title: 'Fix Maestro UI tests (simulator network flakiness)', type: 'Bug', priority: 'P1', points: 3, status: 'Todo' },
+    { id: 'HLP-42', title: 'RLS policies audit - apply to all 5 core tables', type: 'Tech-Debt', priority: 'P0', points: 5, status: 'Todo' },
+    { id: 'HLP-43', title: 'Sentry + PostHog - verify events in dashboard', type: 'Feature', priority: 'P2', points: 1, status: 'Todo' },
+  ];
+
+  const STORAGE_KEY = 'helpy_sprint_v2';
+  let tickets = [];
+  let scopeCreep = 0;
+  let nextRowNum = 44;
+
+  const STATUS_CYCLE = ['Todo', 'In Progress', 'Done', 'Blocked'];
+  const TYPE_OPTIONS = ['Feature', 'Bug', 'Tech-Debt', 'Discovery'];
+  const PRIO_OPTIONS = ['P0', 'P1', 'P2', 'P3'];
+
+  // ---- Persistence ----
+  function saveState() {
+    const state = {
+      sprintNum: document.getElementById('sprint-num').value,
+      goal: document.getElementById('sprint-goal').value,
+      startDate: document.getElementById('start-date').value,
+      endDate: document.getElementById('end-date').value,
+      capacity: document.getElementById('capacity').value,
+      teamSize: document.getElementById('team-size').value,
+      commitment: document.getElementById('commitment-text').value,
+      notes: document.getElementById('notes-text').value,
+      tickets,
+      scopeCreep,
+      nextRowNum,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    flashSave();
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return false;
+      const s = JSON.parse(raw);
+      document.getElementById('sprint-num').value = s.sprintNum || 1;
+      document.getElementById('sprint-goal').value = s.goal || '';
+      document.getElementById('start-date').value = s.startDate || '';
+      document.getElementById('end-date').value = s.endDate || '';
+      document.getElementById('capacity').value = s.capacity || '';
+      document.getElementById('team-size').value = s.teamSize || '';
+      document.getElementById('commitment-text').value = s.commitment || '';
+      document.getElementById('notes-text').value = s.notes || '';
+      tickets = s.tickets || [];
+      scopeCreep = s.scopeCreep || 0;
+      nextRowNum = s.nextRowNum || 44;
+      return true;
+    } catch(e) { return false; }
+  }
+
+  let saveTimer;
+  function debounceSave() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveState, 600);
+  }
+
+  let toastTimer;
+  function flashSave() {
+    const t = document.getElementById('save-toast');
+    t.classList.add('visible');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('visible'), 1600);
+  }
+
+  // ---- Render ----
+  function render() {
+    renderTable();
+    updateHealth();
+    updateChips();
+  }
+
+  function renderTable() {
+    const tbody = document.getElementById('ticket-body');
+    tbody.innerHTML = '';
+
+    tickets.forEach((tk, i) => {
+      const tr = document.createElement('tr');
+      tr.dataset.index = i;
+
+      // Type class (spaces -> hyphens for CSS)
+      const typeCls = 'type-' + tk.type.replace(/\s/g, '-');
+      const prioCls = 'prio-' + tk.priority;
+      const statusCls = 'status-' + tk.status.replace(/\s/g, '-');
+
+      tr.innerHTML = `
+        <td class="td-id">${escHtml(tk.id)}</td>
+        <td class="td-title"><input type="text" value="${escHtml(tk.title)}" placeholder="Ticket title..." data-field="title" data-idx="${i}" /></td>
+        <td>
+          <select class="type-select ${typeCls}" data-field="type" data-idx="${i}">
+            ${TYPE_OPTIONS.map(o => `<option value="${o}" ${o===tk.type?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </td>
+        <td>
+          <select class="prio-select ${prioCls}" data-field="priority" data-idx="${i}">
+            ${PRIO_OPTIONS.map(o => `<option value="${o}" ${o===tk.priority?'selected':''}>${o}</option>`).join('')}
+          </select>
+        </td>
+        <td style="text-align:center;">
+          <input class="est-input" type="number" min="0" max="99" value="${tk.points}" data-field="points" data-idx="${i}" />
+        </td>
+        <td>
+          <button class="status-badge ${statusCls}" data-field="status" data-idx="${i}">
+            ${tk.status === 'In Progress' ? 'In Progress' : tk.status}
+          </button>
+        </td>
+        <td class="td-delete">
+          <button class="delete-btn" data-delete="${i}" title="Remove ticket">&#x2715;</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // Totals row
+    const totalPts = tickets.reduce((s, t) => s + (parseInt(t.points)||0), 0);
+    const tr = document.createElement('tr');
+    tr.className = 'totals-row';
+    tr.innerHTML = `
+      <td colspan="4" class="totals-label">Total committed points</td>
+      <td style="text-align:center;" class="totals-points">${totalPts}</td>
+      <td colspan="2"></td>
+    `;
+    tbody.appendChild(tr);
+
+    // Attach events
+    tbody.querySelectorAll('input[data-field="title"]').forEach(el => {
+      el.addEventListener('input', e => {
+        tickets[+e.target.dataset.idx].title = e.target.value;
+        updateHealth(); updateChips(); debounceSave();
+      });
+    });
+    tbody.querySelectorAll('input[data-field="points"]').forEach(el => {
+      el.addEventListener('input', e => {
+        tickets[+e.target.dataset.idx].points = parseInt(e.target.value) || 0;
+        // Update totals row without full re-render
+        updateTotalsRow();
+        updateHealth(); updateChips(); debounceSave();
+      });
+    });
+    tbody.querySelectorAll('select[data-field="type"]').forEach(el => {
+      el.addEventListener('change', e => {
+        const idx = +e.target.dataset.idx;
+        tickets[idx].type = e.target.value;
+        e.target.className = 'type-select type-' + e.target.value.replace(/\s/g, '-');
+        debounceSave();
+      });
+    });
+    tbody.querySelectorAll('select[data-field="priority"]').forEach(el => {
+      el.addEventListener('change', e => {
+        const idx = +e.target.dataset.idx;
+        tickets[idx].priority = e.target.value;
+        e.target.className = 'prio-select prio-' + e.target.value;
+        debounceSave();
+      });
+    });
+    tbody.querySelectorAll('button[data-field="status"]').forEach(el => {
+      el.addEventListener('click', e => {
+        const idx = +e.currentTarget.dataset.idx;
+        const cur = tickets[idx].status;
+        const next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(cur) + 1) % STATUS_CYCLE.length];
+        tickets[idx].status = next;
+        const cls = 'status-' + next.replace(/\s/g, '-');
+        e.currentTarget.className = 'status-badge ' + cls;
+        e.currentTarget.textContent = next;
+        updateHealth(); debounceSave();
+      });
+    });
+    tbody.querySelectorAll('button[data-delete]').forEach(el => {
+      el.addEventListener('click', e => {
+        const idx = +e.currentTarget.dataset.delete;
+        tickets.splice(idx, 1);
+        render(); debounceSave();
+      });
+    });
+  }
+
+  function updateTotalsRow() {
+    const totalPts = tickets.reduce((s, t) => s + (parseInt(t.points)||0), 0);
+    const totalsCell = document.querySelector('.totals-row .totals-points');
+    if (totalsCell) totalsCell.textContent = totalPts;
+  }
+
+  function updateHealth() {
+    const totalPts = tickets.reduce((s, t) => s + (parseInt(t.points)||0), 0);
+    const done = tickets.filter(t => t.status === 'Done').length;
+    const total = tickets.length;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+    document.getElementById('velocity-val').textContent = totalPts;
+    document.getElementById('scope-val').textContent = scopeCreep;
+    document.getElementById('completion-val').textContent = pct + '%';
+    document.getElementById('completion-sub').textContent = done + ' of ' + total + ' ticket' + (total!==1?'s':'') + ' done';
+    document.getElementById('completion-bar').style.width = pct + '%';
+  }
+
+  function updateChips() {
+    const totalPts = tickets.reduce((s, t) => s + (parseInt(t.points)||0), 0);
+    const sd = document.getElementById('start-date').value;
+    const ed = document.getElementById('end-date').value;
+    let dateStr = 'Set start + end dates below';
+    if (sd && ed) {
+      const fmt = d => { const p = d.split('-'); return p[2]+'/'+p[1]+'/'+p[0].slice(2); };
+      dateStr = fmt(sd) + ' - ' + fmt(ed);
+    } else if (sd) {
+      const fmt = d => { const p = d.split('-'); return p[2]+'/'+p[1]+'/'+p[0].slice(2); };
+      dateStr = 'From ' + fmt(sd);
+    }
+    document.getElementById('chip-dates').textContent = dateStr;
+    document.getElementById('chip-pts').textContent = totalPts + ' pt' + (totalPts!==1?'s':'') + ' committed';
+  }
+
+  function adjustScope(delta) {
+    scopeCreep = Math.max(0, scopeCreep + delta);
+    updateHealth();
+    debounceSave();
+  }
+
+  function addRow() {
+    const id = 'HLP-' + nextRowNum++;
+    tickets.push({ id, title: '', type: 'Feature', priority: 'P2', points: 0, status: 'Todo' });
+    render();
+    debounceSave();
+    // Focus the new title input
+    setTimeout(() => {
+      const inputs = document.querySelectorAll('#ticket-body input[data-field="title"]');
+      if (inputs.length > 0) inputs[inputs.length - 1].focus();
+    }, 50);
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ---- Global input listeners ----
+  ['sprint-num','sprint-goal','start-date','end-date','capacity','team-size','commitment-text','notes-text'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', () => { updateChips(); debounceSave(); });
+    el.addEventListener('change', () => { updateChips(); debounceSave(); });
+  });
+
+  // ---- Scroll progress bar ----
+  window.addEventListener('scroll', () => {
+    const el = document.documentElement;
+    const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+  });
+
+  // ---- Init ----
+  const hadSaved = loadState();
+  if (!hadSaved || tickets.length === 0) {
+    tickets = DEFAULT_TICKETS.map(t => ({...t}));
+  }
+  render();
+</script>
+</body>
+</html>

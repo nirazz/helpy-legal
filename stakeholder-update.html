@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stakeholder Update - Helpy</title>
+  <style>
+    :root {
+      --brand: #6366f1;
+      --brand-dark: #4f46e5;
+      --brand-light: #eef2ff;
+      --green: #10b981;
+      --green-light: #d1fae5;
+      --amber: #f59e0b;
+      --amber-light: #fef3c7;
+      --red: #ef4444;
+      --red-light: #fee2e2;
+      --pink: #ec4899;
+      --pink-light: #fce7f3;
+      --slate: #64748b;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Reading progress bar */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, var(--brand), var(--pink));
+      width: 0%; z-index: 1000; transition: width 0.1s;
+    }
+
+    /* Header */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(248,250,252,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px; gap: 16px;
+    }
+    .header-brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .header-logo {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--brand), var(--pink));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .header-title { font-size: 15px; font-weight: 700; color: var(--text); }
+    .header-subtitle { font-size: 12px; color: var(--slate); }
+    .header-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+    /* Status pill - clickable cycle */
+    .status-pill {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 700;
+      cursor: pointer; border: none; letter-spacing: 0.3px;
+      transition: all 0.15s; user-select: none;
+    }
+    .status-pill .dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+    .status-pill.on-track { background: var(--green-light); color: #065f46; }
+    .status-pill.on-track .dot { background: var(--green); }
+    .status-pill.at-risk { background: var(--amber-light); color: #92400e; }
+    .status-pill.at-risk .dot { background: var(--amber); }
+    .status-pill.off-track { background: var(--red-light); color: #991b1b; }
+    .status-pill.off-track .dot { background: var(--red); }
+
+    /* Week picker */
+    .week-picker {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--card); border: 1.5px solid var(--border);
+      border-radius: 10px; padding: 5px 12px; font-size: 12px;
+    }
+    .week-picker input[type="week"] {
+      border: none; background: transparent; font-size: 12px; font-family: inherit;
+      color: var(--text); outline: none; cursor: pointer;
+    }
+    .week-label { font-weight: 700; color: var(--brand); }
+    .week-range { color: var(--text-muted); }
+
+    /* Main layout */
+    .page-wrap { max-width: 980px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+      border-radius: 20px; padding: 40px 40px 36px; color: #fff;
+      margin-bottom: 32px; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -50px; right: -50px;
+      width: 220px; height: 220px; background: rgba(255,255,255,0.07);
+      border-radius: 50%;
+    }
+    .hero::after {
+      content: ''; position: absolute; bottom: -60px; left: 30%;
+      width: 160px; height: 160px; background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+    .hero-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; opacity: 0.7; margin-bottom: 8px;
+    }
+    .hero-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .hero h1 { font-size: 28px; font-weight: 800; line-height: 1.2; margin-bottom: 6px; }
+    .hero-meta { font-size: 14px; opacity: 0.8; display: flex; gap: 16px; flex-wrap: wrap; }
+    .hero-meta span { display: flex; align-items: center; gap: 5px; }
+
+    /* TL;DR box */
+    .tldr-wrap {
+      background: var(--brand-light); border: 2px solid var(--brand);
+      border-radius: var(--radius); padding: 20px 24px; margin-bottom: 28px;
+    }
+    .tldr-header {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: var(--brand-dark); margin-bottom: 10px;
+    }
+    .tldr-icon { font-size: 14px; }
+    .tldr-text {
+      font-size: 14px; color: #1e1b4b; line-height: 1.7;
+      border: none; background: transparent; width: 100%;
+      font-family: inherit; resize: vertical; min-height: 64px;
+      outline: none;
+    }
+    .tldr-hint { font-size: 11px; color: var(--brand); margin-top: 6px; opacity: 0.7; }
+
+    /* Section label */
+    .section-label {
+      font-size: 11px; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 1px;
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 14px; margin-top: 36px;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    /* 2x2 grid */
+    .quad-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 4px;
+    }
+    @media (max-width: 680px) { .quad-grid { grid-template-columns: 1fr; } }
+
+    /* Quad card */
+    .quad-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .quad-card-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px 12px; border-bottom: 1px solid var(--border);
+    }
+    .quad-card-title {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 14px; font-weight: 700;
+    }
+    .quad-icon {
+      width: 30px; height: 30px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0;
+    }
+    .qi-shipped { background: var(--green-light); }
+    .qi-progress { background: var(--brand-light); }
+    .qi-blocked { background: var(--red-light); }
+    .qi-next { background: var(--amber-light); }
+
+    .add-item-btn {
+      width: 26px; height: 26px; border-radius: 7px; border: 1.5px dashed var(--border);
+      background: transparent; cursor: pointer; font-size: 16px; color: var(--text-muted);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s; flex-shrink: 0;
+    }
+    .add-item-btn:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
+
+    .quad-body { padding: 8px 0; min-height: 60px; }
+
+    /* Shipped items */
+    .shipped-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 14px; transition: background 0.1s;
+    }
+    .shipped-item:hover { background: var(--bg); }
+    .shipped-check {
+      width: 18px; height: 18px; border-radius: 5px;
+      background: var(--green); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .shipped-check svg { width: 10px; height: 8px; }
+    .shipped-label { font-size: 13px; flex: 1; }
+    .shipped-label[contenteditable="true"]:focus { outline: 1px dashed var(--border); border-radius: 4px; padding: 1px 4px; }
+
+    /* Category badge */
+    .cat-badge {
+      font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+      letter-spacing: 0.3px; flex-shrink: 0; cursor: pointer;
+      border: none; font-family: inherit;
+    }
+    .cat-badge.feature { background: var(--brand-light); color: var(--brand-dark); }
+    .cat-badge.fix { background: var(--green-light); color: #065f46; }
+    .cat-badge.infra { background: #f1f5f9; color: #475569; }
+
+    .item-remove-btn {
+      width: 18px; height: 18px; border-radius: 4px; border: none;
+      background: transparent; cursor: pointer; font-size: 13px;
+      color: var(--text-muted); opacity: 0; transition: opacity 0.15s;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .shipped-item:hover .item-remove-btn,
+    .progress-item:hover .item-remove-btn,
+    .blocked-item:hover .item-remove-btn,
+    .next-item:hover .item-remove-btn { opacity: 1; }
+    .item-remove-btn:hover { color: var(--red); background: var(--red-light); }
+
+    /* In-progress items */
+    .progress-item {
+      padding: 10px 14px; transition: background 0.1s;
+    }
+    .progress-item:hover { background: var(--bg); }
+    .progress-item + .progress-item { border-top: 1px solid var(--border); }
+    .progress-row1 { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .progress-label { font-size: 13px; flex: 1; font-weight: 600; }
+    .progress-label[contenteditable="true"]:focus { outline: 1px dashed var(--border); border-radius: 4px; padding: 1px 4px; }
+    .owner-chip {
+      font-size: 10px; font-weight: 700; background: #f1f5f9;
+      color: #475569; padding: 2px 8px; border-radius: 10px;
+      border: none; font-family: inherit; cursor: pointer;
+    }
+    .eta-chip {
+      font-size: 10px; color: var(--text-muted); background: var(--amber-light);
+      padding: 2px 8px; border-radius: 10px; white-space: nowrap;
+      border: none; font-family: inherit; cursor: pointer; color: #92400e;
+    }
+    .progress-bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .progress-track {
+      flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden;
+    }
+    .progress-fill-bar {
+      height: 100%; border-radius: 3px;
+      background: linear-gradient(90deg, var(--brand), var(--pink));
+      transition: width 0.3s;
+    }
+    .progress-pct { font-size: 11px; font-weight: 700; color: var(--brand); min-width: 30px; text-align: right; }
+    .progress-slider {
+      width: 100%; accent-color: var(--brand); cursor: pointer;
+      height: 4px; margin-top: 4px;
+    }
+
+    /* Blocked items */
+    .blocked-item {
+      padding: 10px 14px; border-left: 3px solid var(--red);
+      margin: 6px 10px; border-radius: 0 8px 8px 0;
+      background: #fff8f8; transition: background 0.1s;
+    }
+    .blocked-item:hover { background: var(--red-light); }
+    .blocked-row1 { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .blocked-title { font-size: 13px; font-weight: 700; flex: 1; }
+    .blocked-title[contenteditable="true"]:focus { outline: 1px dashed var(--border); border-radius: 4px; padding: 1px 4px; }
+    .blocked-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+    .blocked-desc[contenteditable="true"]:focus { outline: 1px dashed var(--border); border-radius: 4px; padding: 1px 4px; }
+    .mitigation-row { display: flex; align-items: flex-start; gap: 5px; }
+    .mitigation-label { font-size: 11px; font-weight: 700; color: var(--green); flex-shrink: 0; margin-top: 1px; }
+    .mitigation-text { font-size: 11px; color: #065f46; }
+    .mitigation-text[contenteditable="true"]:focus { outline: 1px dashed var(--border); border-radius: 4px; padding: 1px 4px; }
+
+    .blocked-empty, .next-empty {
+      padding: 20px 14px; text-align: center;
+      font-size: 13px; color: var(--text-muted);
+    }
+
+    /* Next week items */
+    .next-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 14px; transition: background 0.1s;
+    }
+    .next-item:hover { background: var(--bg); }
+    .next-bullet {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--amber); flex-shrink: 0;
+    }
+    .next-label { font-size: 13px; flex: 1; }
+    .next-label[contenteditable="true"]:focus { outline: 1px dashed var(--border); border-radius: 4px; padding: 1px 4px; }
+    .pri-badge {
+      font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+      letter-spacing: 0.3px; border: none; font-family: inherit; cursor: pointer;
+      flex-shrink: 0;
+    }
+    .pri-badge.p0 { background: var(--red-light); color: #991b1b; }
+    .pri-badge.p1 { background: var(--amber-light); color: #92400e; }
+    .pri-badge.p2 { background: var(--brand-light); color: var(--brand-dark); }
+
+    /* Metrics row */
+    .metrics-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 14px; margin-bottom: 4px;
+    }
+    @media (max-width: 680px) { .metrics-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 380px) { .metrics-grid { grid-template-columns: 1fr; } }
+
+    .metric-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px 18px;
+      transition: box-shadow 0.2s;
+    }
+    .metric-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+    .metric-label {
+      font-size: 11px; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px;
+    }
+    .metric-value {
+      font-size: 28px; font-weight: 800; color: var(--text);
+      line-height: 1; margin-bottom: 6px;
+      border: none; background: transparent; width: 100%;
+      font-family: inherit; outline: none;
+    }
+    .metric-value:focus { border-bottom: 2px solid var(--brand); }
+    .metric-delta {
+      font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 4px;
+    }
+    .delta-up { color: var(--green); }
+    .delta-down { color: var(--red); }
+    .delta-flat { color: var(--text-muted); }
+    .delta-input {
+      border: none; background: transparent; font-size: 12px; font-weight: 600;
+      font-family: inherit; outline: none; width: 100%;
+    }
+    .delta-up .delta-input { color: var(--green); }
+    .delta-down .delta-input { color: var(--red); }
+    .delta-flat .delta-input { color: var(--text-muted); }
+
+    /* Decisions */
+    .decisions-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; margin-bottom: 4px;
+    }
+    .decisions-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px; border-bottom: 1px solid var(--border);
+    }
+    .decisions-title { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; }
+    .decisions-body { padding: 8px 0; }
+    .decision-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 8px 16px; transition: background 0.1s;
+    }
+    .decision-item:hover { background: var(--bg); }
+    .decision-bullet { color: var(--brand); font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+    .decision-text { font-size: 13px; flex: 1; line-height: 1.5; }
+    .decision-text[contenteditable="true"]:focus { outline: 1px dashed var(--border); border-radius: 4px; padding: 1px 4px; }
+
+    /* Ask box */
+    .ask-wrap {
+      background: #fffbeb; border: 2px solid var(--amber);
+      border-radius: var(--radius); padding: 20px 24px; margin-bottom: 4px;
+    }
+    .ask-header {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; color: #92400e; margin-bottom: 10px;
+    }
+    .ask-text {
+      font-size: 14px; color: #451a03; line-height: 1.7;
+      border: none; background: transparent; width: 100%;
+      font-family: inherit; resize: vertical; min-height: 56px;
+      outline: none;
+    }
+    .ask-hint { font-size: 11px; color: var(--amber); margin-top: 6px; opacity: 0.8; }
+
+    /* History */
+    .history-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+    }
+    .history-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 16px;
+    }
+    .history-title { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; }
+    .history-actions { display: flex; gap: 8px; }
+    .save-btn {
+      padding: 7px 18px; border-radius: 8px; border: none;
+      background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+      color: white; font-size: 13px; font-weight: 700;
+      cursor: pointer; font-family: inherit; transition: opacity 0.15s;
+    }
+    .save-btn:hover { opacity: 0.88; }
+    .save-btn:active { opacity: 0.75; }
+    .toggle-history-btn {
+      padding: 7px 16px; border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: white; color: var(--text-muted); font-size: 13px;
+      font-weight: 600; cursor: pointer; font-family: inherit;
+      transition: all 0.15s;
+    }
+    .toggle-history-btn:hover { border-color: var(--brand); color: var(--brand); }
+
+    .history-list { border-top: 1px solid var(--border); display: none; }
+    .history-list.open { display: block; }
+    .history-empty {
+      padding: 24px; text-align: center;
+      font-size: 13px; color: var(--text-muted);
+    }
+    .history-week {
+      padding: 0; border-bottom: 1px solid var(--border);
+    }
+    .history-week:last-child { border-bottom: none; }
+    .history-week-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; cursor: pointer; transition: background 0.1s;
+      user-select: none;
+    }
+    .history-week-header:hover { background: var(--bg); }
+    .history-week-meta { display: flex; align-items: center; gap: 10px; }
+    .history-week-label { font-size: 13px; font-weight: 700; }
+    .history-week-range { font-size: 12px; color: var(--text-muted); }
+    .history-week-status { font-size: 11px; font-weight: 700; }
+    .history-week-body { padding: 14px 16px; background: var(--bg); display: none; font-size: 13px; line-height: 1.7; }
+    .history-week-body.open { display: block; }
+    .history-week-body pre { white-space: pre-wrap; font-family: inherit; color: #334155; }
+    .history-del-btn {
+      font-size: 11px; color: var(--red); background: none;
+      border: none; cursor: pointer; font-family: inherit; opacity: 0.5;
+    }
+    .history-del-btn:hover { opacity: 1; }
+
+    /* Save toast */
+    .save-toast {
+      position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: #1e293b; color: white; padding: 10px 22px; border-radius: 40px;
+      font-size: 13px; font-weight: 600; opacity: 0;
+      transition: all 0.3s; z-index: 500; pointer-events: none;
+    }
+    .save-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Misc */
+    [contenteditable="true"] { cursor: text; }
+    [contenteditable="true"]:hover { background: rgba(99,102,241,0.04); border-radius: 4px; }
+    .card-divider { height: 1px; background: var(--border); margin: 0 14px; }
+    .empty-hint { padding: 16px 14px; font-size: 13px; color: var(--text-muted); text-align: center; }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<header>
+  <div class="header-brand">
+    <div class="header-logo">&#x1F91D;</div>
+    <div>
+      <div class="header-title">Helpy</div>
+      <div class="header-subtitle">Stakeholder Update</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="week-picker">
+      <span class="week-label" id="week-num-display">W11</span>
+      <input type="week" id="week-input" value="2026-W11" />
+      <span class="week-range" id="week-range-display">Mar 9 - 14</span>
+    </div>
+    <button class="status-pill on-track" id="status-pill" onclick="cycleStatus()" title="Click to change status">
+      <span class="dot"></span>
+      <span id="status-label">On Track</span>
+    </button>
+  </div>
+</header>
+
+<div class="page-wrap">
+
+  <!-- TL;DR -->
+  <div class="tldr-wrap">
+    <div class="tldr-header">
+      <span class="tldr-icon">&#x26A1;</span>
+      TL;DR - For busy stakeholders
+    </div>
+    <textarea class="tldr-text" id="tldr-text" rows="3">Helpy completed its best engineering week yet - shipped edit request, the celebration sheet for offer-sent, and ChatScreen redesign. All 16/16 health checks are green, push notification infra is confirmed live, and the app is in review for v1.0.1. No blockers; focus next week shifts to growth and device-testing push notifications.</textarea>
+    <div class="tldr-hint">Click to edit - this is what stakeholders read first.</div>
+  </div>
+
+  <!-- 2x2 Grid -->
+  <div class="section-label">Weekly Snapshot</div>
+
+  <div class="quad-grid">
+
+    <!-- Shipped -->
+    <div class="quad-card">
+      <div class="quad-card-header">
+        <div class="quad-card-title">
+          <div class="quad-icon qi-shipped">&#x2705;</div>
+          Shipped This Week
+        </div>
+        <button class="add-item-btn" onclick="addShipped()" title="Add item">+</button>
+      </div>
+      <div class="quad-body" id="shipped-list">
+        <!-- items injected by JS -->
+      </div>
+    </div>
+
+    <!-- In Progress -->
+    <div class="quad-card">
+      <div class="quad-card-header">
+        <div class="quad-card-title">
+          <div class="quad-icon qi-progress">&#x1F6A7;</div>
+          In Progress
+        </div>
+        <button class="add-item-btn" onclick="addInProgress()" title="Add item">+</button>
+      </div>
+      <div class="quad-body" id="progress-list">
+        <!-- items injected by JS -->
+      </div>
+    </div>
+
+    <!-- Blocked -->
+    <div class="quad-card">
+      <div class="quad-card-header">
+        <div class="quad-card-title">
+          <div class="quad-icon qi-blocked">&#x26D4;</div>
+          Blocked / At Risk
+        </div>
+        <button class="add-item-btn" onclick="addBlocked()" title="Add item">+</button>
+      </div>
+      <div class="quad-body" id="blocked-list">
+        <!-- items injected by JS -->
+      </div>
+    </div>
+
+    <!-- Next Week -->
+    <div class="quad-card">
+      <div class="quad-card-header">
+        <div class="quad-card-title">
+          <div class="quad-icon qi-next">&#x1F4C5;</div>
+          Next Week
+        </div>
+        <button class="add-item-btn" onclick="addNextWeek()" title="Add item">+</button>
+      </div>
+      <div class="quad-body" id="next-list">
+        <!-- items injected by JS -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Metrics -->
+  <div class="section-label">Metrics Snapshot</div>
+  <div class="metrics-grid" id="metrics-grid">
+    <!-- injected by JS -->
+  </div>
+
+  <!-- Key Decisions -->
+  <div class="section-label">Key Decisions Made</div>
+  <div class="decisions-card">
+    <div class="decisions-header">
+      <div class="decisions-title">
+        <span>&#x1F4A1;</span>
+        Decisions &amp; Rationale
+      </div>
+      <button class="add-item-btn" onclick="addDecision()" title="Add decision">+</button>
+    </div>
+    <div class="decisions-body" id="decisions-list">
+      <!-- injected by JS -->
+    </div>
+  </div>
+
+  <!-- Ask -->
+  <div class="section-label">Ask - What I Need</div>
+  <div class="ask-wrap">
+    <div class="ask-header">
+      <span>&#x1F64B;</span>
+      What I need from stakeholders this week
+    </div>
+    <textarea class="ask-text" id="ask-text" rows="3">Need 5 people to test the TestFlight build (v1.0.1) on a physical device and confirm push notifications arrive on swipe right + new message. Also need a decision on whether to pursue Google Play in parallel or wait for iOS traction data (target: 50 MAU before Android investment).</textarea>
+    <div class="ask-hint">Click to edit - be specific about what you need and when.</div>
+  </div>
+
+  <!-- History -->
+  <div class="section-label">Update History</div>
+  <div class="history-card">
+    <div class="history-header">
+      <div class="history-title">
+        <span>&#x1F4C2;</span>
+        Saved Updates
+      </div>
+      <div class="history-actions">
+        <button class="toggle-history-btn" onclick="toggleHistory()">View History</button>
+        <button class="save-btn" onclick="saveWeek()">Save This Week</button>
+      </div>
+    </div>
+    <div class="history-list" id="history-list">
+      <div class="history-empty" id="history-empty">No saved updates yet. Click "Save This Week" to snapshot the current state.</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="save-toast" id="save-toast">Week saved to history</div>
+
+<script>
+// ---- Status cycle ----
+const STATUS_CYCLE = ['on-track', 'at-risk', 'off-track'];
+const STATUS_LABELS = { 'on-track': 'On Track', 'at-risk': 'At Risk', 'off-track': 'Off Track' };
+let currentStatus = 'on-track';
+
+function cycleStatus() {
+  const i = STATUS_CYCLE.indexOf(currentStatus);
+  currentStatus = STATUS_CYCLE[(i + 1) % STATUS_CYCLE.length];
+  const pill = document.getElementById('status-pill');
+  pill.className = 'status-pill ' + currentStatus;
+  document.getElementById('status-label').textContent = STATUS_LABELS[currentStatus];
+}
+
+// ---- Week picker ----
+function updateWeekDisplay(val) {
+  if (!val) return;
+  const [year, week] = val.split('-W');
+  const wNum = parseInt(week, 10);
+  const d = new Date(parseInt(year, 10), 0, 4);
+  d.setDate(d.getDate() + (wNum - 1) * 7 - (d.getDay() || 7) + 1);
+  const end = new Date(d); end.setDate(d.getDate() + 5);
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const rangeStr = d.getMonth() === end.getMonth()
+    ? months[d.getMonth()] + ' ' + d.getDate() + ' - ' + end.getDate()
+    : months[d.getMonth()] + ' ' + d.getDate() + ' - ' + months[end.getMonth()] + ' ' + end.getDate();
+  document.getElementById('week-num-display').textContent = 'W' + wNum;
+  document.getElementById('week-range-display').textContent = rangeStr;
+}
+document.getElementById('week-input').addEventListener('change', function() {
+  updateWeekDisplay(this.value);
+});
+updateWeekDisplay('2026-W11');
+
+// ---- Reading progress ----
+window.addEventListener('scroll', function() {
+  const doc = document.documentElement;
+  const pct = (doc.scrollTop / (doc.scrollHeight - doc.clientHeight)) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+});
+
+// ---- Data ----
+const shipped = [
+  { label: 'Edit request - users can edit from MyRequestsScreen', cat: 'feature' },
+  { label: 'Celebration bottom sheet for "Offer Sent" (replaces pill toast)', cat: 'feature' },
+  { label: 'ChatScreen redesign - pending offers split from active chats', cat: 'feature' },
+  { label: 'Toast undo race condition fix (4200ms delay on createMatch)', cat: 'fix' },
+  { label: 'Health check skill - 16/16 checks passing', cat: 'infra' },
+  { label: 'All Growth & Retention backlog items completed', cat: 'feature' },
+];
+
+const inProgress = [
+  { label: 'Push notifications - device test', owner: 'Nir', eta: 'Mar 16', pct: 80 },
+  { label: 'v1.0.1 App Store review', owner: 'Apple', eta: 'Mar 16', pct: 60 },
+  { label: 'Maestro UI test suite - fix flaky flows', owner: 'Nir', eta: 'Mar 21', pct: 30 },
+];
+
+const blocked = [
+  {
+    title: 'Push notifications - can only test on physical device',
+    desc: 'Expo Go + simulator do not support APNs. Need real device on TestFlight.',
+    mitigation: 'Build 1.0.1 is in TestFlight. Need 1 volunteer tester with physical iPhone.'
+  }
+];
+
+const nextWeek = [
+  { label: 'Test push notifications end-to-end on physical device', pri: 'p0' },
+  { label: 'Google Play decision - parallel or wait for iOS data', pri: 'p0' },
+  { label: 'First user acquisition experiment - invite referral loop', pri: 'p1' },
+  { label: 'PostHog funnel review - swipe right to match_created conversion', pri: 'p1' },
+  { label: 'Swoop app - end-to-end flow test (browse to chat)', pri: 'p2' },
+];
+
+const metricsData = [
+  { label: 'WAU', value: '--', delta: '', deltaDir: 'flat', deltaArrow: '-' },
+  { label: 'Matches Created', value: '--', delta: '', deltaDir: 'flat', deltaArrow: '-' },
+  { label: 'App Store Rating', value: '--', delta: 'Pending first reviews', deltaDir: 'flat', deltaArrow: '' },
+  { label: 'Crash-free Rate', value: '100%', delta: 'No Sentry events yet', deltaDir: 'up', deltaArrow: '' },
+];
+
+const decisions = [
+  'Deferred Google Play until iOS reaches ~50 MAU - not enough users to justify 20-tester recruitment cost.',
+  'Deferred Helper Tiers feature - social proof mechanics need more users to be meaningful.',
+  'Chose Supabase pg_cron for request auto-expiry (7 days) over client-side logic - more reliable at scale.',
+  'Celebration bottom sheet replaces pill toast for "Offer Sent" - better emotional feedback loop, higher perceived quality.',
+];
+
+// ---- Render shipped ----
+function renderShipped() {
+  const el = document.getElementById('shipped-list');
+  if (!shipped.length) { el.innerHTML = '<div class="empty-hint">Nothing shipped yet - add items above.</div>'; return; }
+  el.innerHTML = shipped.map((item, i) => `
+    <div class="shipped-item">
+      <div class="shipped-check">
+        <svg viewBox="0 0 10 8" fill="none">
+          <path d="M1 4l3 3 5-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="shipped-label" contenteditable="true" onblur="shipped[${i}].label=this.textContent">${item.label}</span>
+      <button class="cat-badge ${item.cat}" onclick="cycleCat(this, ${i})" title="Click to change category">${item.cat.charAt(0).toUpperCase()+item.cat.slice(1)}</button>
+      <button class="item-remove-btn" onclick="removeShipped(${i})" title="Remove">x</button>
+    </div>
+  `).join('');
+}
+
+function cycleCat(btn, i) {
+  const cats = ['feature', 'fix', 'infra'];
+  const cur = shipped[i].cat;
+  shipped[i].cat = cats[(cats.indexOf(cur) + 1) % cats.length];
+  renderShipped();
+}
+
+function removeShipped(i) {
+  shipped.splice(i, 1);
+  renderShipped();
+}
+
+function addShipped() {
+  shipped.push({ label: 'New item - click to edit', cat: 'feature' });
+  renderShipped();
+  const items = document.querySelectorAll('#shipped-list .shipped-label');
+  if (items.length) { const last = items[items.length - 1]; last.focus(); document.execCommand('selectAll'); }
+}
+
+// ---- Render in-progress ----
+function renderInProgress() {
+  const el = document.getElementById('progress-list');
+  if (!inProgress.length) { el.innerHTML = '<div class="empty-hint">Nothing in progress - add items above.</div>'; return; }
+  el.innerHTML = inProgress.map((item, i) => `
+    <div class="progress-item">
+      <div class="progress-row1">
+        <span class="progress-label" contenteditable="true" onblur="inProgress[${i}].label=this.textContent">${item.label}</span>
+        <button class="owner-chip" contenteditable="true" onblur="inProgress[${i}].owner=this.textContent" title="Click to edit owner">${item.owner}</button>
+        <button class="eta-chip" contenteditable="true" onblur="inProgress[${i}].eta=this.textContent" title="Click to edit ETA">${item.eta}</button>
+        <button class="item-remove-btn" onclick="removeInProgress(${i})" title="Remove">x</button>
+      </div>
+      <div class="progress-bar-wrap">
+        <div class="progress-track"><div class="progress-fill-bar" id="pfill-${i}" style="width:${item.pct}%"></div></div>
+        <span class="progress-pct" id="ppct-${i}">${item.pct}%</span>
+      </div>
+      <input type="range" class="progress-slider" min="0" max="100" value="${item.pct}"
+        oninput="updatePct(${i}, this.value)" />
+    </div>
+  `).join('');
+}
+
+function updatePct(i, val) {
+  inProgress[i].pct = parseInt(val);
+  const fill = document.getElementById('pfill-' + i);
+  const pct = document.getElementById('ppct-' + i);
+  if (fill) fill.style.width = val + '%';
+  if (pct) pct.textContent = val + '%';
+}
+
+function removeInProgress(i) {
+  inProgress.splice(i, 1);
+  renderInProgress();
+}
+
+function addInProgress() {
+  inProgress.push({ label: 'New item - click to edit', owner: 'Nir', eta: 'TBD', pct: 0 });
+  renderInProgress();
+}
+
+// ---- Render blocked ----
+function renderBlocked() {
+  const el = document.getElementById('blocked-list');
+  if (!blocked.length) {
+    el.innerHTML = '<div class="blocked-empty">&#x1F7E2; No blockers this week - great!</div>';
+    return;
+  }
+  el.innerHTML = blocked.map((item, i) => `
+    <div class="blocked-item">
+      <div class="blocked-row1">
+        <span class="blocked-title" contenteditable="true" onblur="blocked[${i}].title=this.textContent">${item.title}</span>
+        <button class="item-remove-btn" onclick="removeBlocked(${i})" title="Remove">x</button>
+      </div>
+      <div class="blocked-desc" contenteditable="true" onblur="blocked[${i}].desc=this.textContent">${item.desc}</div>
+      <div class="mitigation-row">
+        <span class="mitigation-label">Mitigation:</span>
+        <span class="mitigation-text" contenteditable="true" onblur="blocked[${i}].mitigation=this.textContent">${item.mitigation}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function removeBlocked(i) {
+  blocked.splice(i, 1);
+  renderBlocked();
+}
+
+function addBlocked() {
+  blocked.push({ title: 'Blocker title - click to edit', desc: 'Description of the blocker.', mitigation: 'Planned mitigation steps.' });
+  renderBlocked();
+}
+
+// ---- Render next week ----
+function renderNextWeek() {
+  const el = document.getElementById('next-list');
+  if (!nextWeek.length) { el.innerHTML = '<div class="next-empty">Nothing planned yet - add items above.</div>'; return; }
+  el.innerHTML = nextWeek.map((item, i) => `
+    <div class="next-item">
+      <div class="next-bullet"></div>
+      <span class="next-label" contenteditable="true" onblur="nextWeek[${i}].label=this.textContent">${item.label}</span>
+      <button class="pri-badge ${item.pri}" onclick="cyclePri(this, ${i})" title="Click to change priority">${item.pri.toUpperCase()}</button>
+      <button class="item-remove-btn" onclick="removeNextWeek(${i})" title="Remove">x</button>
+    </div>
+  `).join('');
+}
+
+function cyclePri(btn, i) {
+  const pris = ['p0', 'p1', 'p2'];
+  const cur = nextWeek[i].pri;
+  nextWeek[i].pri = pris[(pris.indexOf(cur) + 1) % pris.length];
+  renderNextWeek();
+}
+
+function removeNextWeek(i) {
+  nextWeek.splice(i, 1);
+  renderNextWeek();
+}
+
+function addNextWeek() {
+  nextWeek.push({ label: 'New item - click to edit', pri: 'p1' });
+  renderNextWeek();
+  const items = document.querySelectorAll('#next-list .next-label');
+  if (items.length) { const last = items[items.length - 1]; last.focus(); document.execCommand('selectAll'); }
+}
+
+// ---- Render metrics ----
+function renderMetrics() {
+  const el = document.getElementById('metrics-grid');
+  el.innerHTML = metricsData.map((m, i) => `
+    <div class="metric-card">
+      <div class="metric-label">${m.label}</div>
+      <input class="metric-value" value="${m.value}" onblur="metricsData[${i}].value=this.value" title="Click to edit" />
+      <div class="metric-delta ${m.deltaDir}">
+        ${m.deltaArrow ? '<span>' + (m.deltaDir === 'up' ? '&#x2191;' : m.deltaDir === 'down' ? '&#x2193;' : '') + '</span>' : ''}
+        <input class="delta-input" value="${m.delta}" onblur="metricsData[${i}].delta=this.value" placeholder="vs last week" />
+      </div>
+    </div>
+  `).join('');
+}
+
+// ---- Render decisions ----
+function renderDecisions() {
+  const el = document.getElementById('decisions-list');
+  if (!decisions.length) { el.innerHTML = '<div class="empty-hint">No decisions logged yet.</div>'; return; }
+  el.innerHTML = decisions.map((d, i) => `
+    <div class="decision-item">
+      <span class="decision-bullet">&#x2192;</span>
+      <span class="decision-text" contenteditable="true" onblur="decisions[${i}]=this.textContent">${d}</span>
+      <button class="item-remove-btn" onclick="removeDecision(${i})" title="Remove">x</button>
+    </div>
+  `).join('');
+}
+
+function removeDecision(i) {
+  decisions.splice(i, 1);
+  renderDecisions();
+}
+
+function addDecision() {
+  decisions.push('New decision - click to edit');
+  renderDecisions();
+  const items = document.querySelectorAll('#decisions-list .decision-text');
+  if (items.length) { const last = items[items.length - 1]; last.focus(); document.execCommand('selectAll'); }
+}
+
+// ---- History ----
+function getStorageKey() { return 'helpy_stakeholder_history'; }
+
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(getStorageKey()) || '[]'); }
+  catch(e) { return []; }
+}
+
+function saveHistory(arr) {
+  localStorage.setItem(getStorageKey(), JSON.stringify(arr));
+}
+
+function toggleHistory() {
+  const list = document.getElementById('history-list');
+  const btn = document.querySelector('.toggle-history-btn');
+  const isOpen = list.classList.toggle('open');
+  btn.textContent = isOpen ? 'Hide History' : 'View History';
+  if (isOpen) renderHistory();
+}
+
+function renderHistory() {
+  const history = loadHistory();
+  const list = document.getElementById('history-list');
+  const empty = document.getElementById('history-empty');
+
+  if (!history.length) {
+    if (empty) empty.style.display = 'block';
+    // remove old week els
+    list.querySelectorAll('.history-week').forEach(el => el.remove());
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  list.querySelectorAll('.history-week').forEach(el => el.remove());
+
+  history.slice().reverse().forEach(function(entry, idx) {
+    const realIdx = history.length - 1 - idx;
+    const div = document.createElement('div');
+    div.className = 'history-week';
+    div.innerHTML = `
+      <div class="history-week-header" onclick="toggleWeekBody(this)">
+        <div class="history-week-meta">
+          <span class="history-week-label">${entry.weekLabel}</span>
+          <span class="history-week-range">${entry.weekRange}</span>
+          <span class="history-week-status" style="color:${entry.statusColor}">${entry.statusLabel}</span>
+        </div>
+        <button class="history-del-btn" onclick="event.stopPropagation(); deleteHistoryEntry(${realIdx})">Delete</button>
+      </div>
+      <div class="history-week-body">
+        <pre>${entry.snapshot}</pre>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function toggleWeekBody(header) {
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+function deleteHistoryEntry(idx) {
+  const history = loadHistory();
+  history.splice(idx, 1);
+  saveHistory(history);
+  renderHistory();
+}
+
+function buildSnapshot() {
+  const tldr = document.getElementById('tldr-text').value;
+  const ask = document.getElementById('ask-text').value;
+
+  let snap = 'TL;DR:\n' + tldr + '\n\n';
+  snap += 'STATUS: ' + STATUS_LABELS[currentStatus] + '\n\n';
+
+  snap += 'SHIPPED:\n';
+  shipped.forEach(s => { snap += '  [x] ' + s.label + ' [' + s.cat + ']\n'; });
+
+  snap += '\nIN PROGRESS:\n';
+  inProgress.forEach(p => { snap += '  - ' + p.label + ' (' + p.pct + '%) | ' + p.owner + ' | ETA: ' + p.eta + '\n'; });
+
+  snap += '\nBLOCKED:\n';
+  if (!blocked.length) { snap += '  (none)\n'; }
+  blocked.forEach(b => { snap += '  ! ' + b.title + '\n    ' + b.desc + '\n    Mitigation: ' + b.mitigation + '\n'; });
+
+  snap += '\nNEXT WEEK:\n';
+  nextWeek.forEach(n => { snap += '  [' + n.pri.toUpperCase() + '] ' + n.label + '\n'; });
+
+  snap += '\nMETRICS:\n';
+  metricsData.forEach(m => { snap += '  ' + m.label + ': ' + m.value + (m.delta ? ' (' + m.delta + ')' : '') + '\n'; });
+
+  snap += '\nDECISIONS:\n';
+  decisions.forEach(d => { snap += '  -> ' + d + '\n'; });
+
+  snap += '\nASK:\n' + ask;
+  return snap;
+}
+
+function saveWeek() {
+  const history = loadHistory();
+  const weekInput = document.getElementById('week-input').value;
+  const weekLabel = document.getElementById('week-num-display').textContent;
+  const weekRange = document.getElementById('week-range-display').textContent;
+  const statusColors = { 'on-track': '#10b981', 'at-risk': '#f59e0b', 'off-track': '#ef4444' };
+
+  // Replace existing entry for same week
+  const existingIdx = history.findIndex(e => e.weekKey === weekInput);
+  const entry = {
+    weekKey: weekInput,
+    weekLabel: weekLabel,
+    weekRange: weekRange,
+    statusLabel: STATUS_LABELS[currentStatus],
+    statusColor: statusColors[currentStatus],
+    savedAt: new Date().toISOString(),
+    snapshot: buildSnapshot()
+  };
+  if (existingIdx >= 0) history[existingIdx] = entry;
+  else history.push(entry);
+
+  saveHistory(history);
+
+  // Show toast
+  const toast = document.getElementById('save-toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2200);
+
+  // Re-render if history panel is open
+  const list = document.getElementById('history-list');
+  if (list.classList.contains('open')) renderHistory();
+}
+
+// ---- Init ----
+renderShipped();
+renderInProgress();
+renderBlocked();
+renderNextWeek();
+renderMetrics();
+renderDecisions();
+</script>
+</body>
+</html>

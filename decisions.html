@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helpy - Decision Log</title>
+    <style>
+        :root {
+            --brand: #6366f1;
+            --brand-dark: #4f46e5;
+            --brand-light: #eef2ff;
+            --green: #10b981;
+            --amber: #f59e0b;
+            --red: #ef4444;
+            --pink: #ec4899;
+            --slate: #64748b;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --card-radius: 14px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.6;
+        }
+
+        /* Progress bar */
+        #progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--brand), var(--pink));
+            z-index: 1000;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* Sticky Header */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+        }
+
+        .site-header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 56px;
+            gap: 24px;
+        }
+
+        .site-header-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .site-header-logo span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+            border-radius: 7px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .header-nav {
+            display: flex;
+            gap: 4px;
+        }
+
+        .header-nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: all 0.15s;
+        }
+
+        .header-nav a:hover {
+            color: var(--text);
+            background: var(--bg);
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, var(--brand-light) 0%, #fdf4ff 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 72px 24px 64px;
+            text-align: center;
+        }
+
+        .hero-badge-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: white;
+            color: var(--brand);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .hero h1 {
+            font-size: 44px;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            color: var(--text);
+            margin-bottom: 14px;
+            line-height: 1.1;
+        }
+
+        .hero h1 .accent { color: var(--brand); }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 560px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* Main */
+        .main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 48px 24px 100px;
+        }
+
+        /* Stats bar */
+        .stats-bar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .stat-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .stat-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .stat-dot-green { background: var(--green); }
+        .stat-dot-amber { background: var(--amber); }
+        .stat-dot-red { background: var(--red); }
+
+        /* Filter bar */
+        .filter-bar {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--card-radius);
+            padding: 16px 20px;
+            margin-bottom: 32px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-bar-label {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            flex-shrink: 0;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+
+        .filter-btn {
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12.5px;
+            font-weight: 600;
+            border: 1.5px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--brand);
+            color: var(--brand);
+        }
+
+        .filter-btn.active {
+            background: var(--brand);
+            border-color: var(--brand);
+            color: white;
+        }
+
+        .filter-divider {
+            width: 1px;
+            height: 28px;
+            background: var(--border);
+            flex-shrink: 0;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 180px;
+            padding: 6px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--text);
+            background: var(--bg);
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .search-input:focus {
+            border-color: var(--brand);
+        }
+
+        .search-input::placeholder { color: var(--text-muted); }
+
+        /* Add button */
+        .add-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+            flex-shrink: 0;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Results meta */
+        .results-meta {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        /* Decisions list */
+        #decisions-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Decision card */
+        .decision-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .decision-card:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 24px rgba(99, 102, 241, 0.08);
+        }
+
+        .decision-card.is-new {
+            border-color: rgba(99, 102, 241, 0.4);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+        }
+
+        .decision-card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px 22px 16px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .decision-number {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--brand-light);
+            color: var(--brand);
+            font-size: 12px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2px;
+        }
+
+        .decision-card.is-new .decision-number {
+            background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+            color: white;
+        }
+
+        .decision-header-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .decision-title-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+
+        .decision-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1.3;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            padding: 3px 9px;
+            border-radius: 20px;
+            flex-shrink: 0;
+        }
+
+        .status-decided {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .status-open {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-reversed {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .category-badge {
+            display: inline-flex;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 9px;
+            border-radius: 20px;
+            background: var(--brand-light);
+            color: var(--brand);
+            flex-shrink: 0;
+        }
+
+        .decision-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .decision-meta-item {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .decision-context-preview {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        .decision-chevron {
+            flex-shrink: 0;
+            font-size: 18px;
+            color: var(--text-muted);
+            transition: transform 0.2s;
+            margin-top: 6px;
+        }
+
+        .decision-card.expanded .decision-chevron {
+            transform: rotate(180deg);
+        }
+
+        /* Expanded body */
+        .decision-body {
+            display: none;
+            border-top: 1px solid var(--border);
+            padding: 22px;
+            background: #fafbff;
+        }
+
+        .decision-card.expanded .decision-body {
+            display: block;
+        }
+
+        .decision-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 680px) {
+            .decision-grid { grid-template-columns: 1fr; }
+        }
+
+        .decision-section-label {
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--brand);
+            margin-bottom: 8px;
+        }
+
+        .decision-section-content {
+            font-size: 13.5px;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .options-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .options-list li {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            padding-left: 18px;
+            position: relative;
+        }
+
+        .options-list li::before {
+            content: '–';
+            position: absolute;
+            left: 0;
+            color: var(--border);
+        }
+
+        .options-list li.chosen {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .options-list li.chosen::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+        }
+
+        .chosen-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #15803d;
+            line-height: 1.5;
+        }
+
+        .owner-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 4px 12px 4px 4px;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text);
+            margin-top: 4px;
+        }
+
+        .owner-avatar {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--brand), var(--pink));
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Add form modal overlay */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: 18px;
+            padding: 32px;
+            width: 100%;
+            max-width: 580px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 24px 64px rgba(0, 0, 0, 0.18);
+            transform: translateY(16px);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .modal-overlay.visible .modal {
+            transform: translateY(0);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .modal-subtitle {
+            font-size: 13.5px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .form-row {
+            margin-bottom: 18px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 7px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            color: var(--text);
+            background: var(--white);
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--brand);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+            line-height: 1.5;
+        }
+
+        .form-row-2col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        @media (max-width: 500px) {
+            .form-row-2col { grid-template-columns: 1fr; }
+        }
+
+        .form-hint {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 28px;
+        }
+
+        .btn-ghost {
+            padding: 9px 20px;
+            border-radius: 50px;
+            font-size: 13.5px;
+            font-weight: 600;
+            border: 1.5px solid var(--border);
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--text-muted);
+            color: var(--text);
+        }
+
+        .btn-primary {
+            padding: 9px 22px;
+            border-radius: 50px;
+            font-size: 13.5px;
+            font-weight: 600;
+            border: none;
+            background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+            color: white;
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 64px 24px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .empty-state-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .empty-state-desc { font-size: 14px; }
+
+        /* Footer */
+        .footer {
+            background: var(--white);
+            border-top: 1px solid var(--border);
+            padding: 32px 24px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #1e293b;
+            color: white;
+            padding: 10px 22px;
+            border-radius: 50px;
+            font-size: 13.5px;
+            font-weight: 600;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            z-index: 999;
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            white-space: nowrap;
+        }
+
+        .toast.visible {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 30px; }
+            .header-nav { display: none; }
+            .decision-title { font-size: 14.5px; }
+            .filter-divider { display: none; }
+            .stats-bar { gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- Sticky Header -->
+<header class="site-header">
+    <div class="site-header-inner">
+        <a href="/" class="site-header-logo">
+            <span>H</span> Helpy
+        </a>
+        <nav class="header-nav">
+            <a href="#decisions">All Decisions</a>
+            <a href="#product">Product</a>
+            <a href="#tech">Tech</a>
+            <a href="#design">Design</a>
+            <a href="#business">Business</a>
+        </nav>
+        <button class="add-btn" onclick="openModal()">
+            + Add Decision
+        </button>
+    </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+    <div class="hero-badge-row">
+        <span class="chip">PM Toolkit</span>
+        <span class="chip">Living Document</span>
+        <span class="chip">Architecture Decision Records</span>
+    </div>
+    <h1>Decision <span class="accent">Log</span></h1>
+    <p class="hero-subtitle">Why we built what we built - a searchable record of every key product, tech, design, and business decision made for Helpy.</p>
+</section>
+
+<!-- Main -->
+<main class="main" id="decisions">
+
+    <!-- Stats bar -->
+    <div class="stats-bar" id="stats-bar">
+        <div class="stat-pill"><span class="stat-dot stat-dot-green"></span><span id="count-decided">0</span> Decided</div>
+        <div class="stat-pill"><span class="stat-dot stat-dot-amber"></span><span id="count-open">0</span> Open</div>
+        <div class="stat-pill"><span class="stat-dot stat-dot-red"></span><span id="count-reversed">0</span> Reversed</div>
+        <div class="stat-pill" style="margin-left: auto;"><span id="count-total">0</span> Total</div>
+    </div>
+
+    <!-- Filter bar -->
+    <div class="filter-bar">
+        <span class="filter-bar-label">Status</span>
+        <div class="filter-group" id="status-filters">
+            <button class="filter-btn active" data-filter-type="status" data-value="all">All</button>
+            <button class="filter-btn" data-filter-type="status" data-value="Decided">Decided</button>
+            <button class="filter-btn" data-filter-type="status" data-value="Open">Open</button>
+            <button class="filter-btn" data-filter-type="status" data-value="Reversed">Reversed</button>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <span class="filter-bar-label">Category</span>
+        <div class="filter-group" id="category-filters">
+            <button class="filter-btn active" data-filter-type="category" data-value="all">All</button>
+            <button class="filter-btn" data-filter-type="category" data-value="Product">Product</button>
+            <button class="filter-btn" data-filter-type="category" data-value="Tech">Tech</button>
+            <button class="filter-btn" data-filter-type="category" data-value="Design">Design</button>
+            <button class="filter-btn" data-filter-type="category" data-value="Business">Business</button>
+            <button class="filter-btn" data-filter-type="category" data-value="Growth">Growth</button>
+        </div>
+
+        <div class="filter-divider"></div>
+
+        <input class="search-input" type="text" id="search-input" placeholder="Search decisions...">
+    </div>
+
+    <p class="results-meta" id="results-meta"></p>
+
+    <div id="decisions-container"></div>
+
+    <div class="empty-state" id="empty-state" style="display:none;">
+        <span class="empty-state-icon">🔍</span>
+        <p class="empty-state-title">No decisions match your filters</p>
+        <p class="empty-state-desc">Try clearing a filter or adjust your search term.</p>
+    </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+    Helpy - Decision Log &nbsp;&bull;&nbsp; Updated continuously &nbsp;&bull;&nbsp; <a href="/" style="color: var(--brand); text-decoration: none;">Back to docs</a>
+</footer>
+
+<!-- Add Decision Modal -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+    <div class="modal" id="modal">
+        <p class="modal-title">Log a New Decision</p>
+        <p class="modal-subtitle">Capture the context, options, and rationale while they are fresh.</p>
+
+        <div class="form-row">
+            <label class="form-label" for="f-title">Decision Title</label>
+            <input class="form-input" id="f-title" type="text" placeholder="e.g. Adopt PostHog for analytics">
+        </div>
+
+        <div class="form-row-2col">
+            <div>
+                <label class="form-label" for="f-status">Status</label>
+                <select class="form-select" id="f-status">
+                    <option value="Decided">Decided</option>
+                    <option value="Open">Open</option>
+                    <option value="Reversed">Reversed</option>
+                </select>
+            </div>
+            <div>
+                <label class="form-label" for="f-category">Category</label>
+                <select class="form-select" id="f-category">
+                    <option value="Product">Product</option>
+                    <option value="Tech">Tech</option>
+                    <option value="Design">Design</option>
+                    <option value="Business">Business</option>
+                    <option value="Growth">Growth</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row-2col">
+            <div>
+                <label class="form-label" for="f-date">Date</label>
+                <input class="form-input" id="f-date" type="date">
+            </div>
+            <div>
+                <label class="form-label" for="f-owner">Owner</label>
+                <input class="form-input" id="f-owner" type="text" placeholder="e.g. Nir (PM)">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <label class="form-label" for="f-context">Context</label>
+            <textarea class="form-textarea" id="f-context" placeholder="Why did this decision come up? What problem were we solving?"></textarea>
+        </div>
+
+        <div class="form-row">
+            <label class="form-label" for="f-options">Options Considered</label>
+            <textarea class="form-textarea" id="f-options" placeholder="Option A: ...&#10;Option B: ...&#10;Option C: ..." style="min-height: 70px;"></textarea>
+            <p class="form-hint">One option per line.</p>
+        </div>
+
+        <div class="form-row">
+            <label class="form-label" for="f-decision">Decision Made</label>
+            <input class="form-input" id="f-decision" type="text" placeholder="What did we choose?">
+        </div>
+
+        <div class="form-row">
+            <label class="form-label" for="f-rationale">Rationale</label>
+            <textarea class="form-textarea" id="f-rationale" placeholder="Why did we choose this? What tradeoffs did we accept?"></textarea>
+        </div>
+
+        <div class="modal-actions">
+            <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+            <button class="btn-primary" onclick="saveDecision()">Save Decision</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── Hardcoded decisions ───────────────────────────────────────────────────
+
+const HARDCODED = [
+    {
+        id: 'hc-1',
+        title: 'Mobile-only - kill the web app',
+        date: '2026-02-05',
+        status: 'Decided',
+        category: 'Product',
+        context: 'We had a working React/Vite web prototype but user research showed near-100% intent to use the app on mobile, and maintaining two codebases was burning engineering time.',
+        options: [
+            'Keep both web + mobile in parallel',
+            'Web-first, port to mobile later',
+            'Mobile-only, archive web app as reference'
+        ],
+        chosen: 'Mobile-only, archive web app as reference',
+        rationale: 'Community help is inherently local and on-the-go. Push notifications, location, and camera are table-stakes features that only make sense on mobile. Killing the web app halved our maintenance burden and let us move twice as fast.',
+        owner: 'Nir (PM)'
+    },
+    {
+        id: 'hc-2',
+        title: 'iOS-first - defer Android until iOS has traction',
+        date: '2026-02-17',
+        status: 'Decided',
+        category: 'Business',
+        context: 'Google Play requires 20 real testers for internal testing review, making early-stage distribution painful. Apple TestFlight is frictionless by comparison.',
+        options: [
+            'Launch iOS and Android simultaneously',
+            'Android-first (larger global market share)',
+            'iOS-first, Android once iOS has traction'
+        ],
+        chosen: 'iOS-first, Android once iOS has traction',
+        rationale: 'iOS users in Israel skew toward early adopters and tend to have higher engagement rates in social apps. TestFlight makes beta distribution trivial. We avoid splitting QA focus before we have product-market fit evidence.',
+        owner: 'Nir (PM)'
+    },
+    {
+        id: 'hc-3',
+        title: 'Require phone verification before help or post actions',
+        date: '2026-02-14',
+        status: 'Decided',
+        category: 'Product',
+        context: 'Fake or throwaway accounts could flood the feed with spam requests or make offers with no intent to follow through, destroying trust in the platform.',
+        options: [
+            'No verification - open to all signed-in users',
+            'Verify phone at sign-up (block onboarding)',
+            'Verify phone lazily - only when user tries to help or post'
+        ],
+        chosen: 'Verify phone lazily - only when user tries to help or post',
+        rationale: 'Lazy verification keeps the sign-up funnel frictionless while still enforcing accountability at the moment it matters (real-world commitment). Users can browse freely and are only prompted when they take a meaningful action. Phone + auth account = two-factor accountability.',
+        owner: 'Nir (PM) + Claude (Dev)'
+    },
+    {
+        id: 'hc-4',
+        title: 'Hebrew/English bilingual from day 1',
+        date: '2026-02-07',
+        status: 'Decided',
+        category: 'Product',
+        context: 'Primary target market is Israel, where both Hebrew and English speakers exist. Adding i18n post-launch typically requires a painful retrofit of all UI text.',
+        options: [
+            'English-only for v1, add Hebrew later',
+            'Hebrew-only (local focus)',
+            'Full bilingual (Hebrew + English) with RTL support from day 1'
+        ],
+        chosen: 'Full bilingual (Hebrew + English) with RTL support from day 1',
+        rationale: 'Retrofitting i18n is a multi-week project and breaks existing components. Building it in from the start cost ~3 sessions but unlocks the entire Israeli market on launch. RTL support is non-trivial and must be foundational. The 200+ key useLocalization hook now powers all screens with zero ongoing cost.',
+        owner: 'Nir (PM)'
+    },
+    {
+        id: 'hc-5',
+        title: 'Pill buttons instead of left/right swipe gestures for matching',
+        date: '2026-02-13',
+        status: 'Decided',
+        category: 'Design',
+        context: 'The original design used Tinder-style swipe gestures (right = offer help, left = skip). User testing and App Store reviewers flagged dating-app connotations as inappropriate for a community help context.',
+        options: [
+            'Keep left/right swipe gestures',
+            'Replace gestures entirely with pill buttons (Skip / Offer Help)',
+            'Keep swipe gestures but change iconography (no hearts)'
+        ],
+        chosen: 'Replace gestures entirely with pill buttons (Skip / Offer Help)',
+        rationale: 'Pill buttons are unambiguous, accessible, and carry no romantic connotation. They also work better in RTL layouts where swipe direction semantics flip confusingly. The hand emoji (Offer Help) communicates the helping context immediately. Swipe gestures can still remain as a secondary input layer if desired later.',
+        owner: 'Nir (PM)'
+    },
+    {
+        id: 'hc-6',
+        title: 'Defer helper tiers to v1.1+',
+        date: '2026-03-12',
+        status: 'Decided',
+        category: 'Product',
+        context: 'A tiered helper system (Bronze/Silver/Gold based on completed helps) was on the roadmap as a retention and trust mechanism.',
+        options: [
+            'Launch helper tiers in v1.0',
+            'Defer to v1.1 - build after launch data exists',
+            'Scrap entirely - rely on rating average only'
+        ],
+        chosen: 'Defer to v1.1 - build after launch data exists',
+        rationale: 'Tiers only create social proof when there are enough users to populate multiple tiers. Shipping tiers to 50 users means everyone is Bronze and the feature adds no value - worse, it could feel discouraging. Post-launch data will tell us whether tiers drive retention or whether ratings alone are sufficient.',
+        owner: 'Nir (PM)'
+    },
+    {
+        id: 'hc-7',
+        title: 'Celebration bottom sheet instead of toast notification for offer confirmation',
+        date: '2026-03-11',
+        status: 'Decided',
+        category: 'Design',
+        context: 'After a helper taps "Offer Help", the app needed to confirm the action. An earlier implementation used a compact dark pill toast at the top of the screen.',
+        options: [
+            'Dark pill toast at top of screen (Gmail-style)',
+            'Full-screen modal confirmation',
+            'Celebration bottom sheet with spring animation, request title, and undo'
+        ],
+        chosen: 'Celebration bottom sheet with spring animation, request title, and undo',
+        rationale: 'A bottom sheet occupies the thumb zone on mobile, feels celebratory (positive reinforcement for prosocial behavior), and provides enough real estate for the request title, requester name, and a "View in Chat" CTA. The 4-second auto-dismiss with undo matches the psychological window before commitment feels final. Spring overshoot animation signals delight, not just confirmation.',
+        owner: 'Nir (PM)'
+    },
+    {
+        id: 'hc-8',
+        title: 'Monetization model for Helpy',
+        date: '2026-03-14',
+        status: 'Open',
+        category: 'Business',
+        context: 'Helpy is currently 100% free. As the user base grows we need a model that generates revenue without undermining the community trust that makes the product work.',
+        options: [
+            'Freemium - free browsing, paid power features (e.g. priority listing, unlimited images)',
+            'Community subscription - flat monthly fee for all members, no free tier',
+            'Local business sponsored requests - businesses post paid "help wanted" listings',
+            'Tip jar - optional in-app tipping from requester to helper after completion'
+        ],
+        chosen: 'TBD - decision deferred until 500+ MAU',
+        rationale: 'No monetization decision should be made before we have product-market fit signals. Introducing a paywall too early could kill growth in a trust-sensitive community app. Targeting this decision at 500 MAU gives us enough data on retention and engagement patterns to know which model fits user behavior.',
+        owner: 'Nir (PM)'
+    }
+];
+
+// ─── State ─────────────────────────────────────────────────────────────────
+
+let filterStatus = 'all';
+let filterCategory = 'all';
+let searchQuery = '';
+
+function getLocalDecisions() {
+    try {
+        return JSON.parse(localStorage.getItem('helpy_decisions') || '[]');
+    } catch (e) { return []; }
+}
+
+function saveLocalDecisions(arr) {
+    localStorage.setItem('helpy_decisions', JSON.stringify(arr));
+}
+
+// ─── Render ─────────────────────────────────────────────────────────────────
+
+function formatDate(iso) {
+    if (!iso) return '';
+    const d = new Date(iso + 'T00:00:00');
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function statusBadge(status) {
+    const map = {
+        'Decided': 'status-decided',
+        'Open': 'status-open',
+        'Reversed': 'status-reversed'
+    };
+    const icons = { 'Decided': '&#10003;', 'Open': '&#9679;', 'Reversed': '&#8635;' };
+    return `<span class="status-badge ${map[status] || 'status-open'}">${icons[status] || ''} ${status}</span>`;
+}
+
+function categoryBadge(cat) {
+    return `<span class="category-badge">${cat}</span>`;
+}
+
+function renderOptions(optionsArr, chosen) {
+    return optionsArr.map(opt => {
+        const isChosen = opt === chosen || opt.toLowerCase().includes(chosen.toLowerCase().slice(0, 20));
+        return `<li class="${isChosen ? 'chosen' : ''}">${opt}</li>`;
+    }).join('');
+}
+
+function cardHTML(d, index, isNew) {
+    const optionsList = Array.isArray(d.options)
+        ? d.options
+        : (d.options || '').split('\n').map(s => s.trim()).filter(Boolean);
+
+    const chosenDisplay = d.chosen || '';
+    const isOpen = d.status === 'Open';
+
+    return `
+    <article class="decision-card${isNew ? ' is-new' : ''}" id="card-${d.id}" data-id="${d.id}">
+        <div class="decision-card-header" onclick="toggleCard('${d.id}')">
+            <div class="decision-number">${isNew ? 'NEW' : '#' + String(index + 1).padStart(2, '0')}</div>
+            <div class="decision-header-content">
+                <div class="decision-title-row">
+                    <span class="decision-title">${d.title}</span>
+                    ${statusBadge(d.status)}
+                    ${categoryBadge(d.category)}
+                </div>
+                <div class="decision-meta-row">
+                    ${d.date ? `<span class="decision-meta-item">&#128197; ${formatDate(d.date)}</span>` : ''}
+                    ${d.owner ? `<span class="decision-meta-item">&#128100; ${d.owner}</span>` : ''}
+                </div>
+                <p class="decision-context-preview">${d.context}</p>
+            </div>
+            <span class="decision-chevron">&#8964;</span>
+        </div>
+        <div class="decision-body">
+            <div class="decision-grid">
+                <div>
+                    <p class="decision-section-label">Options Considered</p>
+                    <ul class="options-list">${renderOptions(optionsList, chosenDisplay)}</ul>
+                </div>
+                <div>
+                    <p class="decision-section-label">${isOpen ? 'Leading Option' : 'Decision Made'}</p>
+                    <div class="chosen-box">${chosenDisplay || 'TBD'}</div>
+                </div>
+            </div>
+            <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr auto; gap: 20px; align-items: start;">
+                <div>
+                    <p class="decision-section-label">Rationale</p>
+                    <p class="decision-section-content">${d.rationale}</p>
+                </div>
+                <div>
+                    <p class="decision-section-label">Owner</p>
+                    <div class="owner-pill">
+                        <div class="owner-avatar">${(d.owner || 'U')[0].toUpperCase()}</div>
+                        ${d.owner || 'Unknown'}
+                    </div>
+                    ${isNew ? `<button onclick="deleteLocalDecision('${d.id}')" style="margin-top:12px; display:block; font-size:11.5px; color:var(--red); background:none; border:none; cursor:pointer; padding:0;">Remove</button>` : ''}
+                </div>
+            </div>
+        </div>
+    </article>`;
+}
+
+function allDecisions() {
+    const local = getLocalDecisions();
+    return [...local, ...HARDCODED];
+}
+
+function filteredDecisions() {
+    return allDecisions().filter(d => {
+        const matchStatus = filterStatus === 'all' || d.status === filterStatus;
+        const matchCat = filterCategory === 'all' || d.category === filterCategory;
+        const q = searchQuery.toLowerCase();
+        const matchSearch = !q ||
+            d.title.toLowerCase().includes(q) ||
+            (d.context || '').toLowerCase().includes(q) ||
+            (d.rationale || '').toLowerCase().includes(q) ||
+            (d.category || '').toLowerCase().includes(q) ||
+            (d.owner || '').toLowerCase().includes(q);
+        return matchStatus && matchCat && matchSearch;
+    });
+}
+
+function render() {
+    const all = allDecisions();
+    const filtered = filteredDecisions();
+    const localIds = new Set(getLocalDecisions().map(d => d.id));
+
+    // Stats
+    document.getElementById('count-decided').textContent = all.filter(d => d.status === 'Decided').length;
+    document.getElementById('count-open').textContent = all.filter(d => d.status === 'Open').length;
+    document.getElementById('count-reversed').textContent = all.filter(d => d.status === 'Reversed').length;
+    document.getElementById('count-total').textContent = all.length;
+
+    // Results meta
+    document.getElementById('results-meta').textContent = filtered.length === all.length
+        ? `Showing all ${all.length} decisions`
+        : `Showing ${filtered.length} of ${all.length} decisions`;
+
+    const container = document.getElementById('decisions-container');
+    const empty = document.getElementById('empty-state');
+
+    if (filtered.length === 0) {
+        container.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+    }
+
+    empty.style.display = 'none';
+    container.innerHTML = filtered.map((d, i) => cardHTML(d, i, localIds.has(d.id))).join('');
+}
+
+function toggleCard(id) {
+    const card = document.getElementById('card-' + id);
+    if (card) card.classList.toggle('expanded');
+}
+
+// ─── Filters ────────────────────────────────────────────────────────────────
+
+document.querySelectorAll('[data-filter-type="status"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-filter-type="status"]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        filterStatus = btn.dataset.value;
+        render();
+    });
+});
+
+document.querySelectorAll('[data-filter-type="category"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-filter-type="category"]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        filterCategory = btn.dataset.value;
+        render();
+    });
+});
+
+document.getElementById('search-input').addEventListener('input', e => {
+    searchQuery = e.target.value.trim();
+    render();
+});
+
+// ─── Modal ──────────────────────────────────────────────────────────────────
+
+function openModal() {
+    // Set today's date default
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('f-date').value = today;
+    document.getElementById('modal-overlay').classList.add('visible');
+    document.getElementById('f-title').focus();
+}
+
+function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('visible');
+    clearForm();
+}
+
+function handleOverlayClick(e) {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+function clearForm() {
+    ['f-title','f-context','f-options','f-decision','f-rationale','f-owner'].forEach(id => {
+        document.getElementById(id).value = '';
+    });
+    document.getElementById('f-status').value = 'Decided';
+    document.getElementById('f-category').value = 'Product';
+}
+
+function saveDecision() {
+    const title = document.getElementById('f-title').value.trim();
+    if (!title) { showToast('Please enter a decision title.'); return; }
+
+    const optionsRaw = document.getElementById('f-options').value.trim();
+    const options = optionsRaw.split('\n').map(s => s.trim()).filter(Boolean);
+
+    const d = {
+        id: 'local-' + Date.now(),
+        title,
+        date: document.getElementById('f-date').value,
+        status: document.getElementById('f-status').value,
+        category: document.getElementById('f-category').value,
+        context: document.getElementById('f-context').value.trim(),
+        options,
+        chosen: document.getElementById('f-decision').value.trim(),
+        rationale: document.getElementById('f-rationale').value.trim(),
+        owner: document.getElementById('f-owner').value.trim()
+    };
+
+    const existing = getLocalDecisions();
+    existing.unshift(d);
+    saveLocalDecisions(existing);
+    closeModal();
+    render();
+    showToast('Decision saved!');
+    // Expand the new card
+    setTimeout(() => {
+        const card = document.getElementById('card-' + d.id);
+        if (card) {
+            card.classList.add('expanded');
+            card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }, 80);
+}
+
+function deleteLocalDecision(id) {
+    if (!confirm('Remove this decision from your local log?')) return;
+    const existing = getLocalDecisions().filter(d => d.id !== id);
+    saveLocalDecisions(existing);
+    render();
+    showToast('Decision removed.');
+}
+
+// Close modal on Escape
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+});
+
+// ─── Toast ──────────────────────────────────────────────────────────────────
+
+let toastTimer;
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('visible');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('visible'), 2600);
+}
+
+// ─── Scroll progress bar ────────────────────────────────────────────────────
+
+window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.body.scrollHeight - window.innerHeight;
+    const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    document.getElementById('progress-bar').style.width = pct + '%';
+});
+
+// ─── Init ────────────────────────────────────────────────────────────────────
+
+render();
+</script>
+
+</body>
+</html>
