@@ -1232,8 +1232,42 @@
 
   </div>
 
-  <!-- SECTION 5: QUESTIONS TO ASK -->
-  <div class="section-label">05 - Questions to Ask the Interviewer</div>
+  <!-- SECTION 5: PM VOCABULARY -->
+  <div class="section-label">05 - PM Vocabulary</div>
+
+  <div class="callout callout-info" style="margin-bottom:24px">
+    <span class="callout-icon">📖</span>
+    <div class="callout-text">
+      <h4>Know these terms cold. Every definition includes a Helpy example so they stick.</h4>
+      <p>Search any term or browse by category. If an interviewer uses a word you don't know - pause, ask for their definition. That's a PM move, not a weakness.</p>
+    </div>
+  </div>
+
+  <div style="position:relative;margin-bottom:20px;">
+    <input id="vocab-search" type="text" placeholder="Search terms... (e.g. RICE, churn, funnel)"
+      oninput="filterVocab(this.value)"
+      style="width:100%;padding:12px 16px 12px 44px;border:1.5px solid var(--border);border-radius:var(--radius);
+             font-size:14px;background:var(--card);color:var(--text);outline:none;transition:border-color 0.15s;"
+      onfocus="this.style.borderColor='var(--brand)'" onblur="this.style.borderColor='var(--border)'"/>
+    <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:18px;pointer-events:none;">🔍</span>
+  </div>
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;" id="vocab-cat-filters">
+    <button class="tab-btn active" onclick="filterVocabCat('all',this)">All</button>
+    <button class="tab-btn" onclick="filterVocabCat('metrics',this)">Metrics</button>
+    <button class="tab-btn" onclick="filterVocabCat('prioritization',this)">Prioritization</button>
+    <button class="tab-btn" onclick="filterVocabCat('strategy',this)">Strategy</button>
+    <button class="tab-btn" onclick="filterVocabCat('execution',this)">Execution</button>
+    <button class="tab-btn" onclick="filterVocabCat('technical',this)">Technical</button>
+    <button class="tab-btn" onclick="filterVocabCat('growth',this)">Growth</button>
+  </div>
+
+  <div id="vocab-count" style="font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:16px;"></div>
+
+  <div id="vocab-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:40px;"></div>
+
+  <!-- SECTION 6: QUESTIONS TO ASK -->
+  <div class="section-label">06 - Questions to Ask the Interviewer</div>
 
   <div class="callout callout-green" style="margin-bottom:24px">
     <span class="callout-icon">🙋</span>
@@ -1458,6 +1492,122 @@
   }
 
   fcInit();
+
+  // ── PM VOCABULARY ──────────────────────────────────────────────
+  const vocab = [
+    // METRICS
+    { term: 'North Star Metric', cat: 'metrics', short: 'The single metric that best captures the core value your product delivers to users.', example: 'Helpy\'s north star is Weekly Active Helpers (WAH). A helper who returns weekly means supply-side health - requesters always get served.' },
+    { term: 'DAU / MAU / WAU', cat: 'metrics', short: 'Daily / Monthly / Weekly Active Users. The ratio DAU/MAU (stickiness) shows how often users come back. 20%+ is healthy for most apps.', example: 'Helpy tracks WAU over MAU because helping is a weekly habit, not daily. A DAU focus would penalize the natural rhythm of community help.' },
+    { term: 'Retention', cat: 'metrics', short: 'The % of users who return after a given time window. D1, D7, D30 are the standard checkpoints.', example: 'Helpy\'s hypothesis: users with at least one completed match retain at D30 at 3x the rate of users who only browsed. The streak counter and weekly digest are retention features.' },
+    { term: 'Churn', cat: 'metrics', short: 'The % of users (or revenue) lost in a period. Opposite of retention. High churn means the product isn\'t delivering enough value to justify coming back.', example: 'Helpy\'s re-engagement push fires after 14 days of inactivity - targeting the churn cliff before the user is fully gone.' },
+    { term: 'Activation', cat: 'metrics', short: 'The moment a new user first experiences the core value of the product - the "aha moment."', example: 'Helpy\'s activation event is first swipe right. Before that, the user is just browsing. After that, they\'re invested in the outcome.' },
+    { term: 'Conversion Rate', cat: 'metrics', short: 'The % of users who complete a desired action (sign-up, purchase, match). Measured at each funnel step.', example: 'Helpy tracks: views request -> swipes right -> requester accepts. The middle-to-bottom conversion (acceptance rate) is the hardest to move.' },
+    { term: 'Funnel', cat: 'metrics', short: 'A sequence of steps users take toward a goal. Visualized as a narrowing shape because users drop off at each step.', example: 'Helpy\'s core funnel: Open app -> Browse requests -> Swipe right -> Match created -> Chat -> Completed. We measure drop-off at each step.' },
+    { term: 'Cohort Analysis', cat: 'metrics', short: 'Grouping users by a shared characteristic (e.g. sign-up week) and tracking their behavior over time. Reveals whether things are improving across generations of users.', example: 'Comparing Helpy\'s Feb cohort vs Mar cohort retention tells us if the celebration sheet improved activation - not just the aggregate number.' },
+    { term: 'NPS (Net Promoter Score)', cat: 'metrics', short: 'A 0-10 loyalty survey: "How likely are you to recommend?" Promoters (9-10) minus Detractors (0-6). Score of 50+ is excellent.', example: 'Helpy plans to run NPS at the moment after a completed match - the emotional peak. That\'s when a promoter is most likely to answer honestly.' },
+    { term: 'Sean Ellis Test', cat: 'metrics', short: 'Ask users: "How would you feel if you could no longer use this product?" If 40%+ say "very disappointed," you have product-market fit.', example: 'Helpy will run this at 100 completed matches. Below 40% = we don\'t have PMF yet and need to go back to discovery.' },
+    { term: 'K-factor', cat: 'metrics', short: 'Viral coefficient. How many new users each existing user brings in. K > 1 means organic growth without paid acquisition.', example: 'Helpy\'s invite-neighbor feature targets K-factor. If each user invites 2 neighbors and 60% sign up, K = 1.2 - the app grows itself.' },
+    { term: 'LTV (Lifetime Value)', cat: 'metrics', short: 'The total value a user is expected to generate over their lifetime. For free apps, this can mean ad revenue, future monetization potential, or referral value.', example: 'Helpy is free today. LTV is calculated as referral value - how many neighbors a power helper brings in through word-of-mouth.' },
+    { term: 'CAC (Customer Acquisition Cost)', cat: 'metrics', short: 'What you spend to acquire one new user. Healthy unit economics require LTV > CAC (typically 3x+).', example: 'Helpy\'s current CAC is near zero - growth is organic through neighborhood invite chains. Paid CAC becomes relevant at city-level expansion.' },
+
+    // PRIORITIZATION
+    { term: 'RICE', cat: 'prioritization', short: 'Prioritization framework: Reach x Impact x Confidence / Effort. Gives each feature a score to compare fairly.', example: 'Streak counter scored ~600 (high reach, proven impact, 80% confidence, 1.5 days effort). Helper tiers scored ~150 (low confidence, 4 days). Streak won by 4x.' },
+    { term: 'MoSCoW', cat: 'prioritization', short: 'Must Have / Should Have / Could Have / Won\'t Have. Used to scope an MVP and manage stakeholder expectations on what gets cut.', example: 'Helpy launch MoSCoW: Must = auth, post request, browse, match, chat. Should = ratings. Could = map view. Won\'t = helper tiers, Android.' },
+    { term: 'P0 / P1 / P2 / P3', cat: 'prioritization', short: 'Priority levels. P0 = drop everything, blocks launch or is on fire. P1 = high value, next sprint. P2 = backlog. P3 = nice to have, probably never.', example: 'RLS security holes were P0 - any authenticated user could read all data. Push notifications device test was P1. Google Play was P2 (deferred).' },
+    { term: 'Opportunity Sizing', cat: 'prioritization', short: 'Estimating the potential impact of a feature or market before investing. Prevents building things that can\'t move the needle.', example: 'Before building helper tiers: "We have 16 users. Tiers need 3+ levels of social proof to be motivating. Deferred until 500+ active users."' },
+    { term: 'Technical Debt', cat: 'prioritization', short: 'Code or architecture shortcuts taken for speed that will cost more time later. Three types: security (fix now), velocity (fix when it slows you), cleanup (defer).', example: 'Helpy security audit found 5 tables with no RLS. That\'s security debt - P0. Flaky Maestro tests are velocity debt - P1 but not blocking.' },
+    { term: 'Scope Creep', cat: 'prioritization', short: 'Features or requirements growing beyond the original plan, usually during delivery. Kills sprint velocity and delays launch.', example: '"Can we also add a map view to the post screen?" during the Browse map view sprint. Answer: log it, add to backlog, don\'t ship it in this sprint.' },
+
+    // STRATEGY
+    { term: 'PMF (Product-Market Fit)', cat: 'strategy', short: 'The degree to which a product satisfies a strong market demand. The most important milestone before scaling. Before PMF, find it. After PMF, scale it.', example: 'Helpy doesn\'t have confirmed PMF yet - we\'re in the "find it" phase. The Sean Ellis test at 100 matches will be the first real signal.' },
+    { term: 'TAM / SAM / SOM', cat: 'strategy', short: 'Total Addressable Market / Serviceable Addressable Market / Serviceable Obtainable Market. Used to show market sizing in a credible, layered way.', example: 'Helpy: TAM = $15B (gig economy). SAM = $2.7M (Israel urban adults with smartphones). SOM = Tel Aviv neighborhoods in year 1.' },
+    { term: 'Two-Sided Marketplace', cat: 'strategy', short: 'A platform connecting two user groups who need each other (supply + demand). Both sides must be present for value to exist. The cold start problem is the main challenge.', example: 'Helpy is two-sided: requesters (demand) and helpers (supply). If there are no helpers, requesters leave. If there are no requests, helpers leave. Seeding supply first is the strategy.' },
+    { term: 'Cold Start Problem', cat: 'strategy', short: 'A marketplace or network has no value until enough users are on it. The hardest problem for any platform to solve.', example: 'Helpy\'s cold start strategy: focus on one Tel Aviv neighborhood, seed 5 real requests via existing WhatsApp groups, fulfill them fast to create word-of-mouth.' },
+    { term: 'Network Effects', cat: 'strategy', short: 'When a product becomes more valuable as more people use it. Direct (more users = more value for all) or indirect (more supply = more value for demand, vice versa).', example: 'Helpy has indirect network effects: more helpers in a neighborhood means faster response times for requesters, which attracts more requesters, which attracts more helpers.' },
+    { term: 'Moat', cat: 'strategy', short: 'A sustainable competitive advantage that makes it hard for competitors to replicate your position. Data, network effects, brand, switching costs are common moats.', example: 'Helpy\'s moat is local trust density - verified phone numbers, ratings history, and neighborhood relationships. Hard for a new entrant to replicate without starting from scratch in each area.' },
+    { term: 'GTM (Go-to-Market)', cat: 'strategy', short: 'The plan for how you bring a product to market - target audience, channels, messaging, pricing, and launch sequence.', example: 'Helpy GTM: neighborhood-first (not city-first), Hebrew-first messaging for Israel launch, App Store as the only distribution channel in v1.' },
+
+    // EXECUTION
+    { term: 'User Story', cat: 'execution', short: 'A requirement written from the user\'s perspective: "As a [user], I want [goal] so that [benefit]." Forces you to think about the why, not just the what.', example: '"As a helper, I want to see nearby requests without signing in, so that I understand the value before committing to an account."' },
+    { term: 'Acceptance Criteria', cat: 'execution', short: 'The specific, testable conditions a feature must meet to be considered done. Prevents "done" meaning different things to different people.', example: 'Phone verification AC: user must enter a valid Israeli mobile number, receive SMS within 30s, enter correct 6-digit code, see phone_verified=true in DB.' },
+    { term: 'MVP (Minimum Viable Product)', cat: 'execution', short: 'The smallest version of a product that delivers enough value to test your core hypothesis. Not a bad version - a focused one.', example: 'Helpy MVP: post request, browse nearby, swipe right, chat. No ratings, no map, no push notifications. Ship and learn before building the full vision.' },
+    { term: 'Discovery vs Delivery', cat: 'execution', short: 'Discovery = figuring out the right thing to build (problem space). Delivery = building it correctly (solution space). Great PMs run both in parallel.', example: 'While delivering the Execution docs, Nir was in discovery for helper tiers - running assumption mapping and sizing the opportunity before committing a sprint.' },
+    { term: 'Sprint', cat: 'execution', short: 'A fixed time box (usually 1-2 weeks) in which a team commits to completing a defined set of work. Creates regular checkpoints and shipping cadence.', example: 'Helpy runs loose sprints: each session = a sprint. Sprint 37 shipped streak counter, invite-neighbor, weekly digest, and 4 slash commands.' },
+    { term: 'Dogfooding', cat: 'execution', short: 'Using your own product as a real user. Surfaces pain points faster than any user research.', example: 'After launch, Nir used Helpy to post a real request in Tel Aviv. Found the empty-state copy was confusing before any user reported it.' },
+    { term: 'Feature Flag', cat: 'execution', short: 'A code switch that lets you enable or disable a feature without a new deployment. Enables gradual rollouts, A/B tests, and instant kill switches.', example: 'Helpy would use a feature flag for helper tiers - ship the code but keep it off until we hit the 500-user threshold that makes tiers meaningful.' },
+    { term: 'STAR Method', cat: 'execution', short: 'A structure for behavioral interview answers: Situation, Task, Action, Result. Makes stories clear, specific, and comparable.', example: 'S: Apple rejected Helpy for missing account deletion. T: Fix within a week to stay in review queue. A: Built delete_user_account RPC + UI. R: Accepted on next submission.' },
+    { term: 'Stakeholder', cat: 'execution', short: 'Anyone with an interest in the product\'s outcome - investors, legal, engineering, customer support, end users. Managing stakeholders = managing expectations proactively.', example: 'Apple is Helpy\'s most powerful stakeholder. Their acceptance criteria (App Store Guidelines) dictated 5 sprint priorities that weren\'t in the original roadmap.' },
+    { term: 'Postmortem', cat: 'execution', short: 'A blameless retrospective after an incident or failure. Focus is on system failures, not individual blame. Outputs: timeline, root cause, action items.', example: 'If Helpy had a push notification outage: postmortem would trace from user complaint -> pg_net trigger -> Edge Function -> Expo Push API. Which step failed and why.' },
+
+    // TECHNICAL
+    { term: 'RLS (Row Level Security)', cat: 'technical', short: 'A Postgres feature that enforces access control at the database layer. Every query is filtered by policies before data is returned - even direct API calls.', example: 'Helpy: messages SELECT policy checks auth.uid() is a participant in the match. No app-layer bug can accidentally expose another user\'s chat.' },
+    { term: 'API (Application Programming Interface)', cat: 'technical', short: 'A contract between two systems defining how they communicate - what requests are valid and what responses to expect. REST and GraphQL are the two common styles.', example: 'Helpy\'s client calls Supabase\'s auto-generated REST API for most reads/writes. For complex geo queries, we call an RPC (a named Postgres function) instead.' },
+    { term: 'RPC (Remote Procedure Call)', cat: 'technical', short: 'Calling a named function on a remote server as if it were local. In Supabase, RPCs are Postgres functions you invoke via HTTP.', example: 'get_nearby_requests(lat, lng, radius_km) is a Postgres function called as an RPC. It returns pre-filtered, pre-sorted requests in one round trip.' },
+    { term: 'Idempotency', cat: 'technical', short: 'An operation that produces the same result no matter how many times it\'s called. Critical for retries, webhooks, and payment flows.', example: 'Helpy\'s unique constraint on (helper_id, request_id) in matches makes createMatch idempotent - double-tapping "Offer Help" returns the existing match, not a duplicate.' },
+    { term: 'Webhook', cat: 'technical', short: 'An HTTP callback triggered by an event on a server. "Don\'t call us, we\'ll call you." The server pushes data to your URL when something happens.', example: 'Helpy uses pg_net (Postgres HTTP extension) as an internal webhook: new match row -> HTTP POST to Edge Function -> push notification. No polling needed.' },
+    { term: 'JWT (JSON Web Token)', cat: 'technical', short: 'A signed token used for authentication. Contains encoded user info (user_id, role, expiry). The server verifies the signature to trust the token without a DB lookup.', example: 'Every Helpy API request includes a JWT as a Bearer token. Supabase verifies it and extracts auth.uid() to enforce RLS policies on each query.' },
+    { term: 'Schema', cat: 'technical', short: 'The structure of a database - what tables exist, what columns they have, what types and constraints apply.', example: 'Helpy schema: 7 tables. The matches table has a status enum (pending/accepted/declined/completed) and foreign keys to help_requests, helper_id, requester_id.' },
+    { term: 'Edge Function', cat: 'technical', short: 'Server-side code that runs close to the user (at the network edge) without managing a server. Supabase Edge Functions run on Deno.', example: 'Helpy has 3 Edge Functions: push-notification (sends push via Expo), phone-verify (calls Twilio Verify), re-engage (weekly digest + reactivation push).' },
+
+    // GROWTH
+    { term: 'A/B Test', cat: 'growth', short: 'A controlled experiment showing variant A to some users and variant B to others. The goal is to measure which version drives the target metric better.', example: 'Helpy planned A/B test: onboarding with phone verification upfront (A) vs after first match (B). Hypothesis: B has higher activation, A has higher trust. Not yet run.' },
+    { term: 'Hypothesis-Driven Development', cat: 'growth', short: 'Every feature starts with a testable hypothesis: "We believe [change] will cause [outcome] because [reason]. We\'ll know it worked when [metric] moves."', example: '"We believe adding a streak counter will increase D14 helper retention because habit loops work in fitness apps. We\'ll know when D14 WAH lifts 15%."' },
+    { term: 'Activation Rate', cat: 'growth', short: 'The % of new users who reach the "aha moment." Low activation means your onboarding isn\'t connecting users to core value fast enough.', example: 'If 100 users sign up and 30 swipe right on their first session, Helpy\'s activation rate is 30%. The first-time helper nudge is designed to lift this.' },
+    { term: 'Viral Loop', cat: 'growth', short: 'A cycle where using the product naturally leads to sharing it with others, who then use it and share it again. The engine of organic growth.', example: 'Helpy\'s viral loop: user gets helped -> tells neighbor how it worked -> neighbor downloads app -> posts request -> new helper invited. One completed match = 1.2 new users (target).' },
+    { term: 'Retention Hook', cat: 'growth', short: 'A mechanism that gives users a reason to return. Streaks, notifications, social proof, and ongoing value are common hooks.', example: 'Helpy has 4 retention hooks: streak counter (loss aversion), weekly digest push (social proof), request auto-expiry (FOMO), fast responder badge (status).' },
+    { term: 'AARRR (Pirate Metrics)', cat: 'growth', short: 'Acquisition, Activation, Retention, Revenue, Referral. A framework for mapping your product\'s growth levers to the right metrics.', example: 'Helpy: Acquisition=App Store downloads, Activation=first swipe right, Retention=WAH, Revenue=none (yet), Referral=invite-neighbor K-factor.' },
+  ];
+
+  let activeVocabCat = 'all';
+  let activeVocabSearch = '';
+
+  function renderVocab() {
+    const grid = document.getElementById('vocab-grid');
+    const count = document.getElementById('vocab-count');
+    const q = activeVocabSearch.toLowerCase();
+    const filtered = vocab.filter(v => {
+      const catMatch = activeVocabCat === 'all' || v.cat === activeVocabCat;
+      const textMatch = !q || v.term.toLowerCase().includes(q) || v.short.toLowerCase().includes(q) || v.example.toLowerCase().includes(q);
+      return catMatch && textMatch;
+    });
+    count.textContent = filtered.length + ' term' + (filtered.length === 1 ? '' : 's');
+    const catColors = {
+      metrics: '#6366f1', prioritization: '#f59e0b', strategy: '#10b981',
+      execution: '#ec4899', technical: '#0f172a', growth: '#ef4444'
+    };
+    grid.innerHTML = filtered.map(v => {
+      const color = catColors[v.cat] || '#64748b';
+      const label = v.cat.charAt(0).toUpperCase() + v.cat.slice(1);
+      return '<div class="vocab-card" style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;">'
+        + '<div style="padding:16px 18px 0;">'
+        + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;">'
+        + '<span style="font-size:15px;font-weight:800;color:var(--text);">' + v.term + '</span>'
+        + '<span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;background:' + color + '20;color:' + color + ';flex-shrink:0;">' + label + '</span>'
+        + '</div>'
+        + '<p style="font-size:13px;line-height:1.65;color:var(--text);margin-bottom:10px;">' + v.short + '</p>'
+        + '</div>'
+        + '<div style="background:var(--bg);border-top:1px solid var(--border);padding:12px 18px;">'
+        + '<p style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:' + color + ';margin-bottom:5px;">Helpy example</p>'
+        + '<p style="font-size:12.5px;line-height:1.6;color:var(--text-muted);">' + v.example + '</p>'
+        + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  function filterVocab(q) {
+    activeVocabSearch = q;
+    renderVocab();
+  }
+
+  function filterVocabCat(cat, btn) {
+    activeVocabCat = cat;
+    document.querySelectorAll('#vocab-cat-filters .tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderVocab();
+  }
+
+  renderVocab();
+
 </script>
 </body>
 </html>
