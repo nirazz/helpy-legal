@@ -385,15 +385,15 @@
 
   <!-- HERO -->
   <div class="hero">
-    <div class="hero-eyebrow">PM Interview Prep</div>
+    <div class="hero-eyebrow">Technical PM Interview Prep</div>
     <h1>Your Helpy Story, Ready for Any Interview</h1>
-    <p>Everything you need to walk confidently into any PM interview and tell a compelling, specific, data-backed story about building a real product from zero to App Store.</p>
+    <p>PM and Technical PM prep. Walk confidently into any interview with specific, data-backed stories from building a real shipped product - architecture, tradeoffs, data models, RLS, push pipelines, and the full PM lifecycle.</p>
     <div class="hero-chips">
       <span class="hero-chip">iOS Live</span>
       <span class="hero-chip">Real Users</span>
       <span class="hero-chip">5 Rejections Survived</span>
       <span class="hero-chip">Full PM Lifecycle</span>
-      <span class="hero-chip">175 Countries</span>
+      <span class="hero-chip">🔧 Technical Depth</span>
     </div>
   </div>
 
@@ -469,6 +469,7 @@
     <button class="tab-btn" onclick="switchTab('prioritization', this)">Prioritization</button>
     <button class="tab-btn" onclick="switchTab('strategy', this)">Strategy</button>
     <button class="tab-btn" onclick="switchTab('execution', this)">Execution</button>
+    <button class="tab-btn" onclick="switchTab('technical', this)" style="background:#0f172a;border-color:#0f172a;color:#fff;">🔧 Technical</button>
     <button class="tab-btn" onclick="switchTab('star', this)">STAR Stories</button>
   </div>
 
@@ -837,6 +838,140 @@
             <p><strong>The tension:</strong> Users just want to download the app. Regulatory compliance feels invisible to them, but failing to complete it meant 27 countries were unavailable on day one.</p>
             <p><strong>What I did:</strong> Navigated to the DSA compliance section (buried under "Business" in App Store Connect), declared as a "Non-Trader" (individual developer, not a business entity), and submitted the form. Within hours, all 27 EU countries went from "Not Available" to "Active."</p>
             <p><strong>The PM lesson:</strong> Regulatory requirements are user experience problems in disguise. An app that isn't available in your country is a UX failure, even if the failure is legal rather than technical. My job as PM is to make the regulatory path as smooth as the product path. I added DSA compliance to the launch checklist so it never gets skipped again.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TECHNICAL -->
+  <div id="tab-technical" class="tab-panel">
+    <div class="qa-list">
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">Walk me through Helpy's architecture.</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag" style="background:#0f172a;color:#fff;">Technical</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>Client layer:</strong> React Native + Expo 54. One codebase that compiles to iOS and Android. UI state managed locally with React hooks, no Redux. Navigation via React Navigation bottom tabs.</p>
+            <p><strong>Backend:</strong> Supabase - a Firebase alternative built on PostgreSQL. It gives us a hosted Postgres database, auto-generated REST and GraphQL APIs, Row Level Security for authorization, real-time subscriptions over WebSocket, storage (S3-compatible), and Edge Functions (Deno runtime, TypeScript) - all in one platform. No separate server to run.</p>
+            <p><strong>Auth:</strong> JWT-based. Google OAuth and Apple Sign-In are the primary flows - the mobile app gets an identity token from the provider, sends it to Supabase which verifies it and issues a session JWT. That JWT is attached to every API request as a Bearer token. Supabase's RLS policies inspect <code>auth.uid()</code> inside the database to enforce per-row access control at the Postgres level.</p>
+            <p><strong>Real-time chat:</strong> Supabase Realtime. The client subscribes to a Postgres channel filtered on <code>match_id</code>. When a message row is inserted, the Realtime server picks it up via logical replication and broadcasts it to all subscribers on that channel. No polling, no custom WebSocket server.</p>
+            <p><strong>Push notifications:</strong> Expo Push API. When a match or message is created, a pg_net database trigger fires an HTTP request to our Edge Function, which calls the Expo Push API with the recipient's push token. The token is stored on the <code>profiles</code> table, registered on sign-in.</p>
+            <p><strong>Key tradeoff:</strong> Supabase is a great 0-to-1 platform - it let me move fast without operating infrastructure. The tradeoff is vendor lock-in and Edge Functions running on Deno (smaller ecosystem than Node). If we hit scale, the path is to migrate Edge Functions to a dedicated service (e.g., Cloud Run) and keep Supabase for the database.</p>
+            <div class="answer-note">Draw a quick 3-box diagram if on a whiteboard: Client - Supabase (DB + Auth + Realtime + Storage) - Edge Functions.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">What is Row Level Security and why did you use it?</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag" style="background:#0f172a;color:#fff;">Technical</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>What it is:</strong> RLS is a Postgres feature that lets you attach security policies directly to a table. Every query - even direct API calls - is filtered by those policies before any data is returned. It's authorization at the database layer, not the application layer.</p>
+            <p><strong>Why it matters for Helpy:</strong> Supabase exposes a REST API directly to the client using an anon key. Without RLS, any authenticated user could run <code>GET /messages</code> and read every message in the database. With RLS, a policy like <code>auth.uid() IN (SELECT helper_id FROM matches WHERE id = match_id)</code> means Postgres will only return rows where the requesting user is a participant in that match - no matter how the query is constructed.</p>
+            <p><strong>Real example:</strong> The <code>messages</code> table has a SELECT policy: users can only read messages from matches they are part of. The <code>profiles</code> table has an UPDATE policy: users can only update their own row (<code>auth.uid() = user_id</code>). The <code>blocked_users</code> table uses a bidirectional policy: <code>auth.uid() = blocker_id OR auth.uid() = blocked_user_id</code> - so both parties can see the block record, but only the blocker can create it.</p>
+            <p><strong>The alternative</strong> would be an app-level middleware layer that adds WHERE clauses to every query. RLS is safer because it's declarative and enforced at the database - a bug in app code can't accidentally bypass it.</p>
+            <div class="answer-note">This is a strong CISO-level answer. TPM interviewers love candidates who think about security at the infrastructure level, not just the UI level.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">Walk me through Helpy's data model.</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag" style="background:#0f172a;color:#fff;">Technical</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p>Seven tables. The core flow is: <strong>profiles</strong> post <strong>help_requests</strong>, helpers create <strong>matches</strong> (pending), requesters accept/decline matches, accepted matches unlock a <strong>messages</strong> thread. After completion, a <strong>ratings</strong> row is created. Safety is handled by <strong>reports</strong> and <strong>blocked_users</strong>.</p>
+            <ul>
+              <li><strong>profiles</strong> - user_id (FK to auth.users), name, avatar, location (lat/lng), search_radius, average_rating, push_token, preferred_language, phone_verified</li>
+              <li><strong>help_requests</strong> - id, user_id, title, description, category (enum), urgency (low/medium/high), location (lat/lng), is_active, images (TEXT[])</li>
+              <li><strong>matches</strong> - id, request_id, helper_id, requester_id, status (pending/accepted/declined/completed)</li>
+              <li><strong>messages</strong> - id, match_id, sender_id, content, created_at</li>
+              <li><strong>ratings</strong> - rater_id, rated_user_id, match_id, rating (1-5), comment</li>
+            </ul>
+            <p><strong>Key design decisions:</strong> Location is stored as raw lat/lng columns, not PostGIS geometry - simpler to query for the current scale. Distance calculations use a Haversine SQL function via an RPC call. Images are stored in Supabase Storage (S3-compatible) and the help_request row holds only the public URLs as a TEXT array.</p>
+            <p><strong>Denormalization:</strong> <code>average_rating</code> on profiles is denormalized (updated by a DB trigger on ratings insert) to avoid a JOIN + AVG on every profile load.</p>
+            <div class="answer-note">Drawing the 7-table schema on a whiteboard shows you think in data models, not just user flows.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">How would you scale Helpy from 1,000 to 1,000,000 users?</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag" style="background:#0f172a;color:#fff;">Technical</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>Current state (1k users):</strong> Single Supabase project, shared compute, no caching layer. Works fine. The read pattern is geo-filtered help requests, which is the first bottleneck at scale.</p>
+            <p><strong>10k users - add indexes and upgrade compute:</strong> Add PostGIS GIST index on location columns to make radius queries use index scans instead of full table scans. Upgrade Supabase to dedicated compute. This alone handles 10-50x load with no architecture change.</p>
+            <p><strong>100k users - read replicas + caching:</strong> Enable Supabase read replicas for the browse feed (read-heavy, tolerates slight staleness). Add a Redis layer (Upstash is Supabase-native) to cache the top-N nearby requests per geohash cell, invalidated on insert/update. Realtime WebSocket connections become expensive - consider per-room connection pooling.</p>
+            <p><strong>1M users - service decomposition:</strong> The geo-query and matching engine becomes a separate service (e.g., Cloud Run + PostGIS). Real-time chat moves to a dedicated service (e.g., Ably or a dedicated Postgres read replica per region). Push notifications move to a queue (SQS + Lambda/Cloud Run) to decouple trigger latency from the DB write path. Auth stays with Supabase - it's already distributed.</p>
+            <p><strong>The biggest non-obvious risk:</strong> Location data. At 1M users, storing precise lat/lng is a privacy liability. I'd geohash coordinates to ~100m precision, which preserves neighborhood-level matching while removing exact home address inferability.</p>
+            <div class="answer-note">TPM interviewers want to see you can reason about scale in stages, not just throw "add more servers" answers.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">How do you work with engineers as a Technical PM? What does "technical" mean to you in this role?</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag" style="background:#0f172a;color:#fff;">Technical</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>My definition of "technical" in a TPM role:</strong> Not writing production code, but being fluent enough to have honest conversations about tradeoffs, to read a PR diff and understand what changed, to write a spec that an engineer doesn't have to reverse-engineer, and to know when "that's technically impossible" is real versus negotiating.</p>
+            <p><strong>In practice on Helpy, this meant:</strong></p>
+            <ul>
+              <li>Writing Engineering Briefs with specific table names, RLS policy logic, and Edge Function signatures - not just "the system should do X"</li>
+              <li>Being the one to diagnose why Supabase RPC calls were throwing TypeError in Expo Go/Hermes (JavaScript engine difference) and proposing the try/catch fallback pattern</li>
+              <li>Understanding that our phone verification hung because Supabase's Promise-based phone auth never resolves with Twilio Verify - so I designed a Promise.race timeout as the fix</li>
+              <li>Running /health-check (18 automated Supabase backend checks) before every release, not just asking "are we good?"</li>
+            </ul>
+            <p><strong>What I don't do:</strong> I don't make implementation decisions for engineers. I give them clear requirements and context, and I trust them on the how. My job is to make sure "what" and "why" are never ambiguous.</p>
+            <div class="answer-note">This answer shows you have genuine technical depth, not just "I used to code" credibility-borrowing.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-question" onclick="toggleQA(this)">
+          <span class="qa-q-text">How do you prioritize technical debt against new features?</span>
+          <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <span class="qa-tag" style="background:#0f172a;color:#fff;">Technical</span>
+            <button class="reveal-btn" onclick="event.stopPropagation();toggleQA(this.closest('.qa-card').querySelector('.qa-question'))">Reveal <span class="arrow">›</span></button>
+          </div>
+        </div>
+        <div class="qa-answer">
+          <div class="qa-answer-inner">
+            <p><strong>Framework:</strong> I categorize tech debt into three buckets: (1) security debt - must fix before it's exploited, (2) velocity debt - slows down every future sprint, (3) cleanup debt - cosmetic, defer until a slow sprint.</p>
+            <p><strong>Concrete Helpy example:</strong> After launching, my CISO audit flagged that 5 core tables had no RLS policies. Any authenticated user could read all data via direct API calls. That's bucket 1 - it went to the top of the backlog immediately, before any new features. It wasn't visible to users, it didn't move any growth metric, but shipping without it was irresponsible.</p>
+            <p><strong>Velocity debt example:</strong> Our Maestro UI test suite is flaky because Supabase is unreachable from the simulator during test runs. This slows every release - we can't trust automated tests. It's in the backlog as P1, but it doesn't block this sprint because we have the /health-check script as a workaround. When it starts costing more than a sprint slot, it gets scheduled.</p>
+            <p><strong>My rule:</strong> If tech debt makes the next feature take 2x longer to build, it's not debt - it's a prerequisite. Reframe it that way to stakeholders. "We need to refactor X before we build Y" lands better than "we need to do tech debt work."</p>
           </div>
         </div>
       </div>
@@ -1215,6 +1350,11 @@
     { cat: 'Execution', q: "What did the Apple rejection process teach you as a PM?", a: "Read the platform guidelines before you build, not after. Every rejection was a structured requirements document I hadn't read. The features I shipped under pressure made the product safer. Apple was an unpaid PM who forced me to ship UGC safety, account deletion, and proper ToS - all net positives." },
     { cat: 'Prioritization', q: "How do you score helper tiers in RICE vs a streak counter?", a: "Streak: Reach 100%, Impact 2 (D30 retention lift), Confidence 80% (fitness app analogs), Effort 1.5 days. Score ~600. Tiers: Reach 100%, Impact 3 (potential), Confidence 20% (no analogous data at our scale), Effort 4 days. Score ~150. Streak wins by ~4x. Tiers deferred until we have enough users for tiers to be meaningful." },
     { cat: 'Strategy', q: "What's the single biggest risk to Helpy and how do you mitigate it?", a: "Failing to reach density in any one geography before motivation runs dry. The cold start problem is existential for a two-sided marketplace. Mitigations: auto-expiry keeps feed fresh, re-engagement push recovers lapsed helpers, urgency notifications rush-deliver high-value requests, invite-neighbor drives referral growth." },
+    { cat: 'Technical', q: "What is Row Level Security and why does Helpy use it?", a: "RLS is a Postgres feature that attaches security policies to tables. Every query is filtered by those policies before data is returned - even direct REST API calls. Helpy uses it because Supabase exposes the DB via an anon key accessible on the client. Without RLS, any user could read every message. With RLS, auth.uid() is checked inside Postgres on every request - authorization at the database layer, not the app layer." },
+    { cat: 'Technical', q: "How does real-time chat work in Helpy?", a: "Supabase Realtime uses Postgres logical replication. The client subscribes to a channel filtered on match_id. When a messages row is inserted, the Realtime server picks it up via the replication slot and broadcasts it to all subscribers. No polling, no custom WebSocket server. The client also does an optimistic insert (messages appear instantly) without waiting for the broadcast." },
+    { cat: 'Technical', q: "How does push notification delivery work end-to-end?", a: "1. User signs in - push token registered with Expo, stored in profiles.push_token. 2. A new match or message is created in Postgres. 3. A pg_net DB trigger fires an HTTP request to our Edge Function. 4. Edge Function calls Expo Push API with the recipient's token. 5. Expo routes to APNs (iOS) or FCM (Android). The trigger is async - it doesn't block the original DB write." },
+    { cat: 'Technical', q: "What's the biggest technical tradeoff you made building Helpy?", a: "Choosing Supabase over a custom backend. The benefit: zero infrastructure to operate - I got Postgres, Auth, Realtime, Storage, and Edge Functions in one platform, which let me move 10x faster. The cost: vendor lock-in, Edge Functions run on Deno (limited ecosystem), and at scale the managed DB compute becomes expensive. At 0-to-1 stage, speed beats optionality every time. The exit path exists if we need it." },
+    { cat: 'Technical', q: "How do you think about API design as a TPM?", a: "I think in consumer-first contracts: what does the client need, and what's the minimum the server must do? For Helpy, I defined RPCs (Remote Procedure Calls) as named Postgres functions when the built-in REST API didn't match the query shape - like get_nearby_requests which takes lat/lng/radius and returns pre-sorted, pre-filtered results in one round trip instead of three. I document expected inputs, outputs, and error codes before engineering starts." },
   ];
 
   let fcState = { deck: [], current: 0, gotIt: 0, reviewAgain: [] };
