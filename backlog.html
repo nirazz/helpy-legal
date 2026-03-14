@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Backlog - Helpy</title>
+<style>
+  :root {
+    --brand: #6366f1;
+    --brand-light: #eef2ff;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --pink: #ec4899;
+    --slate: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: #0f172a; }
+
+  /* Progress bar */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: linear-gradient(90deg, var(--brand), var(--pink));
+    z-index: 1000; transition: width 0.1s;
+  }
+
+  /* Header */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(248,250,252,0.85); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border); padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .header-brand { display: flex; align-items: center; gap: 10px; }
+  .header-logo {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--brand), var(--pink));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: white; font-weight: 700;
+  }
+  .header-title { font-size: 15px; font-weight: 700; color: #0f172a; }
+  .header-subtitle { font-size: 12px; color: var(--slate); }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* Page title */
+  .page-title { font-size: 28px; font-weight: 800; color: #0f172a; margin-bottom: 6px; }
+  .page-subtitle { font-size: 15px; color: var(--slate); margin-bottom: 32px; }
+
+  /* RICE formula card */
+  .rice-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px 24px; margin-bottom: 28px;
+    display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: start;
+  }
+  .rice-formula {
+    background: var(--brand-light); border-radius: 10px; padding: 14px 20px;
+    text-align: center; min-width: 200px;
+  }
+  .rice-formula .eq { font-size: 13px; color: var(--brand); font-weight: 600; margin-bottom: 4px; }
+  .rice-formula .big { font-size: 18px; font-weight: 800; color: var(--brand); }
+  .rice-pillars { display: flex; flex-wrap: wrap; gap: 10px; }
+  .pillar { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; min-width: 180px; }
+  .pillar-name { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--slate); margin-bottom: 3px; }
+  .pillar-desc { font-size: 13px; color: #334155; }
+
+  /* Filter bar */
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 6px 16px; border-radius: 20px; border: 1.5px solid var(--border);
+    background: var(--card); color: var(--slate); font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .filter-btn:hover { border-color: var(--brand); color: var(--brand); }
+  .filter-btn.active { background: var(--brand); border-color: var(--brand); color: white; }
+  .filter-btn[data-filter="Done"].active { background: var(--green); border-color: var(--green); }
+  .filter-btn[data-filter="P0"].active { background: var(--red); border-color: var(--red); }
+  .filter-btn[data-filter="P1"].active { background: var(--amber); border-color: var(--amber); }
+  .filter-btn[data-filter="P2"].active { background: var(--brand); border-color: var(--brand); }
+  .filter-btn[data-filter="P3"].active { background: var(--slate); border-color: var(--slate); }
+
+  /* Table */
+  .table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 28px; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: var(--bg); padding: 11px 14px; text-align: left;
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    color: var(--slate); border-bottom: 1px solid var(--border); white-space: nowrap;
+    cursor: pointer; user-select: none;
+  }
+  thead th:hover { color: var(--brand); }
+  thead th.sorted-asc::after { content: ' ↑'; color: var(--brand); }
+  thead th.sorted-desc::after { content: ' ↓'; color: var(--brand); }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #f8fafc; }
+  tbody tr.hidden { display: none; }
+  td { padding: 12px 14px; font-size: 13px; vertical-align: middle; }
+  .td-id { font-weight: 700; color: var(--slate); font-size: 12px; }
+  .td-feature { font-weight: 600; color: #0f172a; max-width: 180px; }
+  .td-cat {
+    font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 20px;
+    white-space: nowrap;
+  }
+  .cat-Growth { background: #fef3c7; color: #92400e; }
+  .cat-Infra { background: #e0e7ff; color: #3730a3; }
+  .cat-Engagement { background: #fce7f3; color: #9d174d; }
+  .cat-UX { background: #d1fae5; color: #065f46; }
+  .cat-Safety { background: #fee2e2; color: #991b1b; }
+  .cat-Analytics { background: #f3e8ff; color: #6b21a8; }
+
+  .td-rice { font-weight: 800; font-size: 15px; color: var(--brand); }
+  .td-score-high { color: var(--red); }
+  .td-score-med { color: var(--amber); }
+  .td-score-low { color: var(--brand); }
+  .td-score-vlow { color: var(--slate); }
+
+  .status-badge {
+    display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 9px;
+    border-radius: 20px; white-space: nowrap;
+  }
+  .status-Done { background: #d1fae5; color: #065f46; }
+  .status-P0 { background: #fee2e2; color: #991b1b; }
+  .status-P1 { background: #fef3c7; color: #92400e; }
+  .status-P2 { background: var(--brand-light); color: #3730a3; }
+  .status-P3 { background: #f1f5f9; color: var(--slate); }
+
+  .td-notes { color: var(--slate); font-size: 12px; max-width: 160px; }
+
+  /* Killed ideas */
+  .killed-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px 24px;
+  }
+  .killed-title { font-size: 13px; font-weight: 700; color: var(--slate); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+  .killed-items { display: flex; flex-wrap: wrap; gap: 10px; }
+  .killed-item {
+    background: #f1f5f9; border-radius: 8px; padding: 10px 14px; flex: 1; min-width: 200px;
+  }
+  .killed-name { font-size: 13px; font-weight: 700; color: #334155; display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .killed-reason { font-size: 12px; color: var(--slate); }
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+
+<header>
+  <div class="header-brand">
+    <div class="header-logo">H</div>
+    <div>
+      <div class="header-title">Helpy</div>
+      <div class="header-subtitle">Product Backlog</div>
+    </div>
+  </div>
+  <div style="font-size:12px;color:var(--slate);">Updated Mar 2026</div>
+</header>
+
+<main>
+  <h1 class="page-title">Product Backlog</h1>
+  <p class="page-subtitle">Every idea, scored and prioritized with RICE</p>
+
+  <!-- RICE card -->
+  <div class="rice-card">
+    <div class="rice-formula">
+      <div class="eq">RICE Score =</div>
+      <div class="big">(R × I × C) / E</div>
+    </div>
+    <div class="rice-pillars">
+      <div class="pillar">
+        <div class="pillar-name">R - Reach</div>
+        <div class="pillar-desc">Users affected per quarter</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-name">I - Impact</div>
+        <div class="pillar-desc">0.25 minimal - 0.5 low - 1 medium - 2 high - 3 massive</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-name">C - Confidence</div>
+        <div class="pillar-desc">% confidence in estimates (100%, 80%, 50%)</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-name">E - Effort</div>
+        <div class="pillar-desc">Person-months of work</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="All">All</button>
+    <button class="filter-btn" data-filter="P0">P0</button>
+    <button class="filter-btn" data-filter="P1">P1</button>
+    <button class="filter-btn" data-filter="P2">P2</button>
+    <button class="filter-btn" data-filter="P3">P3</button>
+    <button class="filter-btn" data-filter="Done">Done</button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap">
+    <table id="backlog-table">
+      <thead>
+        <tr>
+          <th data-col="id">ID</th>
+          <th data-col="feature">Feature</th>
+          <th data-col="category">Category</th>
+          <th data-col="reach" title="Users per quarter">Reach</th>
+          <th data-col="impact">Impact</th>
+          <th data-col="confidence">Conf.</th>
+          <th data-col="effort">Effort</th>
+          <th data-col="rice" class="sorted-desc">RICE</th>
+          <th data-col="status">Status</th>
+          <th data-col="notes">Notes</th>
+        </tr>
+      </thead>
+      <tbody id="backlog-body"></tbody>
+    </table>
+  </div>
+
+  <!-- Killed ideas -->
+  <div class="killed-card">
+    <div class="killed-title">
+      <span>🚫</span> Ideas We Considered and Explicitly Killed
+    </div>
+    <div class="killed-items">
+      <div class="killed-item">
+        <div class="killed-name">🌐 Web App Relaunch</div>
+        <div class="killed-reason">Mobile-only strategy. Web prototype archived as reference only.</div>
+      </div>
+      <div class="killed-item">
+        <div class="killed-name">💳 Payment System</div>
+        <div class="killed-reason">Breaks community ethos. Helpy is about genuine neighborly help, not gigs.</div>
+      </div>
+      <div class="killed-item">
+        <div class="killed-name">👻 Anonymous Mode</div>
+        <div class="killed-reason">Undermines the trust model. Real identity is core to community safety.</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  // Scroll progress
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const pct = (window.scrollY / (doc.scrollHeight - doc.clientHeight)) * 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+  });
+
+  // Data
+  const items = [
+    { id:'BL-010', feature:'ASO Optimization',            category:'Growth',     reach:1000, impact:2,    conf:0.80, effort:0.2, status:'P0',   notes:'Keywords, screenshots' },
+    { id:'BL-011', feature:'Ambassador Program',          category:'Growth',     reach:500,  impact:3,    conf:0.80, effort:0.5, status:'P0',   notes:'3 neighborhood captains' },
+    { id:'BL-002', feature:'Push Notifications Device Test', category:'Infra',  reach:200,  impact:2,    conf:1.00, effort:0.1, status:'P0',   notes:'Code deployed, needs physical test' },
+    { id:'BL-015', feature:'PostHog Funnel Setup',        category:'Analytics',  reach:1,    impact:3,    conf:1.00, effort:0.2, status:'P0',   notes:"Can't grow what you can't measure" },
+    { id:'BL-014', feature:'Referral Program',            category:'Growth',     reach:300,  impact:2,    conf:0.80, effort:1,   status:'P1',   notes:'With incentives' },
+    { id:'BL-001', feature:'Google Play Store Launch',    category:'Growth',     reach:500,  impact:2,    conf:0.80, effort:1,   status:'P1',   notes:'Deferred until iOS traction' },
+    { id:'BL-005', feature:'Request Templates / Quick-Post', category:'UX',     reach:100,  impact:2,    conf:0.80, effort:0.5, status:'P1',   notes:'Reduce first-post friction' },
+    { id:'BL-006', feature:'Neighborhood Leaderboard',   category:'Engagement', reach:200,  impact:1,    conf:0.50, effort:0.5, status:'P2',   notes:'Top helpers this month' },
+    { id:'BL-004', feature:'In-App Notification Center', category:'UX',         reach:200,  impact:1,    conf:0.80, effort:1,   status:'P2',   notes:'Currently push-only' },
+    { id:'BL-003', feature:'Helper Tiers (Bronze/Silver/Gold)', category:'Engagement', reach:200, impact:1, conf:0.50, effort:2, status:'P2', notes:'Not enough users yet' },
+    { id:'BL-012', feature:'ML Content Moderation',      category:'Safety',     reach:200,  impact:2,    conf:0.50, effort:4,   status:'P2',   notes:'At scale, not now' },
+    { id:'BL-007', feature:'Typing Indicators in Chat',  category:'UX',         reach:150,  impact:0.5,  conf:1.00, effort:0.5, status:'P2',   notes:'' },
+    { id:'BL-008', feature:'Read Receipts in Chat',      category:'UX',         reach:150,  impact:0.5,  conf:1.00, effort:0.5, status:'P2',   notes:'' },
+    { id:'BL-009', feature:'Scheduled / Recurring Requests', category:'UX',    reach:50,   impact:2,    conf:0.50, effort:3,   status:'P3',   notes:'' },
+    { id:'BL-013', feature:'Video Messages in Chat',     category:'UX',         reach:100,  impact:0.5,  conf:0.50, effort:4,   status:'P3',   notes:'v2' },
+  ];
+
+  function calcRICE(item) {
+    return Math.round((item.reach * item.impact * item.conf) / item.effort);
+  }
+
+  function scoreClass(score) {
+    if (score >= 2000) return 'td-score-high';
+    if (score >= 500) return 'td-score-med';
+    if (score >= 100) return 'td-score-low';
+    return 'td-score-vlow';
+  }
+
+  let currentFilter = 'All';
+  let sortCol = 'rice';
+  let sortDir = 'desc';
+
+  function render() {
+    const tbody = document.getElementById('backlog-body');
+    let sorted = [...items].map(i => ({ ...i, rice: calcRICE(i) }));
+    sorted.sort((a, b) => {
+      let av = a[sortCol], bv = b[sortCol];
+      if (typeof av === 'string') av = av.toLowerCase(), bv = bv.toLowerCase();
+      return sortDir === 'asc' ? (av > bv ? 1 : -1) : (av < bv ? 1 : -1);
+    });
+
+    tbody.innerHTML = sorted.map(item => {
+      const rice = item.rice;
+      const hidden = currentFilter !== 'All' && item.status !== currentFilter ? 'hidden' : '';
+      return `<tr class="${hidden}" data-status="${item.status}">
+        <td class="td-id">${item.id}</td>
+        <td class="td-feature">${item.feature}</td>
+        <td><span class="td-cat cat-${item.category}">${item.category}</span></td>
+        <td>${item.reach.toLocaleString()}</td>
+        <td>${item.impact}</td>
+        <td>${Math.round(item.conf * 100)}%</td>
+        <td>${item.effort}</td>
+        <td class="td-rice ${scoreClass(rice)}">${rice.toLocaleString()}</td>
+        <td><span class="status-badge status-${item.status}">${item.status}</span></td>
+        <td class="td-notes">${item.notes}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // Filter buttons
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      render();
+    });
+  });
+
+  // Sort headers
+  document.querySelectorAll('thead th[data-col]').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.dataset.col;
+      if (sortCol === col) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+      else { sortCol = col; sortDir = 'desc'; }
+      document.querySelectorAll('thead th').forEach(h => h.classList.remove('sorted-asc','sorted-desc'));
+      th.classList.add(sortDir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+      render();
+    });
+  });
+
+  render();
+</script>
+</body>
+</html>

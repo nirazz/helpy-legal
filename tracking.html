@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Helpy - Analytics Tracking Plan</title>
+<style>
+  :root {
+    --brand: #6366f1;
+    --brand-dark: #4f46e5;
+    --brand-light: #eef2ff;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --pink: #ec4899;
+    --slate: #64748b;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--brand), var(--pink));
+    z-index: 1000;
+    transition: width 0.1s ease;
+    width: 0%;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--brand-dark);
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 16px;
+  }
+
+  .header-tag {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand);
+    background: var(--brand-light);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .hero {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand);
+    background: var(--brand-light);
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    color: var(--text-muted);
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  section { margin-bottom: 60px; }
+
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 20px;
+    letter-spacing: -0.2px;
+  }
+
+  .callout {
+    background: var(--brand-light);
+    border-left: 4px solid var(--brand);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .callout-text { font-size: 14px; color: var(--text); line-height: 1.65; }
+  .callout-text strong { color: var(--brand-dark); }
+
+  /* Tools row */
+  .tools-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+
+  .tool-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 16px;
+  }
+
+  .tool-chip-icon {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .tool-chip-text { font-size: 13px; font-weight: 600; color: var(--text); }
+  .tool-chip-sub { font-size: 11px; color: var(--text-muted); }
+
+  /* Funnel diagrams */
+  .funnels-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 700px) {
+    .funnels-grid { grid-template-columns: 1fr; }
+  }
+
+  .funnel-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 18px;
+    overflow: hidden;
+  }
+
+  .funnel-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .funnel-goal {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 18px;
+  }
+
+  .funnel-goal span {
+    font-weight: 700;
+    color: var(--green);
+  }
+
+  .funnel-steps { display: flex; flex-direction: column; gap: 4px; }
+
+  .funnel-step {
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    position: relative;
+    text-align: center;
+  }
+
+  .funnel-arrow {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1;
+    margin: 1px 0;
+  }
+
+  /* Activation funnel colors - darkening shades */
+  .funnel-step-1 { background: #e0e7ff; }
+  .funnel-step-2 { background: #c7d2fe; margin: 0 6px; }
+  .funnel-step-3 { background: #a5b4fc; margin: 0 12px; }
+  .funnel-step-4 { background: #818cf8; margin: 0 18px; color: white; }
+  .funnel-step-5 { background: #6366f1; margin: 0 24px; color: white; }
+
+  /* Match funnel */
+  .funnel-step-m1 { background: #d1fae5; }
+  .funnel-step-m2 { background: #a7f3d0; margin: 0 5px; }
+  .funnel-step-m3 { background: #6ee7b7; margin: 0 10px; }
+  .funnel-step-m4 { background: #34d399; margin: 0 15px; color: white; }
+  .funnel-step-m5 { background: #10b981; margin: 0 20px; color: white; }
+  .funnel-step-m6 { background: #059669; margin: 0 25px; color: white; }
+
+  /* Retention funnel */
+  .funnel-step-r1 { background: #fce7f3; }
+  .funnel-step-r2 { background: #fbcfe8; margin: 0 8px; }
+  .funnel-step-r3 { background: #f9a8d4; margin: 0 16px; }
+  .funnel-step-r4 { background: #ec4899; margin: 0 24px; color: white; }
+
+  /* Events table */
+  .events-table-wrapper {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .events-search {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .events-search input {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--card);
+    outline: none;
+    font-family: inherit;
+  }
+
+  .events-search input:focus { border-color: var(--brand); }
+
+  .events-search input::placeholder { color: var(--text-muted); }
+
+  .events-filter-btns {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+
+  .filter-btn.active {
+    background: var(--brand);
+    color: white;
+    border-color: var(--brand);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card);
+  }
+
+  thead th {
+    background: var(--bg);
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--bg); }
+  tbody tr.hidden-row { display: none; }
+
+  td {
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--text);
+    vertical-align: top;
+  }
+
+  td:first-child {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px;
+    color: var(--brand-dark);
+    white-space: nowrap;
+  }
+
+  .event-category {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 5px;
+    white-space: nowrap;
+  }
+
+  .cat-auth     { background: #dbeafe; color: #1e40af; }
+  .cat-onboard  { background: #fce7f3; color: #9d174d; }
+  .cat-phone    { background: #fef9c3; color: #854d0e; }
+  .cat-request  { background: #dcfce7; color: #166534; }
+  .cat-offer    { background: var(--brand-light); color: var(--brand-dark); }
+  .cat-chat     { background: #f0fdf4; color: #166534; }
+  .cat-complete { background: #ecfdf5; color: #065f46; }
+  .cat-safety   { background: #fee2e2; color: #991b1b; }
+  .cat-social   { background: #f5f3ff; color: #5b21b6; }
+  .cat-system   { background: #f1f5f9; color: #475569; }
+
+  .props-pill {
+    display: inline-block;
+    font-size: 11px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 1px 5px;
+    border-radius: 4px;
+    margin: 1px 2px 1px 0;
+    color: var(--slate);
+    white-space: nowrap;
+  }
+
+  /* KPI cards */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+
+  @media (max-width: 700px) {
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 16px;
+    text-align: center;
+  }
+
+  .kpi-icon { font-size: 22px; margin-bottom: 8px; }
+  .kpi-target {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--brand);
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+  .kpi-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+  .kpi-note { font-size: 11px; color: var(--text-muted); }
+
+  /* Don't track */
+  .dont-track {
+    background: #fff7f7;
+    border: 1px solid #fecaca;
+    border-radius: var(--radius);
+    padding: 20px 22px;
+  }
+
+  .dont-track-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--red);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .vanity-list {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .vanity-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: line-through;
+  }
+
+  footer {
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<header>
+  <a class="header-logo" href="index.html">
+    <div class="logo-icon">✋</div>
+    Helpy
+  </a>
+  <span class="header-tag">Analytics Tracking Plan</span>
+</header>
+
+<main>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-badge">📊 Analytics</div>
+    <h1>Analytics Tracking Plan</h1>
+    <p class="hero-sub">Every event Helpy fires - what, when, and why</p>
+  </div>
+
+  <!-- Philosophy -->
+  <section>
+    <div class="callout">
+      <div class="callout-icon">🎯</div>
+      <div class="callout-text">
+        <strong>Philosophy:</strong> Track behaviors not pageviews. Every event should answer a product question. If you can't name the question it answers, don't track it.
+      </div>
+    </div>
+
+    <div class="tools-row">
+      <div class="tool-chip">
+        <div class="tool-chip-icon" style="background:#f5f0ff;">📈</div>
+        <div>
+          <div class="tool-chip-text">PostHog</div>
+          <div class="tool-chip-sub">Funnels, cohorts, retention</div>
+        </div>
+      </div>
+      <div class="tool-chip">
+        <div class="tool-chip-icon" style="background:#fff0f0;">🪲</div>
+        <div>
+          <div class="tool-chip-text">Sentry</div>
+          <div class="tool-chip-sub">Crashes + error rates</div>
+        </div>
+      </div>
+      <div class="tool-chip">
+        <div class="tool-chip-icon" style="background:#f0fff4;">🗄️</div>
+        <div>
+          <div class="tool-chip-text">Supabase</div>
+          <div class="tool-chip-sub">DB triggers + raw counts</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Funnels -->
+  <section>
+    <h2>Core Funnels</h2>
+    <div class="funnels-grid">
+
+      <div class="funnel-card">
+        <div class="funnel-title">Activation Funnel</div>
+        <div class="funnel-goal">Goal: <span>&gt;50%</span> open to first action</div>
+        <div class="funnel-steps">
+          <div class="funnel-step funnel-step-1">App opened</div>
+          <div class="funnel-arrow">&#8595;</div>
+          <div class="funnel-step funnel-step-2">Signed in</div>
+          <div class="funnel-arrow">&#8595;</div>
+          <div class="funnel-step funnel-step-3">Terms accepted</div>
+          <div class="funnel-arrow">&#8595;</div>
+          <div class="funnel-step funnel-step-4">Phone verified</div>
+          <div class="funnel-arrow">&#8595;</div>
+          <div class="funnel-step funnel-step-5">First action</div>
+        </div>
+      </div>
+
+      <div class="funnel-card">
+        <div class="funnel-title">Match Funnel</div>
+        <div class="funnel-goal">Goal: <span>&gt;40%</span> requests get 1+ offer</div>
+        <div class="funnel-steps">
+          <div class="funnel-step funnel-step-m1">Request posted</div>
+          <div class="funnel-arrow">&#8595;</div>
+          <div class="funnel-step funnel-step-m2">Offer made</div>
+          <div class="funnel-arrow">&#8595;</div>
+          <div class="funnel-step funnel-step-m3">Offer accepted</div>
+          <div class="funnel-arrow">&#8595;</div>
+          <div class="funnel-step funnel-step-m4">Chat started</div>
+          <div class="funnel-arrow">&#8595;</div>
+          <div class="funnel-step funnel-step-m5">Completed</div>
+          <div class="funnel-arrow">&#8595;</div>
+          <div class="funnel-step funnel-step-m6">Rating given</div>
+        </div>
+      </div>
+
+      <div class="funnel-card">
+        <div class="funnel-title">Retention</div>
+        <div class="funnel-goal">Goal: D7 <span>&gt;25%</span>, D30 <span>&gt;12%</span></div>
+        <div class="funnel-steps">
+          <div class="funnel-step funnel-step-r1">Day 1 (100%)</div>
+          <div class="funnel-arrow">&#8595;</div>
+          <div class="funnel-step funnel-step-r2">Day 7 target: 25%</div>
+          <div class="funnel-arrow">&#8595;</div>
+          <div class="funnel-step funnel-step-r3">Day 14 target: 18%</div>
+          <div class="funnel-arrow">&#8595;</div>
+          <div class="funnel-step funnel-step-r4">Day 30 target: 12%</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Events Table -->
+  <section>
+    <h2>Full Event Tracking Table</h2>
+
+    <div class="events-table-wrapper">
+      <div class="events-search">
+        <input type="text" id="search-input" placeholder="Search events..." oninput="filterEvents()" />
+        <div class="events-filter-btns">
+          <button class="filter-btn active" onclick="filterByCategory(this, 'all')">All</button>
+          <button class="filter-btn" onclick="filterByCategory(this, 'auth')">Auth</button>
+          <button class="filter-btn" onclick="filterByCategory(this, 'onboard')">Onboarding</button>
+          <button class="filter-btn" onclick="filterByCategory(this, 'offer')">Offer</button>
+          <button class="filter-btn" onclick="filterByCategory(this, 'chat')">Chat</button>
+          <button class="filter-btn" onclick="filterByCategory(this, 'safety')">Safety</button>
+        </div>
+      </div>
+
+      <table id="events-table">
+        <thead>
+          <tr>
+            <th>Event Name</th>
+            <th>Category</th>
+            <th>Trigger</th>
+            <th>Key Properties</th>
+            <th>Question it Answers</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-cat="system">
+            <td>app_opened</td>
+            <td><span class="event-category cat-system">System</span></td>
+            <td>App launches (foreground)</td>
+            <td><span class="props-pill">platform</span><span class="props-pill">version</span><span class="props-pill">locale</span></td>
+            <td>How many people open the app each day? DAU base.</td>
+          </tr>
+          <tr data-cat="auth">
+            <td>sign_in_started</td>
+            <td><span class="event-category cat-auth">Auth</span></td>
+            <td>User taps a sign-in button</td>
+            <td><span class="props-pill">method</span></td>
+            <td>Which sign-in method do users prefer? Is email being used despite being hidden?</td>
+          </tr>
+          <tr data-cat="auth">
+            <td>sign_in_completed</td>
+            <td><span class="event-category cat-auth">Auth</span></td>
+            <td>Auth session established</td>
+            <td><span class="props-pill">method</span><span class="props-pill">is_new_user</span></td>
+            <td>What is the sign-in conversion rate per method? How many are new vs returning?</td>
+          </tr>
+          <tr data-cat="onboard">
+            <td>onboarding_slide_viewed</td>
+            <td><span class="event-category cat-onboard">Onboarding</span></td>
+            <td>Each onboarding slide becomes visible</td>
+            <td><span class="props-pill">slide_index</span><span class="props-pill">slide_title</span></td>
+            <td>Where do users drop off in onboarding? Which slides have poor completion?</td>
+          </tr>
+          <tr data-cat="onboard">
+            <td>onboarding_completed</td>
+            <td><span class="event-category cat-onboard">Onboarding</span></td>
+            <td>User taps Get Started on last slide</td>
+            <td><span class="props-pill">duration_seconds</span></td>
+            <td>What fraction of new users complete onboarding? Paired with D7 retention.</td>
+          </tr>
+          <tr data-cat="onboard">
+            <td>onboarding_skipped</td>
+            <td><span class="event-category cat-onboard">Onboarding</span></td>
+            <td>User taps Skip</td>
+            <td><span class="props-pill">skipped_at_slide</span></td>
+            <td>How many users skip? Do skippers retain worse than completers?</td>
+          </tr>
+          <tr data-cat="onboard">
+            <td>terms_accepted</td>
+            <td><span class="event-category cat-onboard">Onboarding</span></td>
+            <td>User taps Accept in TermsModal</td>
+            <td><span class="props-pill">is_first_time</span></td>
+            <td>Are all users accepting terms before accessing features? Compliance check.</td>
+          </tr>
+          <tr data-cat="phone">
+            <td>phone_verify_started</td>
+            <td><span class="event-category cat-phone">Phone</span></td>
+            <td>PhoneVerifyModal opens</td>
+            <td><span class="props-pill">trigger</span></td>
+            <td>What triggers verification? Is it offer or post that drives the most opens?</td>
+          </tr>
+          <tr data-cat="phone">
+            <td>phone_verify_completed</td>
+            <td><span class="event-category cat-phone">Phone</span></td>
+            <td>OTP verified successfully</td>
+            <td><span class="props-pill">attempts</span><span class="props-pill">duration_seconds</span></td>
+            <td>What is the phone verify completion rate? How many attempts on average?</td>
+          </tr>
+          <tr data-cat="phone">
+            <td>phone_verify_abandoned</td>
+            <td><span class="event-category cat-phone">Phone</span></td>
+            <td>User closes modal without completing</td>
+            <td><span class="props-pill">step</span><span class="props-pill">attempts</span></td>
+            <td>Where do users abandon? After entering number or during OTP entry?</td>
+          </tr>
+          <tr data-cat="request">
+            <td>request_posted</td>
+            <td><span class="event-category cat-request">Request</span></td>
+            <td>Help request saved to DB</td>
+            <td><span class="props-pill">category</span><span class="props-pill">urgency</span><span class="props-pill">has_images</span><span class="props-pill">char_count</span></td>
+            <td>How many requests are posted per day? Which categories are most common?</td>
+          </tr>
+          <tr data-cat="request">
+            <td>request_viewed</td>
+            <td><span class="event-category cat-request">Request</span></td>
+            <td>RequestDetailsModal opens</td>
+            <td><span class="props-pill">request_id</span><span class="props-pill">category</span><span class="props-pill">urgency</span></td>
+            <td>How many views does each request get before receiving an offer?</td>
+          </tr>
+          <tr data-cat="offer">
+            <td>offer_made</td>
+            <td><span class="event-category cat-offer">Offer</span></td>
+            <td>Swipe right or Offer Help tap</td>
+            <td><span class="props-pill">request_id</span><span class="props-pill">input_method</span><span class="props-pill">category</span></td>
+            <td>What is offers-per-session? Which categories get most offers? Swipe vs button?</td>
+          </tr>
+          <tr data-cat="offer">
+            <td>offer_undone</td>
+            <td><span class="event-category cat-offer">Offer</span></td>
+            <td>User taps Undo in bottom sheet</td>
+            <td><span class="props-pill">request_id</span><span class="props-pill">time_to_undo_ms</span></td>
+            <td>How often do users regret offers? High undo rate signals accidental taps.</td>
+          </tr>
+          <tr data-cat="offer">
+            <td>offer_accepted</td>
+            <td><span class="event-category cat-offer">Offer</span></td>
+            <td>Requester taps Accept on offer</td>
+            <td><span class="props-pill">match_id</span><span class="props-pill">time_to_accept_hours</span></td>
+            <td>What fraction of offers get accepted? How fast do requesters respond?</td>
+          </tr>
+          <tr data-cat="offer">
+            <td>offer_declined</td>
+            <td><span class="event-category cat-offer">Offer</span></td>
+            <td>Requester taps Decline on offer</td>
+            <td><span class="props-pill">match_id</span><span class="props-pill">time_to_decline_hours</span></td>
+            <td>What is the decline rate? Segmented by category to identify mismatch.</td>
+          </tr>
+          <tr data-cat="chat">
+            <td>chat_opened</td>
+            <td><span class="event-category cat-chat">Chat</span></td>
+            <td>User opens a chat room</td>
+            <td><span class="props-pill">match_id</span><span class="props-pill">user_role</span></td>
+            <td>How many accepted matches actually start chatting? Chat = intent to coordinate.</td>
+          </tr>
+          <tr data-cat="chat">
+            <td>message_sent</td>
+            <td><span class="event-category cat-chat">Chat</span></td>
+            <td>Message delivered to DB</td>
+            <td><span class="props-pill">match_id</span><span class="props-pill">char_count</span><span class="props-pill">is_quick_reply</span></td>
+            <td>How many messages per match? Quick reply vs typed? Engagement depth.</td>
+          </tr>
+          <tr data-cat="complete">
+            <td>request_completed</td>
+            <td><span class="event-category cat-complete">Complete</span></td>
+            <td>Requester taps "Mark Complete"</td>
+            <td><span class="props-pill">match_id</span><span class="props-pill">days_to_complete</span></td>
+            <td>What fraction of accepted matches complete? Speed to completion distribution.</td>
+          </tr>
+          <tr data-cat="complete">
+            <td>rating_given</td>
+            <td><span class="event-category cat-complete">Complete</span></td>
+            <td>Rating submitted via RatingModal</td>
+            <td><span class="props-pill">stars</span><span class="props-pill">has_comment</span></td>
+            <td>What fraction of completions get rated? Average rating distribution.</td>
+          </tr>
+          <tr data-cat="safety">
+            <td>user_reported</td>
+            <td><span class="event-category cat-safety">Safety</span></td>
+            <td>Report submitted via ReportModal</td>
+            <td><span class="props-pill">reason</span><span class="props-pill">content_type</span></td>
+            <td>What are the most common report reasons? Volume per week for moderation capacity.</td>
+          </tr>
+          <tr data-cat="safety">
+            <td>user_blocked</td>
+            <td><span class="event-category cat-safety">Safety</span></td>
+            <td>User blocks another from any surface</td>
+            <td><span class="props-pill">source</span></td>
+            <td>Where do most blocks happen? Browse vs chat signals different safety issues.</td>
+          </tr>
+          <tr data-cat="social">
+            <td>profile_viewed</td>
+            <td><span class="event-category cat-social">Social</span></td>
+            <td>PublicProfileModal opens</td>
+            <td><span class="props-pill">target_user_id</span><span class="props-pill">source</span></td>
+            <td>How often do users check profiles before deciding to trust a helper?</td>
+          </tr>
+          <tr data-cat="social">
+            <td>invite_sent</td>
+            <td><span class="event-category cat-social">Social</span></td>
+            <td>User shares invite via native share sheet</td>
+            <td><span class="props-pill">language</span></td>
+            <td>Viral coefficient input. How many users share? Estimate K-factor.</td>
+          </tr>
+          <tr data-cat="system">
+            <td>push_received</td>
+            <td><span class="event-category cat-system">System</span></td>
+            <td>Push notification delivered (foreground)</td>
+            <td><span class="props-pill">type</span><span class="props-pill">language</span></td>
+            <td>Are pushes reaching users? Delivery rate per notification type.</td>
+          </tr>
+          <tr data-cat="system">
+            <td>push_tapped</td>
+            <td><span class="event-category cat-system">System</span></td>
+            <td>User taps a push notification</td>
+            <td><span class="props-pill">type</span><span class="props-pill">time_since_sent_ms</span></td>
+            <td>Push CTR per type. Are weekly digests effective? New offer vs message pushes?</td>
+          </tr>
+          <tr data-cat="system">
+            <td>app_crashed</td>
+            <td><span class="event-category cat-system">System</span></td>
+            <td>Sentry captures unhandled exception</td>
+            <td><span class="props-pill">screen</span><span class="props-pill">error_type</span><span class="props-pill">os_version</span></td>
+            <td>Crash-free session rate. Which screens are unstable? P0 fix trigger.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- KPI Dashboard -->
+  <section>
+    <h2>Key Weekly Metrics Dashboard</h2>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon">👥</div>
+        <div class="kpi-target">200</div>
+        <div class="kpi-label">WAU Target</div>
+        <div class="kpi-note">Weekly active users by month 3</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">🤝</div>
+        <div class="kpi-target">40%</div>
+        <div class="kpi-label">Match Rate</div>
+        <div class="kpi-note">Requests that get 1+ offer</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">⚡</div>
+        <div class="kpi-target">60%</div>
+        <div class="kpi-label">Activation</div>
+        <div class="kpi-note">Open to first post or offer</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">📅</div>
+        <div class="kpi-target">25%</div>
+        <div class="kpi-label">D7 Retention</div>
+        <div class="kpi-note">Return within first week</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">🔄</div>
+        <div class="kpi-target">&gt;0.3</div>
+        <div class="kpi-label">Viral K-factor</div>
+        <div class="kpi-note">Invites that convert</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Don't Track -->
+  <section>
+    <h2>What NOT to Track</h2>
+    <div class="dont-track">
+      <div class="dont-track-title">
+        <span>🚫</span> Vanity Metrics - Ignore These
+      </div>
+      <div class="vanity-list">
+        <div class="vanity-item">📱 Total downloads</div>
+        <div class="vanity-item">👁️ Pageviews / screen views</div>
+        <div class="vanity-item">⏱️ Session length</div>
+        <div class="vanity-item">📣 Social media followers</div>
+        <div class="vanity-item">⭐ App Store rating average</div>
+      </div>
+      <p style="font-size:13px; color:var(--text-muted); margin-top:14px; line-height:1.6;">These feel good but don't tell you whether the product works. A user spending 30 minutes in the app could mean they're engaged or that they're lost. Measure <strong style="color:var(--text)">actions that create value</strong> - offers made, matches created, help delivered.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Helpy - Neighbors Helping Neighbors &nbsp;&middot;&nbsp;
+  <a href="index.html" style="color:var(--brand); text-decoration:none;">Home</a> &nbsp;&middot;&nbsp;
+  <a href="experiments.html" style="color:var(--brand); text-decoration:none;">Experiments</a> &nbsp;&middot;&nbsp;
+  <a href="nps.html" style="color:var(--brand); text-decoration:none;">NPS &amp; PMF</a>
+</footer>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const el = document.getElementById('progress-bar');
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    el.style.width = (docHeight > 0 ? (scrollTop / docHeight) * 100 : 0) + '%';
+  });
+
+  let activeCategory = 'all';
+  let searchQuery = '';
+
+  function applyFilters() {
+    const rows = document.querySelectorAll('#events-table tbody tr');
+    rows.forEach(row => {
+      const cat = row.getAttribute('data-cat');
+      const text = row.textContent.toLowerCase();
+      const catMatch = activeCategory === 'all' || cat === activeCategory;
+      const searchMatch = searchQuery === '' || text.includes(searchQuery);
+      row.classList.toggle('hidden-row', !(catMatch && searchMatch));
+    });
+  }
+
+  function filterByCategory(btn, cat) {
+    activeCategory = cat;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilters();
+  }
+
+  function filterEvents() {
+    searchQuery = document.getElementById('search-input').value.toLowerCase().trim();
+    applyFilters();
+  }
+</script>
+</body>
+</html>

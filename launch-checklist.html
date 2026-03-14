@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Launch Checklist - Helpy</title>
+<style>
+  :root {
+    --brand: #6366f1;
+    --brand-light: #eef2ff;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --pink: #ec4899;
+    --slate: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: #0f172a; }
+
+  #progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: linear-gradient(90deg, var(--brand), var(--pink));
+    z-index: 1000; transition: width 0.1s;
+  }
+
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(248,250,252,0.85); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border); padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .header-brand { display: flex; align-items: center; gap: 10px; }
+  .header-logo {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--brand), var(--pink));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: white; font-weight: 700;
+  }
+  .header-title { font-size: 15px; font-weight: 700; color: #0f172a; }
+  .header-subtitle { font-size: 12px; color: var(--slate); }
+
+  main { max-width: 760px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  .page-title { font-size: 28px; font-weight: 800; color: #0f172a; margin-bottom: 6px; }
+  .page-subtitle { font-size: 15px; color: var(--slate); margin-bottom: 12px; }
+
+  .overall-bar-wrap { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 20px; margin-bottom: 32px; }
+  .overall-label { display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .overall-label span { font-size: 13px; font-weight: 600; color: var(--slate); }
+  .overall-label .overall-count { font-size: 13px; font-weight: 700; color: var(--brand); }
+  .bar-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--brand), var(--green)); transition: width 0.4s cubic-bezier(0.4,0,0.2,1); }
+
+  .reset-btn {
+    font-size: 12px; color: var(--slate); background: none; border: 1px solid var(--border);
+    border-radius: 8px; padding: 5px 12px; cursor: pointer; transition: all 0.15s;
+  }
+  .reset-btn:hover { border-color: var(--red); color: var(--red); }
+
+  /* Section */
+  .section { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 20px; overflow: hidden; }
+  .section-header { padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
+  .section-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .icon-pre-build { background: #fef3c7; }
+  .icon-pre-submit { background: #e0e7ff; }
+  .icon-post-launch { background: #d1fae5; }
+  .section-info { flex: 1; }
+  .section-name { font-size: 15px; font-weight: 700; color: #0f172a; }
+  .section-desc { font-size: 12px; color: var(--slate); margin-top: 1px; }
+
+  /* Mini progress */
+  .section-progress { text-align: right; min-width: 80px; }
+  .section-frac { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+  .mini-track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .mini-fill { height: 100%; border-radius: 3px; transition: width 0.4s cubic-bezier(0.4,0,0.2,1); }
+  .fill-pre-build { background: var(--amber); }
+  .fill-pre-submit { background: var(--brand); }
+  .fill-post-launch { background: var(--green); }
+
+  /* Checklist items */
+  .check-list { padding: 8px 0; }
+  .check-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 10px 20px; transition: background 0.1s; cursor: pointer;
+  }
+  .check-item:hover { background: var(--bg); }
+  .check-item.done .item-label { text-decoration: line-through; color: var(--slate); }
+
+  .checkbox {
+    width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--border);
+    flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; background: white;
+  }
+  .check-item.done .checkbox { background: var(--green); border-color: var(--green); }
+  .checkbox-check { width: 10px; height: 8px; opacity: 0; transition: opacity 0.1s; }
+  .check-item.done .checkbox-check { opacity: 1; }
+
+  .item-label { font-size: 14px; color: #334155; line-height: 1.5; }
+
+  /* Tags */
+  .item-tag {
+    display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 6px;
+    border-radius: 4px; margin-left: 6px; vertical-align: middle;
+  }
+  .tag-security { background: #fee2e2; color: #991b1b; }
+  .tag-i18n { background: #fce7f3; color: #9d174d; }
+  .tag-analytics { background: #f3e8ff; color: #6b21a8; }
+  .tag-infra { background: #e0e7ff; color: #3730a3; }
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+
+<header>
+  <div class="header-brand">
+    <div class="header-logo">H</div>
+    <div>
+      <div class="header-title">Helpy</div>
+      <div class="header-subtitle">Launch Checklist</div>
+    </div>
+  </div>
+  <button class="reset-btn" onclick="resetAll()">Reset All</button>
+</header>
+
+<main>
+  <h1 class="page-title">Launch Checklist</h1>
+  <p class="page-subtitle">Everything that must be true before shipping</p>
+
+  <div class="overall-bar-wrap">
+    <div class="overall-label">
+      <span>Overall Progress</span>
+      <span class="overall-count" id="overall-count">0 / 0 complete</span>
+    </div>
+    <div class="bar-track">
+      <div class="bar-fill" id="overall-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- Section: Pre-Build -->
+  <div class="section" id="section-pre-build">
+    <div class="section-header">
+      <div class="section-icon icon-pre-build">📐</div>
+      <div class="section-info">
+        <div class="section-name">Pre-Build</div>
+        <div class="section-desc">Before writing a single line of code</div>
+      </div>
+      <div class="section-progress">
+        <div class="section-frac" id="frac-pre-build">0/9</div>
+        <div class="mini-track"><div class="mini-fill fill-pre-build" id="fill-pre-build" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="check-list" id="list-pre-build"></div>
+  </div>
+
+  <!-- Section: Pre-Submit -->
+  <div class="section" id="section-pre-submit">
+    <div class="section-header">
+      <div class="section-icon icon-pre-submit">🚀</div>
+      <div class="section-info">
+        <div class="section-name">Pre-Submit</div>
+        <div class="section-desc">Before App Store submission</div>
+      </div>
+      <div class="section-progress">
+        <div class="section-frac" id="frac-pre-submit">0/16</div>
+        <div class="mini-track"><div class="mini-fill fill-pre-submit" id="fill-pre-submit" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="check-list" id="list-pre-submit"></div>
+  </div>
+
+  <!-- Section: Post-Launch -->
+  <div class="section" id="section-post-launch">
+    <div class="section-header">
+      <div class="section-icon icon-post-launch">📊</div>
+      <div class="section-info">
+        <div class="section-name">Post-Launch</div>
+        <div class="section-desc">After App Store approval</div>
+      </div>
+      <div class="section-progress">
+        <div class="section-frac" id="frac-post-launch">0/8</div>
+        <div class="mini-track"><div class="mini-fill fill-post-launch" id="fill-post-launch" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="check-list" id="list-post-launch"></div>
+  </div>
+</main>
+
+<script>
+  // Scroll progress
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const pct = (window.scrollY / (doc.scrollHeight - doc.clientHeight)) * 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+  });
+
+  const SECTIONS = {
+    'pre-build': {
+      items: [
+        { id:'pb1', label:'PRD written and reviewed' },
+        { id:'pb2', label:'User stories with acceptance criteria defined' },
+        { id:'pb3', label:'Design mocked up (even a rough sketch)' },
+        { id:'pb4', label:'Edge cases identified (empty state, error state, loading state)' },
+        { id:'pb5', label:'Analytics events planned (what will we track?)', tag:'analytics' },
+        { id:'pb6', label:'Success metric defined (how will we know it worked?)' },
+        { id:'pb7', label:'Security implications reviewed (RLS, input validation, auth)', tag:'security' },
+        { id:'pb8', label:'Hebrew translations written for all new strings', tag:'i18n' },
+        { id:'pb9', label:'RTL layout considered for all new UI', tag:'i18n' },
+      ]
+    },
+    'pre-submit': {
+      items: [
+        { id:'ps1', label:'All acceptance criteria pass on simulator' },
+        { id:'ps2', label:'All acceptance criteria pass on physical device' },
+        { id:'ps3', label:'Hebrew mode tested end-to-end', tag:'i18n' },
+        { id:'ps4', label:'Dark mode tested' },
+        { id:'ps5', label:'No console errors or warnings in production build' },
+        { id:'ps6', label:'Sentry configured and catching errors', tag:'infra' },
+        { id:'ps7', label:'PostHog events firing correctly', tag:'analytics' },
+        { id:'ps8', label:'Push notifications tested on physical device', tag:'infra' },
+        { id:'ps9', label:'Run /health-check (all 18 backend checks passing)', tag:'infra' },
+        { id:'ps10', label:'RLS policies verified on any new tables', tag:'security' },
+        { id:'ps11', label:'Content filter applied to any new user input fields', tag:'security' },
+        { id:'ps12', label:'App version and build number bumped in app.json' },
+        { id:'ps13', label:'Release notes written' },
+        { id:'ps14', label:'Screenshots updated if UI changed significantly' },
+        { id:'ps15', label:'test@help-y.com test account works end-to-end' },
+        { id:'ps16', label:'Terms and privacy policy URLs working' },
+      ]
+    },
+    'post-launch': {
+      items: [
+        { id:'pl1', label:'Monitor Sentry for crash spike (first 24h)', tag:'infra' },
+        { id:'pl2', label:'Check PostHog for activation funnel drop-offs', tag:'analytics' },
+        { id:'pl3', label:'Reply to any new App Store reviews' },
+        { id:'pl4', label:'Post in beta tester group (TestFlight update available)' },
+        { id:'pl5', label:'Update CLAUDE.md with session notes' },
+        { id:'pl6', label:'Push code to GitHub (nirazz/helpy-app)' },
+        { id:'pl7', label:'Post about the release (optional)' },
+        { id:'pl8', label:'Schedule post-launch retro (1 week after)' },
+      ]
+    }
+  };
+
+  const TAG_HTML = {
+    security: '<span class="item-tag tag-security">Security</span>',
+    i18n: '<span class="item-tag tag-i18n">i18n</span>',
+    analytics: '<span class="item-tag tag-analytics">Analytics</span>',
+    infra: '<span class="item-tag tag-infra">Infra</span>',
+  };
+
+  const STORAGE_KEY = 'helpy-checklist-v2';
+
+  function loadState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; }
+  }
+  function saveState(state) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  let state = loadState();
+
+  function renderSection(sectionId) {
+    const sec = SECTIONS[sectionId];
+    const list = document.getElementById('list-' + sectionId);
+    list.innerHTML = sec.items.map(item => {
+      const done = !!state[item.id];
+      return `<div class="check-item ${done ? 'done' : ''}" onclick="toggle('${item.id}','${sectionId}')">
+        <div class="checkbox">
+          <svg class="checkbox-check" viewBox="0 0 10 8" fill="none">
+            <path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="item-label">${item.label}${item.tag ? TAG_HTML[item.tag] : ''}</span>
+      </div>`;
+    }).join('');
+    updateSectionProgress(sectionId);
+  }
+
+  function updateSectionProgress(sectionId) {
+    const sec = SECTIONS[sectionId];
+    const done = sec.items.filter(i => state[i.id]).length;
+    const total = sec.items.length;
+    const pct = total ? Math.round(done / total * 100) : 0;
+    document.getElementById('frac-' + sectionId).textContent = done + '/' + total;
+    document.getElementById('fill-' + sectionId).style.width = pct + '%';
+  }
+
+  function updateOverall() {
+    let total = 0, done = 0;
+    Object.values(SECTIONS).forEach(sec => {
+      total += sec.items.length;
+      done += sec.items.filter(i => state[i.id]).length;
+    });
+    const pct = total ? Math.round(done / total * 100) : 0;
+    document.getElementById('overall-count').textContent = done + ' / ' + total + ' complete';
+    document.getElementById('overall-fill').style.width = pct + '%';
+  }
+
+  function toggle(itemId, sectionId) {
+    state[itemId] = !state[itemId];
+    saveState(state);
+    renderSection(sectionId);
+    updateOverall();
+  }
+
+  function resetAll() {
+    if (!confirm('Reset all checkboxes?')) return;
+    state = {};
+    saveState(state);
+    Object.keys(SECTIONS).forEach(s => renderSection(s));
+    updateOverall();
+  }
+
+  // Init
+  Object.keys(SECTIONS).forEach(s => renderSection(s));
+  updateOverall();
+</script>
+</body>
+</html>

@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Helpy - NPS &amp; PMF Survey</title>
+<style>
+  :root {
+    --brand: #6366f1;
+    --brand-dark: #4f46e5;
+    --brand-light: #eef2ff;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --pink: #ec4899;
+    --slate: #64748b;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--brand), var(--pink));
+    z-index: 1000;
+    transition: width 0.1s ease;
+    width: 0%;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--brand-dark);
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 16px;
+  }
+
+  .header-tag {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand);
+    background: var(--brand-light);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .hero {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand);
+    background: var(--brand-light);
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    color: var(--text-muted);
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  section { margin-bottom: 60px; }
+
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 20px;
+    letter-spacing: -0.2px;
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+  }
+
+  /* Two surveys split */
+  .surveys-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 640px) {
+    .surveys-grid { grid-template-columns: 1fr; }
+  }
+
+  .survey-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 22px;
+  }
+
+  .survey-number {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--brand);
+    margin-bottom: 8px;
+  }
+
+  .survey-question {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* NPS Scale */
+  .nps-scale {
+    margin-bottom: 16px;
+  }
+
+  .nps-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .nps-buttons {
+    display: flex;
+    gap: 3px;
+  }
+
+  .nps-btn {
+    flex: 1;
+    height: 34px;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s ease, opacity 0.1s ease;
+    color: white;
+  }
+
+  .nps-btn:hover { transform: translateY(-2px); opacity: 0.9; }
+
+  .nps-btn.detractor { background: var(--red); }
+  .nps-btn.passive   { background: var(--amber); }
+  .nps-btn.promoter  { background: var(--green); }
+
+  .nps-legend {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .nps-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .nps-formula {
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--text);
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .nps-formula .formula-math {
+    font-weight: 700;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: var(--brand);
+  }
+
+  .survey-current {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--text-muted);
+    background: var(--bg);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  /* PMF options */
+  .pmf-options { display: flex; flex-direction: column; gap: 8px; }
+
+  .pmf-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    user-select: none;
+  }
+
+  .pmf-option:hover { background: var(--bg); border-color: var(--brand); }
+
+  .pmf-option.selected {
+    border-color: var(--brand);
+    background: var(--brand-light);
+  }
+
+  .pmf-emoji { font-size: 20px; flex-shrink: 0; }
+
+  .pmf-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .pmf-bar-wrap {
+    width: 60px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .pmf-bar { height: 100%; border-radius: 2px; }
+
+  .pmf-option:nth-child(1) .pmf-bar { background: var(--green); width: 0%; transition: width 0.6s ease; }
+  .pmf-option:nth-child(2) .pmf-bar { background: var(--amber); width: 0%; transition: width 0.6s ease; }
+  .pmf-option:nth-child(3) .pmf-bar { background: var(--red); width: 0%; transition: width 0.6s ease; }
+  .pmf-option:nth-child(4) .pmf-bar { background: var(--slate); width: 0%; transition: width 0.6s ease; }
+
+  /* PMF interpretation */
+  .pmf-guide {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .pmf-guide-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+  }
+
+  .pmf-guide-row.pmf-yes   { background: #dcfce7; color: #166534; }
+  .pmf-guide-row.pmf-warm  { background: #fef9c3; color: #854d0e; }
+  .pmf-guide-row.pmf-no    { background: #fee2e2; color: #991b1b; }
+
+  .pmf-guide-row .pmf-pct { font-weight: 800; font-size: 14px; min-width: 44px; }
+  .pmf-guide-row .pmf-meaning { line-height: 1.4; }
+
+  /* Follow-up questions */
+  .followup-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 640px) {
+    .followup-grid { grid-template-columns: 1fr; }
+  }
+
+  .followup-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+
+  .followup-persona {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+
+  .persona-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .persona-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .followup-qs { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+  .followup-q {
+    font-size: 13px;
+    color: var(--text);
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  .followup-q::before {
+    content: '?';
+    position: absolute;
+    left: 0;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--brand);
+  }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    padding-left: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 12px;
+    bottom: 12px;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .tl-item {
+    position: relative;
+    padding: 0 0 24px 0;
+  }
+
+  .tl-item:last-child { padding-bottom: 0; }
+
+  .tl-dot {
+    position: absolute;
+    left: -24px;
+    top: 4px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--card);
+    box-shadow: 0 0 0 2px var(--border);
+    background: var(--card);
+    z-index: 1;
+  }
+
+  .tl-trigger {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--brand);
+    background: var(--brand-light);
+    padding: 3px 9px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-bottom: 4px;
+  }
+
+  .tl-action {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+
+  .tl-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* Survey Results Tracker */
+  .tracker-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .tracker-header {
+    padding: 16px 20px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .tracker-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .add-run-btn {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--brand);
+    background: var(--brand-light);
+    border: none;
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .add-run-btn:hover { opacity: 0.8; }
+
+  .tracker-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .tracker-table thead th {
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    white-space: nowrap;
+  }
+
+  .tracker-table tbody td {
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--text);
+    vertical-align: top;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tracker-table tbody tr:last-child td { border-bottom: none; }
+
+  .tracker-empty {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  .tracker-empty .empty-icon { font-size: 32px; margin-bottom: 10px; }
+  .tracker-empty p { font-size: 13px; line-height: 1.55; max-width: 320px; margin: 0 auto; }
+
+  .run-row td:first-child { white-space: nowrap; }
+
+  .nps-score-badge {
+    font-size: 14px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  .pmf-pct-badge {
+    font-size: 14px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  .badge-green { background: #dcfce7; color: #166534; }
+  .badge-amber { background: #fef9c3; color: #854d0e; }
+  .badge-red   { background: #fee2e2; color: #991b1b; }
+  .badge-gray  { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+
+  .expand-btn {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--brand);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .run-notes {
+    display: none;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+  }
+
+  .run-notes.open { display: table-row; }
+
+  .run-notes td {
+    padding: 12px 14px 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Add run modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,0.45);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal-box {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 28px 28px 24px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  }
+
+  .modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  .form-row {
+    margin-bottom: 14px;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 5px;
+  }
+
+  .form-input {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.15s;
+  }
+
+  .form-input:focus { border-color: var(--brand); background: var(--card); }
+
+  .form-row-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .modal-btns {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+
+  .btn-cancel {
+    padding: 9px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  .btn-save {
+    padding: 9px 20px;
+    border-radius: 8px;
+    border: none;
+    background: var(--brand);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .btn-save:hover { opacity: 0.88; }
+
+  /* Warning cards */
+  .warnings-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  @media (max-width: 640px) {
+    .warnings-grid { grid-template-columns: 1fr; }
+  }
+
+  .warn-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--amber);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+  }
+
+  .warn-icon { font-size: 20px; margin-bottom: 8px; }
+  .warn-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 5px; }
+  .warn-desc { font-size: 13px; color: var(--text-muted); line-height: 1.55; }
+
+  footer {
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<header>
+  <a class="header-logo" href="index.html">
+    <div class="logo-icon">✋</div>
+    Helpy
+  </a>
+  <span class="header-tag">NPS &amp; PMF Survey</span>
+</header>
+
+<main>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-badge">💙 User Love</div>
+    <h1>NPS &amp; PMF Survey</h1>
+    <p class="hero-sub">Measuring how much users actually love Helpy</p>
+  </div>
+
+  <!-- Two Surveys -->
+  <section>
+    <h2>Two Surveys, Two Questions</h2>
+    <div class="surveys-grid">
+
+      <!-- NPS -->
+      <div class="survey-card">
+        <div class="survey-number">Survey 1 - NPS</div>
+        <div class="survey-question">"How likely are you to recommend Helpy to a neighbor?"</div>
+
+        <div class="nps-scale">
+          <div class="nps-labels">
+            <span>0 - Not at all</span>
+            <span>10 - Extremely</span>
+          </div>
+          <div class="nps-buttons" id="nps-buttons">
+            <button class="nps-btn detractor" onclick="selectNps(0)">0</button>
+            <button class="nps-btn detractor" onclick="selectNps(1)">1</button>
+            <button class="nps-btn detractor" onclick="selectNps(2)">2</button>
+            <button class="nps-btn detractor" onclick="selectNps(3)">3</button>
+            <button class="nps-btn detractor" onclick="selectNps(4)">4</button>
+            <button class="nps-btn detractor" onclick="selectNps(5)">5</button>
+            <button class="nps-btn detractor" onclick="selectNps(6)">6</button>
+            <button class="nps-btn passive"   onclick="selectNps(7)">7</button>
+            <button class="nps-btn passive"   onclick="selectNps(8)">8</button>
+            <button class="nps-btn promoter"  onclick="selectNps(9)">9</button>
+            <button class="nps-btn promoter"  onclick="selectNps(10)">10</button>
+          </div>
+          <div id="nps-selected" style="display:none; font-size:12px; color:var(--brand); margin-top:8px; font-weight:600;"></div>
+        </div>
+
+        <div class="nps-legend">
+          <div class="nps-legend-item"><div class="legend-dot" style="background:var(--red)"></div> 0-6 Detractors</div>
+          <div class="nps-legend-item"><div class="legend-dot" style="background:var(--amber)"></div> 7-8 Passives</div>
+          <div class="nps-legend-item"><div class="legend-dot" style="background:var(--green)"></div> 9-10 Promoters</div>
+        </div>
+
+        <div class="nps-formula">
+          <span class="formula-math">NPS = % Promoters - % Detractors</span><br>
+          <span style="font-size:12px; color:var(--text-muted);">Target: &gt;50 &nbsp;&nbsp; Current: not yet measured</span>
+        </div>
+      </div>
+
+      <!-- Sean Ellis PMF -->
+      <div class="survey-card">
+        <div class="survey-number">Survey 2 - Sean Ellis PMF Test</div>
+        <div class="survey-question">"How would you feel if you could no longer use Helpy?"</div>
+
+        <div class="pmf-options" id="pmf-options">
+          <div class="pmf-option" onclick="selectPmf(0)">
+            <span class="pmf-emoji">😢</span>
+            <span class="pmf-text">Very disappointed</span>
+            <div class="pmf-bar-wrap"><div class="pmf-bar"></div></div>
+          </div>
+          <div class="pmf-option" onclick="selectPmf(1)">
+            <span class="pmf-emoji">😐</span>
+            <span class="pmf-text">Somewhat disappointed</span>
+            <div class="pmf-bar-wrap"><div class="pmf-bar"></div></div>
+          </div>
+          <div class="pmf-option" onclick="selectPmf(2)">
+            <span class="pmf-emoji">🤷</span>
+            <span class="pmf-text">Not disappointed</span>
+            <div class="pmf-bar-wrap"><div class="pmf-bar"></div></div>
+          </div>
+          <div class="pmf-option" onclick="selectPmf(3)">
+            <span class="pmf-emoji">👋</span>
+            <span class="pmf-text">I already stopped using it</span>
+            <div class="pmf-bar-wrap"><div class="pmf-bar"></div></div>
+          </div>
+        </div>
+
+        <div class="pmf-guide">
+          <div class="pmf-guide-row pmf-yes">
+            <span class="pmf-pct">&gt;40%</span>
+            <span class="pmf-meaning"><strong>PMF achieved.</strong> This is the magic number. Grow.</span>
+          </div>
+          <div class="pmf-guide-row pmf-warm">
+            <span class="pmf-pct">25-40%</span>
+            <span class="pmf-meaning"><strong>Getting warm.</strong> Find your "very disappointed" segment - serve them better.</span>
+          </div>
+          <div class="pmf-guide-row pmf-no">
+            <span class="pmf-pct">&lt;25%</span>
+            <span class="pmf-meaning"><strong>No PMF yet.</strong> Don't scale. Find what's missing first.</span>
+          </div>
+        </div>
+
+        <div class="survey-current" style="margin-top: 14px;">
+          <span>⏳</span>
+          <span>NOT YET RUN - Run at 50 active users</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Follow-up Questions -->
+  <section>
+    <h2>Follow-Up Questions</h2>
+    <div class="followup-grid">
+      <div class="followup-card">
+        <div class="followup-persona">
+          <div class="persona-dot" style="background:var(--green)"></div>
+          <div class="persona-label">For "Very disappointed" respondents</div>
+        </div>
+        <ul class="followup-qs">
+          <li class="followup-q">What would you use instead of Helpy if it were gone?</li>
+          <li class="followup-q">What do you love most about Helpy? What's the single best thing?</li>
+          <li class="followup-q">Who else in your neighborhood do you think would benefit from this?</li>
+        </ul>
+      </div>
+      <div class="followup-card">
+        <div class="followup-persona">
+          <div class="persona-dot" style="background:var(--red)"></div>
+          <div class="persona-label">For "Not disappointed" respondents</div>
+        </div>
+        <ul class="followup-qs">
+          <li class="followup-q">What's missing that would make you really love Helpy?</li>
+          <li class="followup-q">What would make this a weekly habit for you?</li>
+          <li class="followup-q">What was your last experience trying to use it - and where did it fall short?</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- When to Run -->
+  <section>
+    <h2>When to Run Each Survey</h2>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--brand-light); box-shadow:0 0 0 2px var(--brand)"></div>
+        <div class="tl-trigger">50 active users</div>
+        <div class="tl-action">First Sean Ellis PMF Test</div>
+        <div class="tl-desc">Early signal. Don't wait for more - you need to know if you're building something people want before investing further.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--brand-light); box-shadow:0 0 0 2px var(--brand)"></div>
+        <div class="tl-trigger">100 active users</div>
+        <div class="tl-action">First full NPS survey</div>
+        <div class="tl-desc">Enough sample to get a statistically meaningful NPS. Run via push notification or in-app modal after request completion.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--brand-light); box-shadow:0 0 0 2px var(--brand)"></div>
+        <div class="tl-trigger">200 active users</div>
+        <div class="tl-action">Second Sean Ellis PMF Test</div>
+        <div class="tl-desc">Compare to first run. Did the score move? What changed? Segment by helpers vs requesters.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--brand-light); box-shadow:0 0 0 2px var(--brand)"></div>
+        <div class="tl-trigger">Every quarter</div>
+        <div class="tl-action">Ongoing NPS pulse</div>
+        <div class="tl-desc">Track NPS trend over time. A falling NPS signals a product regression before it shows up in churn numbers.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot" style="background:var(--brand-light); box-shadow:0 0 0 2px var(--brand)"></div>
+        <div class="tl-trigger">After each major feature</div>
+        <div class="tl-action">Mini targeted survey (3 questions max)</div>
+        <div class="tl-desc">Ask users who experienced the new feature: Did it solve the problem? Was it intuitive? Would you miss it?</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Survey Results Tracker -->
+  <section>
+    <h2>Survey Results Tracker</h2>
+
+    <div class="tracker-card">
+      <div class="tracker-header">
+        <div class="tracker-title">All Survey Runs</div>
+        <button class="add-run-btn" onclick="openModal()">+ Log a Run</button>
+      </div>
+
+      <div id="tracker-body">
+        <table class="tracker-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Survey</th>
+              <th>N</th>
+              <th>Very Disappointed %</th>
+              <th>NPS Score</th>
+              <th>Key Insight</th>
+              <th>Action Taken</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="runs-tbody">
+            <!-- rows injected by JS -->
+          </tbody>
+        </table>
+        <div class="tracker-empty" id="tracker-empty">
+          <div class="empty-icon">📋</div>
+          <p>No survey runs logged yet. First run planned at 50 active users.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reading Results Right -->
+  <section>
+    <h2>Reading Results Right</h2>
+    <div class="warnings-grid">
+      <div class="warn-card">
+        <div class="warn-icon">⚠️</div>
+        <div class="warn-title">Sample Bias</div>
+        <div class="warn-desc">Happy users respond more. Churned users don't complete surveys. Your NPS will likely be inflated vs reality. Actively recruit both active and recently-churned users.</div>
+      </div>
+      <div class="warn-card">
+        <div class="warn-icon">⏱️</div>
+        <div class="warn-title">Recency Bias</div>
+        <div class="warn-desc">Timing matters. A user asked right after a successful match will score higher than one asked after a failed search. Send surveys 24 hours after key events, not immediately.</div>
+      </div>
+      <div class="warn-card">
+        <div class="warn-icon">👥</div>
+        <div class="warn-title">Who Matters More Than What</div>
+        <div class="warn-desc">Segment NPS by persona. Helpers and requesters have different needs. A 45 NPS from helpers with a 20 NPS from requesters means you need to fix the requester experience first.</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Add Run Modal -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal-box">
+    <div class="modal-title">Log a Survey Run</div>
+    <div class="form-row-2col">
+      <div class="form-row" style="margin-bottom:0">
+        <label class="form-label" for="run-date">Date</label>
+        <input class="form-input" type="date" id="run-date" />
+      </div>
+      <div class="form-row" style="margin-bottom:0">
+        <label class="form-label" for="run-type">Survey Type</label>
+        <select class="form-input" id="run-type">
+          <option value="Sean Ellis PMF">Sean Ellis PMF</option>
+          <option value="NPS">NPS</option>
+          <option value="Mini survey">Mini survey</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row-2col" style="margin-top:14px;">
+      <div class="form-row" style="margin-bottom:0">
+        <label class="form-label" for="run-n">Respondents (N)</label>
+        <input class="form-input" type="number" id="run-n" placeholder="e.g. 52" min="1" />
+      </div>
+      <div class="form-row" style="margin-bottom:0">
+        <label class="form-label" for="run-vd">Very Disappointed %</label>
+        <input class="form-input" type="number" id="run-vd" placeholder="e.g. 38" min="0" max="100" />
+      </div>
+    </div>
+    <div class="form-row" style="margin-top:14px;">
+      <label class="form-label" for="run-nps">NPS Score (leave blank if PMF test)</label>
+      <input class="form-input" type="number" id="run-nps" placeholder="e.g. 52" min="-100" max="100" />
+    </div>
+    <div class="form-row">
+      <label class="form-label" for="run-insight">Key Insight</label>
+      <input class="form-input" type="text" id="run-insight" placeholder="e.g. Helpers love it, requesters want faster responses" />
+    </div>
+    <div class="form-row">
+      <label class="form-label" for="run-action">Action Taken</label>
+      <input class="form-input" type="text" id="run-action" placeholder="e.g. Added fast responder badge, improved response prompts" />
+    </div>
+    <div class="form-row">
+      <label class="form-label" for="run-notes">Notes (optional)</label>
+      <input class="form-input" type="text" id="run-notes" placeholder="Any context about this run..." />
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveRun()">Save Run</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Helpy - Neighbors Helping Neighbors &nbsp;&middot;&nbsp;
+  <a href="index.html" style="color:var(--brand); text-decoration:none;">Home</a> &nbsp;&middot;&nbsp;
+  <a href="experiments.html" style="color:var(--brand); text-decoration:none;">Experiments</a> &nbsp;&middot;&nbsp;
+  <a href="tracking.html" style="color:var(--brand); text-decoration:none;">Tracking Plan</a>
+</footer>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const el = document.getElementById('progress-bar');
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    el.style.width = (docHeight > 0 ? (scrollTop / docHeight) * 100 : 0) + '%';
+  });
+
+  // NPS interactive
+  function selectNps(val) {
+    const types = ['detractor','detractor','detractor','detractor','detractor','detractor','detractor','passive','passive','promoter','promoter'];
+    const labels = ['Detractor','Detractor','Detractor','Detractor','Detractor','Detractor','Detractor','Passive','Passive','Promoter','Promoter'];
+    const colors = { detractor: 'var(--red)', passive: 'var(--amber)', promoter: 'var(--green)' };
+    const btns = document.querySelectorAll('#nps-buttons .nps-btn');
+    btns.forEach((b, i) => {
+      b.style.opacity = i === val ? '1' : '0.4';
+      b.style.transform = i === val ? 'translateY(-4px) scale(1.1)' : '';
+    });
+    const sel = document.getElementById('nps-selected');
+    sel.style.display = 'block';
+    sel.style.color = colors[types[val]];
+    sel.textContent = 'You selected ' + val + ' - ' + labels[val];
+  }
+
+  // PMF interactive
+  function selectPmf(idx) {
+    const opts = document.querySelectorAll('#pmf-options .pmf-option');
+    opts.forEach((o, i) => o.classList.toggle('selected', i === idx));
+  }
+
+  // Survey runs localStorage
+  const STORAGE_KEY = 'helpy_survey_runs';
+
+  function loadRuns() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch { return []; }
+  }
+
+  function saveRuns(runs) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(runs));
+  }
+
+  function npsClass(score) {
+    if (score === null || score === undefined || score === '') return 'badge-gray';
+    const n = parseInt(score);
+    if (n >= 50) return 'badge-green';
+    if (n >= 20) return 'badge-amber';
+    return 'badge-red';
+  }
+
+  function vdClass(pct) {
+    if (pct === null || pct === undefined || pct === '') return 'badge-gray';
+    const n = parseInt(pct);
+    if (n >= 40) return 'badge-green';
+    if (n >= 25) return 'badge-amber';
+    return 'badge-red';
+  }
+
+  function renderRuns() {
+    const runs = loadRuns();
+    const tbody = document.getElementById('runs-tbody');
+    const empty = document.getElementById('tracker-empty');
+
+    tbody.innerHTML = '';
+
+    if (runs.length === 0) {
+      empty.style.display = 'block';
+      return;
+    }
+
+    empty.style.display = 'none';
+
+    runs.forEach((run, idx) => {
+      const tr = document.createElement('tr');
+      tr.className = 'run-row';
+      tr.innerHTML = `
+        <td>${run.date || '-'}</td>
+        <td>${run.type || '-'}</td>
+        <td>${run.n || '-'}</td>
+        <td>${run.vd !== '' && run.vd !== null ? '<span class="pmf-pct-badge ' + vdClass(run.vd) + '">' + run.vd + '%</span>' : '<span style="color:var(--text-muted)">-</span>'}</td>
+        <td>${run.nps !== '' && run.nps !== null ? '<span class="nps-score-badge ' + npsClass(run.nps) + '">' + run.nps + '</span>' : '<span style="color:var(--text-muted)">-</span>'}</td>
+        <td style="max-width:160px;">${run.insight || '-'}</td>
+        <td style="max-width:140px;">${run.action || '-'}</td>
+        <td>${run.notes ? '<button class="expand-btn" onclick="toggleNotes(' + idx + ')">Notes</button>' : ''}</td>
+      `;
+      tbody.appendChild(tr);
+
+      if (run.notes) {
+        const notesTr = document.createElement('tr');
+        notesTr.className = 'run-notes';
+        notesTr.id = 'notes-' + idx;
+        notesTr.innerHTML = '<td colspan="8">' + run.notes + '</td>';
+        tbody.appendChild(notesTr);
+      }
+    });
+  }
+
+  function toggleNotes(idx) {
+    const el = document.getElementById('notes-' + idx);
+    if (el) el.classList.toggle('open');
+  }
+
+  // Modal
+  function openModal() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('run-date').value = today;
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    ['run-date','run-n','run-vd','run-nps','run-insight','run-action','run-notes'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  }
+
+  function saveRun() {
+    const run = {
+      date:    document.getElementById('run-date').value,
+      type:    document.getElementById('run-type').value,
+      n:       document.getElementById('run-n').value,
+      vd:      document.getElementById('run-vd').value,
+      nps:     document.getElementById('run-nps').value,
+      insight: document.getElementById('run-insight').value,
+      action:  document.getElementById('run-action').value,
+      notes:   document.getElementById('run-notes').value,
+    };
+    if (!run.date || !run.n) {
+      alert('Please enter at least a date and number of respondents.');
+      return;
+    }
+    const runs = loadRuns();
+    runs.unshift(run);
+    saveRuns(runs);
+    renderRuns();
+    closeModal();
+  }
+
+  // Init
+  renderRuns();
+</script>
+</body>
+</html>

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sprint Retrospective - Helpy</title>
+<style>
+  :root {
+    --brand: #6366f1;
+    --brand-light: #eef2ff;
+    --green: #10b981;
+    --green-light: #d1fae5;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --red-light: #fee2e2;
+    --pink: #ec4899;
+    --slate: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: #0f172a; }
+
+  #progress-bar {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: linear-gradient(90deg, var(--brand), var(--pink));
+    z-index: 1000; transition: width 0.1s;
+  }
+
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(248,250,252,0.85); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border); padding: 16px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .header-brand { display: flex; align-items: center; gap: 10px; }
+  .header-logo {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--brand), var(--pink));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; color: white; font-weight: 700;
+  }
+  .header-title { font-size: 15px; font-weight: 700; color: #0f172a; }
+  .header-subtitle { font-size: 12px; color: var(--slate); }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  .page-title { font-size: 28px; font-weight: 800; color: #0f172a; margin-bottom: 6px; }
+  .page-subtitle { font-size: 15px; color: var(--slate); margin-bottom: 24px; }
+
+  /* Callout */
+  .callout-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 28px; }
+  @media (max-width: 620px) { .callout-row { grid-template-columns: 1fr; } }
+  .callout-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px 18px; display: flex; gap: 12px; align-items: flex-start;
+  }
+  .callout-icon { font-size: 20px; flex-shrink: 0; }
+  .callout-text { font-size: 13px; color: #334155; line-height: 1.6; }
+  .callout-text strong { font-weight: 700; color: #0f172a; }
+
+  /* Board */
+  .board-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .board-title { font-size: 17px; font-weight: 700; color: #0f172a; }
+  .sprint-select {
+    font-size: 13px; border: 1.5px solid var(--border); border-radius: 8px; padding: 6px 12px;
+    background: white; color: #334155; font-family: inherit; outline: none; cursor: pointer;
+    transition: border-color 0.15s;
+  }
+  .sprint-select:focus { border-color: var(--brand); }
+
+  .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+  @media (max-width: 720px) { .board { grid-template-columns: 1fr; } }
+
+  .col { display: flex; flex-direction: column; gap: 0; }
+  .col-header {
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .col-header-left { display: flex; align-items: center; gap: 8px; }
+  .col-icon { font-size: 16px; }
+  .col-name { font-size: 14px; font-weight: 700; }
+  .col-count { font-size: 12px; font-weight: 600; opacity: 0.7; }
+  .col-went-well .col-header { background: #065f46; color: white; }
+  .col-needs-work .col-header { background: #991b1b; color: white; }
+  .col-actions .col-header { background: #3730a3; color: white; }
+
+  .col-body {
+    border: 1px solid var(--border); border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    background: var(--bg); padding: 12px; min-height: 200px;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+
+  /* Cards */
+  .retro-card {
+    border-radius: 10px; padding: 12px 14px; font-size: 13px; line-height: 1.5;
+    cursor: grab; border: 1.5px solid transparent; position: relative;
+    transition: box-shadow 0.15s, transform 0.15s;
+    user-select: none;
+  }
+  .retro-card:active { cursor: grabbing; }
+  .retro-card.dragging { opacity: 0.6; transform: rotate(2deg); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+  .retro-card.drag-over { border-color: var(--brand); }
+
+  .card-went-well { background: #ecfdf5; border-color: #a7f3d0; color: #065f46; }
+  .card-needs-work { background: #fff1f2; border-color: #fecaca; color: #991b1b; }
+  .card-actions { background: var(--brand-light); border-color: #c7d2fe; color: #3730a3; }
+
+  .retro-card .card-remove {
+    position: absolute; top: 6px; right: 8px;
+    background: none; border: none; font-size: 14px; cursor: pointer; opacity: 0.4;
+    transition: opacity 0.15s; color: inherit; line-height: 1;
+  }
+  .retro-card:hover .card-remove { opacity: 0.8; }
+  .retro-card .card-text { margin-right: 16px; outline: none; }
+  .retro-card .card-text:empty::before { content: 'Click to edit...'; opacity: 0.5; pointer-events: none; }
+
+  .add-card-btn {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 9px 14px; border: 1.5px dashed; border-radius: 8px;
+    background: none; font-size: 13px; cursor: pointer; transition: all 0.15s;
+    font-family: inherit; margin-top: 2px;
+  }
+  .col-went-well .add-card-btn { border-color: #6ee7b7; color: #065f46; }
+  .col-went-well .add-card-btn:hover { background: #d1fae5; }
+  .col-needs-work .add-card-btn { border-color: #fca5a5; color: #991b1b; }
+  .col-needs-work .add-card-btn:hover { background: #fee2e2; }
+  .col-actions .add-card-btn { border-color: #a5b4fc; color: #3730a3; }
+  .col-actions .add-card-btn:hover { background: var(--brand-light); }
+
+  .col-drop-zone { flex: 1; min-height: 40px; }
+  .col-drop-zone.drag-target { background: rgba(99,102,241,0.05); border-radius: 6px; }
+
+  /* Retro History */
+  .section-divider { font-size: 13px; font-weight: 700; color: var(--slate); margin: 32px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .history-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 28px; }
+  .history-item {
+    background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .history-toggle {
+    width: 100%; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;
+    background: none; border: none; cursor: pointer; font-family: inherit; text-align: left;
+    transition: background 0.1s;
+  }
+  .history-toggle:hover { background: var(--bg); }
+  .history-meta { display: flex; align-items: center; gap: 10px; }
+  .history-date { font-size: 12px; color: var(--slate); }
+  .history-name { font-size: 14px; font-weight: 600; color: #0f172a; }
+  .history-chevron { font-size: 12px; color: var(--slate); transition: transform 0.2s; }
+  .history-item.open .history-chevron { transform: rotate(90deg); }
+  .history-body { display: none; padding: 0 18px 16px; }
+  .history-item.open .history-body { display: block; }
+  .empty-history { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; text-align: center; color: var(--slate); font-size: 14px; }
+
+  /* Commitment tracker */
+  .tracker-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .tracker-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+  .tracker-header-title { font-size: 14px; font-weight: 700; }
+  .tracker-table { width: 100%; border-collapse: collapse; }
+  .tracker-table th { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--slate); padding: 10px 16px; background: var(--bg); border-bottom: 1px solid var(--border); text-align: left; }
+  .tracker-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; font-size: 13px; }
+  .tracker-table tr:last-child td { border-bottom: none; }
+  .tracker-table tr.done-row td { opacity: 0.55; text-decoration: line-through; }
+  .tracker-check { width: 18px; height: 18px; border-radius: 5px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; flex-shrink: 0; background: white; }
+  .tracker-check.checked { background: var(--green); border-color: var(--green); }
+  .retro-badge { font-size: 11px; font-weight: 600; background: var(--brand-light); color: var(--brand); padding: 2px 7px; border-radius: 20px; }
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+
+<header>
+  <div class="header-brand">
+    <div class="header-logo">H</div>
+    <div>
+      <div class="header-title">Helpy</div>
+      <div class="header-subtitle">Sprint Retrospective</div>
+    </div>
+  </div>
+  <div style="font-size:12px;color:var(--slate);">Mar 2026</div>
+</header>
+
+<main>
+  <h1 class="page-title">Sprint Retrospective</h1>
+  <p class="page-subtitle">What went well, what didn't, what we'll do differently</p>
+
+  <div class="callout-row">
+    <div class="callout-card">
+      <div class="callout-icon">🕐</div>
+      <div class="callout-text">
+        <strong>60 minutes max.</strong> Run at the end of every sprint or major feature release. Three questions: What went well? What didn't? What do we commit to changing?
+      </div>
+    </div>
+    <div class="callout-card">
+      <div class="callout-icon">🛡</div>
+      <div class="callout-text">
+        <strong>Safe space. No blame.</strong> Be specific and factual. Every retro must end with <strong>1-3 concrete commitments</strong> - not a wishlist. Vague intentions don't count.
+      </div>
+    </div>
+  </div>
+
+  <!-- Board -->
+  <div class="board-header">
+    <div class="board-title">Retro Board</div>
+    <input id="sprint-name" class="sprint-select" placeholder="Sprint name (e.g. Growth sprint Mar 2026)" style="min-width:240px;">
+  </div>
+
+  <div class="board">
+    <div class="col col-went-well" id="col-went-well">
+      <div class="col-header">
+        <div class="col-header-left">
+          <span class="col-icon">✅</span>
+          <span class="col-name">Went Well</span>
+        </div>
+        <span class="col-count" id="count-went-well">0</span>
+      </div>
+      <div class="col-body">
+        <div class="col-drop-zone" id="zone-went-well" ondragover="onDragOver(event,'went-well')" ondrop="onDrop(event,'went-well')" ondragleave="onDragLeave(event)"></div>
+        <button class="add-card-btn" onclick="addCard('went-well')">+ Add card</button>
+      </div>
+    </div>
+
+    <div class="col col-needs-work" id="col-needs-work">
+      <div class="col-header">
+        <div class="col-header-left">
+          <span class="col-icon">🔧</span>
+          <span class="col-name">Needs Work</span>
+        </div>
+        <span class="col-count" id="count-needs-work">0</span>
+      </div>
+      <div class="col-body">
+        <div class="col-drop-zone" id="zone-needs-work" ondragover="onDragOver(event,'needs-work')" ondrop="onDrop(event,'needs-work')" ondragleave="onDragLeave(event)"></div>
+        <button class="add-card-btn" onclick="addCard('needs-work')">+ Add card</button>
+      </div>
+    </div>
+
+    <div class="col col-actions" id="col-actions">
+      <div class="col-header">
+        <div class="col-header-left">
+          <span class="col-icon">🎯</span>
+          <span class="col-name">Action Items</span>
+        </div>
+        <span class="col-count" id="count-actions">0</span>
+      </div>
+      <div class="col-body">
+        <div class="col-drop-zone" id="zone-actions" ondragover="onDragOver(event,'actions')" ondrop="onDrop(event,'actions')" ondragleave="onDragLeave(event)"></div>
+        <button class="add-card-btn" onclick="addCard('actions')">+ Add card</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- History -->
+  <div class="section-divider">Retro History</div>
+  <div class="history-list" id="history-list">
+    <div class="empty-history" id="empty-history-msg">No past retros yet. Save your first retro above to see it here.</div>
+  </div>
+
+  <button onclick="saveRetro()" style="margin-bottom:32px;display:inline-flex;align-items:center;gap:8px;padding:12px 28px;background:linear-gradient(135deg,var(--brand),#818cf8);color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:opacity 0.15s;" onmouseover="this.style.opacity=0.9" onmouseout="this.style.opacity=1">
+    💾 Save This Retro
+  </button>
+
+  <!-- Commitments -->
+  <div class="section-divider">Retro Commitment Tracker</div>
+
+  <div class="tracker-card">
+    <div class="tracker-header">
+      <span style="font-size:16px;">📌</span>
+      <span class="tracker-header-title">Commitments from All Retros</span>
+    </div>
+    <table class="tracker-table">
+      <thead>
+        <tr>
+          <th style="width:32px;"></th>
+          <th>Commitment</th>
+          <th>From Retro</th>
+          <th>Owner</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="commitment-tbody"></tbody>
+    </table>
+  </div>
+</main>
+
+<script>
+  // Scroll progress
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const pct = (window.scrollY / (doc.scrollHeight - doc.clientHeight)) * 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+  });
+
+  const STORAGE_KEY = 'helpy-retro-v1';
+  let dragSrc = null;
+
+  // Board data: { id, col, text }
+  let cards = [];
+  let commitments = [];
+  let retroHistory = [];
+
+  function loadState() {
+    try {
+      const s = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      cards = s.cards || [];
+      commitments = s.commitments || [];
+      retroHistory = s.retroHistory || [];
+    } catch { cards = []; commitments = []; retroHistory = []; }
+  }
+
+  function saveState() {
+    cards = collectCards();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ cards, commitments, retroHistory }));
+  }
+
+  function collectCards() {
+    const result = [];
+    ['went-well','needs-work','actions'].forEach(col => {
+      document.querySelectorAll(`#zone-${col} .retro-card`).forEach(el => {
+        result.push({ id: el.id, col, text: el.querySelector('.card-text').innerText.trim() });
+      });
+    });
+    return result;
+  }
+
+  function cardClass(col) {
+    return col === 'went-well' ? 'card-went-well' : col === 'needs-work' ? 'card-needs-work' : 'card-actions';
+  }
+
+  function createCardEl(id, col, text) {
+    const div = document.createElement('div');
+    div.id = id;
+    div.className = 'retro-card ' + cardClass(col);
+    div.draggable = true;
+    div.innerHTML = `<div class="card-text" contenteditable="true">${text}</div>
+      <button class="card-remove" onclick="removeCard('${id}',event)" title="Remove">×</button>`;
+    div.addEventListener('dragstart', e => { dragSrc = div; setTimeout(() => div.classList.add('dragging'), 0); e.dataTransfer.effectAllowed = 'move'; });
+    div.addEventListener('dragend', () => { div.classList.remove('dragging'); saveState(); updateCounts(); });
+    return div;
+  }
+
+  function addCard(col, text='') {
+    const id = 'card-' + Date.now();
+    const zone = document.getElementById('zone-' + col);
+    const el = createCardEl(id, col, text);
+    zone.appendChild(el);
+    if (!text) el.querySelector('.card-text').focus();
+    updateCounts();
+    saveState();
+  }
+
+  function removeCard(id, e) {
+    e.stopPropagation();
+    document.getElementById(id)?.remove();
+    updateCounts();
+    saveState();
+  }
+
+  function onDragOver(e, col) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    document.getElementById('zone-' + col).classList.add('drag-target');
+  }
+  function onDragLeave(e) {
+    e.currentTarget.classList.remove('drag-target');
+  }
+  function onDrop(e, col) {
+    e.preventDefault();
+    const zone = document.getElementById('zone-' + col);
+    zone.classList.remove('drag-target');
+    if (dragSrc) {
+      const oldClass = ['card-went-well','card-needs-work','card-actions'].find(c => dragSrc.classList.contains(c));
+      if (oldClass) { dragSrc.classList.remove(oldClass); dragSrc.classList.add(cardClass(col)); }
+      zone.appendChild(dragSrc);
+      dragSrc = null;
+      updateCounts();
+      saveState();
+    }
+  }
+
+  function updateCounts() {
+    ['went-well','needs-work','actions'].forEach(col => {
+      const count = document.querySelectorAll('#zone-' + col + ' .retro-card').length;
+      document.getElementById('count-' + col).textContent = count;
+    });
+  }
+
+  // History
+  function saveRetro() {
+    const sprintName = document.getElementById('sprint-name').value.trim() || ('Retro - ' + new Date().toLocaleDateString());
+    const snapshot = collectCards();
+    if (snapshot.length === 0) { alert('Add some cards before saving.'); return; }
+    const entry = { id: 'retro-' + Date.now(), name: sprintName, date: new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }), cards: snapshot };
+    retroHistory.unshift(entry);
+    // Add action items to commitments
+    snapshot.filter(c => c.col === 'actions').forEach(c => {
+      commitments.push({ id: 'com-' + Date.now() + Math.random(), text: c.text, retro: sprintName, owner: 'Nir', done: false });
+    });
+    saveState();
+    renderHistory();
+    renderCommitments();
+    alert('Retro saved!');
+  }
+
+  function renderHistory() {
+    const list = document.getElementById('history-list');
+    if (retroHistory.length === 0) {
+      list.innerHTML = '<div class="empty-history" id="empty-history-msg">No past retros yet. Save your first retro above to see it here.</div>';
+      return;
+    }
+    list.innerHTML = retroHistory.map((entry, idx) => `
+      <div class="history-item" id="hi-${entry.id}">
+        <button class="history-toggle" onclick="toggleHistory('${entry.id}')">
+          <div class="history-meta">
+            <span class="history-date">${entry.date}</span>
+            <span class="history-name">${entry.name}</span>
+            <span style="font-size:12px;color:var(--slate);">(${entry.cards.length} cards)</span>
+          </div>
+          <span class="history-chevron">▶</span>
+        </button>
+        <div class="history-body">
+          ${['went-well','needs-work','actions'].map(col => {
+            const colCards = entry.cards.filter(c => c.col === col);
+            if (!colCards.length) return '';
+            const names = { 'went-well':'Went Well', 'needs-work':'Needs Work', 'actions':'Action Items' };
+            const colors = { 'went-well':'#065f46', 'needs-work':'#991b1b', 'actions':'#3730a3' };
+            return `<div style="margin-bottom:10px;">
+              <div style="font-size:11px;font-weight:700;color:${colors[col]};text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">${names[col]}</div>
+              ${colCards.map(c => `<div style="font-size:13px;padding:6px 10px;background:var(--bg);border-radius:6px;margin-bottom:4px;color:#334155;">${c.text || '(empty)'}</div>`).join('')}
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`).join('');
+  }
+
+  function toggleHistory(id) {
+    document.getElementById('hi-' + id)?.classList.toggle('open');
+  }
+
+  function renderCommitments() {
+    const tbody = document.getElementById('commitment-tbody');
+    if (commitments.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--slate);padding:24px;font-size:13px;">No commitments yet. Save a retro with action items to track them here.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = commitments.map(c => `
+      <tr class="${c.done ? 'done-row' : ''}" id="com-row-${c.id}">
+        <td>
+          <div class="tracker-check ${c.done ? 'checked' : ''}" onclick="toggleCommitment('${c.id}')">
+            ${c.done ? `<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>` : ''}
+          </div>
+        </td>
+        <td>${c.text}</td>
+        <td><span class="retro-badge">${c.retro}</span></td>
+        <td>${c.owner}</td>
+        <td>
+          <span style="font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:${c.done ? '#d1fae5' : '#fef3c7'};color:${c.done ? '#065f46' : '#92400e'};">
+            ${c.done ? 'Done' : 'Open'}
+          </span>
+        </td>
+      </tr>`).join('');
+  }
+
+  function toggleCommitment(id) {
+    const c = commitments.find(x => x.id === id);
+    if (c) { c.done = !c.done; saveState(); renderCommitments(); }
+  }
+
+  // Pre-populated example data
+  function initDefaults() {
+    const exampleCards = [
+      { id:'card-ex1', col:'went-well', text:'RTL translations done right the first time - no rework needed' },
+      { id:'card-ex2', col:'went-well', text:'Health check skill caught the old project ref before it caused a bug' },
+      { id:'card-ex3', col:'went-well', text:'Celebration bottom sheet shipped fast and looks great' },
+      { id:'card-ex4', col:'needs-work', text:'Quota bug took 2 sessions to fix because we did not reproduce it first' },
+      { id:'card-ex5', col:'needs-work', text:'Test data in wrong city (SF vs Tel Aviv) wasted debugging time' },
+      { id:'card-ex6', col:'needs-work', text:'No staging environment makes every fix a production deploy' },
+      { id:'card-ex7', col:'actions', text:'Always reproduce bug locally before fixing - add to launch checklist' },
+      { id:'card-ex8', col:'actions', text:'Seed test data in Tel Aviv coordinates by default' },
+      { id:'card-ex9', col:'actions', text:'Add simulator location mock to dev setup docs' },
+    ];
+    exampleCards.forEach(c => {
+      const zone = document.getElementById('zone-' + c.col);
+      const el = createCardEl(c.id, c.col, c.text);
+      zone.appendChild(el);
+    });
+    updateCounts();
+
+    // Pre-fill commitments
+    commitments = [
+      { id:'com-ex1', text:'Always reproduce bug locally before fixing - add to launch checklist', retro:'Growth sprint Mar 2026', owner:'Nir', done: false },
+      { id:'com-ex2', text:'Seed test data in Tel Aviv coordinates by default', retro:'Growth sprint Mar 2026', owner:'Nir', done: false },
+      { id:'com-ex3', text:'Add simulator location mock to dev setup docs', retro:'Growth sprint Mar 2026', owner:'Nir', done: false },
+    ];
+    renderCommitments();
+  }
+
+  // Init
+  loadState();
+  if (cards.length === 0 && commitments.length === 0) {
+    initDefaults();
+  } else {
+    cards.forEach(c => {
+      const zone = document.getElementById('zone-' + c.col);
+      if (zone) zone.appendChild(createCardEl(c.id, c.col, c.text));
+    });
+    updateCounts();
+    renderCommitments();
+  }
+  renderHistory();
+</script>
+</body>
+</html>

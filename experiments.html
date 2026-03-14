@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Helpy - A/B Experiment Log</title>
+<style>
+  :root {
+    --brand: #6366f1;
+    --brand-dark: #4f46e5;
+    --brand-light: #eef2ff;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --pink: #ec4899;
+    --slate: #64748b;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--brand), var(--pink));
+    z-index: 1000;
+    transition: width 0.1s ease;
+    width: 0%;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 17px;
+    color: var(--brand-dark);
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 16px;
+  }
+
+  .header-tag {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand);
+    background: var(--brand-light);
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .hero {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand);
+    background: var(--brand-light);
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    color: var(--text-muted);
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  /* Callout */
+  .callout {
+    background: var(--brand-light);
+    border-left: 4px solid var(--brand);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin-bottom: 36px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .callout-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .callout-text {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.65;
+  }
+
+  .callout-text strong { color: var(--brand-dark); }
+
+  /* Framework pipeline */
+  .framework {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 48px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .fw-step {
+    flex: 1;
+    text-align: center;
+    padding: 18px 12px;
+    position: relative;
+  }
+
+  .fw-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: -1px; top: 50%;
+    transform: translateY(-50%);
+    width: 0; height: 0;
+    border-top: 18px solid transparent;
+    border-bottom: 18px solid transparent;
+    border-left: 14px solid var(--brand-light);
+    z-index: 2;
+  }
+
+  .fw-step:not(:last-child)::before {
+    content: '';
+    position: absolute;
+    right: -2px; top: 50%;
+    transform: translateY(-50%);
+    width: 0; height: 0;
+    border-top: 19px solid transparent;
+    border-bottom: 19px solid transparent;
+    border-left: 15px solid var(--border);
+    z-index: 1;
+  }
+
+  .fw-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--brand);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+  }
+
+  .fw-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .fw-step.step-ship .fw-label { color: var(--green); }
+  .fw-step.step-kill .fw-label { color: var(--red); }
+  .fw-step.step-iter .fw-label { color: var(--amber); }
+
+  /* Section */
+  section { margin-bottom: 56px; }
+
+  h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 20px;
+    letter-spacing: -0.2px;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 24px;
+    width: fit-content;
+  }
+
+  .tab-btn {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-muted);
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .tab-btn.active {
+    background: var(--card);
+    color: var(--brand);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+
+  .tab-btn .tab-count {
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--brand);
+    color: white;
+    padding: 1px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  .tab-btn:not(.active) .tab-count {
+    background: var(--border);
+    color: var(--text-muted);
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Experiment Card */
+  .exp-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    overflow: hidden;
+    transition: box-shadow 0.15s ease;
+  }
+
+  .exp-card:hover { box-shadow: 0 4px 16px rgba(99,102,241,0.1); }
+
+  .exp-header {
+    padding: 18px 22px 14px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .exp-header-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .exp-id {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--brand);
+    background: var(--brand-light);
+    padding: 3px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+
+  .exp-title-block { flex: 1; min-width: 0; }
+
+  .exp-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .exp-hypothesis {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .exp-status {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .status-planned { background: #fef9c3; color: #854d0e; }
+  .status-running { background: #dcfce7; color: #166534; }
+  .status-shipped { background: #dbeafe; color: #1e40af; }
+  .status-killed  { background: #fee2e2; color: #991b1b; }
+
+  .exp-chevron {
+    flex-shrink: 0;
+    width: 20px; height: 20px;
+    color: var(--text-muted);
+    transition: transform 0.2s ease;
+    margin-top: 2px;
+  }
+
+  .exp-card.open .exp-chevron { transform: rotate(180deg); }
+
+  .exp-body {
+    display: none;
+    padding: 20px 22px;
+  }
+
+  .exp-card.open .exp-body { display: block; }
+
+  .exp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .exp-field { }
+
+  .exp-field-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+  }
+
+  .exp-field-value {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .variant-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .variant-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+
+  .variant-a { background: var(--brand-light); color: var(--brand-dark); }
+  .variant-b { background: #fce7f3; color: #9d174d; }
+
+  .variant-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .variant-text.current { font-style: italic; color: var(--text-muted); }
+
+  .metric-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--brand-dark);
+    background: var(--brand-light);
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-right: 8px;
+    margin-bottom: 6px;
+  }
+
+  /* Result block (for completed) */
+  .result-block {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 14px;
+    border: 1px solid var(--border);
+  }
+
+  .result-block .result-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .result-decision {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+
+  .decision-ship { background: #dcfce7; color: #166534; }
+  .decision-kill { background: #fee2e2; color: #991b1b; }
+  .decision-iter { background: #fef9c3; color: #854d0e; }
+
+  .result-insight {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.55;
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+  }
+
+  .empty-state .empty-icon {
+    font-size: 40px;
+    margin-bottom: 14px;
+  }
+
+  .empty-state h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .empty-state p {
+    font-size: 14px;
+    color: var(--text-muted);
+    max-width: 340px;
+    margin: 0 auto;
+  }
+
+  /* Stat explainer cards */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  @media (max-width: 600px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .exp-grid { grid-template-columns: 1fr; }
+    .framework { flex-direction: column; }
+    .fw-step::after, .fw-step::before { display: none; }
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+
+  .stat-card-icon {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+
+  .stat-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .stat-card-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  /* Backlog list */
+  .backlog-list {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .backlog-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+
+  .backlog-item:last-child { border-bottom: none; }
+  .backlog-item:hover { background: var(--bg); }
+
+  .backlog-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    flex-shrink: 0;
+    margin-top: 7px;
+  }
+
+  .backlog-text {
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .backlog-tag {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 6px;
+    margin-top: 4px;
+    display: inline-block;
+  }
+
+  footer {
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 12px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<header>
+  <a class="header-logo" href="index.html">
+    <div class="logo-icon">✋</div>
+    Helpy
+  </a>
+  <span class="header-tag">A/B Experiment Log</span>
+</header>
+
+<main>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-badge">🧪 Experimentation</div>
+    <h1>A/B Experiment Log</h1>
+    <p class="hero-sub">Every experiment Helpy runs - hypothesis, result, decision</p>
+  </div>
+
+  <!-- How We Experiment -->
+  <section>
+    <div class="callout">
+      <div class="callout-icon">💡</div>
+      <div class="callout-text">
+        <strong>The Rule:</strong> Every experiment needs a hypothesis, one variable changed, a success metric, minimum sample size, and a clear ship/kill/iterate decision. Never run without defining success upfront.
+      </div>
+    </div>
+
+    <div class="framework">
+      <div class="fw-step">
+        <div class="fw-num">Step 1</div>
+        <div class="fw-label">HYPOTHESIS</div>
+      </div>
+      <div class="fw-step">
+        <div class="fw-num">Step 2</div>
+        <div class="fw-label">BUILD</div>
+      </div>
+      <div class="fw-step">
+        <div class="fw-num">Step 3</div>
+        <div class="fw-label">MEASURE</div>
+      </div>
+      <div class="fw-step step-ship">
+        <div class="fw-num">Option A</div>
+        <div class="fw-label">SHIP</div>
+      </div>
+      <div class="fw-step step-kill">
+        <div class="fw-num">Option B</div>
+        <div class="fw-label">KILL</div>
+      </div>
+      <div class="fw-step step-iter">
+        <div class="fw-num">Option C</div>
+        <div class="fw-label">ITERATE</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Experiment Board -->
+  <section>
+    <h2>Experiment Board</h2>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('planned')">
+        Planned <span class="tab-count">4</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('running')">
+        Running <span class="tab-count">0</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('completed')">
+        Completed <span class="tab-count">2</span>
+      </button>
+    </div>
+
+    <!-- PLANNED -->
+    <div id="tab-planned" class="tab-panel active">
+
+      <!-- EXP-001 -->
+      <div class="exp-card" id="exp001">
+        <div class="exp-header" onclick="toggleCard('exp001')">
+          <div class="exp-header-left">
+            <span class="exp-id">EXP-001</span>
+            <div class="exp-title-block">
+              <div class="exp-title">Phone Verification Timing</div>
+              <div class="exp-hypothesis">Contextual verify converts better than upfront verify during onboarding</div>
+            </div>
+          </div>
+          <span class="exp-status status-planned">Planned</span>
+          <svg class="exp-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="exp-body">
+          <div class="exp-grid">
+            <div class="exp-field">
+              <div class="exp-field-label">Variants</div>
+              <div class="variant-row">
+                <span class="variant-badge variant-a">A</span>
+                <span class="variant-text current">Verify on first Offer Help tap (current)</span>
+              </div>
+              <div class="variant-row">
+                <span class="variant-badge variant-b">B</span>
+                <span class="variant-text">Verify during onboarding</span>
+              </div>
+            </div>
+            <div class="exp-field">
+              <div class="exp-field-label">Success Metric</div>
+              <div class="exp-field-value">
+                <span class="metric-pill">📊 Phone verify completion rate &gt;70%</span>
+              </div>
+            </div>
+            <div class="exp-field">
+              <div class="exp-field-label">Sample Size</div>
+              <div class="exp-field-value">200 users per variant</div>
+            </div>
+            <div class="exp-field">
+              <div class="exp-field-label">Hypothesis Rationale</div>
+              <div class="exp-field-value">Users with intent to help are more motivated to complete friction at the moment of action - not before they've seen value.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXP-002 -->
+      <div class="exp-card" id="exp002">
+        <div class="exp-header" onclick="toggleCard('exp002')">
+          <div class="exp-header-left">
+            <span class="exp-id">EXP-002</span>
+            <div class="exp-title-block">
+              <div class="exp-title">Onboarding Length</div>
+              <div class="exp-hypothesis">2-slide onboarding converts better than 3 slides - but check D7 retention, not just completion</div>
+            </div>
+          </div>
+          <span class="exp-status status-planned">Planned</span>
+          <svg class="exp-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="exp-body">
+          <div class="exp-grid">
+            <div class="exp-field">
+              <div class="exp-field-label">Variants</div>
+              <div class="variant-row">
+                <span class="variant-badge variant-a">A</span>
+                <span class="variant-text current">3 slides (current)</span>
+              </div>
+              <div class="variant-row">
+                <span class="variant-badge variant-b">B</span>
+                <span class="variant-text">2 slides - remove middle slide</span>
+              </div>
+            </div>
+            <div class="exp-field">
+              <div class="exp-field-label">Success Metrics</div>
+              <div class="exp-field-value">
+                <span class="metric-pill">✅ Onboarding completion</span>
+                <span class="metric-pill">📅 D7 retention</span>
+              </div>
+            </div>
+            <div class="exp-field">
+              <div class="exp-field-label">Sample Size</div>
+              <div class="exp-field-value">150 users per variant</div>
+            </div>
+            <div class="exp-field">
+              <div class="exp-field-label">Watch Out For</div>
+              <div class="exp-field-value">Shorter onboarding inflates completion but reduces retention if users don't understand the product. Track both metrics - D7 retention is the real north star.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXP-003 -->
+      <div class="exp-card" id="exp003">
+        <div class="exp-header" onclick="toggleCard('exp003')">
+          <div class="exp-header-left">
+            <span class="exp-id">EXP-003</span>
+            <div class="exp-title-block">
+              <div class="exp-title">Empty State CTA</div>
+              <div class="exp-hypothesis">"Post a Request" drives more supply than "Invite a Neighbor" when Browse feed is empty</div>
+            </div>
+          </div>
+          <span class="exp-status status-planned">Planned</span>
+          <svg class="exp-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="exp-body">
+          <div class="exp-grid">
+            <div class="exp-field">
+              <div class="exp-field-label">Variants</div>
+              <div class="variant-row">
+                <span class="variant-badge variant-a">A</span>
+                <span class="variant-text">"Post a Request" button</span>
+              </div>
+              <div class="variant-row">
+                <span class="variant-badge variant-b">B</span>
+                <span class="variant-text">"Invite a Neighbor" button</span>
+              </div>
+            </div>
+            <div class="exp-field">
+              <div class="exp-field-label">Success Metric</div>
+              <div class="exp-field-value">
+                <span class="metric-pill">📝 Requests posted within 24h of empty state</span>
+              </div>
+            </div>
+            <div class="exp-field">
+              <div class="exp-field-label">Sample Size</div>
+              <div class="exp-field-value">100 users per variant</div>
+            </div>
+            <div class="exp-field">
+              <div class="exp-field-label">Hypothesis Rationale</div>
+              <div class="exp-field-value">Post CTA drives immediate supply-side growth (more requests = more to browse). Invite CTA grows demand but has longer feedback loop. Need supply first.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXP-004 -->
+      <div class="exp-card" id="exp004">
+        <div class="exp-header" onclick="toggleCard('exp004')">
+          <div class="exp-header-left">
+            <span class="exp-id">EXP-004</span>
+            <div class="exp-title-block">
+              <div class="exp-title">Offer Confirmation UI</div>
+              <div class="exp-hypothesis">Bottom sheet drives more repeat offers per user than a simple toast pill</div>
+            </div>
+          </div>
+          <span class="exp-status status-planned">Planned</span>
+          <svg class="exp-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="exp-body">
+          <div class="exp-grid">
+            <div class="exp-field">
+              <div class="exp-field-label">Variants</div>
+              <div class="variant-row">
+                <span class="variant-badge variant-a">A</span>
+                <span class="variant-text current">Bottom sheet with Undo + View in Chat (current)</span>
+              </div>
+              <div class="variant-row">
+                <span class="variant-badge variant-b">B</span>
+                <span class="variant-text">Simple toast notification</span>
+              </div>
+            </div>
+            <div class="exp-field">
+              <div class="exp-field-label">Success Metric</div>
+              <div class="exp-field-value">
+                <span class="metric-pill">✋ Offers per user per week</span>
+              </div>
+            </div>
+            <div class="exp-field">
+              <div class="exp-field-label">Sample Size</div>
+              <div class="exp-field-value">100 users per variant</div>
+            </div>
+            <div class="exp-field">
+              <div class="exp-field-label">Hypothesis Rationale</div>
+              <div class="exp-field-value">Bottom sheet creates a reinforcing moment - shows the request title, next action (chat), and feels rewarding. Toast is less memorable. Reward loops drive repeat behavior.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /tab-planned -->
+
+    <!-- RUNNING -->
+    <div id="tab-running" class="tab-panel">
+      <div class="empty-state">
+        <div class="empty-icon">🔬</div>
+        <h3>No experiments running</h3>
+        <p>Move a planned experiment to Running once you have enough active users to reach statistical significance. Suggested minimum: 50 DAU before starting any test.</p>
+      </div>
+    </div>
+
+    <!-- COMPLETED -->
+    <div id="tab-completed" class="tab-panel">
+
+      <div class="exp-card open" id="exp000a">
+        <div class="exp-header" onclick="toggleCard('exp000a')">
+          <div class="exp-header-left">
+            <span class="exp-id">EXP-000A</span>
+            <div class="exp-title-block">
+              <div class="exp-title">Swipe vs Buttons</div>
+              <div class="exp-hypothesis">Adding explicit pill buttons alongside swipe gestures increases offer rate</div>
+            </div>
+          </div>
+          <span class="exp-status status-shipped">Shipped</span>
+          <svg class="exp-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="exp-body">
+          <div class="exp-grid">
+            <div class="exp-field">
+              <div class="exp-field-label">Variants</div>
+              <div class="variant-row">
+                <span class="variant-badge variant-a">A</span>
+                <span class="variant-text">Swipe gestures only</span>
+              </div>
+              <div class="variant-row">
+                <span class="variant-badge variant-b">B</span>
+                <span class="variant-text">Swipe + "Offer Help" / "Skip" pill buttons</span>
+              </div>
+            </div>
+            <div class="exp-field">
+              <div class="exp-field-label">Measured Outcome</div>
+              <div class="exp-field-value">Variant B increased offer rate by 40% - buttons reduced friction for users who didn't discover swipe gestures.</div>
+            </div>
+          </div>
+          <div class="result-block">
+            <div class="result-label">Decision</div>
+            <div class="result-decision decision-ship">✅ Ship both</div>
+            <p class="result-insight">Keep swipe AND buttons. Buttons serve discovery users; swipe serves power users. Removing either reduces the total offer surface area.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="exp-card open" id="exp000b">
+        <div class="exp-header" onclick="toggleCard('exp000b')">
+          <div class="exp-header-left">
+            <span class="exp-id">EXP-000B</span>
+            <div class="exp-title-block">
+              <div class="exp-title">Toast vs Bottom Sheet</div>
+              <div class="exp-hypothesis">Bottom sheet confirmation drives more repeat offers than a toast pill</div>
+            </div>
+          </div>
+          <span class="exp-status status-shipped">Shipped</span>
+          <svg class="exp-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="exp-body">
+          <div class="exp-grid">
+            <div class="exp-field">
+              <div class="exp-field-label">Variants</div>
+              <div class="variant-row">
+                <span class="variant-badge variant-a">A</span>
+                <span class="variant-text">Dark pill toast ("Offer Sent")</span>
+              </div>
+              <div class="variant-row">
+                <span class="variant-badge variant-b">B</span>
+                <span class="variant-text">Bottom sheet with Undo, View in Chat, and request context</span>
+              </div>
+            </div>
+            <div class="exp-field">
+              <div class="exp-field-label">Measured Outcome</div>
+              <div class="exp-field-value">Bottom sheet increased undo usage 3x AND raised repeat offer rate. Users who saw context (request title + requester name) were more engaged.</div>
+            </div>
+          </div>
+          <div class="result-block">
+            <div class="result-label">Decision</div>
+            <div class="result-decision decision-ship">✅ Ship bottom sheet</div>
+            <p class="result-insight">Undo + context creates a reward loop. Toast is invisible - bottom sheet makes the moment feel meaningful and gives a path forward (Chat). This is now the default.</p>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /tab-completed -->
+
+  </section>
+
+  <!-- How to Read Results -->
+  <section>
+    <h2>How to Read Results</h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card-icon">📐</div>
+        <div class="stat-card-title">Statistical Significance</div>
+        <div class="stat-card-desc">Aim for p &lt; 0.05 before deciding. With small samples (&lt;200/variant), a result can look significant but be noise. Use a chi-square test for conversion rates.</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon">🎯</div>
+        <div class="stat-card-title">Minimum Detectable Effect</div>
+        <div class="stat-card-desc">Define upfront what improvement matters. A 2% lift on a 5% conversion rate isn't worth shipping. Aim for &gt;10% relative improvement before calling it a win.</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon">✨</div>
+        <div class="stat-card-title">Novelty Effect</div>
+        <div class="stat-card-desc">New UI often gets a short-term boost just because it's different. Wait at least 2 weeks after launch before measuring - let the novelty wear off and see steady-state behavior.</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon">🚫</div>
+        <div class="stat-card-title">Don't Peek Early</div>
+        <div class="stat-card-desc">Checking results daily and stopping when you see what you want inflates false positives. Commit to your sample size upfront and don't declare a winner until you hit it.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Experiment Backlog -->
+  <section>
+    <h2>Experiment Backlog</h2>
+    <p style="font-size:13px; color:var(--text-muted); margin-bottom:16px;">Ideas to test once we have enough DAU. Not all ideas deserve an experiment - validate with user interviews first.</p>
+    <div class="backlog-list">
+      <div class="backlog-item">
+        <div class="backlog-dot"></div>
+        <div>
+          <div class="backlog-text">Hebrew vs English default by device locale - does showing Hebrew by default to Israeli users increase D7 retention vs letting them choose?</div>
+          <span class="backlog-tag">Localization</span>
+        </div>
+      </div>
+      <div class="backlog-item">
+        <div class="backlog-dot"></div>
+        <div>
+          <div class="backlog-text">Image vs no-image card CTR - do request cards with photos get 2x more offer taps?</div>
+          <span class="backlog-tag">Browse</span>
+        </div>
+      </div>
+      <div class="backlog-item">
+        <div class="backlog-dot"></div>
+        <div>
+          <div class="backlog-text">Urgency badge color - red vs amber for "high" urgency. Does red feel alarming or motivating?</div>
+          <span class="backlog-tag">Design</span>
+        </div>
+      </div>
+      <div class="backlog-item">
+        <div class="backlog-dot"></div>
+        <div>
+          <div class="backlog-text">Profile completeness prompt timing - show "add a photo" nudge after first match vs after sign-in. Which drives higher completion?</div>
+          <span class="backlog-tag">Onboarding</span>
+        </div>
+      </div>
+      <div class="backlog-item">
+        <div class="backlog-dot"></div>
+        <div>
+          <div class="backlog-text">Push notification copy A/B - personalized ("Yael needs help with transport") vs generic ("A new request near you"). Open rate difference?</div>
+          <span class="backlog-tag">Push</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Helpy - Neighbors Helping Neighbors &nbsp;&middot;&nbsp;
+  <a href="index.html" style="color:var(--brand); text-decoration:none;">Home</a> &nbsp;&middot;&nbsp;
+  <a href="tracking.html" style="color:var(--brand); text-decoration:none;">Tracking Plan</a> &nbsp;&middot;&nbsp;
+  <a href="nps.html" style="color:var(--brand); text-decoration:none;">NPS &amp; PMF</a>
+</footer>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const el = document.getElementById('progress-bar');
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    el.style.width = (docHeight > 0 ? (scrollTop / docHeight) * 100 : 0) + '%';
+  });
+
+  // Tabs
+  function switchTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+
+  // Accordion cards
+  function toggleCard(id) {
+    const card = document.getElementById(id);
+    card.classList.toggle('open');
+  }
+</script>
+</body>
+</html>
