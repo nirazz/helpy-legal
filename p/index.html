@@ -139,6 +139,7 @@
       gap: 5px;
     }
     .stat + .stat { border-left: 1px solid rgba(255,255,255,0.08); }
+    html[dir="rtl"] .stat + .stat { border-left: none; border-right: 1px solid rgba(255,255,255,0.08); }
     .stat-val { display: flex; align-items: baseline; gap: 3px; }
     .stat-num {
       font-size: 24px; font-weight: 700;
@@ -155,7 +156,8 @@
       line-height: 1.3;
     }
 
-    .reviews { width: 100%; margin-bottom: 24px; text-align: left; }
+    .reviews { width: 100%; margin-bottom: 24px; text-align: right; }
+    html[dir="ltr"] .reviews { text-align: left; }
     .reviews-label {
       font-size: 10px; font-weight: 700;
       color: rgba(255,255,255,0.22);
@@ -206,11 +208,34 @@
   (function () {
     var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3b21zdHp6bXllZ3BiaWRpYmZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTA1NjksImV4cCI6MjA4ODM4NjU2OX0.sZBrK88ecSJBstXNBa2UUAHhBxNfy9-Ssac1JPY9i2k';
     var APP_STORE = 'https://apps.apple.com/app/id6758919822';
-    var CAT = {
+
+    var CAT_EN = {
       'elderly-care': 'Elderly care', 'borrow': 'Lending', 'giveaway': 'Giveaway',
       'activity': 'Activities', 'tutoring': 'Tutoring', 'pro-advice': 'Pro advice',
       'rides': 'Rides', 'moving': 'Moving', 'errands': 'Errands',
       'technology': 'Tech help', 'language-help': 'Language help', 'other': 'Other'
+    };
+    var CAT_HE = {
+      'elderly-care': 'קשישים', 'borrow': 'השאלה', 'giveaway': 'למסור',
+      'activity': 'פעילות', 'tutoring': 'שיעורים', 'pro-advice': 'ייעוץ מקצועי',
+      'rides': 'הסעות', 'moving': '引っ越し', 'errands': 'שליחויות',
+      'technology': 'עזרת טכנולוגיה', 'language-help': 'שפות', 'other': 'אחר',
+      'moving': 'הובלה'
+    };
+
+    var T = {
+      en: {
+        rating: 'Rating', reviews: 'Reviews', helped: 'Helped',
+        newToHelpy: '✨ New to Helpy',
+        whatNeighborsSay: 'What neighbors say',
+        footer: 'Real neighbors helping each other'
+      },
+      he: {
+        rating: 'דירוג', reviews: 'ביקורות', helped: 'עזר',
+        newToHelpy: '✨ חדש בHelpy',
+        whatNeighborsSay: 'מה השכנים אומרים',
+        footer: 'שכנים אמיתיים עוזרים אחד לשני'
+      }
     };
 
     var id = window.location.hash.slice(1);
@@ -230,7 +255,17 @@
     }
 
     function render(p) {
-      document.title = esc(p.name) + ' on Helpy';
+      var isHe = p.preferredLanguage === 'he';
+      var t = isHe ? T.he : T.en;
+      var CAT = isHe ? CAT_HE : CAT_EN;
+
+      // Apply RTL to the document
+      if (isHe) {
+        document.documentElement.setAttribute('dir', 'rtl');
+        document.documentElement.setAttribute('lang', 'he');
+      }
+
+      document.title = esc(p.name) + ' - Helpy';
 
       var avatarHtml = p.avatar
         ? '<img class="avatar" src="' + esc(p.avatar) + '" alt="' + esc(p.name) + '" />'
@@ -253,17 +288,17 @@
           : '<span class="stat-num">&#8212;</span>';
         statsHtml =
           '<div class="stats-row">'
-          + '<div class="stat"><div class="stat-val">' + ratingVal + '</div><span class="stat-label">Rating</span></div>'
-          + '<div class="stat"><div class="stat-val"><span class="stat-num">' + (p.ratingCount||0) + '</span></div><span class="stat-label">Reviews</span></div>'
-          + '<div class="stat"><div class="stat-val"><span class="stat-num">' + (p.helpedCount||0) + '</span></div><span class="stat-label">Helped</span></div>'
+          + '<div class="stat"><div class="stat-val">' + ratingVal + '</div><span class="stat-label">' + t.rating + '</span></div>'
+          + '<div class="stat"><div class="stat-val"><span class="stat-num">' + (p.ratingCount||0) + '</span></div><span class="stat-label">' + t.reviews + '</span></div>'
+          + '<div class="stat"><div class="stat-val"><span class="stat-num">' + (p.helpedCount||0) + '</span></div><span class="stat-label">' + t.helped + '</span></div>'
           + '</div>';
       } else {
-        statsHtml = '<div class="new-badge">&#10024; New to Helpy</div>';
+        statsHtml = '<div class="new-badge">' + t.newToHelpy + '</div>';
       }
 
       var reviewsHtml = '';
       if (p.reviews && p.reviews.length > 0) {
-        reviewsHtml = '<div class="reviews"><p class="reviews-label">What neighbors say</p>';
+        reviewsHtml = '<div class="reviews"><p class="reviews-label">' + t.whatNeighborsSay + '</p>';
         p.reviews.forEach(function(r) {
           reviewsHtml +=
             '<div class="review">'
@@ -288,7 +323,7 @@
         + '<a class="badge" href="' + APP_STORE + '">'
         + '<img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" />'
         + '</a>'
-        + '<p class="footer">Real neighbors helping each other</p>';
+        + '<p class="footer">' + t.footer + '</p>';
     }
 
     function showError(msg) {
