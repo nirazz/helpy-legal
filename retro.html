@@ -38,9 +38,9 @@
   .header-brand { display: flex; align-items: center; gap: 10px; }
   .header-logo {
     width: 32px; height: 32px; border-radius: 8px;
-    background: linear-gradient(135deg, var(--brand), var(--pink));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; color: white; font-weight: 700;
+    
+    
+    overflow: hidden;
   }
   .header-title { font-size: 15px; font-weight: 700; color: #0f172a; }
   .header-subtitle { font-size: 12px; color: var(--slate); }
@@ -119,7 +119,7 @@
   .retro-card .card-text:empty::before { content: 'Click to edit...'; opacity: 0.5; pointer-events: none; }
 
   .add-card-btn {
-    display: flex; align-items: center; justify-content: center; gap: 6px;
+     gap: 6px;
     padding: 9px 14px; border: 1.5px dashed; border-radius: 8px;
     background: none; font-size: 13px; cursor: pointer; transition: all 0.15s;
     font-family: inherit; margin-top: 2px;
@@ -166,7 +166,7 @@
   .tracker-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; font-size: 13px; }
   .tracker-table tr:last-child td { border-bottom: none; }
   .tracker-table tr.done-row td { opacity: 0.55; text-decoration: line-through; }
-  .tracker-check { width: 18px; height: 18px; border-radius: 5px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; flex-shrink: 0; background: white; }
+  .tracker-check { width: 18px; height: 18px; border-radius: 5px; border: 2px solid var(--border);  cursor: pointer; transition: all 0.15s; flex-shrink: 0; background: white; }
   .tracker-check.checked { background: var(--green); border-color: var(--green); }
   .retro-badge { font-size: 11px; font-weight: 600; background: var(--brand-light); color: var(--brand); padding: 2px 7px; border-radius: 20px; }
 </style>
@@ -176,7 +176,7 @@
 
 <header>
   <div class="header-brand">
-    <div class="header-logo">H</div>
+    <div class="header-logo"><img src="app-icon-512.png" alt="Helpy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></div>
     <div>
       <div class="header-title">Helpy</div>
       <div class="header-subtitle">Sprint Retrospective</div>

@@ -38,9 +38,9 @@
   .header-brand { display: flex; align-items: center; gap: 10px; }
   .header-logo {
     width: 32px; height: 32px; border-radius: 8px;
-    background: linear-gradient(135deg, var(--brand), var(--pink));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px; color: white; font-weight: 700;
+    
+    
+    overflow: hidden;
   }
   .header-title { font-size: 15px; font-weight: 700; color: #0f172a; }
   .header-subtitle { font-size: 12px; color: var(--slate); }
@@ -150,7 +150,7 @@
 
 <header>
   <div class="header-brand">
-    <div class="header-logo">H</div>
+    <div class="header-logo"><img src="app-icon-512.png" alt="Helpy" style="width:100%;height:100%;object-fit:cover;border-radius:8px;"></div>
     <div>
       <div class="header-title">Helpy</div>
       <div class="header-subtitle">Product Backlog</div>

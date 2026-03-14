@@ -51,10 +51,11 @@
       flex-shrink: 0; text-decoration: none;
     }
     .header-logo .logo-icon {
+      overflow: hidden;
       width: 32px; height: 32px; border-radius: 8px;
-      background: linear-gradient(135deg, var(--brand), var(--pink));
-      display: flex; align-items: center; justify-content: center; font-size: 16px;
+      overflow: hidden;
     }
+    .header-logo .logo-icon img { width:100%; height:100%; object-fit:cover; }
     .header-nav { display: flex; align-items: center; gap: 4px; }
     .header-nav a {
       font-size: 13px; font-weight: 600; color: var(--text-muted);
@@ -256,7 +257,7 @@
 
 <header>
   <a class="header-logo" href="index.html">
-    <div class="logo-icon">✋</div>
+    <div class="logo-icon"><img src="app-icon-512.png" alt="Helpy"></div>
     Helpy
   </a>
   <nav class="header-nav">
