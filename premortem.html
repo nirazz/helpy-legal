@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helpy - Pre-Mortem</title>
+  <style>
+    :root {
+      --brand: #6366f1;
+      --brand-dark: #4f46e5;
+      --brand-light: #eef2ff;
+      --green: #10b981;
+      --green-light: #d1fae5;
+      --amber: #f59e0b;
+      --amber-light: #fef3c7;
+      --red: #ef4444;
+      --red-light: #fee2e2;
+      --pink: #ec4899;
+      --pink-light: #fce7f3;
+      --slate: #64748b;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6;
+    }
+
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, var(--brand), var(--pink));
+      width: 0%; z-index: 1000; transition: width 0.1s;
+    }
+
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border); padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px; gap: 16px;
+    }
+    .header-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 17px; color: var(--brand);
+      flex-shrink: 0; text-decoration: none;
+    }
+    .header-logo .logo-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--brand), var(--pink));
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+    .header-nav { display: flex; align-items: center; gap: 4px; }
+    .header-nav a {
+      font-size: 13px; font-weight: 600; color: var(--text-muted);
+      text-decoration: none; padding: 6px 12px; border-radius: 8px; transition: all 0.15s;
+    }
+    .header-nav a:hover { background: var(--brand-light); color: var(--brand); }
+    .header-nav a.active { background: var(--brand-light); color: var(--brand); }
+    .header-badge {
+      background: var(--green); color: #fff; font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px; flex-shrink: 0;
+    }
+
+    .page-wrap { max-width: 960px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    /* Hero - dark/ominous theme */
+    .hero {
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
+      border-radius: 20px; padding: 48px 44px; color: #fff;
+      margin-bottom: 40px; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -60px; right: -60px;
+      width: 240px; height: 240px; background: rgba(255,255,255,0.04); border-radius: 50%;
+    }
+    .hero::after {
+      content: ''; position: absolute; bottom: -70px; left: 30%;
+      width: 180px; height: 180px; background: rgba(255,255,255,0.03); border-radius: 50%;
+    }
+    .hero-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; opacity: 0.6; margin-bottom: 10px;
+    }
+    .hero h1 { font-size: 34px; font-weight: 800; line-height: 1.2; margin-bottom: 14px; }
+    .hero p { font-size: 16px; opacity: 0.8; max-width: 560px; line-height: 1.7; margin-bottom: 24px; }
+    .hero-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .hero-chip {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 600;
+    }
+
+    .section-label {
+      font-size: 11px; font-weight: 700; color: var(--text-muted);
+      letter-spacing: 1.5px; text-transform: uppercase;
+      display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
+    }
+    .section-label::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    /* Callout boxes */
+    .callout {
+      border-radius: var(--radius); padding: 20px 24px;
+      margin-bottom: 32px; display: flex; align-items: flex-start; gap: 16px;
+    }
+    .callout-purple { background: var(--brand-light); border: 1.5px solid #c7d2fe; }
+    .callout-red { background: var(--red-light); border: 1.5px solid #fca5a5; }
+    .callout-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+    .callout-text h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .callout-text p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+    blockquote {
+      border-left: 3px solid var(--brand); padding-left: 16px;
+      font-style: italic; font-size: 15px; color: var(--text-muted);
+      margin: 12px 0;
+    }
+
+    /* Exercise card */
+    .exercise-card {
+      background: linear-gradient(135deg, #1e1b4b, #312e81);
+      border-radius: var(--radius); padding: 32px 36px;
+      color: #fff; margin-bottom: 40px; text-align: center;
+    }
+    .exercise-card .skull { font-size: 56px; margin-bottom: 16px; }
+    .exercise-card h3 { font-size: 20px; font-weight: 800; margin-bottom: 12px; }
+    .exercise-card p { font-size: 15px; opacity: 0.8; line-height: 1.7; max-width: 520px; margin: 0 auto; }
+
+    /* Scenario cards */
+    .scenarios-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 20px; margin-bottom: 40px;
+    }
+    @media (max-width: 700px) {
+      .scenarios-grid { grid-template-columns: 1fr; }
+      .hero { padding: 32px 24px; }
+      .hero h1 { font-size: 26px; }
+    }
+
+    .scenario {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .scenario:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.08); }
+
+    .scenario-header {
+      padding: 20px 22px 16px; border-bottom: 1px solid var(--border);
+    }
+    .scenario-top {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 12px; margin-bottom: 10px;
+    }
+    .scenario-emoji { font-size: 30px; }
+    .likelihood-badge {
+      font-size: 11px; font-weight: 700; padding: 4px 10px;
+      border-radius: 20px; white-space: nowrap;
+    }
+    .lh-high { background: var(--red-light); color: #991b1b; }
+    .lh-medium { background: var(--amber-light); color: #78350f; }
+    .lh-low-medium { background: #fef9c3; color: #713f12; }
+    .lh-low { background: var(--green-light); color: #065f46; }
+
+    .scenario-header h3 { font-size: 16px; font-weight: 800; margin-bottom: 0; }
+    .scenario-subhead { font-size: 12px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+
+    .scenario-body { padding: 18px 22px; }
+    .obituary {
+      font-size: 13px; color: var(--text); line-height: 1.7;
+      margin-bottom: 16px; font-style: italic;
+      border-left: 3px solid var(--red); padding-left: 12px;
+    }
+    .prevention-label {
+      font-size: 10px; font-weight: 700; color: var(--text-muted);
+      letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .prevention-items { display: flex; flex-direction: column; gap: 5px; }
+    .prevention-item {
+      font-size: 12px; display: flex; gap: 8px; align-items: flex-start;
+      line-height: 1.4;
+    }
+    .prevention-item::before {
+      content: 'PREVENT:'; font-size: 10px; font-weight: 700;
+      color: var(--green); flex-shrink: 0; margin-top: 1px;
+    }
+
+    /* Action plan table */
+    .action-table {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden; margin-bottom: 40px;
+    }
+    .action-table-header {
+      display: grid; grid-template-columns: 2fr 2fr 1fr 1fr;
+      padding: 12px 20px; background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-size: 11px; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 1px; gap: 12px;
+    }
+    .action-row {
+      display: grid; grid-template-columns: 2fr 2fr 1fr 1fr;
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+      gap: 12px; align-items: start; transition: background 0.1s;
+    }
+    .action-row:last-child { border-bottom: none; }
+    .action-row:hover { background: var(--bg); }
+    .action-scenario {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 700;
+    }
+    .action-scenario .dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 2px;
+    }
+    .dot-red { background: var(--red); }
+    .dot-amber { background: var(--amber); }
+    .dot-green { background: var(--green); }
+    .action-prevention { font-size: 13px; color: var(--text); line-height: 1.5; }
+    .action-owner {
+      font-size: 12px; background: var(--brand-light);
+      color: var(--brand); font-weight: 700; padding: 3px 10px;
+      border-radius: 20px; display: inline-block; white-space: nowrap;
+    }
+    .action-deadline {
+      font-size: 12px; color: var(--text-muted); font-weight: 600;
+    }
+    @media (max-width: 700px) {
+      .action-table-header, .action-row { grid-template-columns: 1fr; }
+      .action-table-header { display: none; }
+    }
+
+    /* Optimistic flip */
+    .flip-section {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 32px; margin-bottom: 40px;
+    }
+    .flip-section h3 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+    .flip-section .flip-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
+    .flip-items { display: flex; flex-direction: column; gap: 16px; }
+    .flip-item {
+      background: var(--bg); border-radius: 10px; padding: 16px 20px;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .flip-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .flip-content {}
+    .flip-failure { font-size: 12px; font-weight: 700; color: var(--red); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .flip-success { font-size: 14px; color: var(--text); line-height: 1.5; }
+    .flip-success strong { color: var(--green); }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<header>
+  <a class="header-logo" href="index.html">
+    <div class="logo-icon">✋</div>
+    Helpy
+  </a>
+  <nav class="header-nav">
+    <a href="vision.html">Vision</a>
+    <a href="okrs.html">OKRs</a>
+    <a href="premortem.html" class="active">Pre-Mortem</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="prd.html">PRD</a>
+  </nav>
+  <div class="header-badge">LIVE ON APP STORE</div>
+</header>
+
+<div class="page-wrap">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">Risk Analysis</div>
+    <h1>Pre-Mortem</h1>
+    <p>It's 2027. Helpy failed. App removed from the App Store. Supabase project paused. What killed it? Working backwards from failure is more powerful than optimistic planning.</p>
+    <div class="hero-chips">
+      <span class="hero-chip">6 Failure Scenarios</span>
+      <span class="hero-chip">Prevention Plans</span>
+      <span class="hero-chip">Optimistic Flips</span>
+    </div>
+  </div>
+
+  <!-- What is a Pre-Mortem -->
+  <div class="section-label">The Method</div>
+
+  <div class="callout callout-purple" style="margin-bottom: 20px;">
+    <div class="callout-icon">🧠</div>
+    <div class="callout-text">
+      <h4>What is a Pre-Mortem?</h4>
+      <p>A pre-mortem is the opposite of a post-mortem. Instead of analyzing failure after it happens, you assume the project has already failed and work backwards to figure out why. This forces you to confront uncomfortable risks before you're emotionally invested - when it's still cheap to change course. It's one of the most underused tools in product development.</p>
+    </div>
+  </div>
+
+  <blockquote style="margin-bottom: 32px;">"The time to repair the roof is when the sun is shining." - John F. Kennedy</blockquote>
+
+  <!-- The Exercise -->
+  <div class="exercise-card">
+    <div class="skull">💀</div>
+    <h3>The Exercise</h3>
+    <p>It is October 2027. Helpy has been shut down. The app has been removed from the App Store. The Supabase project is paused. The domain has lapsed. 18 months of work came to nothing. What went wrong? Walk through each scenario below and ask: could this happen to us?</p>
+  </div>
+
+  <!-- 6 Scenarios -->
+  <div class="section-label">The Six Obituaries</div>
+
+  <div class="scenarios-grid">
+
+    <!-- Scenario 1: Empty Feed -->
+    <div class="scenario">
+      <div class="scenario-header">
+        <div class="scenario-top">
+          <div class="scenario-emoji">📭</div>
+          <span class="likelihood-badge lh-high">HIGH LIKELIHOOD</span>
+        </div>
+        <h3>Scenario 1 - The Empty Feed</h3>
+        <div class="scenario-subhead">The cold start problem killed us</div>
+      </div>
+      <div class="scenario-body">
+        <div class="obituary">
+          Helpy never reached critical mass in any neighborhood. Users opened the app, saw 2-3 stale requests from 8km away in a category they couldn't help with, and never came back. The feed felt empty. Without enough supply, demand dried up. A great product killed by a distribution problem, not a product problem. The app had a 4.5-star rating from the 12 users who actually used it - but there were only 12 of them.
+        </div>
+        <div class="prevention-label">Prevention Actions</div>
+        <div class="prevention-items">
+          <div class="prevention-item">Hyper-focus on ONE Tel Aviv neighborhood first - flood it with density before expanding</div>
+          <div class="prevention-item">Manually seed content in early weeks (Nir posts real requests, recruits neighbors directly)</div>
+          <div class="prevention-item">Ambassador program: 3 paid neighborhood reps post weekly, activate their buildings</div>
+          <div class="prevention-item">Track "feed density" metric (avg cards seen per session) before any expansion</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 2: Trust Incident -->
+    <div class="scenario">
+      <div class="scenario-header">
+        <div class="scenario-top">
+          <div class="scenario-emoji">🔐</div>
+          <span class="likelihood-badge lh-medium">MEDIUM LIKELIHOOD</span>
+        </div>
+        <h3>Scenario 2 - The Trust Incident</h3>
+        <div class="scenario-subhead">One bad actor destroyed everything</div>
+      </div>
+      <div class="scenario-body">
+        <div class="obituary">
+          A helper used Helpy to gain entry to an elderly woman's apartment under the pretense of helping with a technical issue, then stole valuables. The story was covered by Ynet and Walla. Downloads dropped 90% in 48 hours. Despite having a report system, content moderation, and terms of service, the PR damage was permanent. The Israeli market is small - word travels fast. No one wanted to be associated with the app that enabled elder fraud.
+        </div>
+        <div class="prevention-label">Prevention Actions</div>
+        <div class="prevention-items">
+          <div class="prevention-item">Add ID verification option for "sensitive" categories (elderly-care, home access)</div>
+          <div class="prevention-item">Faster manual moderation - respond to reports within 4 hours, not 24</div>
+          <div class="prevention-item">Clear safety guidelines shown before any in-person meetup is arranged</div>
+          <div class="prevention-item">Liability framework in ToS - regularly reviewed by a lawyer at 500+ users</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 3: WhatsApp -->
+    <div class="scenario">
+      <div class="scenario-header">
+        <div class="scenario-top">
+          <div class="scenario-emoji">💬</div>
+          <span class="likelihood-badge lh-medium">MEDIUM LIKELIHOOD</span>
+        </div>
+        <h3>Scenario 3 - WhatsApp Copies It</h3>
+        <div class="scenario-subhead">Distribution beat product</div>
+      </div>
+      <div class="scenario-body">
+        <div class="obituary">
+          WhatsApp launched "Neighborhood Help" in May 2026 - a lightweight feature inside existing neighborhood groups that let you post requests and offer help with a thumbs-up. It wasn't as good as Helpy: no matching algorithm, no ratings, no privacy controls. But it was already on every single phone in Israel. Helpy's DAU dropped 60% in 30 days. No one downloads a new app when the feature is "good enough" in an app they already have open 40 times a day.
+        </div>
+        <div class="prevention-label">Prevention Actions</div>
+        <div class="prevention-items">
+          <div class="prevention-item">Build deep trust features WhatsApp cannot copy: verified identity, ratings history, urgency routing</div>
+          <div class="prevention-item">Differentiate on safety and accountability - your neighbor's verified track record is the moat</div>
+          <div class="prevention-item">Own the "trusted neighborhood helper" positioning, not just the "request posting" use case</div>
+          <div class="prevention-item">At PMF signal, raise a small round to accelerate before platforms can react</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 4: Founder Burnout -->
+    <div class="scenario">
+      <div class="scenario-header">
+        <div class="scenario-top">
+          <div class="scenario-emoji">🔋</div>
+          <span class="likelihood-badge lh-medium">MEDIUM LIKELIHOOD</span>
+        </div>
+        <h3>Scenario 4 - Founder Burned Out</h3>
+        <div class="scenario-subhead">Solo founder unsustainability</div>
+      </div>
+      <div class="scenario-body">
+        <div class="obituary">
+          Nir was doing everything - product, development (with Claude), marketing, support, legal, hosting, App Store submissions, moderation. 14 months in, 150 users, no revenue. A full-time job on top of this. The grind was 2-3 hours every night and every weekend. Without a co-founder to share the cognitive and emotional load, it became unsustainable. One bad week - a rejection, a bug, a slow month - was enough to tip the scale. The app went unmaintained. Users stopped coming.
+        </div>
+        <div class="prevention-label">Prevention Actions</div>
+        <div class="prevention-items">
+          <div class="prevention-item">Actively look for a co-founder who owns either tech or growth/community</div>
+          <div class="prevention-item">Define a personal sustainability threshold upfront: if below X users by Y date, evaluate options honestly</div>
+          <div class="prevention-item">Explore pre-seed funding at 500 MAU - even $30K buys 6 months of runway and validation</div>
+          <div class="prevention-item">Keep the maintenance burden low: use managed infra (Supabase, EAS) over self-hosted anything</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 5: App Store Policy -->
+    <div class="scenario">
+      <div class="scenario-header">
+        <div class="scenario-top">
+          <div class="scenario-emoji">🍎</div>
+          <span class="likelihood-badge lh-low-medium">LOW-MEDIUM LIKELIHOOD</span>
+        </div>
+        <h3>Scenario 5 - App Store Policy Change</h3>
+        <div class="scenario-subhead">Platform risk materialized</div>
+      </div>
+      <div class="scenario-body">
+        <div class="obituary">
+          Apple updated its UGC guidelines in Q3 2026, requiring all apps that facilitate in-person meetings between strangers to implement AI-powered content moderation reviewed by a human trust and safety team within 24 hours, plus a $50,000/year safety compliance certification. It was aimed at large platforms but written broadly enough to catch Helpy. The app was removed from the App Store pending compliance. The certification was financially out of reach for a solo bootstrapped founder.
+        </div>
+        <div class="prevention-label">Prevention Actions</div>
+        <div class="prevention-items">
+          <div class="prevention-item">Stay ahead of UGC guidelines - subscribe to Apple Developer news, review policy updates quarterly</div>
+          <div class="prevention-item">Build basic moderation tooling early (reported content queue, automated flagging) so scaling is not a cliff</div>
+          <div class="prevention-item">Pursue Android (Google Play) in parallel - platform diversification reduces single-point-of-failure risk</div>
+          <div class="prevention-item">Keep safety policies public and documented - makes compliance certification faster if required</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scenario 6: No Demand -->
+    <div class="scenario">
+      <div class="scenario-header">
+        <div class="scenario-top">
+          <div class="scenario-emoji">🤷</div>
+          <span class="likelihood-badge lh-low">LOW LIKELIHOOD</span>
+        </div>
+        <h3>Scenario 6 - Nobody Actually Wanted It</h3>
+        <div class="scenario-subhead">The most honest failure</div>
+      </div>
+      <div class="scenario-body">
+        <div class="obituary">
+          After 200 user interviews, 18 months of development, and 5 App Store rejections, the painful truth emerged: people say they want community connection, but their actual behavior tells a different story. The social friction of asking for help is a feature, not a bug - it filters out bad requests and maintains social capital. Demand was never really there. The people who "loved the idea" never actually posted. Usage peaked at 50 real sessions, then flatlined. Pivoting was too late.
+        </div>
+        <div class="prevention-label">Prevention Actions</div>
+        <div class="prevention-items">
+          <div class="prevention-item">Run Sean Ellis "very disappointed" test at exactly 100 users - if under 40%, pivot immediately</div>
+          <div class="prevention-item">Watch behavior, not words: "I love this" in interviews means nothing if they never post</div>
+          <div class="prevention-item">Define explicit pivot triggers now: if D7 retention under 10% at 200 users, the core loop is broken</div>
+          <div class="prevention-item">Have a pivot hypothesis ready: same tech stack could serve hyperlocal commerce, skill exchange, elderly care</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Action Plan Table -->
+  <div class="section-label">Pre-Mortem Action Plan</div>
+
+  <div class="action-table">
+    <div class="action-table-header">
+      <div>Failure Scenario</div>
+      <div>Prevention Action</div>
+      <div>Owner</div>
+      <div>Deadline</div>
+    </div>
+    <div class="action-row">
+      <div class="action-scenario"><div class="dot dot-red"></div>Empty Feed (HIGH)</div>
+      <div class="action-prevention">Seed one Tel Aviv neighborhood with 10+ requests. Recruit 3 ambassadors. Track feed density weekly.</div>
+      <div><span class="action-owner">Nir</span></div>
+      <div class="action-deadline">Q2 2026</div>
+    </div>
+    <div class="action-row">
+      <div class="action-scenario"><div class="dot dot-amber"></div>Trust Incident (MED)</div>
+      <div class="action-prevention">Add "sensitive category" safety notice. 4-hour response SLA on reports. Legal review of ToS at 500 users.</div>
+      <div><span class="action-owner">Nir</span></div>
+      <div class="action-deadline">Q2 2026</div>
+    </div>
+    <div class="action-row">
+      <div class="action-scenario"><div class="dot dot-amber"></div>WhatsApp Copies (MED)</div>
+      <div class="action-prevention">Deepen trust features (verified ratings, urgency routing). Nail the "known neighbor" positioning.</div>
+      <div><span class="action-owner">Nir</span></div>
+      <div class="action-deadline">Q3 2026</div>
+    </div>
+    <div class="action-row">
+      <div class="action-scenario"><div class="dot dot-amber"></div>Burnout (MED)</div>
+      <div class="action-prevention">Define sustainability threshold. Actively recruit co-founder. Evaluate funding at 500 MAU.</div>
+      <div><span class="action-owner">Nir</span></div>
+      <div class="action-deadline">Ongoing</div>
+    </div>
+    <div class="action-row">
+      <div class="action-scenario"><div class="dot dot-amber"></div>App Store Policy (LOW-MED)</div>
+      <div class="action-prevention">Android launch by Q3 2026. Subscribe to policy update feeds. Build moderation queue.</div>
+      <div><span class="action-owner">Nir</span></div>
+      <div class="action-deadline">Q3 2026</div>
+    </div>
+    <div class="action-row">
+      <div class="action-scenario"><div class="dot dot-green"></div>No Demand (LOW)</div>
+      <div class="action-prevention">Run Sean Ellis test at 100 users. Define pivot triggers. Have a backup hypothesis ready.</div>
+      <div><span class="action-owner">Nir</span></div>
+      <div class="action-deadline">At 100 users</div>
+    </div>
+  </div>
+
+  <!-- Optimistic Flip -->
+  <div class="section-label">The Optimistic Flip</div>
+
+  <div class="flip-section">
+    <h3>Every failure has a mirror success</h3>
+    <div class="flip-sub">The same forces that could kill Helpy - if navigated correctly - become its strongest competitive advantages. The flip side of each failure scenario is a reason why Helpy can win.</div>
+
+    <div class="flip-items">
+      <div class="flip-item">
+        <div class="flip-icon">📭</div>
+        <div class="flip-content">
+          <div class="flip-failure">Empty Feed - Cold Start</div>
+          <div class="flip-success">If we solve the cold start problem by activating <strong>one dense neighborhood</strong>, that neighborhood becomes a word-of-mouth engine. People tell their friends in the next building. Success spreads block by block - not through ads, but through lived experience.</div>
+        </div>
+      </div>
+      <div class="flip-item">
+        <div class="flip-icon">🔐</div>
+        <div class="flip-content">
+          <div class="flip-failure">Trust Incident</div>
+          <div class="flip-success">If we build a reputation for being <strong>the safest way to connect with neighbors</strong> - verified profiles, fast moderation, accountability - trust becomes our moat. Every other platform is reactive. We can be proactively safe by design.</div>
+        </div>
+      </div>
+      <div class="flip-item">
+        <div class="flip-icon">💬</div>
+        <div class="flip-content">
+          <div class="flip-failure">WhatsApp Copies It</div>
+          <div class="flip-success">WhatsApp cannot build <strong>a trust reputation system, verified identity, or urgency routing</strong> without alienating their privacy-first brand. The deeper we go on accountability and trust, the harder we are to copy with a lightweight feature.</div>
+        </div>
+      </div>
+      <div class="flip-item">
+        <div class="flip-icon">🔋</div>
+        <div class="flip-content">
+          <div class="flip-failure">Founder Burnout</div>
+          <div class="flip-success">If Helpy finds a co-founder or early team member, the combined energy is <strong>non-linear</strong>. Two people who genuinely believe in the mission can sustain far longer than one - and the product quality compounds with multiple perspectives.</div>
+        </div>
+      </div>
+      <div class="flip-item">
+        <div class="flip-icon">🍎</div>
+        <div class="flip-content">
+          <div class="flip-failure">App Store Policy Risk</div>
+          <div class="flip-success">Proactive safety compliance - built in from Day 1 - means Helpy can handle any new requirements <strong>without scrambling</strong>. Being a genuinely safe platform becomes a source of trust with Apple, users, and potential municipality partners.</div>
+        </div>
+      </div>
+      <div class="flip-item">
+        <div class="flip-icon">🤷</div>
+        <div class="flip-content">
+          <div class="flip-failure">No Real Demand</div>
+          <div class="flip-success">If the Sean Ellis test at 100 users shows 40%+ "very disappointed," we have <strong>confirmed genuine PMF</strong> in an underserved market. That data is the clearest signal to accelerate - to raise funding, expand cities, and build the growth engine while the window is open.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const max = document.body.scrollHeight - window.innerHeight;
+    document.getElementById('progress-bar').style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helpy - Vision, Mission &amp; Market</title>
+  <style>
+    :root {
+      --brand: #6366f1;
+      --brand-dark: #4f46e5;
+      --brand-light: #eef2ff;
+      --green: #10b981;
+      --green-light: #d1fae5;
+      --amber: #f59e0b;
+      --amber-light: #fef3c7;
+      --red: #ef4444;
+      --red-light: #fee2e2;
+      --pink: #ec4899;
+      --pink-light: #fce7f3;
+      --slate: #64748b;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* Progress bar */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, var(--brand), var(--pink));
+      width: 0%; z-index: 1000; transition: width 0.1s;
+    }
+
+    /* Header */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 56px; gap: 16px;
+    }
+    .header-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 17px; color: var(--brand);
+      flex-shrink: 0; text-decoration: none;
+    }
+    .header-logo .logo-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--brand), var(--pink));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .header-nav {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .header-nav a {
+      font-size: 13px; font-weight: 600; color: var(--text-muted);
+      text-decoration: none; padding: 6px 12px; border-radius: 8px;
+      transition: all 0.15s;
+    }
+    .header-nav a:hover { background: var(--brand-light); color: var(--brand); }
+    .header-nav a.active { background: var(--brand-light); color: var(--brand); }
+    .header-badge {
+      background: var(--green); color: #fff; font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+    /* Layout */
+    .page-wrap { max-width: 960px; margin: 0 auto; padding: 40px 20px 80px; }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+      border-radius: 20px; padding: 48px 44px; color: #fff;
+      margin-bottom: 40px; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; top: -60px; right: -60px;
+      width: 240px; height: 240px; background: rgba(255,255,255,0.07);
+      border-radius: 50%;
+    }
+    .hero::after {
+      content: ''; position: absolute; bottom: -70px; left: 30%;
+      width: 180px; height: 180px; background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+    .hero-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; opacity: 0.7; margin-bottom: 10px;
+    }
+    .hero h1 { font-size: 34px; font-weight: 800; line-height: 1.2; margin-bottom: 14px; }
+    .hero p { font-size: 16px; opacity: 0.85; max-width: 560px; line-height: 1.7; margin-bottom: 28px; }
+    .hero-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .hero-chip {
+      background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 20px; padding: 5px 14px; font-size: 12px; font-weight: 600;
+    }
+
+    /* Section label */
+    .section-label {
+      font-size: 11px; font-weight: 700; color: var(--text-muted);
+      letter-spacing: 1.5px; text-transform: uppercase;
+      display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
+    }
+    .section-label::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    /* Grid layouts */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 40px; }
+    @media (max-width: 700px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .grid-4 { grid-template-columns: 1fr 1fr; }
+      .hero { padding: 32px 24px; }
+      .hero h1 { font-size: 26px; }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px;
+    }
+    .card-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 16px;
+    }
+    .card h3 { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+    .card p { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
+
+    /* Vision/Mission cards */
+    .vision-card {
+      background: linear-gradient(135deg, var(--brand-light), #f5f3ff);
+      border: 1.5px solid #c7d2fe; border-radius: var(--radius); padding: 32px;
+    }
+    .vision-card .card-icon { background: var(--brand-light); }
+    .vision-card h3 { font-size: 13px; font-weight: 700; color: var(--brand); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+    .vision-card .statement {
+      font-size: 20px; font-weight: 700; color: var(--text); line-height: 1.45;
+    }
+
+    .mission-card {
+      background: linear-gradient(135deg, #f0fdf4, #ecfdf5);
+      border: 1.5px solid #a7f3d0; border-radius: var(--radius); padding: 32px;
+    }
+    .mission-card h3 { font-size: 13px; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+    .mission-card .statement {
+      font-size: 20px; font-weight: 700; color: var(--text); line-height: 1.45;
+    }
+
+    /* Narrative story card */
+    .story-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 36px 40px;
+      margin-bottom: 40px; position: relative; overflow: hidden;
+    }
+    .story-card::before {
+      content: '\201C'; position: absolute; top: 10px; left: 24px;
+      font-size: 120px; color: var(--brand-light); line-height: 1;
+      font-family: Georgia, serif; z-index: 0;
+    }
+    .story-card .story-content { position: relative; z-index: 1; }
+    .story-card p {
+      font-size: 16px; line-height: 1.8; color: var(--text);
+      margin-bottom: 16px;
+    }
+    .story-card p:last-child { margin-bottom: 0; }
+    .story-card .story-punchline {
+      font-size: 18px; font-weight: 700; color: var(--brand);
+      border-top: 1px solid var(--border); padding-top: 20px; margin-top: 4px;
+    }
+
+    /* TAM/SAM/SOM concentric circles */
+    .market-section { margin-bottom: 40px; }
+    .circles-container {
+      display: flex; align-items: center; gap: 40px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 40px;
+    }
+    @media (max-width: 700px) {
+      .circles-container { flex-direction: column; }
+    }
+    .circles-visual {
+      flex-shrink: 0;
+      position: relative; width: 220px; height: 220px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .circle-ring {
+      position: absolute; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .circle-tam {
+      width: 220px; height: 220px;
+      background: rgba(99,102,241,0.08); border: 2.5px solid rgba(99,102,241,0.25);
+    }
+    .circle-sam {
+      width: 152px; height: 152px;
+      background: rgba(99,102,241,0.13); border: 2.5px solid rgba(99,102,241,0.4);
+    }
+    .circle-som {
+      width: 88px; height: 88px;
+      background: var(--brand); border: 2.5px solid var(--brand);
+      box-shadow: 0 4px 20px rgba(99,102,241,0.35);
+    }
+    .circle-label-tam {
+      position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+      font-size: 10px; font-weight: 700; color: var(--brand); letter-spacing: 1px;
+      text-transform: uppercase; white-space: nowrap;
+    }
+    .circle-label-sam {
+      position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
+      font-size: 10px; font-weight: 700; color: var(--brand); opacity: 0.8;
+      letter-spacing: 1px; text-transform: uppercase; white-space: nowrap;
+    }
+    .circle-label-som {
+      font-size: 10px; font-weight: 800; color: #fff;
+      letter-spacing: 1px; text-transform: uppercase;
+    }
+    .circles-legend { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+    .legend-item { display: flex; flex-direction: column; gap: 4px; }
+    .legend-header { display: flex; align-items: center; gap: 10px; }
+    .legend-dot {
+      width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
+    }
+    .legend-dot-tam { background: rgba(99,102,241,0.3); border: 2px solid var(--brand); }
+    .legend-dot-sam { background: rgba(99,102,241,0.5); border: 2px solid var(--brand); }
+    .legend-dot-som { background: var(--brand); }
+    .legend-title { font-size: 14px; font-weight: 700; }
+    .legend-number { font-size: 22px; font-weight: 800; color: var(--brand); }
+    .legend-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; padding-left: 22px; }
+
+    /* Business model cards */
+    .biz-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      cursor: default;
+    }
+    .biz-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+    .biz-card.current {
+      border-color: var(--brand); border-width: 2px;
+      background: var(--brand-light);
+    }
+    .biz-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; gap: 8px; }
+    .biz-icon { font-size: 28px; }
+    .biz-current-badge {
+      background: var(--brand); color: #fff;
+      font-size: 10px; font-weight: 700; padding: 3px 8px;
+      border-radius: 20px; letter-spacing: 0.5px; white-space: nowrap;
+    }
+    .biz-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+    .biz-pros-cons { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; }
+    .biz-pro, .biz-con {
+      font-size: 12px; display: flex; gap: 6px; align-items: flex-start; line-height: 1.4;
+    }
+    .biz-pro { color: #065f46; }
+    .biz-con { color: #7f1d1d; }
+    .biz-pro span:first-child { color: var(--green); font-weight: 700; }
+    .biz-con span:first-child { color: var(--red); font-weight: 700; }
+
+    /* Timeline */
+    .timeline-section { margin-bottom: 40px; }
+    .timeline {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 36px 40px;
+    }
+    .timeline-track {
+      position: relative;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+    @media (max-width: 700px) {
+      .timeline-track { grid-template-columns: 1fr; }
+      .timeline-line { display: none; }
+    }
+    .timeline-line {
+      position: absolute; top: 20px; left: 10%; right: 10%;
+      height: 2px; background: var(--border); z-index: 0;
+    }
+    .timeline-line-fill {
+      position: absolute; top: 20px; left: 10%;
+      height: 2px; background: linear-gradient(90deg, var(--brand), var(--pink));
+      z-index: 1; transition: width 1s ease;
+    }
+    .timeline-item { position: relative; z-index: 2; padding: 0 12px; }
+    .timeline-dot {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; margin-bottom: 16px;
+      position: relative;
+    }
+    .timeline-dot.done {
+      background: var(--brand-light); border: 2.5px solid var(--brand);
+    }
+    .timeline-dot.active {
+      background: var(--brand); border: 2.5px solid var(--brand);
+      box-shadow: 0 4px 14px rgba(99,102,241,0.4);
+    }
+    .timeline-dot.future {
+      background: white; border: 2.5px solid var(--border);
+    }
+    .timeline-period {
+      font-size: 11px; font-weight: 700; color: var(--brand);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+    }
+    .timeline-item.future-item .timeline-period { color: var(--text-muted); }
+    .timeline-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .timeline-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+    .timeline-mau {
+      display: inline-block; margin-top: 8px;
+      background: var(--brand-light); color: var(--brand);
+      font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px;
+    }
+    .timeline-item.future-item .timeline-mau {
+      background: var(--bg); color: var(--text-muted);
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 16px; margin-bottom: 40px;
+    }
+    @media (max-width: 700px) { .stats-row { grid-template-columns: 1fr 1fr; } }
+    .stat-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px 18px; text-align: center;
+    }
+    .stat-number { font-size: 28px; font-weight: 800; color: var(--brand); margin-bottom: 4px; }
+    .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<header>
+  <a class="header-logo" href="index.html">
+    <div class="logo-icon">✋</div>
+    Helpy
+  </a>
+  <nav class="header-nav">
+    <a href="vision.html" class="active">Vision</a>
+    <a href="okrs.html">OKRs</a>
+    <a href="premortem.html">Pre-Mortem</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="prd.html">PRD</a>
+  </nav>
+  <div class="header-badge">LIVE ON APP STORE</div>
+</header>
+
+<div class="page-wrap">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">Strategic Foundation</div>
+    <h1>Vision, Mission &amp; Market</h1>
+    <p>Why Helpy exists, who it's for, and how big it can get. The north star that guides every product decision.</p>
+    <div class="hero-chips">
+      <span class="hero-chip">Tel Aviv Focus</span>
+      <span class="hero-chip">iOS Live</span>
+      <span class="hero-chip">16 Users at Launch</span>
+      <span class="hero-chip">Forever Free (for now)</span>
+    </div>
+  </div>
+
+  <!-- Current snapshot stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-number">16</div>
+      <div class="stat-label">Users at Launch</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">5K</div>
+      <div class="stat-label">Year 1 MAU Target</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">2.7M</div>
+      <div class="stat-label">Addressable Users (Israel)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">$15B</div>
+      <div class="stat-label">TAM Estimate</div>
+    </div>
+  </div>
+
+  <!-- Vision & Mission -->
+  <div class="section-label">Core Identity</div>
+  <div class="grid-2" style="margin-bottom: 40px;">
+    <div class="vision-card">
+      <h3>Vision</h3>
+      <div class="statement">"A world where no neighbor feels alone, and no request for help goes unanswered."</div>
+    </div>
+    <div class="mission-card">
+      <h3>Mission</h3>
+      <div class="statement">"Make it effortless for neighbors to help each other with everyday tasks - free, trusted, and human."</div>
+    </div>
+  </div>
+
+  <!-- Narrative -->
+  <div class="section-label">The Problem We're Solving</div>
+  <div class="story-card" style="margin-bottom: 40px;">
+    <div class="story-content">
+      <p>Cities are getting lonelier. In Tel Aviv, you can live next to someone for 5 years and not know their name. Yet that neighbor has a drill you need, time you could use, a skill that solves your problem in 20 minutes.</p>
+      <p>The gap between "I need help" and "my neighbor can help" isn't a capability gap. It's a social friction gap. People want to connect and help each other - they just need a low-stakes, judgment-free way to ask.</p>
+      <p>Traditional solutions fail: Facebook groups are noisy and feel exposed. WhatsApp threads die. Nextdoor became toxic. TaskRabbit costs money and removes the human element entirely.</p>
+      <p class="story-punchline">Helpy removes the friction. Not with money. Not with contracts. With a swipe.</p>
+    </div>
+  </div>
+
+  <!-- Market Sizing -->
+  <div class="section-label">Market Sizing - TAM / SAM / SOM</div>
+  <div class="market-section">
+    <div class="circles-container">
+      <div class="circles-visual">
+        <div class="circle-ring circle-tam">
+          <span class="circle-label-tam">TAM</span>
+        </div>
+        <div class="circle-ring circle-sam">
+          <span class="circle-label-sam">SAM</span>
+        </div>
+        <div class="circle-ring circle-som">
+          <span class="circle-label-som">SOM</span>
+        </div>
+      </div>
+      <div class="circles-legend">
+        <div class="legend-item">
+          <div class="legend-header">
+            <div class="legend-dot legend-dot-tam"></div>
+            <div class="legend-title">TAM - Total Addressable Market</div>
+          </div>
+          <div class="legend-number">$15B</div>
+          <div class="legend-desc">Global neighborhood and community help market. 4.5B urban dwellers globally. If 10% would use a neighborhood help app, that's 450M potential users at ~$33 annual value each.</div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-header">
+            <div class="legend-dot legend-dot-sam"></div>
+            <div class="legend-title">SAM - Serviceable Addressable Market</div>
+          </div>
+          <div class="legend-number">2.7M</div>
+          <div class="legend-desc">Israel + Hebrew diaspora (~10M). Tel Aviv metro is the densest urban cluster - ~3M residents. 90% smartphone penetration = 2.7M addressable users who could realistically download and use Helpy.</div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-header">
+            <div class="legend-dot legend-dot-som"></div>
+            <div class="legend-title">SOM - Serviceable Obtainable Market</div>
+          </div>
+          <div class="legend-number">5,000</div>
+          <div class="legend-desc">Year 1 target: Tel Aviv only. Target 1% of 500K core Tel Aviv residents = 5,000 MAU. Achievable through neighborhood ambassador program and organic word-of-mouth.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Business Model -->
+  <div class="section-label">Business Model Options</div>
+  <div class="grid-4">
+    <div class="biz-card current">
+      <div class="biz-header">
+        <div class="biz-icon">🌐</div>
+        <span class="biz-current-badge">CURRENT</span>
+      </div>
+      <h4>Forever Free</h4>
+      <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">Zero cost, zero friction. Build trust and community goodwill first.</p>
+      <div class="biz-pros-cons">
+        <div class="biz-pro"><span>+</span><span>Maximum viral growth</span></div>
+        <div class="biz-pro"><span>+</span><span>Community trust</span></div>
+        <div class="biz-con"><span>-</span><span>Zero revenue</span></div>
+        <div class="biz-con"><span>-</span><span>Unsustainable solo</span></div>
+      </div>
+    </div>
+    <div class="biz-card">
+      <div class="biz-header">
+        <div class="biz-icon">⚡</div>
+      </div>
+      <h4>Freemium Boost</h4>
+      <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">Free base. Pay to "Boost" a request to top of the local feed for 24h.</p>
+      <div class="biz-pros-cons">
+        <div class="biz-pro"><span>+</span><span>Low friction paywall</span></div>
+        <div class="biz-pro"><span>+</span><span>Aligns value + price</span></div>
+        <div class="biz-con"><span>-</span><span>Pay-to-win optics</span></div>
+        <div class="biz-con"><span>-</span><span>Needs volume first</span></div>
+      </div>
+    </div>
+    <div class="biz-card">
+      <div class="biz-header">
+        <div class="biz-icon">🏆</div>
+      </div>
+      <h4>Helper Subscription</h4>
+      <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">~$5/mo for power helpers. Priority in the feed, verified badge, advanced filters.</p>
+      <div class="biz-pros-cons">
+        <div class="biz-pro"><span>+</span><span>Recurring revenue</span></div>
+        <div class="biz-pro"><span>+</span><span>Rewards best helpers</span></div>
+        <div class="biz-con"><span>-</span><span>Needs helper tiers first</span></div>
+        <div class="biz-con"><span>-</span><span>Feels weird for free help</span></div>
+      </div>
+    </div>
+    <div class="biz-card">
+      <div class="biz-header">
+        <div class="biz-icon">🏛️</div>
+      </div>
+      <h4>Municipality B2B</h4>
+      <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">Cities pay for community programs. White-label Helpy for neighborhoods.</p>
+      <div class="biz-pros-cons">
+        <div class="biz-pro"><span>+</span><span>Large contract value</span></div>
+        <div class="biz-pro"><span>+</span><span>Seeding the market</span></div>
+        <div class="biz-con"><span>-</span><span>Long sales cycles</span></div>
+        <div class="biz-con"><span>-</span><span>Needs social proof first</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3-Year Timeline -->
+  <div class="section-label">3-Year Growth Milestones</div>
+  <div class="timeline-section">
+    <div class="timeline">
+      <div class="timeline-track">
+        <div class="timeline-line"></div>
+        <div id="timeline-fill" class="timeline-line-fill" style="width: 0%"></div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot active">✅</div>
+          <div class="timeline-period">2026 H1</div>
+          <div class="timeline-title">PMF in Tel Aviv</div>
+          <div class="timeline-desc">App Store launch. iOS only. Hebrew/English. Core help loop working. First real matches.</div>
+          <span class="timeline-mau">Target: 1,000 MAU</span>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot future">🟡</div>
+          <div class="timeline-period">2026 H2</div>
+          <div class="timeline-title">Jerusalem + Haifa</div>
+          <div class="timeline-desc">Expand to 2 more cities. Android launch. Neighborhood ambassador program active.</div>
+          <span class="timeline-mau">Target: 5,000 MAU</span>
+        </div>
+
+        <div class="timeline-item future-item">
+          <div class="timeline-dot future">○</div>
+          <div class="timeline-period">2027</div>
+          <div class="timeline-title">3 Countries</div>
+          <div class="timeline-desc">Israel + 2 adjacent markets. Evaluate freemium model. Helper tiers meaningful.</div>
+          <span class="timeline-mau">Target: 50,000 MAU</span>
+        </div>
+
+        <div class="timeline-item future-item">
+          <div class="timeline-dot future">○</div>
+          <div class="timeline-period">2028</div>
+          <div class="timeline-title">Monetization</div>
+          <div class="timeline-desc">First revenue stream live. Municipality partnerships. Series A fundraise if warranted.</div>
+          <span class="timeline-mau">Target: 200,000 MAU</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const max = document.body.scrollHeight - window.innerHeight;
+    const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
+    document.getElementById('progress-bar').style.width = pct + '%';
+  });
+
+  // Animate timeline fill on scroll
+  function animateTimeline() {
+    const fill = document.getElementById('timeline-fill');
+    if (!fill) return;
+    const rect = fill.parentElement.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.85) {
+      fill.style.width = '28%'; // represents current progress: ~H1 2026
+    }
+  }
+  window.addEventListener('scroll', animateTimeline);
+  setTimeout(animateTimeline, 600);
+</script>
+
+</body>
+</html>
