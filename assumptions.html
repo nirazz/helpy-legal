@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Helpy - Assumption Map</title>
+<style>
+  :root {
+    --brand: #6366f1;
+    --brand-dark: #4f46e5;
+    --brand-light: #eef2ff;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --pink: #ec4899;
+    --slate: #64748b;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--brand), var(--pink));
+    z-index: 1000;
+    transition: width 0.1s ease;
+    width: 0%;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+  }
+
+  .header-inner {
+    max-width: 960px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    gap: 20px;
+  }
+
+  .header-logo {
+    display: flex; align-items: center; gap: 9px;
+    font-weight: 700; font-size: 16px;
+    color: var(--text); text-decoration: none;
+  }
+
+  .logo-icon {
+    width: 30px; height: 30px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 15px;
+  }
+
+  .header-actions { display: flex; align-items: center; gap: 10px; }
+
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600;
+    color: var(--slate); background: #f1f5f9;
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 7px 14px; cursor: pointer; transition: all 0.15s;
+    text-decoration: none;
+  }
+  .btn-outline:hover { background: #e2e8f0; color: var(--text); }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #fff7ed 0%, #fdf4ff 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 64px 24px 56px;
+    text-align: center;
+  }
+
+  .hero-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: white; color: var(--amber);
+    border: 1px solid rgba(245,158,11,0.3);
+    border-radius: 20px; padding: 5px 14px; margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-size: 40px; font-weight: 800;
+    letter-spacing: -0.03em; color: var(--text);
+    margin-bottom: 12px; line-height: 1.1;
+  }
+
+  .hero h1 .accent { color: var(--amber); }
+
+  .hero-subtitle {
+    font-size: 17px; color: var(--text-muted);
+    max-width: 520px; margin: 0 auto;
+  }
+
+  /* Main */
+  .main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 56px 24px 100px;
+  }
+
+  .section { margin-bottom: 64px; }
+
+  .section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--brand);
+    margin-bottom: 8px; display: block;
+  }
+
+  .section-title {
+    font-size: 26px; font-weight: 700;
+    letter-spacing: -0.02em; color: var(--text); margin-bottom: 8px;
+  }
+
+  .section-desc {
+    font-size: 14.5px; color: var(--text-muted);
+    margin-bottom: 28px; max-width: 660px;
+  }
+
+  /* Intro explanation */
+  .intro-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 14px;
+    display: flex; gap: 16px; align-items: flex-start;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .intro-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(99,102,241,0.08); }
+  .intro-icon { font-size: 26px; flex-shrink: 0; margin-top: 2px; }
+  .intro-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .intro-text { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+
+  /* Quadrant explanation grid */
+  .quadrant-explain {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+  @media (max-width: 600px) { .quadrant-explain { grid-template-columns: 1fr; } }
+
+  .qe-card {
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    border: 2px solid;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .qe-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
+
+  .qe-card.danger { background: #fff1f2; border-color: #fecaca; }
+  .qe-card.validated { background: #f0fdf4; border-color: #bbf7d0; }
+  .qe-card.watch { background: #fffbeb; border-color: #fde68a; }
+  .qe-card.safe { background: #f8fafc; border-color: #e2e8f0; }
+
+  .qe-header {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .qe-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-red { background: var(--red); }
+  .dot-green { background: var(--green); }
+  .dot-amber { background: var(--amber); }
+  .dot-slate { background: var(--slate); }
+
+  .color-red { color: var(--red); }
+  .color-green { color: #15803d; }
+  .color-amber { color: #92400e; }
+  .color-slate { color: var(--slate); }
+
+  .qe-axes { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+  .qe-action { font-size: 13px; color: var(--text); font-weight: 500; line-height: 1.5; }
+
+  /* 2x2 Matrix */
+  .matrix-wrap {
+    position: relative;
+    margin-bottom: 48px;
+  }
+
+  .matrix-axis-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--slate);
+    text-align: center; margin-bottom: 10px;
+  }
+
+  .matrix-side-wrap {
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .matrix-y-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--slate);
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .matrix-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 0;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .matrix-cell {
+    padding: 20px;
+    border: 1px solid var(--border);
+    min-height: 220px;
+  }
+
+  .matrix-cell.danger-zone { background: #fff1f2; }
+  .matrix-cell.validated { background: #f0fdf4; }
+  .matrix-cell.watch { background: #fffbeb; }
+  .matrix-cell.safe-zone { background: #f8fafc; }
+
+  .cell-label {
+    font-size: 10px; font-weight: 800; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .assumption-chip {
+    background: white;
+    border: 1px solid;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+    position: relative;
+  }
+
+  .assumption-chip:last-child { margin-bottom: 0; }
+
+  .assumption-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .danger-zone .assumption-chip { border-color: #fca5a5; color: #7f1d1d; }
+  .danger-zone .assumption-chip:hover { box-shadow: 0 4px 12px rgba(239,68,68,0.15); }
+
+  .validated .assumption-chip { border-color: #86efac; color: #14532d; }
+  .validated .assumption-chip:hover { box-shadow: 0 4px 12px rgba(16,185,129,0.15); }
+
+  .watch .assumption-chip { border-color: #fcd34d; color: #78350f; }
+  .watch .assumption-chip:hover { box-shadow: 0 4px 12px rgba(245,158,11,0.15); }
+
+  .safe-zone .assumption-chip { border-color: #cbd5e1; color: #334155; }
+  .safe-zone .assumption-chip:hover { box-shadow: 0 4px 12px rgba(100,116,139,0.12); }
+
+  .chip-evidence {
+    display: none;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border);
+  }
+
+  .assumption-chip.expanded .chip-evidence { display: block; }
+
+  .chip-evidence-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--green); margin-bottom: 2px;
+  }
+
+  .matrix-x-labels {
+    display: flex;
+    padding-left: 32px;
+    margin-top: 8px;
+    gap: 0;
+  }
+
+  .matrix-x-label {
+    flex: 1;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--slate);
+  }
+
+  /* Mobile - stack matrix */
+  @media (max-width: 660px) {
+    .matrix-side-wrap { flex-direction: column; align-items: stretch; }
+    .matrix-y-label { writing-mode: horizontal-tb; transform: none; }
+    .matrix-grid { grid-template-columns: 1fr; }
+    .matrix-cell { min-height: auto; }
+  }
+
+  /* Priority action cards */
+  .priority-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .priority-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  }
+  .priority-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99,102,241,0.09);
+    border-color: rgba(99,102,241,0.3);
+  }
+
+  .priority-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .priority-num.p1 { background: #fee2e2; color: var(--red); }
+  .priority-num.p2 { background: #fef3c7; color: #92400e; }
+  .priority-num.p3 { background: var(--brand-light); color: var(--brand); }
+
+  .priority-body { flex: 1; }
+
+  .priority-assumption {
+    font-size: 15px; font-weight: 700; color: var(--text);
+    margin-bottom: 10px; line-height: 1.4;
+  }
+
+  .priority-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-top: 12px;
+  }
+
+  @media (max-width: 580px) { .priority-row { grid-template-columns: 1fr; } }
+
+  .priority-field-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 3px;
+  }
+
+  .priority-field-val {
+    font-size: 13px; color: var(--text); line-height: 1.45;
+  }
+
+  .priority-tag {
+    display: inline-flex; align-items: center;
+    font-size: 11px; font-weight: 600;
+    padding: 3px 9px; border-radius: 20px;
+    margin-bottom: 8px;
+  }
+
+  .tag-p0 { background: #fee2e2; color: var(--red); }
+  .tag-p1 { background: #fef3c7; color: #92400e; }
+  .tag-p2 { background: var(--brand-light); color: var(--brand); }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: rgba(15,23,42,0.92);
+    color: white;
+    font-size: 13.5px; font-weight: 600;
+    padding: 11px 20px; border-radius: 50px;
+    z-index: 9999;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+    opacity: 0; white-space: nowrap; backdrop-filter: blur(10px);
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  @media print {
+    #progress-bar, .header-actions, #toast { display: none !important; }
+    body { background: white; }
+    .priority-card, .assumption-chip { break-inside: avoid; box-shadow: none !important; transform: none !important; }
+    .main { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="header-logo">
+      <div class="logo-icon">&#x270B;</div>
+      Helpy
+    </a>
+    <div class="header-actions">
+      <a href="docs.html" class="btn-outline">Docs</a>
+      <a href="user-interviews.html" class="btn-outline">Interview Script</a>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-chip">&#9888;&#65039; Assumption Mapping</div>
+  <h1>Assumption <span class="accent">Map</span></h1>
+  <p class="hero-subtitle">What we believe vs. what we've proven - ranked by risk. The dangerous assumptions are high-risk AND untested.</p>
+</div>
+
+<div class="main">
+
+  <!-- Section 1: What is an Assumption Map -->
+  <div class="section">
+    <span class="section-label">Section 1</span>
+    <h2 class="section-title">What is an Assumption Map?</h2>
+    <p class="section-desc">Every product is built on beliefs. Some are explicit. Most are invisible. The dangerous ones are assumptions that are both high-risk (the product fails if they're wrong) and untested (we don't actually know). This map surfaces them before they sink the ship.</p>
+
+    <div class="intro-card">
+      <div class="intro-icon">&#128161;</div>
+      <div>
+        <div class="intro-title">Why this matters at Helpy's stage</div>
+        <div class="intro-text">With 16 users at launch, nearly everything is still an assumption. The goal isn't to validate everything - it's to run the cheapest, fastest test on the assumption most likely to kill the product. Prioritize relentlessly.</div>
+      </div>
+    </div>
+
+    <div class="quadrant-explain">
+      <div class="qe-card danger">
+        <div class="qe-header">
+          <div class="qe-dot dot-red"></div>
+          <span class="color-red">Danger Zone</span>
+        </div>
+        <div class="qe-axes">High risk + Untested</div>
+        <div class="qe-action">Act immediately. Run the cheapest test that could invalidate this. Every week you delay is risk.</div>
+      </div>
+      <div class="qe-card validated">
+        <div class="qe-header">
+          <div class="qe-dot dot-green"></div>
+          <span class="color-green">Validated</span>
+        </div>
+        <div class="qe-axes">High risk + Tested (proven true)</div>
+        <div class="qe-action">These were scary and you proved them. Use as conviction for investors and your team. Keep evidence fresh.</div>
+      </div>
+      <div class="qe-card watch">
+        <div class="qe-header">
+          <div class="qe-dot dot-amber"></div>
+          <span class="color-amber">Watch</span>
+        </div>
+        <div class="qe-axes">Low risk + Untested</div>
+        <div class="qe-action">Test opportunistically. These matter but won't kill you if they're wrong. Add to the queue, not the sprint.</div>
+      </div>
+      <div class="qe-card safe">
+        <div class="qe-header">
+          <div class="qe-dot dot-slate"></div>
+          <span class="color-slate">Safe</span>
+        </div>
+        <div class="qe-axes">Low risk + Tested</div>
+        <div class="qe-action">These are your foundation. Document them so new team members start with context, not guesswork.</div>
+      </div>
+    </div>
+
+    <p style="font-size: 13px; color: var(--text-muted); font-style: italic;">Tap any assumption card below to expand evidence or context.</p>
+  </div>
+
+  <!-- Section 2: The Matrix -->
+  <div class="section">
+    <span class="section-label">Section 2</span>
+    <h2 class="section-title">The Assumption Map</h2>
+    <p class="section-desc">Each card is clickable. Cards in green include real evidence from Helpy's production launch. Cards in red are the ones that should keep you up at night.</p>
+
+    <div class="matrix-wrap">
+      <div class="matrix-axis-label">RISK IF WRONG (x-axis: Low &rarr; High)</div>
+      <div class="matrix-side-wrap">
+        <div class="matrix-y-label">TESTED STATUS (y-axis: Untested &rarr; Validated)</div>
+        <div style="flex:1">
+          <div class="matrix-grid">
+
+            <!-- Top-left: DANGER ZONE (high risk, untested) -->
+            <div class="matrix-cell danger-zone">
+              <div class="cell-label">
+                <span style="width:10px;height:10px;border-radius:50%;background:var(--red);display:inline-block;flex-shrink:0"></span>
+                <span class="color-red">Danger Zone</span>
+              </div>
+              <div class="assumption-chip" onclick="toggleChip(this)">
+                Neighbors are willing to help strangers for free, regularly
+                <div class="chip-evidence">
+                  <div class="chip-evidence-label">Why it matters</div>
+                  The entire supply side of Helpy depends on unpaid altruism. If helpers get fatigued or expect reciprocity, the model breaks.
+                </div>
+              </div>
+              <div class="assumption-chip" onclick="toggleChip(this)">
+                Users will verify their phone number even when it creates friction before their first action
+                <div class="chip-evidence">
+                  <div class="chip-evidence-label">Why it matters</div>
+                  Phone verification gates posting and offering help. If it creates drop-off, activation tanks.
+                </div>
+              </div>
+              <div class="assumption-chip" onclick="toggleChip(this)">
+                Tel Aviv has enough density for the feed to feel active at 200 users
+                <div class="chip-evidence">
+                  <div class="chip-evidence-label">Why it matters</div>
+                  Sparse feeds kill engagement. Users need to see relevant nearby requests within their 10km radius.
+                </div>
+              </div>
+              <div class="assumption-chip" onclick="toggleChip(this)">
+                Hebrew-speaking users prefer a dedicated app over WhatsApp neighborhood groups
+                <div class="chip-evidence">
+                  <div class="chip-evidence-label">Why it matters</div>
+                  WhatsApp groups are deeply entrenched in Israeli neighborhoods. Helpy needs a clear "why not WhatsApp" answer.
+                </div>
+              </div>
+            </div>
+
+            <!-- Top-right: VALIDATED (high risk, tested) -->
+            <div class="matrix-cell validated">
+              <div class="cell-label">
+                <span style="width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block;flex-shrink:0"></span>
+                <span class="color-green">Validated</span>
+              </div>
+              <div class="assumption-chip" onclick="toggleChip(this)">
+                Apple App Store will approve a UGC community app with proper safety controls
+                <div class="chip-evidence">
+                  <div class="chip-evidence-label">Evidence</div>
+                  Approved after 5 rejections and 3 months. Safety controls required: report/block, content filter, ToS acceptance, account deletion, phone verification.
+                </div>
+              </div>
+              <div class="assumption-chip" onclick="toggleChip(this)">
+                Swipe UX works for help requests, not just dating apps
+                <div class="chip-evidence">
+                  <div class="chip-evidence-label">Evidence</div>
+                  Positive early user feedback on the gesture mechanic. Cards/Map toggle added after users wanted to see distance context.
+                </div>
+              </div>
+              <div class="assumption-chip" onclick="toggleChip(this)">
+                Twilio OTP via phone is reliable enough for production verification
+                <div class="chip-evidence">
+                  <div class="chip-evidence-label">Evidence</div>
+                  Confirmed working end-to-end on real device. Supabase native phone auth was unreliable - switched to direct Twilio Edge Function.
+                </div>
+              </div>
+              <div class="assumption-chip" onclick="toggleChip(this)">
+                Hebrew + English bilingual app is buildable without major UX compromise
+                <div class="chip-evidence">
+                  <div class="chip-evidence-label">Evidence</div>
+                  Full RTL support shipped across all 5 screens, navigation, modals, alerts. 200+ translation keys. No major UX breaks.
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom-left: WATCH (low risk, untested) -->
+            <div class="matrix-cell watch">
+              <div class="cell-label">
+                <span style="width:10px;height:10px;border-radius:50%;background:var(--amber);display:inline-block;flex-shrink:0"></span>
+                <span class="color-amber">Watch</span>
+              </div>
+              <div class="assumption-chip" onclick="toggleChip(this)">
+                Users will rate helpers after a successful match without prompting
+                <div class="chip-evidence">
+                  <div class="chip-evidence-label">Current state</div>
+                  RatingModal exists and is triggered on match completion. No data yet on whether users actually complete it.
+                </div>
+              </div>
+              <div class="assumption-chip" onclick="toggleChip(this)">
+                Push notifications meaningfully drive re-engagement
+                <div class="chip-evidence">
+                  <div class="chip-evidence-label">Current state</div>
+                  Infrastructure live: Edge Functions, pg_cron, Expo push. Needs physical device testing and open rate tracking.
+                </div>
+              </div>
+              <div class="assumption-chip" onclick="toggleChip(this)">
+                The invite feature creates meaningful word-of-mouth growth
+                <div class="chip-evidence">
+                  <div class="chip-evidence-label">Current state</div>
+                  Native share sheet ships in next release. Zero data on invite-to-install conversion yet.
+                </div>
+              </div>
+              <div class="assumption-chip" onclick="toggleChip(this)">
+                Streak counter motivates repeated helping behavior
+                <div class="chip-evidence">
+                  <div class="chip-evidence-label">Current state</div>
+                  Streak tracking implemented in DB + ProfileScreen. No retention data yet to confirm motivation effect.
+                </div>
+              </div>
+            </div>
+
+            <!-- Bottom-right: SAFE (low risk, tested) -->
+            <div class="matrix-cell safe-zone">
+              <div class="cell-label">
+                <span style="width:10px;height:10px;border-radius:50%;background:var(--slate);display:inline-block;flex-shrink:0"></span>
+                <span class="color-slate">Safe</span>
+              </div>
+              <div class="assumption-chip" onclick="toggleChip(this)">
+                React Native + Supabase can handle the full feature set
+                <div class="chip-evidence">
+                  <div class="chip-evidence-label">Evidence</div>
+                  Production app live on iOS. Real-time chat, geolocation, image uploads, auth, RLS - all running on this stack.
+                </div>
+              </div>
+              <div class="assumption-chip" onclick="toggleChip(this)">
+                Google + Apple OAuth covers 95% of target users
+                <div class="chip-evidence">
+                  <div class="chip-evidence-label">Evidence</div>
+                  Both providers working in production. Email/password hidden behind fallback for edge cases only.
+                </div>
+              </div>
+              <div class="assumption-chip" onclick="toggleChip(this)">
+                A 10km search radius is appropriate for Tel Aviv density
+                <div class="chip-evidence">
+                  <div class="chip-evidence-label">Evidence</div>
+                  Reduced from 25km after feedback. Tel Aviv metro area is roughly 10km diameter - 10km covers most of it.
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="matrix-x-labels">
+            <div class="matrix-x-label">Untested</div>
+            <div class="matrix-x-label">Tested</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Priority Actions -->
+  <div class="section">
+    <span class="section-label">Section 3</span>
+    <h2 class="section-title">Top 3 Assumptions to Test Next</h2>
+    <p class="section-desc">These are pulled from the Danger Zone. Ranked by how quickly they could kill the product if wrong. Run the cheapest test that would give you a clear signal.</p>
+
+    <div class="priority-grid">
+
+      <div class="priority-card">
+        <div class="priority-num p1">1</div>
+        <div class="priority-body">
+          <span class="priority-tag tag-p0">P0 - Test This Week</span>
+          <div class="priority-assumption">"Neighbors are willing to help strangers for free, regularly"</div>
+          <div class="priority-row">
+            <div>
+              <div class="priority-field-label">Why It Matters</div>
+              <div class="priority-field-val">If helpers only engage once out of novelty, DAU collapses. The whole supply side depends on intrinsic motivation - not gamification or money.</div>
+            </div>
+            <div>
+              <div class="priority-field-label">How to Test</div>
+              <div class="priority-field-val">Look at repeat helper behavior in DB. Did any user offer help more than 3 times? Interview 3 helpers: "What keeps you coming back?"</div>
+            </div>
+            <div>
+              <div class="priority-field-label">Success Criteria</div>
+              <div class="priority-field-val">At least 30% of helpers who completed one match create a second offer within 30 days. User interviews confirm intrinsic motivation, not just curiosity.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="priority-card">
+        <div class="priority-num p2">2</div>
+        <div class="priority-body">
+          <span class="priority-tag tag-p1">P1 - Test This Month</span>
+          <div class="priority-assumption">"Tel Aviv has enough density for the feed to feel active at 200 users"</div>
+          <div class="priority-row">
+            <div>
+              <div class="priority-field-label">Why It Matters</div>
+              <div class="priority-field-val">An empty feed kills new users immediately. The cold-start problem is existential for any marketplace at this stage.</div>
+            </div>
+            <div>
+              <div class="priority-field-label">How to Test</div>
+              <div class="priority-field-val">Simulate: how many requests are visible to a user with 10km radius in central Tel Aviv right now? Track "cards seen per session" in PostHog. Ask new users: did the feed feel active?</div>
+            </div>
+            <div>
+              <div class="priority-field-label">Success Criteria</div>
+              <div class="priority-field-val">New users see at least 5 cards in their first session. Less than 20% of sessions end at an empty state within the first week of signup.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="priority-card">
+        <div class="priority-num p3">3</div>
+        <div class="priority-body">
+          <span class="priority-tag tag-p2">P2 - Test Next Quarter</span>
+          <div class="priority-assumption">"Hebrew-speaking users prefer Helpy over WhatsApp neighborhood groups"</div>
+          <div class="priority-row">
+            <div>
+              <div class="priority-field-label">Why It Matters</div>
+              <div class="priority-field-val">WhatsApp groups are the incumbent. If users default to WhatsApp for anything Helpy does, growth stalls. We need to understand the specific jobs Helpy wins vs. loses.</div>
+            </div>
+            <div>
+              <div class="priority-field-label">How to Test</div>
+              <div class="priority-field-val">User interview question: "Before posting on Helpy, did you try WhatsApp first? Why or why not?" Track source attribution if possible.</div>
+            </div>
+            <div>
+              <div class="priority-field-label">Success Criteria</div>
+              <div class="priority-field-val">At least 60% of requesters say they would NOT have gotten this help via WhatsApp. Helpy fills a gap, not a duplicate channel.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const el = document.getElementById('progress-bar');
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    el.style.width = (docHeight > 0 ? (scrollTop / docHeight) * 100 : 0) + '%';
+  });
+
+  function toggleChip(chip) {
+    const wasExpanded = chip.classList.contains('expanded');
+    // Collapse siblings in same cell
+    const siblings = chip.parentElement.querySelectorAll('.assumption-chip');
+    siblings.forEach(s => s.classList.remove('expanded'));
+    if (!wasExpanded) {
+      chip.classList.add('expanded');
+      showToast('Click again to collapse');
+    }
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+  }
+</script>
+</body>
+</html>

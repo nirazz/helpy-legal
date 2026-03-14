@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Helpy - Jobs to Be Done</title>
+<style>
+  :root {
+    --brand: #6366f1;
+    --brand-dark: #4f46e5;
+    --brand-light: #eef2ff;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --pink: #ec4899;
+    --slate: #64748b;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--brand), var(--pink));
+    z-index: 1000;
+    transition: width 0.1s ease;
+    width: 0%;
+  }
+
+  header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+  }
+
+  .header-inner {
+    max-width: 900px; margin: 0 auto;
+    display: flex; align-items: center;
+    justify-content: space-between;
+    height: 56px; gap: 20px;
+  }
+
+  .header-logo {
+    display: flex; align-items: center; gap: 9px;
+    font-weight: 700; font-size: 16px;
+    color: var(--text); text-decoration: none;
+  }
+
+  .logo-icon {
+    width: 30px; height: 30px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 15px;
+  }
+
+  .header-actions { display: flex; align-items: center; gap: 10px; }
+
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600;
+    color: var(--slate); background: #f1f5f9;
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 7px 14px; cursor: pointer; transition: all 0.15s;
+    text-decoration: none;
+  }
+  .btn-outline:hover { background: #e2e8f0; color: var(--text); }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #ecfdf5 0%, var(--brand-light) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 64px 24px 56px;
+    text-align: center;
+  }
+
+  .hero-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: white; color: var(--green);
+    border: 1px solid rgba(16,185,129,0.3);
+    border-radius: 20px; padding: 5px 14px; margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-size: 40px; font-weight: 800;
+    letter-spacing: -0.03em; color: var(--text);
+    margin-bottom: 12px; line-height: 1.1;
+  }
+
+  .hero h1 .accent { color: var(--green); }
+
+  .hero-subtitle {
+    font-size: 17px; color: var(--text-muted);
+    max-width: 520px; margin: 0 auto;
+  }
+
+  /* Main */
+  .main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 56px 24px 100px;
+  }
+
+  .section { margin-bottom: 64px; }
+
+  .section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--brand);
+    margin-bottom: 8px; display: block;
+  }
+
+  .section-title {
+    font-size: 26px; font-weight: 700;
+    letter-spacing: -0.02em; color: var(--text); margin-bottom: 8px;
+  }
+
+  .section-desc {
+    font-size: 14.5px; color: var(--text-muted);
+    margin-bottom: 28px; max-width: 660px;
+  }
+
+  /* Framework explanation */
+  .framework-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 640px) { .framework-row { grid-template-columns: 1fr; } }
+
+  .fw-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .fw-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(99,102,241,0.08); }
+
+  .fw-icon { font-size: 26px; margin-bottom: 10px; }
+  .fw-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .fw-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+  .framework-callout {
+    background: var(--brand-light);
+    border: 1px solid rgba(99,102,241,0.2);
+    border-left: 4px solid var(--brand);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    font-size: 14px;
+    color: #3730a3;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  /* Role tabs */
+  .role-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .role-tab {
+    display: flex; align-items: center; gap: 7px;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid;
+  }
+
+  .role-tab.requester {
+    background: #f0fdf4; border-color: #bbf7d0; color: #15803d;
+  }
+  .role-tab.requester.active, .role-tab.requester:hover {
+    background: var(--green); border-color: var(--green); color: white;
+  }
+
+  .role-tab.helper {
+    background: var(--brand-light); border-color: rgba(99,102,241,0.3); color: var(--brand);
+  }
+  .role-tab.helper.active, .role-tab.helper:hover {
+    background: var(--brand); border-color: var(--brand); color: white;
+  }
+
+  /* Job cards */
+  .jobs-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .job-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  }
+
+  .job-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(99,102,241,0.1);
+    border-color: rgba(99,102,241,0.3);
+  }
+
+  .job-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .job-icon-wrap {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+
+  .job-icon-wrap.green { background: #dcfce7; }
+  .job-icon-wrap.brand { background: var(--brand-light); }
+  .job-icon-wrap.amber { background: #fef3c7; }
+  .job-icon-wrap.pink { background: #fdf2f8; }
+
+  .job-title-wrap { flex: 1; }
+
+  .job-num {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 4px;
+  }
+
+  .job-statement {
+    font-size: 17px; font-weight: 700;
+    color: var(--text); line-height: 1.3;
+  }
+
+  .job-expand-icon {
+    width: 24px; height: 24px;
+    background: #f1f5f9; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: var(--slate);
+    flex-shrink: 0; margin-top: 2px;
+    transition: transform 0.2s;
+  }
+
+  .job-card.expanded .job-expand-icon {
+    transform: rotate(180deg);
+    background: var(--brand); color: white;
+  }
+
+  .job-body {
+    display: none;
+    padding: 0 24px 22px;
+    border-top: 1px solid var(--border);
+    margin-top: -1px;
+  }
+
+  .job-card.expanded .job-body { display: block; }
+
+  .job-dimensions {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-top: 18px;
+    margin-bottom: 18px;
+  }
+
+  @media (max-width: 600px) { .job-dimensions { grid-template-columns: 1fr; } }
+
+  .dim-card {
+    border-radius: 10px;
+    padding: 12px 14px;
+    border: 1px solid;
+  }
+
+  .dim-card.functional { background: #f0fdf4; border-color: #bbf7d0; }
+  .dim-card.emotional { background: #fdf4ff; border-color: #e9d5ff; }
+  .dim-card.social { background: #eff6ff; border-color: #bfdbfe; }
+
+  .dim-label {
+    font-size: 10px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 0.08em; margin-bottom: 4px;
+  }
+
+  .dim-label.functional { color: #15803d; }
+  .dim-label.emotional { color: #7e22ce; }
+  .dim-label.social { color: #1d4ed8; }
+
+  .dim-text { font-size: 13px; color: var(--text); line-height: 1.4; }
+
+  .job-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  @media (max-width: 500px) { .job-row { grid-template-columns: 1fr; } }
+
+  .job-field-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--text-muted); margin-bottom: 3px;
+  }
+
+  .job-field-val {
+    font-size: 13px; color: var(--text); line-height: 1.45;
+  }
+
+  .job-field-val.workaround { color: var(--red); }
+  .job-field-val.solution { color: var(--green); }
+
+  /* Underserved jobs */
+  .underserved-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  @media (max-width: 700px) { .underserved-grid { grid-template-columns: 1fr; } }
+
+  .underserved-card {
+    background: var(--card);
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    cursor: default;
+  }
+
+  .underserved-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(99,102,241,0.08);
+    border-color: rgba(99,102,241,0.35);
+    border-style: solid;
+  }
+
+  .uj-icon { font-size: 28px; margin-bottom: 12px; }
+  .uj-title { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .uj-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; }
+
+  .uj-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .uj-tag {
+    font-size: 11px; font-weight: 600;
+    padding: 3px 9px; border-radius: 20px;
+  }
+
+  .uj-tag.v2 { background: var(--brand-light); color: var(--brand); }
+  .uj-tag.opportunity { background: #dcfce7; color: #15803d; }
+  .uj-tag.risk { background: #fee2e2; color: var(--red); }
+
+  /* Closing callout */
+  .closing-callout {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    border-radius: var(--radius);
+    padding: 40px 36px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .closing-callout::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .closing-callout::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; left: -30px;
+    width: 140px; height: 140px;
+    background: radial-gradient(circle, rgba(16,185,129,0.2) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .closing-label {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; color: rgba(255,255,255,0.5);
+    margin-bottom: 12px; position: relative; z-index: 1;
+  }
+
+  .closing-title {
+    font-size: 18px; font-weight: 700;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 20px;
+    position: relative; z-index: 1;
+  }
+
+  .closing-quote {
+    font-size: 20px; font-weight: 400;
+    color: white; line-height: 1.6;
+    position: relative; z-index: 1;
+    margin-bottom: 24px;
+  }
+
+  .closing-quote strong {
+    background: linear-gradient(90deg, var(--brand), var(--pink));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+  }
+
+  .closing-meta {
+    font-size: 14px; color: rgba(255,255,255,0.5);
+    position: relative; z-index: 1;
+    line-height: 1.5;
+  }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: rgba(15,23,42,0.92);
+    color: white;
+    font-size: 13.5px; font-weight: 600;
+    padding: 11px 20px; border-radius: 50px;
+    z-index: 9999;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+    opacity: 0; white-space: nowrap; backdrop-filter: blur(10px);
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  @media print {
+    #progress-bar, .header-actions, #toast, .role-tabs { display: none !important; }
+    body { background: white; }
+    .job-body { display: block !important; }
+    .job-expand-icon { display: none; }
+    .job-card, .underserved-card { break-inside: avoid; box-shadow: none !important; transform: none !important; }
+    .main { padding: 24px; }
+    .closing-callout { background: #1e293b !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="header-logo">
+      <div class="logo-icon">&#x270B;</div>
+      Helpy
+    </a>
+    <div class="header-actions">
+      <a href="docs.html" class="btn-outline">Docs</a>
+      <a href="assumptions.html" class="btn-outline">Assumption Map</a>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-chip">&#128101; JTBD Framework</div>
+  <h1>Jobs to <span class="accent">Be Done</span></h1>
+  <p class="hero-subtitle">What job does a user hire Helpy to do? Understanding motivation beats understanding features.</p>
+</div>
+
+<div class="main">
+
+  <!-- Section 1: Framework -->
+  <div class="section">
+    <span class="section-label">Section 1</span>
+    <h2 class="section-title">The JTBD Framework</h2>
+    <p class="section-desc">People don't buy products - they hire them to do a job. The job has three dimensions: what they need to get done, how they need to feel, and what they need others to see. Miss any one of these and you lose the hire.</p>
+
+    <div class="framework-row">
+      <div class="fw-card">
+        <div class="fw-icon">&#128295;</div>
+        <div class="fw-title">Functional Need</div>
+        <div class="fw-desc">The practical outcome. "I need someone to watch my dog for an hour." Observable, measurable, the thing they'd put on a to-do list.</div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-icon">&#10084;&#65039;</div>
+        <div class="fw-title">Emotional Need</div>
+        <div class="fw-desc">How they need to feel during or after. "I need to feel less alone in this city." Harder to measure, impossible to ignore. This is the real why.</div>
+      </div>
+      <div class="fw-card">
+        <div class="fw-icon">&#128101;</div>
+        <div class="fw-title">Social Need</div>
+        <div class="fw-desc">What they need others to perceive. "I want to be seen as the kind of person who helps." Identity and reputation are powerful motivators at both ends of the match.</div>
+      </div>
+    </div>
+
+    <div class="framework-callout">
+      <strong>Key insight for Helpy:</strong> Requesters and helpers have completely different jobs to be done. A product that tries to serve both with the same UX without understanding these differences will feel off to both. Every design decision should be traced back to whose job you're designing for.
+    </div>
+  </div>
+
+  <!-- Section 2: Requester Jobs -->
+  <div class="section">
+    <span class="section-label">Section 2</span>
+    <h2 class="section-title">Primary Jobs - Requester</h2>
+    <p class="section-desc">The person posting the request. They have a concrete problem AND a deeper underlying need. The surface request is rarely the whole story. Click any card to expand.</p>
+
+    <div class="jobs-grid">
+
+      <div class="job-card" id="rq1">
+        <div class="job-header" onclick="toggleJob('rq1')">
+          <div class="job-icon-wrap green">&#128588;</div>
+          <div class="job-title-wrap">
+            <div class="job-num">Requester - Job 1</div>
+            <div class="job-statement">"Help me get this task done without the awkwardness of asking"</div>
+          </div>
+          <div class="job-expand-icon">&#9660;</div>
+        </div>
+        <div class="job-body">
+          <div class="job-dimensions">
+            <div class="dim-card functional">
+              <div class="dim-label functional">Functional</div>
+              <div class="dim-text">Get a specific small task completed - carrying furniture, reaching something, fixing a basic issue, getting a ride.</div>
+            </div>
+            <div class="dim-card emotional">
+              <div class="dim-label emotional">Emotional</div>
+              <div class="dim-text">Feel like it's OK to need help. Remove the shame and social calculation of asking a specific person directly.</div>
+            </div>
+            <div class="dim-card social">
+              <div class="dim-label social">Social</div>
+              <div class="dim-text">Not feel like a burden. The anonymized request format removes the direct "I owe you" dynamic of asking face to face.</div>
+            </div>
+          </div>
+          <div class="job-row">
+            <div>
+              <div class="job-field-label">Current Workaround</div>
+              <div class="job-field-val workaround">Not asking at all. Doing it the hard way alone. Or asking a close friend who lives far away.</div>
+            </div>
+            <div>
+              <div class="job-field-label">Helpy's Solution</div>
+              <div class="job-field-val solution">Post anonymously. Match is initiated by the helper, which removes the direct ask and the resulting obligation feeling.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="job-card" id="rq2">
+        <div class="job-header" onclick="toggleJob('rq2')">
+          <div class="job-icon-wrap brand">&#127968;</div>
+          <div class="job-title-wrap">
+            <div class="job-num">Requester - Job 2</div>
+            <div class="job-statement">"Help me feel connected to my neighborhood"</div>
+          </div>
+          <div class="job-expand-icon">&#9660;</div>
+        </div>
+        <div class="job-body">
+          <div class="job-dimensions">
+            <div class="dim-card functional">
+              <div class="dim-label functional">Functional</div>
+              <div class="dim-text">Find at least one neighbor whose name and face you know. Build a minimal social fabric in a dense, anonymous city.</div>
+            </div>
+            <div class="dim-card emotional">
+              <div class="dim-label emotional">Emotional</div>
+              <div class="dim-text">Feel less isolated. Know that if something went wrong, there's someone nearby who might actually respond.</div>
+            </div>
+            <div class="dim-card social">
+              <div class="dim-label social">Social</div>
+              <div class="dim-text">Be seen as a real member of the neighborhood community - not just a door number.</div>
+            </div>
+          </div>
+          <div class="job-row">
+            <div>
+              <div class="job-field-label">Current Workaround</div>
+              <div class="job-field-val workaround">WhatsApp building groups (passive, broadcast). Random encounters in the elevator. Nothing intentional.</div>
+            </div>
+            <div>
+              <div class="job-field-label">Helpy's Solution</div>
+              <div class="job-field-val solution">Each interaction creates a named, faceable connection. Profile cards show real people, not usernames. Ratings build a track record.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="job-card" id="rq3">
+        <div class="job-header" onclick="toggleJob('rq3')">
+          <div class="job-icon-wrap amber">&#128274;</div>
+          <div class="job-title-wrap">
+            <div class="job-num">Requester - Job 3</div>
+            <div class="job-statement">"Reassure me it's safe to let someone help me"</div>
+          </div>
+          <div class="job-expand-icon">&#9660;</div>
+        </div>
+        <div class="job-body">
+          <div class="job-dimensions">
+            <div class="dim-card functional">
+              <div class="dim-label functional">Functional</div>
+              <div class="dim-text">See enough information about a potential helper before accepting - photo, name, ratings, verification status.</div>
+            </div>
+            <div class="dim-card emotional">
+              <div class="dim-label emotional">Emotional</div>
+              <div class="dim-text">Feel secure enough to open the door, share a location, or accept help from someone you haven't met before.</div>
+            </div>
+            <div class="dim-card social">
+              <div class="dim-label social">Social</div>
+              <div class="dim-text">Trust the platform itself - know there's accountability. Ratings, verification, and report/block mechanisms signal "this is a real community."</div>
+            </div>
+          </div>
+          <div class="job-row">
+            <div>
+              <div class="job-field-label">Current Workaround</div>
+              <div class="job-field-val workaround">Only accepting help from people already known. Avoiding the situation entirely.</div>
+            </div>
+            <div>
+              <div class="job-field-label">Helpy's Solution</div>
+              <div class="job-field-val solution">Phone verification badge, Google/Apple auth (real identity), star ratings, block/report, community guidelines. Trust layers compound.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Section 3: Helper Jobs -->
+  <div class="section">
+    <span class="section-label">Section 3</span>
+    <h2 class="section-title">Primary Jobs - Helper</h2>
+    <p class="section-desc">The person swiping right. They're not just being altruistic - they have real needs too. Underestimating helper motivation is how platforms lose their supply side.</p>
+
+    <div class="jobs-grid">
+
+      <div class="job-card" id="hp1">
+        <div class="job-header" onclick="toggleJob('hp1')">
+          <div class="job-icon-wrap brand">&#10024;</div>
+          <div class="job-title-wrap">
+            <div class="job-num">Helper - Job 1</div>
+            <div class="job-statement">"Help me feel useful and contribute to something"</div>
+          </div>
+          <div class="job-expand-icon">&#9660;</div>
+        </div>
+        <div class="job-body">
+          <div class="job-dimensions">
+            <div class="dim-card functional">
+              <div class="dim-label functional">Functional</div>
+              <div class="dim-text">Find a concrete task they can complete within their existing skills and availability. Not something that takes days - something doable today.</div>
+            </div>
+            <div class="dim-card emotional">
+              <div class="dim-label emotional">Emotional</div>
+              <div class="dim-text">Feel the satisfaction of having made a real difference to someone specific - not a donation to an abstract cause, but a named neighbor with a real need.</div>
+            </div>
+            <div class="dim-card social">
+              <div class="dim-label social">Social</div>
+              <div class="dim-text">Have proof of contribution. Ratings and streak counter let them see (and optionally share) that they're someone who shows up for their community.</div>
+            </div>
+          </div>
+          <div class="job-row">
+            <div>
+              <div class="job-field-label">Current Workaround</div>
+              <div class="job-field-val workaround">Volunteering at distant organizations. Waiting to be asked directly. No easy way to find small local needs.</div>
+            </div>
+            <div>
+              <div class="job-field-label">Helpy's Solution</div>
+              <div class="job-field-val solution">Browse feed of immediate nearby requests. Instant match on swipe. Star rating confirms the impact was real. Streak counter tracks consistency.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="job-card" id="hp2">
+        <div class="job-header" onclick="toggleJob('hp2')">
+          <div class="job-icon-wrap green">&#128400;</div>
+          <div class="job-title-wrap">
+            <div class="job-num">Helper - Job 2</div>
+            <div class="job-statement">"Help me meet my neighbors without the awkwardness"</div>
+          </div>
+          <div class="job-expand-icon">&#9660;</div>
+        </div>
+        <div class="job-body">
+          <div class="job-dimensions">
+            <div class="dim-card functional">
+              <div class="dim-label functional">Functional</div>
+              <div class="dim-text">Have a structured reason to knock on a neighbor's door or approach someone on the street - a task, not small talk.</div>
+            </div>
+            <div class="dim-card emotional">
+              <div class="dim-label emotional">Emotional</div>
+              <div class="dim-text">Feel the warmth of a real human connection without the social risk of an unprompted approach.</div>
+            </div>
+            <div class="dim-card social">
+              <div class="dim-label social">Social</div>
+              <div class="dim-text">Be seen as a person who takes initiative in their community - not someone who walks past without engaging.</div>
+            </div>
+          </div>
+          <div class="job-row">
+            <div>
+              <div class="job-field-label">Current Workaround</div>
+              <div class="job-field-val workaround">Smiling in the elevator. Reading building WhatsApp groups without participating. Never meeting neighbors despite living 5 meters away for 3 years.</div>
+            </div>
+            <div>
+              <div class="job-field-label">Helpy's Solution</div>
+              <div class="job-field-val solution">The task is the social lubricant. After the help, a natural connection exists. Profile pictures and names make future encounters warmer.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="job-card" id="hp3">
+        <div class="job-header" onclick="toggleJob('hp3')">
+          <div class="job-icon-wrap pink">&#127942;</div>
+          <div class="job-title-wrap">
+            <div class="job-num">Helper - Job 3</div>
+            <div class="job-statement">"Give me recognition for my contributions"</div>
+          </div>
+          <div class="job-expand-icon">&#9660;</div>
+        </div>
+        <div class="job-body">
+          <div class="job-dimensions">
+            <div class="dim-card functional">
+              <div class="dim-label functional">Functional</div>
+              <div class="dim-text">See their history of help, their rating, their streak. Have something to point to when they think "I'm someone who helps."</div>
+            </div>
+            <div class="dim-card emotional">
+              <div class="dim-label emotional">Emotional</div>
+              <div class="dim-text">Feel seen and appreciated. Know that the help meant something - to the person helped and to the community they live in.</div>
+            </div>
+            <div class="dim-card social">
+              <div class="dim-label social">Social</div>
+              <div class="dim-text">Build a reputation as a reliable, trustworthy neighbor. The rating system is both intrinsic reward and social signal.</div>
+            </div>
+          </div>
+          <div class="job-row">
+            <div>
+              <div class="job-field-label">Current Workaround</div>
+              <div class="job-field-val workaround">No mechanism. Good deeds disappear into the void. No one knows who the helpful people in the building are.</div>
+            </div>
+            <div>
+              <div class="job-field-label">Helpy's Solution</div>
+              <div class="job-field-val solution">Star ratings visible on profile. Streak counter on ProfileScreen. "Fast responder" badge for high response rates. Community impact stats: Helped N neighbors.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Section 4: Underserved Jobs -->
+  <div class="section">
+    <span class="section-label">Section 4</span>
+    <h2 class="section-title">Underserved Jobs</h2>
+    <p class="section-desc">Jobs Helpy currently does NOT fully serve. Each is a real opportunity - but scope discipline matters. These are v1.1+ unless user research shows them to be P0.</p>
+
+    <div class="underserved-grid">
+
+      <div class="underserved-card">
+        <div class="uj-icon">&#128197;</div>
+        <div class="uj-title">Scheduled and Recurring Help</div>
+        <div class="uj-desc">Some jobs aren't one-time - a weekly grocery run, regular dog walking, ongoing tutoring. Helpy only supports one-off requests today. Recurring needs have no solution.</div>
+        <div class="uj-tags">
+          <span class="uj-tag v2">v1.1 Candidate</span>
+          <span class="uj-tag opportunity">High frequency</span>
+        </div>
+      </div>
+
+      <div class="underserved-card">
+        <div class="uj-icon">&#128203;</div>
+        <div class="uj-title">Neighborhood Skills Directory</div>
+        <div class="uj-desc">Know who can help before you need them. "There's a doctor in building B, a lawyer on the 4th floor, someone who speaks English in unit 12." Proactive discovery, not reactive requesting.</div>
+        <div class="uj-tags">
+          <span class="uj-tag v2">v1.1 Candidate</span>
+          <span class="uj-tag opportunity">High retention</span>
+        </div>
+      </div>
+
+      <div class="underserved-card">
+        <div class="uj-icon">&#127881;</div>
+        <div class="uj-title">Group Activities with Neighbors</div>
+        <div class="uj-desc">Not help requests - social initiatives. "Anyone want to walk at 7am?" "I'm ordering from X, want to split delivery?" Low-stakes group coordination that builds the neighborhood layer.</div>
+        <div class="uj-tags">
+          <span class="uj-tag v2">v2 Idea</span>
+          <span class="uj-tag risk">Scope risk</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Section 5: The One Job That Matters -->
+  <div class="section">
+    <span class="section-label">Section 5</span>
+    <h2 class="section-title">The One Job That Matters Most</h2>
+    <p class="section-desc">Strip away all the features, the analytics, the growth metrics. What does Helpy exist to do? Here it is in one story.</p>
+
+    <div class="closing-callout">
+      <div class="closing-label">North Star - The Job Behind All Jobs</div>
+      <div class="closing-title">When everything breaks down at the worst moment possible...</div>
+      <div class="closing-quote">
+        When Dana posts a help request at 10pm because she has a job interview tomorrow and her baby won't stop crying and she just needs someone to watch the dog for an hour -
+        <br><br>
+        Helpy's job is: <strong>make her feel like she has a neighbor she can count on.</strong>
+      </div>
+      <div class="closing-meta">
+        Not a transaction. Not a service. Not an app. A neighbor.<br>
+        Every product decision should be tested against this: does it make the person on the other side feel less alone?
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const el = document.getElementById('progress-bar');
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    el.style.width = (docHeight > 0 ? (scrollTop / docHeight) * 100 : 0) + '%';
+  });
+
+  function toggleJob(id) {
+    const card = document.getElementById(id);
+    const isExpanded = card.classList.contains('expanded');
+    card.classList.toggle('expanded', !isExpanded);
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+</script>
+</body>
+</html>

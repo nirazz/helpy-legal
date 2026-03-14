@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Helpy - User Interview Script</title>
+<style>
+  :root {
+    --brand: #6366f1;
+    --brand-dark: #4f46e5;
+    --brand-light: #eef2ff;
+    --green: #10b981;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --pink: #ec4899;
+    --slate: #64748b;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --radius: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Progress Bar */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--brand), var(--pink));
+    z-index: 1000;
+    transition: width 0.1s ease;
+    width: 0%;
+  }
+
+  /* Sticky Header */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+  }
+
+  .header-inner {
+    max-width: 860px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    gap: 20px;
+  }
+
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    width: 30px; height: 30px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-dark));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 15px;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--slate);
+    background: #f1f5f9;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+  .btn-outline:hover { background: #e2e8f0; color: var(--text); }
+
+  .btn-print {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--brand);
+    background: var(--brand-light);
+    border: 1px solid rgba(99,102,241,0.2);
+    border-radius: 8px;
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-decoration: none;
+  }
+
+  .btn-print:hover {
+    background: var(--brand);
+    color: white;
+    border-color: var(--brand);
+  }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, var(--brand-light) 0%, #fdf4ff 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 64px 24px 56px;
+    text-align: center;
+  }
+
+  .hero-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background: white;
+    color: var(--brand);
+    border: 1px solid rgba(99,102,241,0.2);
+    border-radius: 20px;
+    padding: 5px 14px;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    margin-bottom: 12px;
+    line-height: 1.1;
+  }
+
+  .hero h1 .accent { color: var(--brand); }
+
+  .hero-subtitle {
+    font-size: 17px;
+    color: var(--text-muted);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* Main */
+  .main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 56px 24px 100px;
+  }
+
+  .section { margin-bottom: 64px; }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--brand);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .section-title {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .section-desc {
+    font-size: 14.5px;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+    max-width: 620px;
+  }
+
+  /* Setup grid */
+  .setup-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  @media (max-width: 600px) { .setup-grid { grid-template-columns: 1fr; } }
+
+  .setup-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .setup-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(99,102,241,0.08);
+  }
+
+  .setup-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+  .setup-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+  .setup-value { font-size: 14px; color: var(--text); font-weight: 500; }
+
+  /* Golden rule callout */
+  .callout-rule {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-left: 4px solid var(--amber);
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .callout-rule-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+  .callout-rule-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #b45309; margin-bottom: 4px; }
+  .callout-rule-text { font-size: 15px; font-weight: 600; color: #92400e; line-height: 1.5; }
+
+  /* Recruit note */
+  .recruit-card {
+    background: var(--brand-light);
+    border: 1px solid rgba(99,102,241,0.2);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .recruit-card-icon { font-size: 18px; }
+  .recruit-card-text { font-size: 14px; color: #3730a3; font-weight: 500; }
+
+  /* Question cards */
+  .question-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s;
+    position: relative;
+  }
+
+  .question-card:hover {
+    border-color: rgba(99,102,241,0.35);
+    box-shadow: 0 3px 16px rgba(99,102,241,0.09);
+    transform: translateY(-1px);
+  }
+
+  .question-card:hover .copy-btn { opacity: 1; }
+
+  .question-number {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--brand-light);
+    color: var(--brand);
+    font-size: 13px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .question-number.red { background: #fee2e2; color: var(--red); }
+  .question-number.amber { background: #fef3c7; color: #b45309; }
+  .question-number.green { background: #dcfce7; color: #15803d; }
+
+  .question-text {
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.55;
+    flex: 1;
+    padding-right: 44px;
+  }
+
+  .copy-btn {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--brand-light);
+    border: 1px solid rgba(99,102,241,0.2);
+    border-radius: 7px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--brand);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s, background 0.15s;
+    white-space: nowrap;
+  }
+
+  .copy-btn:hover { background: var(--brand); color: white; }
+  .copy-btn.copied { background: var(--green); color: white; border-color: var(--green); opacity: 1; }
+
+  /* Scale visual for Q3 */
+  .scale-visual {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .scale-visual span { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+  .scale-track {
+    flex: 1;
+    height: 4px;
+    background: linear-gradient(90deg, #fee2e2, #fef3c7, #dcfce7);
+    border-radius: 4px;
+  }
+
+  /* Group headers */
+  .group-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    margin-top: 28px;
+  }
+  .group-header:first-child { margin-top: 0; }
+
+  .group-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .dot-red { background: var(--red); }
+  .dot-amber { background: var(--amber); }
+  .dot-green { background: var(--green); }
+
+  .group-title { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+  .color-red { color: var(--red); }
+  .color-amber { color: #b45309; }
+  .color-green { color: #15803d; }
+
+  /* PMF card */
+  .pmf-card {
+    background: linear-gradient(135deg, var(--brand-light) 0%, #fdf4ff 100%);
+    border: 2px solid rgba(99,102,241,0.25);
+    border-radius: var(--radius);
+    padding: 32px 28px;
+    text-align: center;
+  }
+
+  .pmf-chip {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--brand);
+    margin-bottom: 10px;
+    display: block;
+  }
+
+  .pmf-question {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+    line-height: 1.3;
+  }
+
+  .pmf-options {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 500px) { .pmf-options { grid-template-columns: 1fr; } }
+
+  .pmf-option {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .pmf-option:hover { border-color: var(--brand); background: var(--brand-light); color: var(--brand); transform: translateY(-1px); }
+  .pmf-option.selected-vd { border-color: var(--green); background: #dcfce7; color: #15803d; }
+  .pmf-option.selected-sd { border-color: var(--amber); background: #fef3c7; color: #92400e; }
+  .pmf-option.selected-nd { border-color: var(--red); background: #fee2e2; color: var(--red); }
+  .pmf-option.selected-na { border-color: var(--slate); background: #f1f5f9; color: var(--slate); }
+
+  .pmf-option .opt-icon { font-size: 22px; display: block; margin-bottom: 6px; }
+
+  .pmf-guide {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    text-align: left;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .pmf-guide-icon { font-size: 18px; flex-shrink: 0; }
+  .pmf-guide-text { font-size: 13.5px; color: var(--text-muted); line-height: 1.5; }
+  .pmf-guide-text strong { color: var(--green); }
+
+  /* Wrap-up grid */
+  .wrapup-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 580px) { .wrapup-grid { grid-template-columns: 1fr; } }
+
+  /* Notes template */
+  .notes-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 26px;
+  }
+
+  .notes-card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .notes-meta {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+
+  .notes-fields { display: flex; flex-direction: column; gap: 14px; }
+
+  .notes-field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-muted);
+    margin-bottom: 5px;
+  }
+
+  .notes-field input,
+  .notes-field textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: var(--text);
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+  }
+
+  .notes-field input:focus,
+  .notes-field textarea:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+    background: white;
+  }
+
+  .notes-field textarea { min-height: 72px; }
+
+  .notes-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 500px) { .notes-row { grid-template-columns: 1fr; } }
+
+  .notes-actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+
+  .btn-clear-notes {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600;
+    color: var(--red); background: #fee2e2;
+    border: 1px solid #fecaca; border-radius: 8px;
+    padding: 7px 14px; cursor: pointer; transition: all 0.15s;
+  }
+  .btn-clear-notes:hover { background: var(--red); color: white; border-color: var(--red); }
+
+  .btn-export-notes {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600;
+    color: var(--green); background: #d1fae5;
+    border: 1px solid #a7f3d0; border-radius: 8px;
+    padding: 7px 14px; cursor: pointer; transition: all 0.15s;
+  }
+  .btn-export-notes:hover { background: var(--green); color: white; border-color: var(--green); }
+
+  /* Time badge */
+  .time-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 600;
+    background: #f1f5f9; color: var(--text-muted);
+    border-radius: 6px; padding: 3px 8px;
+    margin-left: 8px; vertical-align: middle;
+  }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: rgba(15,23,42,0.92);
+    color: white;
+    font-size: 13.5px; font-weight: 600;
+    padding: 11px 20px;
+    border-radius: 50px;
+    z-index: 9999;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s;
+    opacity: 0;
+    white-space: nowrap;
+    backdrop-filter: blur(10px);
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  @media print {
+    #progress-bar, .header-actions, .copy-btn, #toast, .notes-actions { display: none !important; }
+    body { background: white; }
+    .question-card, .setup-item { break-inside: avoid; box-shadow: none !important; transform: none !important; }
+    .section { margin-bottom: 36px; }
+    .main { padding: 24px; }
+    .pmf-option.selected-vd::after { content: " [SELECTED]"; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="header-logo">
+      <div class="logo-icon">&#x270B;</div>
+      Helpy
+    </a>
+    <div class="header-actions">
+      <a href="docs.html" class="btn-outline">Docs</a>
+      <button class="btn-print" onclick="window.print()">&#9113; Print Script</button>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-chip">&#127897; PM Research</div>
+  <h1>User <span class="accent">Interview</span> Script</h1>
+  <p class="hero-subtitle">Discovery questions for Helpy's first real users. Understand the problem - don't pitch the solution.</p>
+</div>
+
+<div class="main">
+
+  <!-- Section 1: Setup -->
+  <div class="section">
+    <span class="section-label">Section 1</span>
+    <h2 class="section-title">Interview Setup</h2>
+    <p class="section-desc">Get the logistics right before the first question. Good setup equals better signal.</p>
+
+    <div class="setup-grid">
+      <div class="setup-item">
+        <div class="setup-icon">&#8987;</div>
+        <div>
+          <div class="setup-label">Duration</div>
+          <div class="setup-value">45 - 60 minutes</div>
+        </div>
+      </div>
+      <div class="setup-item">
+        <div class="setup-icon">&#128249;</div>
+        <div>
+          <div class="setup-label">Format</div>
+          <div class="setup-value">Video or in-person (record with permission)</div>
+        </div>
+      </div>
+      <div class="setup-item">
+        <div class="setup-icon">&#128101;</div>
+        <div>
+          <div class="setup-label">Team</div>
+          <div class="setup-value">2 interviewers: 1 asks, 1 takes notes</div>
+        </div>
+      </div>
+      <div class="setup-item">
+        <div class="setup-icon">&#127919;</div>
+        <div>
+          <div class="setup-label">Goal</div>
+          <div class="setup-value">Understand the real problem, not validate assumptions</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout-rule">
+      <div class="callout-rule-icon">&#9888;&#65039;</div>
+      <div>
+        <div class="callout-rule-label">Golden Rule</div>
+        <div class="callout-rule-text">"You are not selling. You are learning. Never pitch during an interview."</div>
+      </div>
+    </div>
+
+    <div class="recruit-card">
+      <div class="recruit-card-icon">&#128270;</div>
+      <div class="recruit-card-text"><strong>Who to recruit:</strong> Active users who posted a request OR offered help at least once. Cold users give you politeness, not insight.</div>
+    </div>
+  </div>
+
+  <!-- Section 2: Warm-Up -->
+  <div class="section">
+    <span class="section-label">Section 2</span>
+    <h2 class="section-title">Warm-Up Questions <span class="time-badge">&#8987; 5 min</span></h2>
+    <p class="section-desc">Build rapport and get context before diving into the real problem space. Listen for neighborhood tenure, digital habits, and social connectedness.</p>
+
+    <div class="question-list">
+      <div class="question-card">
+        <div class="question-number">1</div>
+        <div class="question-text">Tell me about yourself - where do you live, and what do you do day to day?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'Tell me about yourself - where do you live, and what do you do day to day?')">Copy</button>
+      </div>
+      <div class="question-card">
+        <div class="question-number">2</div>
+        <div class="question-text">How long have you lived in your current neighborhood or building?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'How long have you lived in your current neighborhood or building?')">Copy</button>
+      </div>
+      <div class="question-card">
+        <div class="question-number">3</div>
+        <div>
+          <div class="question-text">How connected do you feel to your neighbors? <span style="font-size:13px;color:var(--text-muted)">(1 = total strangers, 10 = close community)</span></div>
+          <div class="scale-visual">
+            <span>1 - Strangers</span>
+            <div class="scale-track"></div>
+            <span>10 - Community</span>
+          </div>
+        </div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'How connected do you feel to your neighbors? On a scale of 1 to 10, where 1 is total strangers and 10 is close community. Then ask: what would make it a 10?')">Copy</button>
+      </div>
+      <div class="question-card">
+        <div class="question-number">4</div>
+        <div class="question-text">What apps do you use daily to communicate with people nearby - building chats, neighborhood groups, anything like that?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'What apps do you use daily to communicate with people nearby - building chats, neighborhood groups, anything like that?')">Copy</button>
+      </div>
+      <div class="question-card">
+        <div class="question-number">5</div>
+        <div class="question-text">When was the last time you needed help with something small - something you couldn't or didn't want to do alone?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'When was the last time you needed help with something small - something you could not or did not want to do alone?')">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Core Discovery -->
+  <div class="section">
+    <span class="section-label">Section 3</span>
+    <h2 class="section-title">Core Discovery Questions <span class="time-badge">&#8987; 25 min</span></h2>
+    <p class="section-desc">These are the high-signal questions. Follow threads. If someone says something interesting, go deeper - "tell me more about that" beats moving to the next question.</p>
+
+    <!-- The Problem -->
+    <div class="group-header">
+      <div class="group-dot dot-red"></div>
+      <span class="group-title color-red">The Problem</span>
+    </div>
+    <div class="question-list">
+      <div class="question-card">
+        <div class="question-number red">1</div>
+        <div class="question-text">Walk me through the last time you needed help from someone nearby. What happened, start to finish?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'Walk me through the last time you needed help from someone nearby. What happened, start to finish?')">Copy</button>
+      </div>
+      <div class="question-card">
+        <div class="question-number red">2</div>
+        <div class="question-text">What did you try first? How did that go?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'What did you try first? How did that go?')">Copy</button>
+      </div>
+      <div class="question-card">
+        <div class="question-number red">3</div>
+        <div class="question-text">How did that make you feel when you had to ask - or when you couldn't bring yourself to ask?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'How did that make you feel when you had to ask - or when you could not bring yourself to ask?')">Copy</button>
+      </div>
+      <div class="question-card">
+        <div class="question-number red">4</div>
+        <div class="question-text">What stopped you from asking your neighbor directly?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'What stopped you from asking your neighbor directly?')">Copy</button>
+      </div>
+      <div class="question-card">
+        <div class="question-number red">5</div>
+        <div class="question-text">How often does this kind of situation come up - needing small help and not knowing who to ask?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'How often does this kind of situation come up - needing small help and not knowing who to ask?')">Copy</button>
+      </div>
+    </div>
+
+    <!-- The Behavior -->
+    <div class="group-header">
+      <div class="group-dot dot-amber"></div>
+      <span class="group-title color-amber">The Behavior</span>
+    </div>
+    <div class="question-list">
+      <div class="question-card">
+        <div class="question-number amber">1</div>
+        <div class="question-text">Before Helpy, what was your go-to method for getting or giving local help?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'Before Helpy, what was your go-to method for getting or giving local help?')">Copy</button>
+      </div>
+      <div class="question-card">
+        <div class="question-number amber">2</div>
+        <div class="question-text">Tell me about a time you helped a neighbor - someone you might not have known well. How did that feel?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'Tell me about a time you helped a neighbor - someone you might not have known well. How did that feel?')">Copy</button>
+      </div>
+      <div class="question-card">
+        <div class="question-number amber">3</div>
+        <div class="question-text">What made you trust - or not trust - someone enough to help them or accept their help?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'What made you trust - or not trust - someone enough to help them or accept their help?')">Copy</button>
+      </div>
+      <div class="question-card">
+        <div class="question-number amber">4</div>
+        <div class="question-text">How do you currently know who in your building or street you could actually ask for something?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'How do you currently know who in your building or street you could actually ask for something?')">Copy</button>
+      </div>
+    </div>
+
+    <!-- Helpy Specific -->
+    <div class="group-header">
+      <div class="group-dot dot-green"></div>
+      <span class="group-title color-green">Helpy Specific</span>
+    </div>
+    <div class="question-list">
+      <div class="question-card">
+        <div class="question-number green">1</div>
+        <div class="question-text">Walk me through the first time you used Helpy. What happened?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'Walk me through the first time you used Helpy. What happened?')">Copy</button>
+      </div>
+      <div class="question-card">
+        <div class="question-number green">2</div>
+        <div class="question-text">What made you come back after the first time?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'What made you come back after the first time?')">Copy</button>
+      </div>
+      <div class="question-card">
+        <div class="question-number green">3</div>
+        <div class="question-text">What almost stopped you from using it - what friction did you feel?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'What almost stopped you from using it - what friction did you feel?')">Copy</button>
+      </div>
+      <div class="question-card">
+        <div class="question-number green">4</div>
+        <div class="question-text">When did Helpy feel most valuable? When did it feel least valuable?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'When did Helpy feel most valuable? When did it feel least valuable?')">Copy</button>
+      </div>
+      <div class="question-card">
+        <div class="question-number green">5</div>
+        <div class="question-text">If Helpy disappeared tomorrow, what would you do instead?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'If Helpy disappeared tomorrow, what would you do instead?')">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: PMF -->
+  <div class="section">
+    <span class="section-label">Section 4</span>
+    <h2 class="section-title">The PMF Question</h2>
+    <p class="section-desc">The Sean Ellis question. Ask it directly, verbally, after Section 3. Note the spontaneous reaction before they consciously answer.</p>
+
+    <div class="pmf-card">
+      <span class="pmf-chip">The Sean Ellis Test - tap to mark an answer</span>
+      <div class="pmf-question">"How would you feel if you could no longer use Helpy?"</div>
+      <div class="pmf-options">
+        <div class="pmf-option" onclick="selectPmf(this, 'vd', 'Very disappointed - strong PMF signal')">
+          <span class="opt-icon">&#128532;</span>
+          Very disappointed
+        </div>
+        <div class="pmf-option" onclick="selectPmf(this, 'sd', 'Somewhat disappointed - soft signal')">
+          <span class="opt-icon">&#128533;</span>
+          Somewhat disappointed
+        </div>
+        <div class="pmf-option" onclick="selectPmf(this, 'nd', 'Not disappointed - no PMF signal')">
+          <span class="opt-icon">&#128528;</span>
+          Not disappointed
+        </div>
+        <div class="pmf-option" onclick="selectPmf(this, 'na', 'N/A - already churned')">
+          <span class="opt-icon">&#10062;</span>
+          N/A - I've already stopped using it
+        </div>
+      </div>
+      <div class="pmf-guide">
+        <div class="pmf-guide-icon">&#128202;</div>
+        <div class="pmf-guide-text">
+          <strong>PMF signal: more than 40% "Very disappointed"</strong> across your cohort is the benchmark from Sean Ellis's research. Below 40% means optimize before scaling. Above 40% means you've found product-market fit - now grow. Segment by user type: PMF may exist within a specific cohort even if the overall number is low.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5: Wrap-Up -->
+  <div class="section">
+    <span class="section-label">Section 5</span>
+    <h2 class="section-title">Wrap-Up <span class="time-badge">&#8987; 10 min</span></h2>
+    <p class="section-desc">End on open-ended reflections. Often the most valuable quotes come in the last 5 minutes when the interviewee relaxes and says what they really think.</p>
+
+    <div class="wrapup-grid">
+      <div class="question-card">
+        <div class="question-number">1</div>
+        <div class="question-text">Is there anyone else you think we should talk to?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'Is there anyone else you think we should talk to?')">Copy</button>
+      </div>
+      <div class="question-card">
+        <div class="question-number">2</div>
+        <div class="question-text">What's the one thing we should absolutely fix?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'What is the one thing we should absolutely fix?')">Copy</button>
+      </div>
+      <div class="question-card">
+        <div class="question-number">3</div>
+        <div class="question-text">What's the one thing we should never change?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'What is the one thing we should never change?')">Copy</button>
+      </div>
+      <div class="question-card">
+        <div class="question-number">4</div>
+        <div class="question-text">Is there anything I didn't ask that you think is important for us to know?</div>
+        <button class="copy-btn" onclick="copyQuestion(this, 'Is there anything I did not ask that you think is important for us to know?')">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: Notes Template -->
+  <div class="section">
+    <span class="section-label">Section 6</span>
+    <h2 class="section-title">Interview Notes Template</h2>
+    <p class="section-desc">Fill this in immediately after the interview, not during - let the conversation flow naturally. Your note-taker should capture direct quotes verbatim.</p>
+
+    <div class="notes-card">
+      <div class="notes-card-title">
+        &#128221; Interview Notes
+        <span class="notes-meta">Auto-saved in browser</span>
+      </div>
+      <div class="notes-fields">
+        <div class="notes-row">
+          <div class="notes-field">
+            <label>Date</label>
+            <input type="date" id="note-date" />
+          </div>
+          <div class="notes-field">
+            <label>Interviewee ID (anonymous)</label>
+            <input type="text" id="note-id" placeholder="e.g. User-07, Tel Aviv, 35F" />
+          </div>
+        </div>
+        <div class="notes-field">
+          <label>Key Quotes (verbatim)</label>
+          <textarea id="note-quotes" placeholder="Write exact words in quotes. Don't paraphrase yet."></textarea>
+        </div>
+        <div class="notes-field">
+          <label>Surprises - Things You Didn't Expect</label>
+          <textarea id="note-surprises" placeholder="What challenged your assumptions?"></textarea>
+        </div>
+        <div class="notes-field">
+          <label>Jobs to Be Done Identified</label>
+          <textarea id="note-jtbd" placeholder="What were they really trying to accomplish? What was the underlying motivation?"></textarea>
+        </div>
+        <div class="notes-field">
+          <label>Follow-Up Needed</label>
+          <textarea id="note-followup" placeholder="Questions to dig into next time, or things to verify." style="min-height:56px;"></textarea>
+        </div>
+        <div class="notes-row">
+          <div class="notes-field">
+            <label>PMF Answer</label>
+            <input type="text" id="note-pmf" placeholder="Very / Somewhat / Not disappointed / N/A" />
+          </div>
+          <div class="notes-field">
+            <label>Overall Signal</label>
+            <input type="text" id="note-signal" placeholder="Strong / Weak / Mixed" />
+          </div>
+        </div>
+      </div>
+      <div class="notes-actions">
+        <button class="btn-export-notes" onclick="exportNotes()">&#128190; Export Notes</button>
+        <button class="btn-clear-notes" onclick="clearNotes()">&#128465; Clear Notes</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const el = document.getElementById('progress-bar');
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    el.style.width = (docHeight > 0 ? (scrollTop / docHeight) * 100 : 0) + '%';
+  });
+
+  // Copy question
+  function copyQuestion(btn, text) {
+    const doIt = () => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      showToast('Question copied to clipboard');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    };
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(doIt).catch(() => { fallbackCopy(text); doIt(); });
+    } else {
+      fallbackCopy(text); doIt();
+    }
+  }
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+
+  // PMF selection
+  function selectPmf(el, type, msg) {
+    document.querySelectorAll('.pmf-option').forEach(o => {
+      o.className = 'pmf-option';
+    });
+    el.classList.add('selected-' + type);
+    showToast(msg);
+  }
+
+  // Toast
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  // Notes persistence
+  const noteFields = ['note-date','note-id','note-quotes','note-surprises','note-jtbd','note-followup','note-pmf','note-signal'];
+  noteFields.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.value = localStorage.getItem('helpy_interview_' + id) || '';
+    el.addEventListener('input', () => localStorage.setItem('helpy_interview_' + id, el.value));
+  });
+
+  function clearNotes() {
+    if (!confirm('Clear all notes? This cannot be undone.')) return;
+    noteFields.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+      localStorage.removeItem('helpy_interview_' + id);
+    });
+    showToast('Notes cleared');
+  }
+
+  function exportNotes() {
+    const labels = {
+      'note-date': 'Date',
+      'note-id': 'Interviewee ID',
+      'note-quotes': 'Key Quotes',
+      'note-surprises': 'Surprises',
+      'note-jtbd': 'Jobs to Be Done',
+      'note-followup': 'Follow-Up Needed',
+      'note-pmf': 'PMF Answer',
+      'note-signal': 'Overall Signal'
+    };
+    let out = 'HELPY USER INTERVIEW NOTES\n' + '='.repeat(40) + '\n\n';
+    noteFields.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.value.trim()) {
+        out += labels[id].toUpperCase() + ':\n' + el.value.trim() + '\n\n';
+      }
+    });
+    const blob = new Blob([out], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    const id = document.getElementById('note-id').value || 'unknown';
+    const date = document.getElementById('note-date').value || new Date().toISOString().slice(0,10);
+    a.download = 'interview-' + date + '-' + id.replace(/\s+/g,'-') + '.txt';
+    a.click();
+    showToast('Notes exported');
+  }
+</script>
+</body>
+</html>
