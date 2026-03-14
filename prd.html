@@ -48,13 +48,30 @@
       display: flex; align-items: center; justify-content: space-between;
       height: 56px;
     }
-    .header-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 17px; color: var(--brand); }
-    .header-logo span { font-size: 22px; }
+    .header-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 17px; color: var(--brand);
+      text-decoration: none; flex-shrink: 0;
+    }
+    .header-logo .logo-icon {
+      width: 28px; height: 28px; border-radius: 7px;
+      background: var(--brand);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 800; color: #fff;
+    }
+    .header-nav {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .header-nav a {
+      font-size: 13px; font-weight: 600; color: var(--text-muted);
+      text-decoration: none; padding: 6px 12px; border-radius: 8px; transition: all 0.15s;
+    }
+    .header-nav a:hover { background: var(--brand-light); color: var(--brand); }
+    .header-nav a.current { background: var(--brand-light); color: var(--brand); }
     .header-badge {
       background: var(--green); color: #fff; font-size: 11px; font-weight: 700;
-      padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px;
+      padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px; flex-shrink: 0;
     }
-    .header-meta { font-size: 12px; color: var(--text-muted); }
 
     /* Layout */
     .layout { display: flex; max-width: 1200px; margin: 0 auto; padding: 0 16px; }
@@ -371,12 +388,18 @@
 <div id="progress-bar"></div>
 
 <header>
-  <div class="header-logo">
-    <span>🤝</span>
-    <span>Helpy PRD</span>
-    <span class="header-badge">LIVE v1.0.2</span>
-  </div>
-  <div class="header-meta">March 2026 · Nir Raz (PM) · Claude (Dev)</div>
+  <a class="header-logo" href="docs.html">
+    <div class="logo-icon">H</div>
+    Helpy
+  </a>
+  <nav class="header-nav">
+    <a href="docs.html">All Docs</a>
+    <a href="prd.html" class="current">PRD</a>
+    <a href="okrs.html">OKRs</a>
+    <a href="roadmap.html">Roadmap</a>
+    <a href="interview-prep.html">Interview</a>
+  </nav>
+  <div class="header-badge">LIVE v1.0.2</div>
 </header>
 
 <div class="layout">
