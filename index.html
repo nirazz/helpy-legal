@@ -565,22 +565,64 @@
     .section-inner, .section:nth-child(even) .section-inner {
       flex-direction: column;
       text-align: center;
-      gap: 48px;
+      gap: 40px;
     }
 
-    .feature-list li { justify-content: center; }
+    /* Left-align feature list on mobile so wrapped text stays flush with icon */
+    .feature-list li { justify-content: flex-start; text-align: left; }
 
     .hero h1 { font-size: 48px; }
     .hero .tagline { font-size: 18px; }
-    .section-text h2 { font-size: 34px; }
-    .flow-section h2, .tech-section h2 { font-size: 36px; }
-    .phone-frame { width: 220px; }
+    .section-text h2 { font-size: 32px; }
+    .flow-section h2, .tech-section h2 { font-size: 32px; }
+    .phone-frame { width: 230px; }
     .flow-steps { flex-direction: column; align-items: center; }
     .flow-arrow { transform: rotate(90deg); }
-    .stats-bar { flex-wrap: wrap; gap: 32px; }
+    .stats-bar { flex-wrap: wrap; gap: 32px; padding: 60px 24px; }
     .stat { border-right: none; padding: 0 24px; }
     .stat .number { font-size: 40px; }
-    .footer h2 { font-size: 40px; }
+    .footer h2 { font-size: 36px; }
+    .footer { padding: 80px 24px 48px; }
+  }
+
+  @media (max-width: 600px) {
+    /* Tighter section padding — less vertical scrolling per section */
+    .section { min-height: auto; padding: 64px 20px; }
+    .section-inner { gap: 32px; }
+
+    .flow-section { padding: 80px 20px; }
+    .flow-section .section-sub { margin-bottom: 40px; font-size: 16px; }
+    .flow-step { width: 100%; max-width: 300px; min-height: auto; padding: 24px 20px; }
+    .flow-arrow { margin: 4px 0; }
+
+    .tech-section { padding: 80px 20px; }
+    .tech-section .section-sub { font-size: 16px; margin-bottom: 40px; }
+    .tech-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .tech-card { padding: 20px 16px; }
+    .tech-card h3 { font-size: 14px; }
+    .tech-card p { font-size: 12px; }
+
+    .safety-section { padding: 80px 20px; }
+    .safety-grid { margin-top: 40px; gap: 12px; }
+    .safety-card { padding: 20px 18px; }
+
+    .hero { padding: 0 20px; }
+    .hero h1 { font-size: 56px; }
+    .hero .tagline { font-size: 19px; }
+    .hero .sub-tagline { font-size: 15px; margin-bottom: 32px; }
+    .hero-pills { gap: 8px; margin-bottom: 32px; }
+    .hero-pill { font-size: 12px; padding: 7px 13px; }
+    .hero-cta { gap: 12px; }
+    .btn-primary, .btn-secondary { font-size: 15px; padding: 13px 24px; }
+
+    .section-text h2 { font-size: 28px; }
+    .section-text p { font-size: 15px; }
+    .feature-list li { font-size: 14px; }
+    .phone-frame { width: 200px; }
+
+    .stats-bar { padding: 48px 20px; gap: 24px; }
+    .stat .number { font-size: 36px; }
+    .stat .label { font-size: 11px; }
   }
 </style>
 </head>
