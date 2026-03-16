@@ -981,6 +981,12 @@
 </div>
 
 <script>
+  // Redirect app users (mobile, no referrer) to privacy policy
+  if (!localStorage.getItem('visited_landing') && !document.referrer && /iPhone|iPad|Android/i.test(navigator.userAgent)) {
+    window.location.replace('/privacy.html');
+  }
+  localStorage.setItem('visited_landing', '1');
+
   // Progress bar
   window.addEventListener('scroll', () => {
     const scrollTop = window.scrollY;
