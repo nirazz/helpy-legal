@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Helpy - שכנים עוזרים לשכנים</title>
+<meta name="description" content="Helpy מחברת בין שכנים שזקוקים לעזרה לבין שכנים שרוצים לעזור. אפליקציה קהילתית, חינמית ודו-לשונית.">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --indigo: #6366f1;
+    --purple: #8b5cf6;
+    --pink: #ec4899;
+    --slate: #94a3b8;
+    --bg: #0a0a1a;
+  }
+
+  body {
+    font-family: 'Heebo', -apple-system, sans-serif;
+    background: var(--bg);
+    color: #fff;
+    overflow-x: hidden;
+  }
+
+  .lang-switch-top { text-align: center; padding: 12px 24px; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
+  .lang-switch-top a { font-size: 13px; color: #a5b4fc; text-decoration: none; font-weight: 500; }
+  .lang-switch-top a:hover { color: #fff; }
+
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: radial-gradient(ellipse at 50% 0%, #2d1b69 0%, var(--bg) 70%);
+    position: relative;
+    overflow: hidden;
+    padding: 60px 24px 0;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
+    top: -250px; left: 50%; transform: translateX(-50%);
+  }
+  .hero-icon { width: 120px; height: 120px; border-radius: 28px; margin-bottom: 28px; box-shadow: 0 24px 60px rgba(99,102,241,0.45); position: relative; z-index: 1; }
+  .hero h1 { font-size: 72px; font-weight: 900; background: linear-gradient(135deg, #818cf8, #c084fc, #f472b6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 16px; position: relative; z-index: 1; }
+  .tagline { font-size: 24px; color: #cbd5e1; margin-bottom: 12px; font-weight: 500; position: relative; z-index: 1; }
+  .sub-tagline { font-size: 17px; color: var(--slate); max-width: 560px; margin: 0 auto 36px; line-height: 1.6; position: relative; z-index: 1; }
+  .hero-pills { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 36px; position: relative; z-index: 1; }
+  .hero-pill { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #cbd5e1; padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
+  .hero-pill i { width: 14px; height: 14px; }
+  .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; position: relative; z-index: 1; }
+  .btn-primary { background: linear-gradient(135deg, var(--indigo), var(--purple)); color: #fff; padding: 16px 36px; border-radius: 999px; text-decoration: none; font-weight: 600; font-size: 16px; box-shadow: 0 12px 30px rgba(139,92,246,0.45); transition: transform 0.2s; }
+  .btn-primary:hover { transform: translateY(-2px); }
+  .btn-secondary { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: #cbd5e1; padding: 16px 36px; border-radius: 999px; font-weight: 500; font-size: 16px; }
+
+  .flow-section { padding: 100px 24px; text-align: center; }
+  .section-label { display: inline-block; font-size: 12px; font-weight: 700; color: var(--indigo); background: rgba(99,102,241,0.1); padding: 6px 14px; border-radius: 999px; margin-bottom: 20px; letter-spacing: 0.05em; }
+  .flow-section h2 { font-size: 48px; font-weight: 800; margin-bottom: 16px; }
+  .gradient { background: linear-gradient(135deg, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .section-sub { font-size: 18px; color: var(--slate); max-width: 640px; margin: 0 auto 60px; line-height: 1.6; }
+  .flow-steps { display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; max-width: 1200px; margin: 0 auto; align-items: flex-start; }
+  .flow-step { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 28px 20px; flex: 1; min-width: 180px; max-width: 220px; }
+  .flow-number { display: inline-block; width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--indigo), var(--purple)); color: #fff; font-weight: 700; font-size: 14px; line-height: 32px; margin-bottom: 12px; }
+  .flow-emoji { margin-bottom: 14px; color: #a5b4fc; }
+  .flow-emoji i { width: 32px; height: 32px; }
+  .flow-step h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #fff; }
+  .flow-step p { font-size: 14px; color: var(--slate); line-height: 1.5; }
+  .flow-arrow { color: var(--slate); font-size: 28px; align-self: center; }
+
+  .features-section { padding: 80px 24px; background: #0f0f24; text-align: center; }
+  .features-section h2 { font-size: 44px; font-weight: 800; margin-bottom: 16px; }
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+  .feature-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 24px; text-align: right; }
+  .feature-card i { width: 28px; height: 28px; color: #a5b4fc; margin-bottom: 12px; }
+  .feature-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; color: #fff; }
+  .feature-card p { font-size: 14px; color: var(--slate); line-height: 1.6; }
+
+  .safety-section { padding: 100px 24px; background: #f8fafc; color: #0f172a; text-align: center; }
+  .safety-section .section-label { background: rgba(99,102,241,0.08); }
+  .safety-section h2 { font-size: 44px; font-weight: 800; margin-bottom: 12px; color: #0f172a; }
+  .safety-section .section-sub { color: #64748b; }
+  .safety-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 1000px; margin: 40px auto 0; }
+  .safety-card { background: #fff; border-radius: 16px; padding: 28px 24px; text-align: right; box-shadow: 0 4px 12px rgba(15,23,42,0.05); }
+  .safety-card i { width: 28px; height: 28px; color: var(--indigo); margin-bottom: 12px; }
+  .safety-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; color: #0f172a; }
+  .safety-card p { font-size: 14px; color: #64748b; line-height: 1.6; }
+
+  .footer { text-align: center; padding: 100px 24px; background: radial-gradient(ellipse at 50% 0%, #2d1b69 0%, var(--bg) 70%); }
+  .footer h2 { font-size: 48px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+  .footer-sub { font-size: 17px; color: var(--slate); max-width: 560px; margin: 0 auto 36px; line-height: 1.6; }
+  .footer-cta { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-bottom: 40px; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-top: 30px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.08); }
+  .footer-links a { font-size: 13px; color: var(--slate); text-decoration: none; }
+  .footer-links a:hover { color: #fff; }
+
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 48px; }
+    .tagline { font-size: 18px; }
+    .flow-section h2, .features-section h2, .safety-section h2, .footer h2 { font-size: 32px; }
+    .flow-arrow { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="lang-switch-top">
+  <a href="/">English version →</a>
+</div>
+
+<div class="hero">
+  <img src="app-icon-512.png" class="hero-icon" alt="Helpy App Icon" onerror="this.style.display='none'">
+  <h1>Helpy</h1>
+  <p class="tagline">שכנים עוזרים לשכנים</p>
+  <p class="sub-tagline">אפליקציה קהילתית לאנשים שרוצים לתת ולקבל עזרה - בחינם, ללא עמלות, ללא מתווכים.</p>
+  <div class="hero-pills">
+    <span class="hero-pill"><i data-lucide="gift"></i> תמיד בחינם</span>
+    <span class="hero-pill"><i data-lucide="globe"></i> עברית ואנגלית</span>
+    <span class="hero-pill"><i data-lucide="map-pin"></i> שכנים באזור</span>
+    <span class="hero-pill"><i data-lucide="shield"></i> מאומת ובטוח</span>
+  </div>
+  <div class="hero-cta">
+    <a href="https://testflight.apple.com/join/P6uAfJsQ" class="btn-primary">נסה/י על iPhone</a>
+    <span class="btn-secondary" style="opacity:0.5;">אנדרואיד - בקרוב</span>
+  </div>
+</div>
+
+<div class="flow-section">
+  <div class="section-label">התהליך</div>
+  <h2>איך <span class="gradient">Helpy</span> עובדת</h2>
+  <p class="section-sub">מבקשה לעזרה תוך דקות - ללא עמלות, ללא מתווכים, רק שכנים.</p>
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="flow-number">1</div>
+      <div class="flow-emoji"><i data-lucide="pen-line"></i></div>
+      <h3>פרסם/י בקשה</h3>
+      <p>תאר/י מה את/ה צריך/ה, הוסף/י תמונות ובחר/י דחיפות</p>
+    </div>
+    <div class="flow-arrow">←</div>
+    <div class="flow-step">
+      <div class="flow-number">2</div>
+      <div class="flow-emoji"><i data-lucide="layers"></i></div>
+      <h3>שכנים גולשים</h3>
+      <p>שכנים בקרבת מקום גולשים בכרטיסים או במפה</p>
+    </div>
+    <div class="flow-arrow">←</div>
+    <div class="flow-step">
+      <div class="flow-number">3</div>
+      <div class="flow-emoji"><i data-lucide="hand-helping"></i></div>
+      <h3>מציעים עזרה</h3>
+      <p>לחצו "הצע/י עזרה" - המבקש/ת בוחר/ת את העוזר/ת</p>
+    </div>
+    <div class="flow-arrow">←</div>
+    <div class="flow-step">
+      <div class="flow-number">4</div>
+      <div class="flow-emoji"><i data-lucide="message-circle"></i></div>
+      <h3>התאמה וצ'אט</h3>
+      <p>הודעות בזמן אמת עם חיווי הקלדה</p>
+    </div>
+    <div class="flow-arrow">←</div>
+    <div class="flow-step">
+      <div class="flow-number">5</div>
+      <div class="flow-emoji"><i data-lucide="star"></i></div>
+      <h3>דירוג ואמון</h3>
+      <p>דירוג כוכבים בונה את המוניטין הקהילתי</p>
+    </div>
+  </div>
+</div>
+
+<div class="features-section">
+  <div class="section-label">מה אפשר לעשות</div>
+  <h2>הכל במקום <span class="gradient">אחד</span></h2>
+  <p class="section-sub">מפרסמים בקשה, גולשים בעזרה שזמינה, מתחברים לשכנים - הכל בלי לצאת מהאפליקציה.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <i data-lucide="move-horizontal"></i>
+      <h3>גלישה בכרטיסים</h3>
+      <p>כרטיסי בקשות שכוללים קטגוריה, דחיפות, מרחק ועד 3 תמונות.</p>
+    </div>
+    <div class="feature-card">
+      <i data-lucide="map"></i>
+      <h3>תצוגת מפה</h3>
+      <p>רואים את כל הבקשות באזור על המפה עם סמלים לפי קטגוריה.</p>
+    </div>
+    <div class="feature-card">
+      <i data-lucide="message-circle"></i>
+      <h3>צ'אט בזמן אמת</h3>
+      <p>הודעות מיידיות באמצעות Supabase Realtime - בלי עיכוב.</p>
+    </div>
+    <div class="feature-card">
+      <i data-lucide="star"></i>
+      <h3>דירוגים וביקורות</h3>
+      <p>פרופיל ציבורי עם דירוג כוכבים, ביקורות ומונה סטריק.</p>
+    </div>
+    <div class="feature-card">
+      <i data-lucide="languages"></i>
+      <h3>תמיכה מלאה בעברית</h3>
+      <p>כל האפליקציה מתורגמת. מעבר מלא ל-RTL. מיתוג חלק בין השפות.</p>
+    </div>
+    <div class="feature-card">
+      <i data-lucide="bell"></i>
+      <h3>התראות דחיפה</h3>
+      <p>התראות דו-לשוניות על הצעות חדשות, הודעות, התאמות ודירוגים.</p>
+    </div>
+  </div>
+</div>
+
+<div class="safety-section">
+  <div class="section-label">אמון ובטיחות</div>
+  <h2>בטוחים <span class="gradient">מהיום הראשון</span></h2>
+  <p class="section-sub">בטיחות היא לא פיצ'ר שהוספנו - היא חלק מכל שכבה באפליקציה.</p>
+  <div class="safety-grid">
+    <div class="safety-card">
+      <i data-lucide="phone"></i>
+      <h3>אימות טלפון</h3>
+      <p>נדרש לפני עזרה או פרסום. אימות דרך Twilio SMS OTP, מוגבל ל-3 נסיונות ב-10 דקות.</p>
+    </div>
+    <div class="safety-card">
+      <i data-lucide="flag"></i>
+      <h3>דיווח וחסימה</h3>
+      <p>אפשר לדווח על משתמש/ת עם 5 סיבות. חסימה אוטומטית עם הדיווח.</p>
+    </div>
+    <div class="safety-card">
+      <i data-lucide="shield-check"></i>
+      <h3>אבטחת מידע</h3>
+      <p>לכל טבלת נתונים יש מדיניות RLS - רואים ומשנים רק מידע שמורשים לו.</p>
+    </div>
+    <div class="safety-card">
+      <i data-lucide="filter"></i>
+      <h3>סינון תוכן</h3>
+      <p>רשימת חסימה דו-לשונית של מונחים פוגעניים, על כל הפוסטים וההודעות.</p>
+    </div>
+    <div class="safety-card">
+      <i data-lucide="file-text"></i>
+      <h3>כללי קהילה</h3>
+      <p>כל משתמש/ת מאשר/ת את כללי הקהילה בכניסה ראשונה - אפס סובלנות להטרדה והונאות.</p>
+    </div>
+    <div class="safety-card">
+      <i data-lucide="trash-2"></i>
+      <h3>מחיקת חשבון</h3>
+      <p>מחיקת מידע מלאה לפי דרישה - פרופיל, הודעות, התאמות ודירוגים - בלחיצה אחת.</p>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <h2>התחילו <span class="gradient">לעזור</span> היום</h2>
+  <p class="footer-sub">חינם לכולם. תמיד. ללא עמלות, ללא מנויים, ללא מתווכים.</p>
+  <div class="footer-cta">
+    <a href="https://testflight.apple.com/join/P6uAfJsQ" class="btn-primary">נסה/י על iPhone</a>
+  </div>
+  <div class="footer-links">
+    <a href="/privacy-he.html">מדיניות פרטיות</a>
+    <a href="/terms-he.html">תנאי שימוש</a>
+    <a href="/delete-account.html">מחיקת חשבון</a>
+    <a href="mailto:support@help-y.com">צור קשר</a>
+    <a href="/">English</a>
+  </div>
+</div>
+
+<script>lucide.createIcons();</script>
+</body>
+</html>
