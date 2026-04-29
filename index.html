@@ -361,43 +361,27 @@
   }
   .feature-list .icon svg { width: 14px; height: 14px; stroke: #6366f1; stroke-width: 2; }
 
-  /* ── Phone mockup ── */
-  .phone-wrapper {
+  /* ── Device shot (App Store-style hero image) ── */
+  .device-shot {
     flex-shrink: 0;
     position: relative;
+    width: 320px;
   }
-  .phone-wrapper::before {
+  .device-shot::before {
     content: '';
     position: absolute;
     top: -30px; left: -30px; right: -30px; bottom: -30px;
-    background: radial-gradient(ellipse, rgba(99,102,241,0.15) 0%, transparent 70%);
-    border-radius: 60px;
+    background: radial-gradient(ellipse, rgba(99,102,241,0.18) 0%, transparent 70%);
     z-index: -1;
     filter: blur(40px);
   }
-  .phone-frame {
-    width: 280px;
-    background: #111125;
-    border-radius: 44px;
-    padding: 12px;
-    box-shadow:
-      0 50px 100px rgba(0,0,0,0.5),
-      0 0 0 1px rgba(255,255,255,0.08),
-      inset 0 0 0 1px rgba(255,255,255,0.04);
-    position: relative;
-  }
-  .phone-notch {
-    width: 96px; height: 24px;
-    background: #111125;
-    border-radius: 0 0 14px 14px;
-    position: absolute;
-    top: 12px; left: 50%; transform: translateX(-50%);
-    z-index: 10;
-  }
-  .phone-screen {
+  .device-image {
     width: 100%;
-    border-radius: 32px;
     display: block;
+    border-radius: 36px;
+    box-shadow:
+      0 40px 80px rgba(15, 23, 42, 0.18),
+      0 12px 28px rgba(15, 23, 42, 0.10);
   }
 
   /* ── Bilingual section ── */
@@ -519,7 +503,7 @@
     .hero .sub-tagline { font-size: 16px; }
     .section-text h2 { font-size: 32px; }
     .flow-section h2, .safety-section h2, .bilingual-section h2 { font-size: 32px; }
-    .phone-frame { width: 240px; }
+    .device-shot { width: 280px; }
     .flow-steps { flex-direction: column; align-items: center; }
     .flow-arrow { transform: rotate(90deg); }
     .footer h2 { font-size: 38px; }
@@ -559,7 +543,7 @@
     .section-text h2 { font-size: 28px; }
     .section-text p.lede { font-size: 16px; }
     .feature-list li { font-size: 14px; }
-    .phone-frame { width: 220px; }
+    .device-shot { width: 240px; }
   }
 </style>
 <noscript>
@@ -687,12 +671,9 @@
         <li><span class="icon"><i data-lucide="ban"></i></span>Hides anyone you've blocked or reported</li>
       </ul>
     </div>
-    <div class="phone-wrapper">
-      <div class="phone-frame">
-        <div class="phone-notch"></div>
-        <img src="screen-browse.png" class="phone-screen" alt="Browse screen — swipe through nearby help requests">
+    <div class="device-shot">
+        <img src="screen-browse.png" class="device-image" alt="Browse screen — swipe through nearby help requests">
       </div>
-    </div>
   </div>
 </div>
 
@@ -709,12 +690,9 @@
         <li><span class="icon"><i data-lucide="refresh-cw"></i></span>Toggle back to cards anytime</li>
       </ul>
     </div>
-    <div class="phone-wrapper">
-      <div class="phone-frame">
-        <div class="phone-notch"></div>
-        <img src="screen-map.png" class="phone-screen" alt="Map view — pins for nearby help requests">
+    <div class="device-shot">
+        <img src="screen-map.png" class="device-image" alt="Map view — pins for nearby help requests">
       </div>
-    </div>
   </div>
 </div>
 
@@ -731,12 +709,9 @@
         <li><span class="icon"><i data-lucide="alarm-clock"></i></span>Mark how urgent it is</li>
       </ul>
     </div>
-    <div class="phone-wrapper">
-      <div class="phone-frame">
-        <div class="phone-notch"></div>
-        <img src="screen-post.png" class="phone-screen" alt="Post screen — create a help request">
+    <div class="device-shot">
+        <img src="screen-post.png" class="device-image" alt="Post screen — create a help request">
       </div>
-    </div>
   </div>
 </div>
 
@@ -753,12 +728,9 @@
         <li><span class="icon"><i data-lucide="star"></i></span>Mark complete &amp; rate when you're done</li>
       </ul>
     </div>
-    <div class="phone-wrapper">
-      <div class="phone-frame">
-        <div class="phone-notch"></div>
-        <img src="screen-chat.png" class="phone-screen" alt="Chat screen — real-time messaging">
+    <div class="device-shot">
+        <img src="screen-chat.png" class="device-image" alt="Chat screen — real-time messaging">
       </div>
-    </div>
   </div>
 </div>
 
@@ -775,12 +747,9 @@
         <li><span class="icon"><i data-lucide="party-popper"></i></span>Quick path to chat after accepting</li>
       </ul>
     </div>
-    <div class="phone-wrapper">
-      <div class="phone-frame">
-        <div class="phone-notch"></div>
-        <img src="screen-activity.png" class="phone-screen" alt="Activity screen — manage your requests">
+    <div class="device-shot">
+        <img src="screen-activity.png" class="device-image" alt="Activity screen — manage your requests">
       </div>
-    </div>
   </div>
 </div>
 
@@ -797,12 +766,9 @@
         <li><span class="icon"><i data-lucide="trophy"></i></span>Monthly neighborhood leaderboard</li>
       </ul>
     </div>
-    <div class="phone-wrapper">
-      <div class="phone-frame">
-        <div class="phone-notch"></div>
-        <img src="screen-profile.png" class="phone-screen" alt="Profile screen — your community identity">
+    <div class="device-shot">
+        <img src="screen-profile.png" class="device-image" alt="Profile screen — your community identity">
       </div>
-    </div>
   </div>
 </div>
 
@@ -812,18 +778,12 @@
   <h2>One app, <span class="gradient">two languages</span>.</h2>
   <p class="section-sub">Full Hebrew with right-to-left layout, full English. One tap to switch — the app remembers.</p>
   <div class="bilingual-phones">
-    <div class="phone-wrapper">
-      <div class="phone-frame">
-        <div class="phone-notch"></div>
-        <img src="screen-browse.png" class="phone-screen" alt="Helpy in English">
+    <div class="device-shot">
+        <img src="screen-browse.png" class="device-image" alt="Helpy in English">
       </div>
-    </div>
-    <div class="phone-wrapper">
-      <div class="phone-frame">
-        <div class="phone-notch"></div>
-        <img src="screen-hebrew-browse.png" class="phone-screen" alt="Helpy in Hebrew (RTL)">
+    <div class="device-shot">
+        <img src="screen-hebrew-browse.png" class="device-image" alt="Helpy in Hebrew (RTL)">
       </div>
-    </div>
   </div>
 </div>
 
