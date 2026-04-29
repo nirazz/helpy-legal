@@ -3,8 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Helpy - Neighbors Helping Neighbors</title>
-<meta name="description" content="Helpy connects neighbors who need help with neighbors who want to help. Free, community-driven, bilingual Hebrew/English app for iOS and Android.">
+<title>Helpy — Real help, from real neighbors</title>
+<meta name="description" content="A free community app for the moments you need a hand — and the moments you can give one. Available on iOS and Android. Hebrew and English.">
+<meta property="og:title" content="Helpy — Real help, from real neighbors">
+<meta property="og:description" content="A free community app for the moments you need a hand — and the moments you can give one.">
+<meta property="og:image" content="https://help-y.com/app-icon-512.png">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://help-y.com/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="app-icon-512.png">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -19,14 +26,33 @@
     --bg: #0a0a1a;
   }
 
+  html { scroll-behavior: smooth; }
+
   body {
-    font-family: 'Inter', -apple-system, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg);
     color: #fff;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* ── Progress Bar ── */
+  /* ── Top language bar ── */
+  .lang-switch-top {
+    text-align: center;
+    padding: 12px 24px;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+  }
+  .lang-switch-top a {
+    font-size: 13px; color: #a5b4fc; text-decoration: none; font-weight: 500;
+  }
+  .lang-switch-top a:hover { color: #fff; }
+
+  /* ── Progress bar ── */
   .progress-bar {
     position: fixed;
     top: 0; left: 0;
@@ -48,7 +74,7 @@
     background: radial-gradient(ellipse at 50% 0%, #2d1b69 0%, var(--bg) 70%);
     position: relative;
     overflow: hidden;
-    padding: 0 24px;
+    padding: 80px 24px 60px;
   }
 
   .hero::before {
@@ -66,7 +92,7 @@
   }
 
   .hero-icon {
-    width: 120px; height: 120px; border-radius: 28px;
+    width: 108px; height: 108px; border-radius: 24px;
     margin-bottom: 28px;
     box-shadow: 0 24px 60px rgba(99,102,241,0.45);
     animation: floatIn 0.9s ease-out;
@@ -74,91 +100,109 @@
   }
 
   .hero h1 {
-    font-size: 72px; font-weight: 900;
+    font-size: 76px; font-weight: 900;
     background: linear-gradient(135deg, #818cf8, #c084fc, #f472b6);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
     animation: floatIn 0.9s ease-out 0.15s both;
     position: relative; z-index: 1;
     line-height: 1;
+    letter-spacing: -0.02em;
   }
 
   .hero .tagline {
-    font-size: 22px; color: #a5b4fc; font-weight: 400;
-    margin-bottom: 12px;
+    font-size: 28px; color: #e0e7ff; font-weight: 600;
+    margin-bottom: 16px;
     animation: floatIn 0.9s ease-out 0.3s both;
     position: relative; z-index: 1;
+    line-height: 1.2;
+    max-width: 720px;
+    letter-spacing: -0.01em;
   }
 
   .hero .sub-tagline {
-    font-size: 16px; color: #64748b; font-weight: 400;
-    margin-bottom: 48px;
+    font-size: 17px; color: #94a3b8; font-weight: 400;
+    margin-bottom: 36px;
     animation: floatIn 0.9s ease-out 0.4s both;
     position: relative; z-index: 1;
+    max-width: 540px;
+    line-height: 1.6;
   }
 
   .hero-pills {
-    display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+    display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
     animation: floatIn 0.9s ease-out 0.5s both;
     position: relative; z-index: 1;
-    margin-bottom: 48px;
+    margin-bottom: 40px;
   }
 
   .hero-pill {
-    background: rgba(99,102,241,0.15);
-    border: 1px solid rgba(99,102,241,0.3);
-    color: #a5b4fc;
-    font-size: 13px; font-weight: 600;
-    padding: 8px 16px;
-    border-radius: 20px;
+    background: rgba(99,102,241,0.12);
+    border: 1px solid rgba(99,102,241,0.25);
+    color: #c7d2fe;
+    font-size: 12px; font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 999px;
     display: inline-flex; align-items: center; gap: 6px;
   }
-  .hero-pill svg { width: 13px; height: 13px; stroke: #a5b4fc; stroke-width: 2; flex-shrink: 0; }
+  .hero-pill svg { width: 12px; height: 12px; stroke: #c7d2fe; stroke-width: 2; flex-shrink: 0; }
 
-  .hero-cta {
-    display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+  /* ── Store badges (Apple-style) ── */
+  .badge-row {
+    display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;
     animation: floatIn 0.9s ease-out 0.6s both;
     position: relative; z-index: 1;
   }
 
-  .btn-primary {
-    background: linear-gradient(135deg, var(--indigo), var(--purple));
+  .store-badge {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: #000;
     color: #fff;
-    font-weight: 700; font-size: 16px;
-    padding: 14px 32px;
-    border-radius: 14px;
+    padding: 12px 22px;
+    border-radius: 12px;
     text-decoration: none;
     transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 8px 32px rgba(99,102,241,0.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    min-width: 180px;
   }
 
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(99,102,241,0.5); }
-
-  .btn-secondary {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
-    color: #94a3b8;
-    font-weight: 600; font-size: 16px;
-    padding: 14px 32px;
-    border-radius: 14px;
-    text-decoration: none;
-    transition: border-color 0.2s, color 0.2s;
+  .store-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
   }
 
-  .btn-secondary:hover { border-color: var(--indigo); color: #c4b5fd; }
+  .store-badge svg { width: 28px; height: 28px; flex-shrink: 0; }
+
+  .store-badge .badge-text {
+    text-align: left;
+    line-height: 1.1;
+  }
+
+  .store-badge .badge-small {
+    font-size: 10px; font-weight: 400;
+    color: #cbd5e1;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .store-badge .badge-big {
+    font-size: 18px; font-weight: 600;
+    color: #fff;
+    margin-top: 2px;
+    letter-spacing: -0.01em;
+  }
 
   .scroll-hint {
-    position: absolute; bottom: 40px;
+    position: absolute; bottom: 36px;
     animation: bounce 2s ease-in-out infinite;
-    color: #475569; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+    color: #475569; font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
     z-index: 1;
   }
-
-  .scroll-hint span { display: block; margin-top: 8px; font-size: 20px; }
+  .scroll-hint span { display: block; margin-top: 6px; font-size: 18px; }
 
   @keyframes bounce {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(10px); }
+    50% { transform: translateY(8px); }
   }
 
   @keyframes floatIn {
@@ -170,25 +214,28 @@
   .flow-section {
     padding: 120px 40px;
     text-align: center;
-    background: #f8fafc;
+    background: #fff;
   }
 
   .section-label {
     display: inline-block;
-    font-size: 12px; font-weight: 700; letter-spacing: 3px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
     text-transform: uppercase; color: #6366f1;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
   }
 
-  .flow-section h2, .tech-section h2 {
+  .flow-section h2 {
     font-size: 48px; font-weight: 800;
-    margin-bottom: 16px; line-height: 1.1;
+    margin-bottom: 18px; line-height: 1.1;
     color: #0f172a;
+    letter-spacing: -0.02em;
   }
 
   .flow-section .section-sub {
     font-size: 18px; color: #64748b;
-    margin-bottom: 64px; max-width: 500px; margin-left: auto; margin-right: auto;
+    margin-bottom: 64px; max-width: 540px;
+    margin-left: auto; margin-right: auto;
+    line-height: 1.6;
   }
 
   .flow-steps {
@@ -205,57 +252,47 @@
     background: #fff;
     border: 1px solid #e2e8f0;
     box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-    border-radius: 24px;
+    border-radius: 22px;
     padding: 32px 20px;
-    width: 170px;
-    min-height: 260px;
-    position: relative;
+    width: 180px;
+    min-height: 240px;
     transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
-    cursor: default;
   }
 
   .flow-step:hover {
-    transform: translateY(-10px);
+    transform: translateY(-8px);
     box-shadow: 0 16px 48px rgba(99,102,241,0.15);
     border-color: rgba(99,102,241,0.4);
   }
 
   .flow-number {
-    width: 44px; height: 44px;
+    width: 40px; height: 40px;
     background: linear-gradient(135deg, var(--indigo), var(--purple));
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 18px; font-weight: 800;
+    font-size: 16px; font-weight: 800;
     margin: 0 auto 14px;
+    color: #fff;
   }
 
-  .flow-emoji { font-size: 34px; margin-bottom: 12px; height: 40px; display: flex; align-items: center; justify-content: center; }
+  .flow-emoji { margin-bottom: 12px; height: 36px; display: flex; align-items: center; justify-content: center; }
+  .flow-emoji svg { width: 30px; height: 30px; stroke: #818cf8; stroke-width: 1.6; }
 
   .flow-step h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; color: #0f172a; }
-
-  .flow-step p { font-size: 12px; color: #64748b; line-height: 1.5; }
+  .flow-step p { font-size: 13px; color: #64748b; line-height: 1.5; }
 
   .flow-arrow {
-    color: #a5b4fc; font-size: 24px;
-    animation: arrowPulse 2s ease-in-out infinite;
+    color: #c4b5fd; font-size: 22px;
+    align-self: center;
     flex-shrink: 0;
   }
 
-  @keyframes arrowPulse {
-    0%, 100% { opacity: 0.5; transform: translateX(0); }
-    50% { opacity: 1; transform: translateX(3px); }
-  }
-
-  /* ── Feature Sections ── */
+  /* ── Feature sections ── */
   .section {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     padding: 100px 40px;
     position: relative;
     opacity: 0;
-    transform: translateY(50px);
+    transform: translateY(40px);
     transition: opacity 0.7s ease, transform 0.7s ease;
     background: #fff;
   }
@@ -266,8 +303,8 @@
   }
 
   .section-inner {
-    max-width: 1100px;
-    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
     display: flex;
     align-items: center;
     gap: 80px;
@@ -280,21 +317,19 @@
 
   .step-badge {
     display: inline-block;
-    background: linear-gradient(135deg, var(--indigo), var(--purple));
-    color: #fff;
-    font-size: 12px; font-weight: 700;
-    padding: 6px 16px;
-    border-radius: 20px;
-    margin-bottom: 20px;
-    letter-spacing: 1px;
+    font-size: 11px; font-weight: 700;
+    color: #6366f1;
+    margin-bottom: 14px;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
   }
 
   .section-text h2 {
     font-size: 44px; font-weight: 800;
     line-height: 1.1;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     color: #0f172a;
+    letter-spacing: -0.02em;
   }
 
   .gradient {
@@ -302,271 +337,173 @@
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
 
-  .section-text p {
-    font-size: 17px; color: #64748b;
-    line-height: 1.75;
-    margin-bottom: 16px;
+  .section-text p.lede {
+    font-size: 18px; color: #475569;
+    line-height: 1.7;
+    margin-bottom: 24px;
   }
 
-  .feature-list { list-style: none; margin-top: 24px; }
+  .feature-list { list-style: none; margin-top: 8px; }
 
   .feature-list li {
     font-size: 15px; color: #1e293b;
-    padding: 9px 0;
+    padding: 10px 0;
     display: flex; align-items: center; gap: 12px;
-    border-bottom: 1px solid rgba(0,0,0,0.07);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
   }
-
   .feature-list li:last-child { border-bottom: none; }
-
   .feature-list .icon {
     width: 28px; height: 28px;
-    background: rgba(99,102,241,0.15);
+    background: rgba(99,102,241,0.12);
     border-radius: 8px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 14px; flex-shrink: 0;
+    flex-shrink: 0;
   }
+  .feature-list .icon svg { width: 14px; height: 14px; stroke: #6366f1; stroke-width: 2; }
 
-  /* ── Phone Mockup ── */
+  /* ── Phone mockup ── */
   .phone-wrapper {
     flex-shrink: 0;
     position: relative;
   }
-
   .phone-wrapper::before {
     content: '';
     position: absolute;
-    top: -20px; left: -20px; right: -20px; bottom: -20px;
-    background: radial-gradient(ellipse, rgba(99,102,241,0.12) 0%, transparent 70%);
+    top: -30px; left: -30px; right: -30px; bottom: -30px;
+    background: radial-gradient(ellipse, rgba(99,102,241,0.15) 0%, transparent 70%);
     border-radius: 60px;
     z-index: -1;
     filter: blur(40px);
   }
-
   .phone-frame {
-    width: 270px;
+    width: 280px;
     background: #111125;
     border-radius: 44px;
-    padding: 14px;
+    padding: 12px;
     box-shadow:
-      0 50px 100px rgba(0,0,0,0.6),
+      0 50px 100px rgba(0,0,0,0.5),
       0 0 0 1px rgba(255,255,255,0.08),
       inset 0 0 0 1px rgba(255,255,255,0.04);
     position: relative;
   }
-
   .phone-notch {
-    width: 100px; height: 24px;
+    width: 96px; height: 24px;
     background: #111125;
     border-radius: 0 0 14px 14px;
     position: absolute;
-    top: 14px; left: 50%; transform: translateX(-50%);
+    top: 12px; left: 50%; transform: translateX(-50%);
     z-index: 10;
   }
-
   .phone-screen {
     width: 100%;
     border-radius: 32px;
     display: block;
   }
 
-  /* ── New Feature Banner ── */
-  .new-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(34, 197, 94, 0.15);
-    border: 1px solid rgba(34, 197, 94, 0.3);
-    color: #4ade80;
-    font-size: 11px; font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 20px;
-    margin-left: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    vertical-align: middle;
-  }
-
-  /* ── Stats Bar ── */
-  .stats-bar {
-    display: flex;
-    justify-content: center;
-    gap: 0;
-    padding: 80px 40px;
-    background: #f8fafc;
-    border-top: 1px solid #e2e8f0;
-    border-bottom: 1px solid #e2e8f0;
-  }
-
-  .stat {
-    text-align: center;
-    padding: 0 40px;
-    border-right: 1px solid #e2e8f0;
-  }
-
-  .stat:last-child { border-right: none; }
-
-  .stat .number {
-    font-size: 52px; font-weight: 900;
-    background: linear-gradient(135deg, #818cf8, #c084fc);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    line-height: 1;
-  }
-
-  .stat .label {
-    font-size: 12px; color: #64748b;
-    margin-top: 10px; text-transform: uppercase; letter-spacing: 2px;
-  }
-
-  /* ── Tech Section ── */
-  .tech-section {
+  /* ── Bilingual section ── */
+  .bilingual-section {
     padding: 120px 40px;
+    background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
     text-align: center;
-    background: #f1f5f9;
+  }
+  .bilingual-section h2 {
+    font-size: 44px; font-weight: 800;
+    color: #0f172a; margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+  .bilingual-section .section-sub {
+    font-size: 17px; color: #64748b;
+    max-width: 540px; margin: 0 auto 56px;
+    line-height: 1.6;
+  }
+  .bilingual-phones {
+    display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
   }
 
-  .tech-section .section-sub {
-    font-size: 18px; color: #64748b;
-    margin-bottom: 64px; max-width: 500px; margin-left: auto; margin-right: auto;
-  }
-
-  .tech-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    max-width: 1040px;
-    margin: 0 auto;
-  }
-
-  .tech-card {
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 20px;
-    padding: 28px 22px;
-    text-align: left;
-    transition: transform 0.3s, border-color 0.3s, background 0.3s;
-  }
-
-  .tech-card:hover {
-    transform: translateY(-4px);
-    border-color: rgba(99,102,241,0.4);
-    background: rgba(99,102,241,0.03);
-    box-shadow: 0 8px 24px rgba(99,102,241,0.1);
-  }
-
-  .tech-card .icon { font-size: 36px; margin-bottom: 14px; }
-
-  .tech-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: #1e293b; }
-
-  .tech-card p { font-size: 13px; color: #64748b; line-height: 1.6; }
-
-  /* ── Safety Section ── */
+  /* ── Safety section ── */
   .safety-section {
     padding: 120px 40px;
     text-align: center;
     background: #fff;
   }
-
+  .safety-section h2 {
+    font-size: 44px; font-weight: 800;
+    margin-bottom: 16px; color: #0f172a;
+    letter-spacing: -0.02em;
+  }
+  .safety-section .section-sub {
+    font-size: 17px; color: #64748b;
+    max-width: 540px; margin: 0 auto 64px;
+    line-height: 1.6;
+  }
   .safety-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 20px;
     max-width: 1000px;
-    margin: 64px auto 0;
+    margin: 0 auto;
     text-align: left;
   }
-
   .safety-card {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
     border-radius: 20px;
     padding: 28px 24px;
-    transition: border-color 0.3s;
+    transition: border-color 0.3s, transform 0.3s;
   }
-
-  .safety-card:hover { border-color: rgba(99,102,241,0.3); }
-
-  .safety-card .icon { font-size: 32px; margin-bottom: 14px; }
-  .feature-list .icon svg { width: 14px; height: 14px; stroke: #a5b4fc; stroke-width: 2; }
-  .safety-card .icon svg { width: 28px; height: 28px; stroke: #a5b4fc; stroke-width: 1.8; }
-  .tech-card .icon svg { width: 32px; height: 32px; stroke: #818cf8; stroke-width: 1.8; }
-  .flow-emoji svg { width: 34px; height: 34px; stroke: #818cf8; stroke-width: 1.5; }
-  .safety-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: #1e293b; }
-  .safety-card p { font-size: 13px; color: #64748b; line-height: 1.6; }
-
-  /* ── Language Badge ── */
-  .lang-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(99,102,241,0.08);
-    border: 1px solid rgba(99,102,241,0.2);
+  .safety-card:hover {
+    border-color: rgba(99,102,241,0.35);
+    transform: translateY(-3px);
+  }
+  .safety-card .icon {
+    width: 44px; height: 44px;
+    background: rgba(99,102,241,0.1);
     border-radius: 12px;
-    padding: 10px 16px;
-    margin-top: 20px;
-    font-size: 14px; color: #4f46e5;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 14px;
   }
+  .safety-card .icon svg { width: 22px; height: 22px; stroke: #6366f1; stroke-width: 2; }
+  .safety-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 8px; color: #0f172a; }
+  .safety-card p { font-size: 14px; color: #64748b; line-height: 1.6; }
 
-  /* ── Footer ── */
+  /* ── Footer / final CTA ── */
   .footer {
     text-align: center;
-    padding: 100px 40px 60px;
+    padding: 120px 40px 60px;
     background: radial-gradient(ellipse at 50% 100%, #1a1040 0%, var(--bg) 70%);
+    position: relative;
   }
-
   .footer h2 {
     font-size: 56px; font-weight: 900;
     margin-bottom: 16px; line-height: 1.1;
+    color: #fff;
+    letter-spacing: -0.02em;
   }
-
   .footer .footer-sub {
-    font-size: 18px; color: #64748b;
+    font-size: 18px; color: #94a3b8;
     margin-bottom: 48px;
-    max-width: 400px;
+    max-width: 460px;
     margin-left: auto; margin-right: auto;
+    line-height: 1.6;
   }
-
-  .badge-row {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin-bottom: 60px;
-    flex-wrap: wrap;
-  }
-
-  .store-badge {
-    display: inline-flex; align-items: center; gap: 10px;
-    font-weight: 700;
-    font-size: 15px;
-    padding: 16px 28px;
-    border-radius: 14px;
-    text-decoration: none;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-
-  .store-badge.apple {
-    background: #fff; color: #000;
-    box-shadow: 0 8px 32px rgba(255,255,255,0.1);
-  }
-
-  .store-badge.apple:hover { transform: translateY(-3px); box-shadow: 0 16px 48px rgba(255,255,255,0.15); }
-
-  .store-badge.android {
-    background: rgba(255,255,255,0.05);
-    color: #a5b4fc;
-    border: 1px solid rgba(99,102,241,0.4);
-  }
-
-  .store-badge.android:hover { transform: translateY(-3px); border-color: var(--indigo); }
-
-  .footer-links {
-    display: flex; justify-content: center; gap: 32px;
+  .footer .badge-row { margin-bottom: 56px; }
+  .footer-meta {
+    font-size: 13px; color: #475569;
     margin-bottom: 40px;
   }
+  .footer-meta a { color: #94a3b8; text-decoration: none; border-bottom: 1px dotted #475569; }
+  .footer-meta a:hover { color: #c4b5fd; border-color: #c4b5fd; }
 
+  .footer-links {
+    display: flex; justify-content: center; gap: 28px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
   .footer-links a {
-    font-size: 14px; color: #475569; text-decoration: none;
+    font-size: 14px; color: #64748b; text-decoration: none;
     transition: color 0.2s;
   }
-
-  .footer-links a:hover { color: #a5b4fc; }
-
+  .footer-links a:hover { color: #c4b5fd; }
   .footer .copyright { font-size: 13px; color: #334155; }
 
   /* ── Responsive ── */
@@ -576,466 +513,384 @@
       text-align: center;
       gap: 40px;
     }
-
-    /* Left-align feature list on mobile so wrapped text stays flush with icon */
     .feature-list li { justify-content: flex-start; text-align: left; }
-
-    .hero h1 { font-size: 48px; }
-    .hero .tagline { font-size: 18px; }
+    .hero h1 { font-size: 56px; }
+    .hero .tagline { font-size: 22px; }
+    .hero .sub-tagline { font-size: 16px; }
     .section-text h2 { font-size: 32px; }
-    .flow-section h2, .tech-section h2 { font-size: 32px; }
-    .phone-frame { width: 230px; }
+    .flow-section h2, .safety-section h2, .bilingual-section h2 { font-size: 32px; }
+    .phone-frame { width: 240px; }
     .flow-steps { flex-direction: column; align-items: center; }
     .flow-arrow { transform: rotate(90deg); }
-    .stats-bar { flex-wrap: wrap; gap: 32px; padding: 60px 24px; }
-    .stat { border-right: none; padding: 0 24px; }
-    .stat .number { font-size: 40px; }
-    .footer h2 { font-size: 36px; }
+    .footer h2 { font-size: 38px; }
     .footer { padding: 80px 24px 48px; }
+    .bilingual-phones { gap: 24px; }
   }
 
   @media (max-width: 600px) {
-    /* Tighter section padding — less vertical scrolling per section */
-    .section { min-height: auto; padding: 64px 20px; }
+    .section { padding: 64px 20px; }
     .section-inner { gap: 32px; }
-
     .flow-section { padding: 80px 20px; }
     .flow-section .section-sub { margin-bottom: 40px; font-size: 16px; }
     .flow-step { width: 100%; max-width: 300px; min-height: auto; padding: 24px 20px; }
     .flow-arrow { margin: 4px 0; }
-
-    .tech-section { padding: 80px 20px; }
-    .tech-section .section-sub { font-size: 16px; margin-bottom: 40px; }
-    .tech-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-    .tech-card { padding: 20px 16px; }
-    .tech-card h3 { font-size: 14px; }
-    .tech-card p { font-size: 12px; }
-
     .safety-section { padding: 80px 20px; }
-    .safety-grid { margin-top: 40px; gap: 12px; }
-    .safety-card { padding: 20px 18px; }
-
-    .hero { padding: 0 20px; }
+    .safety-grid { gap: 12px; }
+    .safety-card { padding: 22px 20px; }
+    .bilingual-section { padding: 80px 20px; }
+    .hero { padding: 70px 20px 40px; }
     .hero h1 { font-size: 56px; }
-    .hero .tagline { font-size: 19px; }
-    .hero .sub-tagline { font-size: 15px; margin-bottom: 32px; }
+    .hero .tagline { font-size: 22px; }
+    .hero .sub-tagline { font-size: 15px; margin-bottom: 28px; }
     .hero-pills { gap: 8px; margin-bottom: 32px; }
-    .hero-pill { font-size: 12px; padding: 7px 13px; }
-    .hero-cta { gap: 12px; }
-    .btn-primary, .btn-secondary { font-size: 15px; padding: 13px 24px; }
-
+    .hero-pill { font-size: 11px; padding: 6px 12px; }
+    .badge-row { gap: 12px; }
+    .store-badge { padding: 10px 18px; min-width: 160px; gap: 10px; }
+    .store-badge svg { width: 24px; height: 24px; }
+    .store-badge .badge-big { font-size: 16px; }
     .section-text h2 { font-size: 28px; }
-    .section-text p { font-size: 15px; }
+    .section-text p.lede { font-size: 16px; }
     .feature-list li { font-size: 14px; }
-    .phone-frame { width: 200px; }
-
-    .stats-bar { padding: 48px 20px; gap: 24px; }
-    .stat .number { font-size: 36px; }
-    .stat .label { font-size: 11px; }
+    .phone-frame { width: 220px; }
   }
 </style>
 </head>
 <body>
 
-<div class="progress-bar" id="progressBar"></div>
-<div style="text-align:center;padding:12px 24px;background:rgba(0,0,0,0.4);backdrop-filter:blur(10px);position:fixed;top:0;left:0;right:0;z-index:100;">
-  <a href="/index-he.html" style="font-size:13px;color:#a5b4fc;text-decoration:none;font-weight:500;">גרסה בעברית →</a>
+<div class="lang-switch-top">
+  <a href="/index-he.html">גרסה בעברית →</a>
 </div>
+
+<div class="progress-bar" id="progressBar"></div>
 
 <!-- ═══════ HERO ═══════ -->
 <div class="hero">
-  <img src="app-icon-512.png" class="hero-icon" alt="Helpy App Icon" onerror="this.style.display='none'">
+  <img src="app-icon-512.png" class="hero-icon" alt="Helpy app icon" onerror="this.style.display='none'">
   <h1>Helpy</h1>
-  <p class="tagline">Neighbors Helping Neighbors</p>
-  <p class="sub-tagline">A community app for people who want to give and receive help - for free.</p>
+  <p class="tagline">Real help, from real neighbors.</p>
+  <p class="sub-tagline">A free community app for the moments you need a hand — and the moments you can give one.</p>
+
   <div class="hero-pills">
-    <span class="hero-pill"><i data-lucide="gift"></i> Always Free</span>
-    <span class="hero-pill"><i data-lucide="globe"></i> Hebrew + English</span>
-    <span class="hero-pill"><i data-lucide="map-pin"></i> Nearby Neighbors</span>
-    <span class="hero-pill"><i data-lucide="shield"></i> Safe & Verified</span>
+    <span class="hero-pill"><i data-lucide="gift"></i> Always free</span>
+    <span class="hero-pill"><i data-lucide="map-pin"></i> Nearby neighbors</span>
+    <span class="hero-pill"><i data-lucide="globe"></i> Hebrew &amp; English</span>
+    <span class="hero-pill"><i data-lucide="shield-check"></i> Verified</span>
   </div>
-  <div class="hero-cta">
-    <a href="https://testflight.apple.com/join/P6uAfJsQ" class="btn-primary">&#63743; Try on iPhone</a>
-    <span class="btn-secondary" style="opacity:0.4;cursor:default;">Android - Coming Soon</span>
+
+  <div class="badge-row">
+    <a href="https://apps.apple.com/app/helpy-neighborly-help/id6758919822" class="store-badge" aria-label="Download Helpy on the App Store">
+      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.86-3.08.41-1.09-.47-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.41C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+      <span class="badge-text">
+        <span class="badge-small">Download on the</span>
+        <span class="badge-big">App Store</span>
+      </span>
+    </a>
+    <a href="https://play.google.com/store/apps/details?id=com.neighborlyhelp.app" class="store-badge" aria-label="Get Helpy on Google Play">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="gp1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#00A0FF"/><stop offset="100%" stop-color="#0064D6"/>
+          </linearGradient>
+          <linearGradient id="gp2" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#FFE000"/><stop offset="100%" stop-color="#FFBD00"/>
+          </linearGradient>
+          <linearGradient id="gp3" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#FF3A44"/><stop offset="100%" stop-color="#C31162"/>
+          </linearGradient>
+          <linearGradient id="gp4" x1="0" y1="0" x2="1" y2="-1">
+            <stop offset="0%" stop-color="#32A071"/><stop offset="100%" stop-color="#2DA771"/>
+          </linearGradient>
+        </defs>
+        <path d="M3.6 2.4c-.4.4-.6 1-.6 1.7v15.8c0 .7.2 1.3.6 1.7L13 12 3.6 2.4z" fill="url(#gp1)"/>
+        <path d="M16.6 15.6L13 12l3.6-3.6 4.6 2.6c1.3.7 1.3 1.9 0 2.6l-4.6 2.0z" fill="url(#gp2)"/>
+        <path d="M16.6 15.6L13 12 3.6 21.6c.6.6 1.5.7 2.4.2l10.6-6.2z" fill="url(#gp3)"/>
+        <path d="M16.6 8.4L6 2.2c-.9-.5-1.8-.4-2.4.2L13 12l3.6-3.6z" fill="url(#gp4)"/>
+      </svg>
+      <span class="badge-text">
+        <span class="badge-small">Get it on</span>
+        <span class="badge-big">Google Play</span>
+      </span>
+    </a>
   </div>
-  <div class="scroll-hint">
-    Explore
-    <span>&#8595;</span>
-  </div>
+
+  <div class="scroll-hint">Explore<span>↓</span></div>
 </div>
 
 <!-- ═══════ HOW IT WORKS ═══════ -->
 <div class="flow-section" id="flow">
-  <div class="section-label">The Flow</div>
-  <h2>How <span style="background:linear-gradient(135deg,#818cf8,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Helpy</span> Works</h2>
-  <p class="section-sub">From request to help in minutes - no fees, no intermediaries, just neighbors.</p>
+  <div class="section-label">How it works</div>
+  <h2>From request to <span class="gradient">help</span> in minutes.</h2>
+  <p class="section-sub">No fees. No middlemen. Just neighbors.</p>
   <div class="flow-steps">
     <div class="flow-step">
       <div class="flow-number">1</div>
       <div class="flow-emoji"><i data-lucide="pen-line"></i></div>
-      <h3>Post a Request</h3>
-      <p>Describe what you need, add photos, pick urgency</p>
+      <h3>Post a request</h3>
+      <p>Say what you need. Add photos. Set how urgent.</p>
     </div>
     <div class="flow-arrow">→</div>
     <div class="flow-step">
       <div class="flow-number">2</div>
       <div class="flow-emoji"><i data-lucide="layers"></i></div>
-      <h3>Helpers Browse</h3>
-      <p>Nearby helpers swipe through cards or browse the map</p>
+      <h3>Neighbors browse</h3>
+      <p>By card or on the map — whatever feels right.</p>
     </div>
     <div class="flow-arrow">→</div>
     <div class="flow-step">
       <div class="flow-number">3</div>
       <div class="flow-emoji"><i data-lucide="hand-helping"></i></div>
-      <h3>Offer Help</h3>
-      <p>Tap "Offer Help" - requester reviews and accepts</p>
+      <h3>Someone offers</h3>
+      <p>You see who they are. You decide.</p>
     </div>
     <div class="flow-arrow">→</div>
     <div class="flow-step">
       <div class="flow-number">4</div>
       <div class="flow-emoji"><i data-lucide="message-circle"></i></div>
-      <h3>Match &amp; Chat</h3>
-      <p>Real-time messaging with typing indicators</p>
+      <h3>Match &amp; chat</h3>
+      <p>Real-time messages to coordinate the help.</p>
     </div>
     <div class="flow-arrow">→</div>
     <div class="flow-step">
       <div class="flow-number">5</div>
       <div class="flow-emoji"><i data-lucide="star"></i></div>
-      <h3>Rate &amp; Build Trust</h3>
-      <p>Star ratings build your community reputation</p>
+      <h3>Rate &amp; build trust</h3>
+      <p>Stars and reviews build a real reputation.</p>
     </div>
   </div>
 </div>
 
-<!-- ═══════ BROWSE (Cards) ═══════ -->
-<div class="section" id="s1">
+<!-- ═══════ BROWSE ═══════ -->
+<div class="section" id="s-browse">
   <div class="section-inner">
     <div class="section-text">
       <span class="step-badge">Browse</span>
-      <h2>Swipe Through <span class="gradient">Requests</span></h2>
-      <p>Browse help requests from neighbors with swipe cards. Cards show category, urgency, distance, requester profile, and up to 3 photos. Haptic feedback on every interaction.</p>
+      <h2>The right kind of <span class="gradient">scrolling</span>.</h2>
+      <p class="lede">Swipe through what your neighbors need. Category, distance, urgency, photos — all at a glance. Tap to offer help.</p>
       <ul class="feature-list">
-        <li><span class="icon"><i data-lucide="hand-helping"></i></span>Pill buttons: "→ Skip" (gray) and "✋ Offer Help" (purple gradient)</li>
-        <li><span class="icon"><i data-lucide="map-pin"></i></span>PostGIS DB-level radius filter - precise distance queries at scale</li>
-        <li><span class="icon"><i data-lucide="zap"></i></span>Loads 25 at a time, auto-fetches more as you go</li>
-        <li><span class="icon"><i data-lucide="move-horizontal"></i></span>Red/green tint overlay follows your swipe direction</li>
-        <li><span class="icon"><i data-lucide="camera"></i></span>Tap photos to zoom (pinch up to 4×)</li>
-        <li><span class="icon"><i data-lucide="ban"></i></span>Hides blocked and reported users automatically</li>
+        <li><span class="icon"><i data-lucide="hand-helping"></i></span>Offer help in one tap</li>
+        <li><span class="icon"><i data-lucide="zap"></i></span>Loads what's near you, fast</li>
+        <li><span class="icon"><i data-lucide="ban"></i></span>Hides anyone you've blocked or reported</li>
       </ul>
     </div>
     <div class="phone-wrapper">
       <div class="phone-frame">
         <div class="phone-notch"></div>
-        <img src="01-browse.png" class="phone-screen" alt="Browse Screen">
+        <img src="screen-browse.png" class="phone-screen" alt="Browse screen — swipe through nearby help requests">
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══════ MAP VIEW ═══════ -->
+<!-- ═══════ MAP ═══════ -->
 <div class="section" id="s-map">
   <div class="section-inner">
     <div class="section-text">
-      <span class="step-badge">Map View <span class="new-badge">New</span></span>
-      <h2>Browse on the <span class="gradient">Map</span></h2>
-      <p>Toggle between card view and map view. See all nearby requests plotted with category emoji pins. Tap any pin to jump to that request - the card updates instantly at the bottom.</p>
+      <span class="step-badge">Map view</span>
+      <h2>See your <span class="gradient">neighborhood</span>.</h2>
+      <p class="lede">Switch to the map to see what's needed where. Pins are color-coded by category. Tap any pin — the request opens right below.</p>
       <ul class="feature-list">
-        <li><span class="icon"><i data-lucide="map-pin"></i></span>Custom emoji pins colored by category</li>
-        <li><span class="icon"><i data-lucide="sparkles"></i></span>Selected pin: highlighted with white border + shadow</li>
-        <li><span class="icon"><i data-lucide="hand-helping"></i></span>Request card shown below map - swipe, skip, or offer help</li>
-        <li><span class="icon"><i data-lucide="refresh-cw"></i></span>Cards ↔ Map toggle - synced to same index</li>
-        <li><span class="icon"><i data-lucide="navigation"></i></span>Camera centers on pin above the bottom card</li>
+        <li><span class="icon"><i data-lucide="map-pin"></i></span>Color-coded pins by category</li>
+        <li><span class="icon"><i data-lucide="navigation"></i></span>Map and card stay in sync</li>
+        <li><span class="icon"><i data-lucide="refresh-cw"></i></span>Toggle back to cards anytime</li>
       </ul>
     </div>
     <div class="phone-wrapper">
       <div class="phone-frame">
         <div class="phone-notch"></div>
-        <img src="map-view.png" class="phone-screen" alt="Map View">
+        <img src="screen-map.png" class="phone-screen" alt="Map view — pins for nearby help requests">
       </div>
     </div>
   </div>
 </div>
 
 <!-- ═══════ POST ═══════ -->
-<div class="section" id="s2">
+<div class="section" id="s-post">
   <div class="section-inner">
     <div class="section-text">
       <span class="step-badge">Post</span>
-      <h2>Ask for <span class="gradient">Help</span> in Seconds</h2>
-      <p>Create a request with a title, description, category, urgency level, and up to 3 photos. Phone verification is required before your first post - keeping the community trustworthy.</p>
+      <h2>Ask for help in <span class="gradient">seconds</span>.</h2>
+      <p class="lede">Pick a category, write a sentence, snap a photo. That's the whole thing. Your post lands in front of nearby neighbors right away.</p>
       <ul class="feature-list">
-        <li><span class="icon"><i data-lucide="hammer"></i></span>12-category grid with icon picker</li>
-        <li><span class="icon"><i data-lucide="camera"></i></span>Photo upload from camera or gallery (up to 3)</li>
-        <li><span class="icon"><i data-lucide="shield"></i></span>Built-in content filter - EN + HE profanity blocked</li>
-        <li><span class="icon"><i data-lucide="smartphone"></i></span>Phone verification required before posting</li>
-        <li><span class="icon"><i data-lucide="check-circle"></i></span>Auto-redirects to My Requests after posting</li>
+        <li><span class="icon"><i data-lucide="grid-3x3"></i></span>12 categories — from groceries to repairs</li>
+        <li><span class="icon"><i data-lucide="camera"></i></span>Up to 3 photos from camera or gallery</li>
+        <li><span class="icon"><i data-lucide="alarm-clock"></i></span>Mark how urgent it is</li>
       </ul>
     </div>
     <div class="phone-wrapper">
       <div class="phone-frame">
         <div class="phone-notch"></div>
-        <img src="02-post.png" class="phone-screen" alt="Post Screen">
+        <img src="screen-post.png" class="phone-screen" alt="Post screen — create a help request">
       </div>
     </div>
   </div>
 </div>
 
 <!-- ═══════ CHAT ═══════ -->
-<div class="section" id="s3">
+<div class="section" id="s-chat">
   <div class="section-inner">
     <div class="section-text">
       <span class="step-badge">Chat</span>
-      <h2><span class="gradient">Real-Time</span> Messaging</h2>
-      <p>Once matched, coordinate instantly with your neighbor. Messages deliver in milliseconds via Supabase Realtime WebSocket subscriptions - with no polling, no delays.</p>
+      <h2>Coordinate in <span class="gradient">real time</span>.</h2>
+      <p class="lede">Once you match, chat to figure out the where, when, and how. Messages are instant — no refresh, no delay.</p>
       <ul class="feature-list">
-        <li><span class="icon"><i data-lucide="pencil"></i></span>Typing indicators - animated dots when partner is typing <span class="new-badge">New</span></li>
-        <li><span class="icon"><i data-lucide="check"></i></span>Read receipts - "Seen ✓" when your message was read <span class="new-badge">New</span></li>
-        <li><span class="icon"><i data-lucide="send"></i></span>Instant delivery via Realtime broadcast channel</li>
-        <li><span class="icon"><i data-lucide="bell-dot"></i></span>Unread badge on tab - clears when you open Chat</li>
-        <li><span class="icon"><i data-lucide="scroll"></i></span>Pagination - load earlier messages on demand</li>
-        <li><span class="icon"><i data-lucide="check-circle"></i></span>Mark Complete and rate your helper from chat</li>
-        <li><span class="icon"><i data-lucide="ban"></i></span>Report or block users directly from chat header</li>
+        <li><span class="icon"><i data-lucide="pencil"></i></span>Typing indicators</li>
+        <li><span class="icon"><i data-lucide="check"></i></span>Read receipts</li>
+        <li><span class="icon"><i data-lucide="star"></i></span>Mark complete &amp; rate when you're done</li>
       </ul>
     </div>
     <div class="phone-wrapper">
       <div class="phone-frame">
         <div class="phone-notch"></div>
-        <img src="03-chat.png" class="phone-screen" alt="Chat Screen">
+        <img src="screen-chat.png" class="phone-screen" alt="Chat screen — real-time messaging">
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══════ REQUESTS ═══════ -->
-<div class="section" id="s4">
+<!-- ═══════ ACTIVITY ═══════ -->
+<div class="section" id="s-activity">
   <div class="section-inner">
     <div class="section-text">
-      <span class="step-badge">Manage</span>
-      <h2>Your <span class="gradient">Requests</span>, Organized</h2>
-      <p>Review all active and past requests in one place. Accept or decline helpers with a tap, close completed requests, and rate your experience - all with haptic feedback.</p>
+      <span class="step-badge">Activity</span>
+      <h2>Everything in <span class="gradient">one place</span>.</h2>
+      <p class="lede">All your requests and offers, active and past. Accept or decline with a tap. Tap any photo to zoom in. Rate your helper when the job's done.</p>
       <ul class="feature-list">
-        <li><span class="icon"><i data-lucide="layout-list"></i></span>Active and History tabs</li>
-        <li><span class="icon"><i data-lucide="check-circle"></i></span>Accept or decline helper offers</li>
-        <li><span class="icon"><i data-lucide="party-popper"></i></span>Celebration animation on accept + "Chat Now" CTA <span class="new-badge">New</span></li>
-        <li><span class="icon"><i data-lucide="camera"></i></span>View request photos with pinch-to-zoom</li>
-        <li><span class="icon"><i data-lucide="refresh-cw"></i></span>Auto-refreshes when tab is focused</li>
-        <li><span class="icon"><i data-lucide="star"></i></span>Star rating prompt on request completion</li>
+        <li><span class="icon"><i data-lucide="layout-list"></i></span>Active and history tabs</li>
+        <li><span class="icon"><i data-lucide="check-circle"></i></span>Accept or decline offers in a tap</li>
+        <li><span class="icon"><i data-lucide="party-popper"></i></span>Quick path to chat after accepting</li>
       </ul>
     </div>
     <div class="phone-wrapper">
       <div class="phone-frame">
         <div class="phone-notch"></div>
-        <img src="04-requests.png" class="phone-screen" alt="Requests Screen">
+        <img src="screen-activity.png" class="phone-screen" alt="Activity screen — manage your requests">
       </div>
     </div>
   </div>
 </div>
 
 <!-- ═══════ PROFILE ═══════ -->
-<div class="section" id="s5">
+<div class="section" id="s-profile">
   <div class="section-inner">
     <div class="section-text">
       <span class="step-badge">Profile</span>
-      <h2>Your <span class="gradient">Community</span> Identity</h2>
-      <p>Your public profile shows your stats, star rating, and reviews. Tap any user's name or avatar anywhere in the app to see their full review wall and community track record.</p>
+      <h2>Build a <span class="gradient">community</span> reputation.</h2>
+      <p class="lede">A real public profile with your rating, reviews, and the help you've given. Streaks and a monthly leaderboard make showing up feel good.</p>
       <ul class="feature-list">
-        <li><span class="icon"><i data-lucide="bar-chart-2"></i></span>Community Impact: Helped, Got Help, Rating, Posted</li>
-        <li><span class="icon"><i data-lucide="user"></i></span>Public profiles with review wall and share button</li>
-        <li><span class="icon"><i data-lucide="check-circle"></i></span>Verification badge for Google/Apple sign-in</li>
-        <li><span class="icon"><i data-lucide="locate"></i></span>Search radius (1–10 km) and availability toggle</li>
-        <li><span class="icon"><i data-lucide="trash-2"></i></span>Account deletion with full data wipe</li>
-      </ul>
-      <div class="lang-badge">
-        🇮🇱 Full Hebrew &amp; English · RTL Support
-      </div>
-    </div>
-    <div class="phone-wrapper">
-      <div class="phone-frame">
-        <div class="phone-notch"></div>
-        <img src="05-profile.png" class="phone-screen" alt="Profile Screen">
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════ HEBREW ═══════ -->
-<div class="section" id="s6">
-  <div class="section-inner">
-    <div class="section-text">
-      <span class="step-badge">🇮🇱 Hebrew</span>
-      <h2>Full <span class="gradient">RTL</span> Support</h2>
-      <p>Every screen, label, and button is translated. The entire layout flips to right-to-left for Hebrew speakers. One tap in Profile to switch - the app remembers your preference.</p>
-      <ul class="feature-list">
-        <li><span class="icon"><i data-lucide="refresh-cw"></i></span>One-tap language toggle on Profile screen</li>
-        <li><span class="icon"><i data-lucide="navigation"></i></span>Full RTL layout - arrows, inputs, modals all flip</li>
-        <li><span class="icon"><i data-lucide="ruler"></i></span>Hebrew uses km (ק״מ) instead of miles</li>
-        <li><span class="icon"><i data-lucide="globe"></i></span>210+ bilingual translation keys</li>
-        <li><span class="icon"><i data-lucide="handshake"></i></span>Language preference synced to your profile</li>
+        <li><span class="icon"><i data-lucide="bar-chart-2"></i></span>Helped, got help, rating, posted</li>
+        <li><span class="icon"><i data-lucide="flame"></i></span>Daily streak counter</li>
+        <li><span class="icon"><i data-lucide="trophy"></i></span>Monthly neighborhood leaderboard</li>
       </ul>
     </div>
     <div class="phone-wrapper">
       <div class="phone-frame">
         <div class="phone-notch"></div>
-        <img src="06-hebrew.png" class="phone-screen" alt="Browse with Photo">
+        <img src="screen-profile.png" class="phone-screen" alt="Profile screen — your community identity">
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══════ STATS ═══════ -->
-<div class="stats-bar">
-  <div class="stat">
-    <div class="number">210+</div>
-    <div class="label">Translation Keys</div>
-  </div>
-  <div class="stat">
-    <div class="number">12</div>
-    <div class="label">Help Categories</div>
-  </div>
-  <div class="stat">
-    <div class="number">9</div>
-    <div class="label">DB Tables</div>
-  </div>
-  <div class="stat">
-    <div class="number">5</div>
-    <div class="label">Edge Functions</div>
-  </div>
-  <div class="stat">
-    <div class="number">2</div>
-    <div class="label">Languages</div>
+<!-- ═══════ BILINGUAL ═══════ -->
+<div class="bilingual-section">
+  <div class="section-label" style="color:#6366f1;">Hebrew &amp; English</div>
+  <h2>One app, <span class="gradient">two languages</span>.</h2>
+  <p class="section-sub">Full Hebrew with right-to-left layout, full English. One tap to switch — the app remembers.</p>
+  <div class="bilingual-phones">
+    <div class="phone-wrapper">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <img src="screen-browse.png" class="phone-screen" alt="Helpy in English">
+      </div>
+    </div>
+    <div class="phone-wrapper">
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <img src="screen-hebrew-browse.png" class="phone-screen" alt="Helpy in Hebrew (RTL)">
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- ═══════ SAFETY ═══════ -->
 <div class="safety-section" id="safety">
-  <div class="section-label">Trust &amp; Safety</div>
-  <h2 style="font-size:44px;font-weight:800;margin-bottom:12px;color:#0f172a;">Built Safe <span class="gradient">From Day One</span></h2>
-  <p style="font-size:17px;color:#64748b;max-width:520px;margin:0 auto;">Safety isn't a feature we added - it's baked into every layer of the app.</p>
+  <div class="section-label">Trust &amp; safety</div>
+  <h2>Built safe, <span class="gradient">from day one</span>.</h2>
+  <p class="section-sub">Safety isn't an extra. It's part of how Helpy is designed — at the surface and underneath.</p>
   <div class="safety-grid">
     <div class="safety-card">
       <div class="icon"><i data-lucide="smartphone"></i></div>
-      <h3>Phone Verification</h3>
-      <p>Required before helping or posting. Verified via Twilio SMS OTP - rate-limited to 3 attempts per 10 minutes.</p>
+      <h3>Verified phones</h3>
+      <p>Every helper verifies their phone before offering help. No anonymous offers.</p>
     </div>
     <div class="safety-card">
       <div class="icon"><i data-lucide="ban"></i></div>
-      <h3>Report &amp; Block</h3>
-      <p>Report any user with 5 reason options. Auto-block on report. Bidirectional blocking - blocked users disappear from both sides.</p>
+      <h3>Report &amp; block</h3>
+      <p>One tap to remove anyone from your view. Blocking is instant and goes both ways.</p>
     </div>
     <div class="safety-card">
-      <div class="icon"><i data-lucide="shield"></i></div>
-      <h3>Row-Level Security</h3>
-      <p>All 9 database tables have RLS policies. You can only see and modify data you're authorized to access.</p>
-    </div>
-    <div class="safety-card">
-      <div class="icon"><i data-lucide="filter"></i></div>
-      <h3>Content Filter</h3>
-      <p>EN + HE profanity blocklist applied to all posts and messages before they reach the database.</p>
-    </div>
-    <div class="safety-card">
-      <div class="icon"><i data-lucide="file-text"></i></div>
-      <h3>Terms Acceptance</h3>
-      <p>Every user must accept community guidelines on first sign-in - covering zero tolerance for harassment and fraud.</p>
+      <div class="icon"><i data-lucide="lock"></i></div>
+      <h3>Private by default</h3>
+      <p>Your exact location is never shared. Helpers see distance, not your address.</p>
     </div>
     <div class="safety-card">
       <div class="icon"><i data-lucide="trash-2"></i></div>
-      <h3>Account Deletion</h3>
-      <p>Full data wipe on request - profiles, messages, matches, ratings, all deleted via server-side RPC with one tap.</p>
+      <h3>Delete anytime</h3>
+      <p>Erase your account and every trace of your data with one tap. No questions, no waiting.</p>
     </div>
   </div>
 </div>
 
-<!-- ═══════ TECH ═══════ -->
-<div class="tech-section" id="tech">
-  <div class="section-label">Under the Hood</div>
-  <h2>Built <span class="gradient">With Care</span></h2>
-  <p class="section-sub">Modern stack chosen for reliability, real-time speed, and zero ongoing infrastructure cost.</p>
-  <div class="tech-grid">
-    <div class="tech-card">
-      <div class="icon"><i data-lucide="smartphone"></i></div>
-      <h3>React Native + Expo</h3>
-      <p>SDK 54, TypeScript, EAS Build. Ships to iOS and Android from one codebase.</p>
-    </div>
-    <div class="tech-card">
-      <div class="icon"><i data-lucide="zap"></i></div>
-      <h3>Supabase</h3>
-      <p>PostgreSQL with RLS on all tables, Realtime WebSockets, Storage, and 5 Edge Functions (Deno).</p>
-    </div>
-    <div class="tech-card">
-      <div class="icon"><i data-lucide="key"></i></div>
-      <h3>Authentication</h3>
-      <p>Google OAuth (primary), Apple Sign-In, email hidden fallback. Auto-profile creation on social sign-in.</p>
-    </div>
-    <div class="tech-card">
-      <div class="icon"><i data-lucide="message-square"></i></div>
-      <h3>Twilio Verify</h3>
-      <p>SMS OTP phone verification via Edge Function. Rate-limited. Bypasses flaky Supabase phone auth.</p>
-    </div>
-    <div class="tech-card">
-      <div class="icon"><i data-lucide="bell"></i></div>
-      <h3>Push Notifications</h3>
-      <p>Expo Push API with bilingual (HE/EN) alerts for new offers, messages, accepted matches, and ratings.</p>
-    </div>
-    <div class="tech-card">
-      <div class="icon"><i data-lucide="map"></i></div>
-      <h3>Maps + Geolocation</h3>
-      <p>react-native-maps with custom emoji pins. Haversine distance. expo-location auto-updates on sign-in.</p>
-    </div>
-    <div class="tech-card">
-      <div class="icon"><i data-lucide="globe"></i></div>
-      <h3>i18n + RTL</h3>
-      <p>210+ keys, Hebrew/English toggle, full right-to-left layout flip, km vs miles auto-switch.</p>
-    </div>
-    <div class="tech-card">
-      <div class="icon"><i data-lucide="moon"></i></div>
-      <h3>Dark Mode</h3>
-      <p>Full system dark mode - every screen, modal, and component uses a themed color system with smooth transitions.</p>
-    </div>
-    <div class="tech-card">
-      <div class="icon"><i data-lucide="sparkles"></i></div>
-      <h3>Animations</h3>
-      <p>Haptic feedback, spring animations, skeleton loaders, swipe tint overlay, celebration confetti on match accept.</p>
-    </div>
-    <div class="tech-card">
-      <div class="icon"><i data-lucide="trending-up"></i></div>
-      <h3>PostHog Analytics</h3>
-      <p>EU-hosted. Tracks the full funnel: sign_up → request_posted → swipe_right → match_created → help_completed.</p>
-    </div>
-    <div class="tech-card">
-      <div class="icon"><i data-lucide="bug"></i></div>
-      <h3>Sentry Crash Reporting</h3>
-      <p>EU data center. Catches unhandled exceptions, reports JS errors with full stack traces, and error boundary UI fallback.</p>
-    </div>
-    <div class="tech-card">
-      <div class="icon"><i data-lucide="trophy"></i></div>
-      <h3>Neighborhood Leaderboard</h3>
-      <p>Monthly top helpers ranked by your search radius. Medals for top 3, streak counter, opt-out toggle. Resets every month.</p>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════ FOOTER ═══════ -->
+<!-- ═══════ FOOTER / FINAL CTA ═══════ -->
 <div class="footer">
-  <h2>Start <span style="background:linear-gradient(135deg,#818cf8,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Helping</span> Today</h2>
-  <p class="footer-sub">Free for everyone. Always. No fees, no subscriptions, no middlemen.</p>
+  <h2>Start <span class="gradient">helping</span> today.</h2>
+  <p class="footer-sub">Free for everyone. Always.</p>
+
   <div class="badge-row">
-    <a href="https://testflight.apple.com/join/P6uAfJsQ" class="store-badge apple">
-      &#63743; &nbsp;TestFlight (iOS Beta)
+    <a href="https://apps.apple.com/app/helpy-neighborly-help/id6758919822" class="store-badge" aria-label="Download Helpy on the App Store">
+      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.86-3.08.41-1.09-.47-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.41C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+      <span class="badge-text">
+        <span class="badge-small">Download on the</span>
+        <span class="badge-big">App Store</span>
+      </span>
     </a>
-    <span class="store-badge android" style="opacity:0.4;cursor:default;">
-      Android - Coming Soon
-    </span>
+    <a href="https://play.google.com/store/apps/details?id=com.neighborlyhelp.app" class="store-badge" aria-label="Get Helpy on Google Play">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="gp1f" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00A0FF"/><stop offset="100%" stop-color="#0064D6"/></linearGradient>
+          <linearGradient id="gp2f" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#FFE000"/><stop offset="100%" stop-color="#FFBD00"/></linearGradient>
+          <linearGradient id="gp3f" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FF3A44"/><stop offset="100%" stop-color="#C31162"/></linearGradient>
+          <linearGradient id="gp4f" x1="0" y1="0" x2="1" y2="-1"><stop offset="0%" stop-color="#32A071"/><stop offset="100%" stop-color="#2DA771"/></linearGradient>
+        </defs>
+        <path d="M3.6 2.4c-.4.4-.6 1-.6 1.7v15.8c0 .7.2 1.3.6 1.7L13 12 3.6 2.4z" fill="url(#gp1f)"/>
+        <path d="M16.6 15.6L13 12l3.6-3.6 4.6 2.6c1.3.7 1.3 1.9 0 2.6l-4.6 2.0z" fill="url(#gp2f)"/>
+        <path d="M16.6 15.6L13 12 3.6 21.6c.6.6 1.5.7 2.4.2l10.6-6.2z" fill="url(#gp3f)"/>
+        <path d="M16.6 8.4L6 2.2c-.9-.5-1.8-.4-2.4.2L13 12l3.6-3.6z" fill="url(#gp4f)"/>
+      </svg>
+      <span class="badge-text">
+        <span class="badge-small">Get it on</span>
+        <span class="badge-big">Google Play</span>
+      </span>
+    </a>
   </div>
+
+  <p class="footer-meta">
+    Prefer the beta channel? <a href="https://testflight.apple.com/join/P6uAfJsQ">Join on TestFlight (iOS)</a>
+  </p>
+
   <div class="footer-links">
-    <a href="/privacy.html">Privacy Policy</a>
-    <a href="/terms.html">Terms of Service</a>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/terms.html">Terms</a>
+    <a href="/delete-account.html">Delete account</a>
     <a href="mailto:support@help-y.com">Contact</a>
+    <a href="/index-he.html">עברית</a>
   </div>
+
   <p class="copyright">© 2026 Helpy. Made with care for communities everywhere.</p>
 </div>
 
 <script>
-  // Redirect app users (mobile, no referrer) to privacy policy
+  // Redirect mobile app users (no referrer) to privacy
   if (!localStorage.getItem('visited_landing') && !document.referrer && /iPhone|iPad|Android/i.test(navigator.userAgent)) {
     window.location.replace('/privacy.html');
   }
@@ -1045,7 +900,8 @@
   window.addEventListener('scroll', () => {
     const scrollTop = window.scrollY;
     const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    document.getElementById('progressBar').style.width = (scrollTop / docHeight * 100) + '%';
+    const pct = docHeight > 0 ? (scrollTop / docHeight * 100) : 0;
+    document.getElementById('progressBar').style.width = pct + '%';
   });
 
   // Reveal sections on scroll
@@ -1054,32 +910,10 @@
       if (entry.isIntersecting) entry.target.classList.add('visible');
     });
   }, { threshold: 0.12 });
-
   document.querySelectorAll('.section').forEach(el => observer.observe(el));
 
   // Render Lucide icons
   lucide.createIcons();
-
-  // Space bar auto-play tour
-  const tourSections = ['flow', 's1', 's-map', 's2', 's3', 's4', 's5', 's6', 'safety', 'tech'];
-  let touring = false;
-
-  function startTour() {
-    if (touring) return;
-    touring = true;
-    let i = 0;
-    function next() {
-      if (i >= tourSections.length) { touring = false; return; }
-      const el = document.getElementById(tourSections[i++]);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      setTimeout(next, 3200);
-    }
-    next();
-  }
-
-  document.addEventListener('keydown', (e) => {
-    if (e.code === 'Space' && !touring) { e.preventDefault(); startTour(); }
-  });
 </script>
 
 </body>
