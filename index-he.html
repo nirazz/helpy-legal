@@ -11,7 +11,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://help-y.com/index-he.html">
 <link rel="icon" href="app-icon-512.png">
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -366,6 +366,13 @@
     .bilingual-phones { gap: 24px; }
   }
 
+  /* Fallback when icons fail (CDN blip / JS disabled) */
+  body.no-icons [data-lucide] { display: none; }
+  body.no-icons .feature-list .icon,
+  body.no-icons .safety-card .icon,
+  body.no-icons .flow-emoji { display: none; }
+  body.no-icons .feature-list li { gap: 0; }
+
   @media (max-width: 600px) {
     .section { padding: 64px 20px; }
     .flow-section { padding: 80px 20px; }
@@ -391,6 +398,13 @@
     .phone-frame { width: 220px; }
   }
 </style>
+<noscript>
+  <style>
+    [data-lucide] { display: none; }
+    .feature-list .icon, .safety-card .icon, .flow-emoji { display: none; }
+    .feature-list li { gap: 0; }
+  </style>
+</noscript>
 </head>
 <body>
 
@@ -733,7 +747,11 @@
   }, { threshold: 0.12 });
   document.querySelectorAll('.section').forEach(el => observer.observe(el));
 
-  lucide.createIcons();
+  if (window.lucide) {
+    lucide.createIcons();
+  } else {
+    document.body.classList.add('no-icons');
+  }
 </script>
 
 </body>

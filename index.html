@@ -12,7 +12,7 @@
 <meta property="og:url" content="https://help-y.com/">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="app-icon-512.png">
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -527,6 +527,14 @@
     .bilingual-phones { gap: 24px; }
   }
 
+  /* Fallback when icons fail (CDN blip / JS disabled) — empty icon slots
+     would otherwise leave odd gaps in pill / list / safety-card layouts */
+  body.no-icons [data-lucide] { display: none; }
+  body.no-icons .feature-list .icon,
+  body.no-icons .safety-card .icon,
+  body.no-icons .flow-emoji { display: none; }
+  body.no-icons .feature-list li { gap: 0; }
+
   @media (max-width: 600px) {
     .section { padding: 64px 20px; }
     .section-inner { gap: 32px; }
@@ -554,6 +562,13 @@
     .phone-frame { width: 220px; }
   }
 </style>
+<noscript>
+  <style>
+    [data-lucide] { display: none; }
+    .feature-list .icon, .safety-card .icon, .flow-emoji { display: none; }
+    .feature-list li { gap: 0; }
+  </style>
+</noscript>
 </head>
 <body>
 
@@ -890,12 +905,6 @@
 </div>
 
 <script>
-  // Redirect mobile app users (no referrer) to privacy
-  if (!localStorage.getItem('visited_landing') && !document.referrer && /iPhone|iPad|Android/i.test(navigator.userAgent)) {
-    window.location.replace('/privacy.html');
-  }
-  localStorage.setItem('visited_landing', '1');
-
   // Progress bar
   window.addEventListener('scroll', () => {
     const scrollTop = window.scrollY;
@@ -912,8 +921,12 @@
   }, { threshold: 0.12 });
   document.querySelectorAll('.section').forEach(el => observer.observe(el));
 
-  // Render Lucide icons
-  lucide.createIcons();
+  // Render Lucide icons — gracefully degrade if the CDN failed to load
+  if (window.lucide) {
+    lucide.createIcons();
+  } else {
+    document.body.classList.add('no-icons');
+  }
 </script>
 
 </body>
