@@ -54,7 +54,7 @@
     <div class="hero">
         <span class="hero-badge">Legal</span>
         <h1>Privacy Policy</h1>
-        <p>Last updated February 17, 2026</p>
+        <p>Last updated June 18, 2026</p>
     </div>
     <nav class="nav">
         <a href="/">Home</a>
@@ -74,6 +74,14 @@
         <div class="divider"></div>
 
         <div class="section">
+            <h2>Who We Are (Data Controller)</h2>
+            <p>Helpy is operated as a sole proprietorship (עוסק פטור) based in Israel, which is the data controller responsible for your personal information. You can contact us about any privacy matter at <a href="mailto:support@help-y.com">support@help-y.com</a>, and we will provide our full registered identity on request.</p>
+            <p>Helpy is operated from Israel and is available internationally. If you use Helpy from the European Economic Area, the United Kingdom, or elsewhere, the protections described in this policy apply to you.</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section">
             <h2>Information We Collect</h2>
 
             <h3>Account Information</h3>
@@ -82,6 +90,7 @@
                 <li><strong>Name</strong> - Your display name shown to other users</li>
                 <li><strong>Email address</strong> - Used for authentication and account recovery</li>
                 <li><strong>Profile photo</strong> - From your Google or Apple account if you sign in with those services</li>
+                <li><strong>Phone number</strong> - Collected only if you complete phone verification</li>
             </ul>
 
             <h3>Location Data</h3>
@@ -96,7 +105,7 @@
             <h3>User-Generated Content</h3>
             <p>We store content you create within the app:</p>
             <ul>
-                <li>Help requests (title, description, category, urgency)</li>
+                <li>Help requests (title, description, category, urgency, and images)</li>
                 <li>Chat messages between matched users</li>
                 <li>Ratings and reviews of other users</li>
             </ul>
@@ -129,11 +138,47 @@
 
         <div class="section">
             <h2>Data Sharing</h2>
-            <p>We do not sell, trade, or share your personal information with third parties. Your data is only visible to:</p>
+            <p><strong>We never sell or rent your personal information.</strong> We do not trade your data for marketing purposes. We do, however, share limited data in the following ways in order to operate the app:</p>
+
+            <h3>With Other Users</h3>
+            <p>Part of your profile is visible to other users so the service can work:</p>
             <ul>
-                <li>Other app users (your name, profile photo, ratings, and approximate location)</li>
-                <li>Matched users (chat messages)</li>
+                <li>Other app users see your name, profile photo, ratings, and approximate location</li>
+                <li>Matched users can see the chat messages you exchange with them</li>
             </ul>
+
+            <h3>With Service Providers (processors acting on our behalf)</h3>
+            <p>We use trusted third-party providers to run the app. These providers process data only on our behalf, under contract, and only as needed to provide their service - they do not use your data for their own purposes:</p>
+            <ul>
+                <li><strong>Supabase</strong> - database, authentication, and storage hosting</li>
+                <li><strong>Google &amp; Apple</strong> - sign-in (authentication only)</li>
+                <li><strong>Expo / push notification services</strong> - to deliver push notifications to your device</li>
+                <li><strong>PostHog</strong> - product analytics, to understand how the app is used and improve it</li>
+                <li><strong>Sentry</strong> - crash and error reporting, to detect and fix bugs</li>
+            </ul>
+
+            <h3>With our Advertising Partner</h3>
+            <p>Only where you have given consent, we share limited app-event data with <strong>Meta (Facebook)</strong> for advertising measurement and attribution (see "Analytics &amp; Advertising" below). Unlike the service providers above, Meta may also use this data in accordance with its own terms. We do not share your name, email, or chat content with Meta, and you can withhold or withdraw consent at any time.</p>
+
+            <h3>For Legal Reasons</h3>
+            <p>We may disclose information if required to do so by law, or if we believe in good faith that disclosure is necessary to comply with a legal obligation, protect the safety of any person, or investigate fraud or a violation of our Terms.</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section">
+            <h2>Analytics &amp; Advertising</h2>
+            <p>We use analytics tools (such as PostHog) to understand how people use Helpy so we can improve it. Where you have given consent, we also use Meta's advertising tools (the Meta SDK) to share limited app-event data - such as app install, sign-up, posting a request, and creating a match - with Meta so we can measure which ads led people to Helpy (advertising measurement and attribution). This sharing only happens after you consent, and you can withdraw consent at any time. We do not use your personal data to build advertising profiles about you, and we do not sell your data to advertisers.</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section">
+            <h2>Legal Basis, Retention &amp; International Transfers</h2>
+            <p><strong>Legal basis (where GDPR applies):</strong> we process your data to perform our contract with you (providing the service), based on your consent (for location, push notifications, and advertising measurement), and for our legitimate interests (keeping the service safe, preventing fraud, and improving the product).</p>
+            <p><strong>Retention:</strong> we keep your data for as long as your account is active. When you delete your account, your personal information is deleted or anonymized within 90 days, except where we are required to retain certain records (in anonymized or limited form) to comply with legal obligations, resolve disputes, or prevent fraud and abuse.</p>
+            <p><strong>International transfers:</strong> our primary database is hosted in the European Union (Supabase, EU region). Israel - where we are based - benefits from a European Commission adequacy decision. Some service providers and our advertising partner (for example, Meta, and certain analytics or crash-reporting providers) may process data in the United States or other countries. Where data is transferred outside the European Economic Area, we rely on appropriate safeguards, such as Standard Contractual Clauses or the EU-US Data Privacy Framework, to protect it.</p>
+            <p><strong>Automated decision-making:</strong> we do not make decisions that produce legal or similarly significant effects about you based solely on automated processing. Our feed ranking and matching only help surface relevant nearby requests and do not make such decisions.</p>
         </div>
 
         <div class="divider"></div>
@@ -147,19 +192,25 @@
 
         <div class="section">
             <h2>Your Rights</h2>
+            <p>Depending on where you live (including under the EU/UK GDPR), you have the right to:</p>
             <ul>
-                <li><strong>Access</strong> your personal data</li>
+                <li><strong>Access</strong> the personal data we hold about you</li>
+                <li><strong>Correct</strong> inaccurate or incomplete data</li>
                 <li><strong>Delete</strong> your account and all associated data</li>
-                <li><strong>Opt out</strong> of push notifications</li>
-                <li><strong>Revoke</strong> location permissions</li>
+                <li><strong>Export</strong> a copy of your data (data portability)</li>
+                <li><strong>Object to or restrict</strong> certain processing</li>
+                <li><strong>Withdraw consent</strong> at any time (for location, notifications, or advertising measurement)</li>
+                <li><strong>Opt out</strong> of push notifications, and <strong>revoke</strong> location permissions, in your device settings</li>
+                <li><strong>Lodge a complaint</strong> with your local data protection authority</li>
             </ul>
+            <p>To exercise any of these rights, contact us at <a href="mailto:support@help-y.com">support@help-y.com</a>. Many actions (deleting your account, disabling notifications, revoking location) can also be done directly in the app.</p>
         </div>
 
         <div class="divider"></div>
 
         <div class="section">
             <h2>Children's Privacy</h2>
-            <p>Helpy is not intended for children under 13. We do not knowingly collect personal information from children under 13.</p>
+            <p>Helpy is intended for users aged 18 and older. It is not directed to children, and we do not knowingly collect personal information from anyone under 18. If we learn that we have collected data from someone under 18, we will delete it. If you believe a minor is using the app, please contact us at <a href="mailto:support@help-y.com">support@help-y.com</a>.</p>
         </div>
 
         <div class="divider"></div>
