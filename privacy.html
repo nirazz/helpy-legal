@@ -54,7 +54,7 @@
     <div class="hero">
         <span class="hero-badge">Legal</span>
         <h1>Privacy Policy</h1>
-        <p>Last updated June 18, 2026</p>
+        <p>Last updated June 25, 2026</p>
     </div>
     <nav class="nav">
         <a href="/">Home</a>
@@ -112,6 +112,9 @@
 
             <h3>Authentication Data</h3>
             <p>We support sign-in via Google and Apple. When using third-party sign-in, we receive only your name, email, and profile photo. We do not access your contacts, calendar, or other personal data from these services.</p>
+
+            <h3>Is Providing This Data Required?</h3>
+            <p>Providing your name and email is necessary to create an account and use Helpy - this is a contractual requirement, and without it we cannot provide the service. Location and phone verification are optional, but some features will not work without them: if you do not share your location, we cannot show you nearby requests or distance-based matches, and if you do not verify your phone, you cannot post a request or offer help. Advertising-measurement data is shared only if you consent and is never required to use the app. You can withdraw any optional permission at any time (see "Your Rights" below).</p>
         </div>
 
         <div class="divider"></div>
@@ -148,14 +151,16 @@
             </ul>
 
             <h3>With Service Providers (processors acting on our behalf)</h3>
-            <p>We use trusted third-party providers to run the app. These providers process data only on our behalf, under contract, and only as needed to provide their service - they do not use your data for their own purposes:</p>
+            <p>We use trusted third-party providers to run the app. These providers process data only on our behalf, under a data-processing agreement, and only as needed to provide their service - they do not use your data for their own purposes:</p>
             <ul>
-                <li><strong>Supabase</strong> - database, authentication, and storage hosting</li>
-                <li><strong>Google &amp; Apple</strong> - sign-in (authentication only)</li>
+                <li><strong>Supabase</strong> - database, authentication, and storage hosting (EU region)</li>
                 <li><strong>Expo / push notification services</strong> - to deliver push notifications to your device</li>
-                <li><strong>PostHog</strong> - product analytics, to understand how the app is used and improve it</li>
+                <li><strong>PostHog</strong> - product analytics, to understand how the app is used and improve it (EU region)</li>
                 <li><strong>Sentry</strong> - crash and error reporting, to detect and fix bugs</li>
             </ul>
+
+            <h3>With Authentication Providers</h3>
+            <p>When you choose to sign in with <strong>Google</strong> or <strong>Apple</strong>, they authenticate you and provide us your name, email, and profile photo. For their own sign-in services these companies act as independent data controllers under their own privacy policies, not as our processors.</p>
 
             <h3>With our Advertising Partner</h3>
             <p>Only where you have given consent, we share limited app-event data with <strong>Meta (Facebook)</strong> for advertising measurement and attribution (see "Analytics &amp; Advertising" below). Unlike the service providers above, Meta may also use this data in accordance with its own terms. We do not share your name, email, or chat content with Meta, and you can withhold or withdraw consent at any time.</p>
@@ -176,8 +181,8 @@
         <div class="section">
             <h2>Legal Basis, Retention &amp; International Transfers</h2>
             <p><strong>Legal basis (where GDPR applies):</strong> we process your data to perform our contract with you (providing the service), based on your consent (for location, push notifications, and advertising measurement), and for our legitimate interests (keeping the service safe, preventing fraud, and improving the product).</p>
-            <p><strong>Retention:</strong> we keep your data for as long as your account is active. When you delete your account, your personal information is deleted or anonymized within 90 days, except where we are required to retain certain records (in anonymized or limited form) to comply with legal obligations, resolve disputes, or prevent fraud and abuse.</p>
-            <p><strong>International transfers:</strong> our primary database is hosted in the European Union (Supabase, EU region). Israel - where we are based - benefits from a European Commission adequacy decision. Some service providers and our advertising partner (for example, Meta, and certain analytics or crash-reporting providers) may process data in the United States or other countries. Where data is transferred outside the European Economic Area, we rely on appropriate safeguards, such as Standard Contractual Clauses or the EU-US Data Privacy Framework, to protect it.</p>
+            <p><strong>Retention:</strong> we keep your data for as long as your account is active. When you delete your account, we anonymize your personal information (name, photo, phone, and location) immediately, and remove or anonymize remaining personal data within 90 days. Some records are kept in anonymized or limited form where we are required to retain them to comply with legal obligations, resolve disputes, or prevent fraud and abuse - for example, chat messages you sent remain visible to the other participant (shown as "Deleted User"), and proof of your acceptance of our Terms is retained.</p>
+            <p><strong>International transfers:</strong> our primary database is hosted in the European Union (Supabase, EU region), and our analytics provider (PostHog) is also in the EU. Israel - where we are based - benefits from a European Commission adequacy decision. Some providers and our advertising partner (for example, Meta, Sentry, and Expo) may process data in the United States or other countries. Where we transfer personal data outside the European Economic Area or the UK, we rely on appropriate safeguards: for providers certified under the EU-US Data Privacy Framework (and its UK Extension), transfers are covered by the European Commission's adequacy decision of 10 July 2023; for all other transfers, and as an additional safeguard, we rely on the European Commission's Standard Contractual Clauses (and the UK International Data Transfer Addendum). You can request a copy of the relevant safeguards at <a href="mailto:support@help-y.com">support@help-y.com</a>.</p>
             <p><strong>Automated decision-making:</strong> we do not make decisions that produce legal or similarly significant effects about you based solely on automated processing. Our feed ranking and matching only help surface relevant nearby requests and do not make such decisions.</p>
         </div>
 
@@ -192,7 +197,7 @@
 
         <div class="section">
             <h2>Your Rights</h2>
-            <p>Depending on where you live (including under the EU/UK GDPR), you have the right to:</p>
+            <p>Depending on where you live (including under the Israeli Protection of Privacy Law, 5741-1981 and the EU/UK GDPR), you have the right to:</p>
             <ul>
                 <li><strong>Access</strong> the personal data we hold about you</li>
                 <li><strong>Correct</strong> inaccurate or incomplete data</li>
@@ -201,7 +206,7 @@
                 <li><strong>Object to or restrict</strong> certain processing</li>
                 <li><strong>Withdraw consent</strong> at any time (for location, notifications, or advertising measurement)</li>
                 <li><strong>Opt out</strong> of push notifications, and <strong>revoke</strong> location permissions, in your device settings</li>
-                <li><strong>Lodge a complaint</strong> with your local data protection authority</li>
+                <li><strong>Lodge a complaint</strong> with a data protection authority - in Israel, the Privacy Protection Authority (PPA); in the EEA or UK, your local supervisory authority</li>
             </ul>
             <p>To exercise any of these rights, contact us at <a href="mailto:support@help-y.com">support@help-y.com</a>. Many actions (deleting your account, disabling notifications, revoking location) can also be done directly in the app.</p>
         </div>
