@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <!-- Force HTTPS - must be first, before any render -->
-  <script>if(location.protocol==='http:'){location.replace('https:'+location.href.slice(5));}</script>
+  <script>if(location.protocol==='http:'&&location.hostname!=='localhost'){location.replace('https:'+location.href.slice(5));}</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Helpy Profile</title>
   <meta property="og:title" content="Helpy - Neighborly Help" />
@@ -72,11 +72,15 @@
       width: 112px; height: 112px;
       border-radius: 50%;
       background: linear-gradient(135deg, #6366f1, #a78bfa);
-      font-size: 44px;
+      font-size: 48px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1;
       display: flex; align-items: center; justify-content: center;
       border: 3px solid rgba(255,255,255,0.8);
       box-shadow: 0 0 0 6px rgba(255,255,255,0.07), 0 20px 48px rgba(0,0,0,0.55);
       margin-bottom: 18px;
+      overflow: hidden;
     }
 
     .name {
@@ -178,8 +182,13 @@
     .review-stars { color: #fbbf24; font-size: 11px; letter-spacing: 1px; }
     .review-body { font-size: 13px; color: rgba(255,255,255,0.48); line-height: 1.5; }
 
-    .badge { display: inline-block; margin-bottom: 10px; }
+    .badges { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
+    .badge { display: inline-block; }
     .badge img { height: 52px; width: auto; display: block; border-radius: 10px; }
+    /* Google's official badge PNG carries built-in padding; oversize + clip so the
+       drawn badge matches the Apple one's visual height */
+    .badge-play { height: 52px; display: flex; align-items: center; overflow: visible; }
+    .badge-play img { height: 78px; width: auto; display: block; margin: 0 -10px; }
 
     .footer { font-size: 12px; color: rgba(255,255,255,0.18); }
 
@@ -208,19 +217,21 @@
   (function () {
     var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3b21zdHp6bXllZ3BiaWRpYmZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTA1NjksImV4cCI6MjA4ODM4NjU2OX0.sZBrK88ecSJBstXNBa2UUAHhBxNfy9-Ssac1JPY9i2k';
     var APP_STORE = 'https://apps.apple.com/app/id6758919822';
+    var PLAY_STORE = 'https://play.google.com/store/apps/details?id=com.neighborlyhelp.app';
 
+    // Keys mirror the app's category taxonomy (src/data/sampleData.ts categoryConfig);
+    // labels mirror useLocalization.ts category.* strings.
     var CAT_EN = {
-      'elderly-care': 'Elderly care', 'borrow': 'Lending', 'giveaway': 'Giveaway',
-      'activity': 'Activities', 'tutoring': 'Tutoring', 'pro-advice': 'Pro advice',
-      'rides': 'Rides', 'moving': 'Moving', 'errands': 'Errands',
-      'technology': 'Tech help', 'language-help': 'Language help', 'other': 'Other'
+      'shopping': 'Shopping', 'borrow': 'Borrow', 'handyman': 'Handyman',
+      'moving': 'Moving', 'transportation': 'Rides', 'giveaway': 'Giveaway',
+      'tech-help': 'Tech Help', 'tutoring': 'Tutoring', 'elderly-care': 'Elderly Care',
+      'pro-advice': 'Pro Advice', 'activity': 'Activity', 'other': 'Other'
     };
     var CAT_HE = {
-      'elderly-care': 'קשישים', 'borrow': 'השאלה', 'giveaway': 'למסור',
-      'activity': 'פעילות', 'tutoring': 'שיעורים', 'pro-advice': 'ייעוץ מקצועי',
-      'rides': 'הסעות', 'moving': '引っ越し', 'errands': 'שליחויות',
-      'technology': 'עזרת טכנולוגיה', 'language-help': 'שפות', 'other': 'אחר',
-      'moving': 'הובלה'
+      'shopping': 'קניות', 'borrow': 'השאלה', 'handyman': 'הנדימן',
+      'moving': 'הובלות', 'transportation': 'טרמפ', 'giveaway': 'מסירה',
+      'tech-help': 'עזרה במחשב', 'tutoring': 'שיעורי עזר', 'elderly-care': 'עזרה לקשישים',
+      'pro-advice': 'ייעוץ מקצועי', 'activity': 'פעילות', 'other': 'אחר'
     };
 
     var T = {
@@ -231,8 +242,8 @@
         footer: 'Real neighbors helping each other'
       },
       he: {
-        rating: 'דירוג', reviews: 'ביקורות', helped: 'עזר',
-        newToHelpy: '✨ חדש בHelpy',
+        rating: 'דירוג', reviews: 'ביקורות', helped: 'עזר/ה',
+        newToHelpy: '✨ חדש/ה ב-Helpy',
         whatNeighborsSay: 'מה השכנים אומרים',
         footer: 'שכנים אמיתיים עוזרים אחד לשני'
       }
@@ -255,7 +266,11 @@
     }
 
     function render(p) {
-      var isHe = p.preferredLanguage === 'he';
+      // preferredLanguage until the edge fn ships it; until then (and for users who
+      // never set it) a Hebrew-script name is the best signal for page language.
+      var isHe = p.preferredLanguage
+        ? p.preferredLanguage === 'he'
+        : /[\u0590-\u05FF]/.test(p.name || '');
       var t = isHe ? T.he : T.en;
       var CAT = isHe ? CAT_HE : CAT_EN;
 
@@ -267,9 +282,19 @@
 
       document.title = esc(p.name) + ' - Helpy';
 
-      var avatarHtml = p.avatar
-        ? '<img class="avatar" src="' + esc(p.avatar) + '" alt="' + esc(p.name) + '" />'
-        : '<div class="avatar-ph">&#x1F9CA;</div>';
+      // profiles.avatar holds either an image URL or (mock/demo users) a bare emoji.
+      var avatarIsUrl = /^https?:\/\//i.test(p.avatar || '');
+      var initial = (p.name || '').trim().charAt(0);
+      window.__avatarPh = (p.avatar && !avatarIsUrl) ? p.avatar : (initial || '👤');
+      window.__avatarFail = function (img) {
+        var ph = document.createElement('div');
+        ph.className = 'avatar-ph';
+        ph.textContent = window.__avatarPh;
+        img.replaceWith(ph);
+      };
+      var avatarHtml = avatarIsUrl
+        ? '<img class="avatar" src="' + esc(p.avatar) + '" alt="" onerror="__avatarFail(this)" />'
+        : '<div class="avatar-ph">' + esc(window.__avatarPh) + '</div>';
 
       var chipsHtml = '';
       if (p.availableCategories && p.availableCategories.length > 0) {
@@ -320,9 +345,14 @@
         + chipsHtml
         + statsHtml
         + reviewsHtml
+        + '<div class="badges">'
         + '<a class="badge" href="' + APP_STORE + '">'
         + '<img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" />'
         + '</a>'
+        + '<a class="badge badge-play" href="' + PLAY_STORE + '">'
+        + '<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" />'
+        + '</a>'
+        + '</div>'
         + '<p class="footer">' + t.footer + '</p>';
     }
 
