@@ -1,0 +1,14 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.neighborlyhelp.app",
+      "sha256_cert_fingerprints": [
+        "FF:8A:1B:ED:01:51:3B:A1:50:79:E8:B5:8D:90:AF:1E:AC:91:DF:A8:A7:C6:AB:42:A4:3E:78:E9:96:0F:F0:94",
+        "FC:A8:7F:D6:29:D0:AE:91:11:D0:F9:58:BA:A6:75:42:89:B3:27:82:D6:14:21:19:2C:67:71:1E:EC:6C:7C:7E",
+        "FA:C6:17:45:DC:09:03:78:6F:B9:ED:E6:2A:96:2B:39:9F:73:48:F0:BB:6F:89:9B:83:32:66:75:91:03:3B:9C"
+      ]
+    }
+  }
+]

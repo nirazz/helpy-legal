@@ -1,0 +1,16 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": ["FN8DDJ75PR.com.neighborlyhelp.app"],
+        "components": [
+          { "/": "/r/" },
+          { "/": "/r/*" },
+          { "/": "/p/" },
+          { "/": "/p/*" }
+        ]
+      }
+    ]
+  }
+}
