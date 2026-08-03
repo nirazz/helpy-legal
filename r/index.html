@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Force HTTPS - must be first, before any render -->
+  <script>if(location.protocol==='http:'&&location.hostname!=='localhost'){location.replace('https:'+location.href.slice(5));}</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helpy Post</title>
+  <meta property="og:title" content="Helpy - Neighborly Help" />
+  <meta property="og:description" content="Real neighbors helping each other." />
+  <meta property="og:image" content="https://help-y.com/app-icon-512.png" />
+  <meta property="og:site_name" content="Helpy" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:image" content="https://help-y.com/app-icon-512.png" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      background: linear-gradient(160deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #root {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    /* Glass card on desktop */
+    @media (min-width: 600px) {
+      body { padding: 60px 40px; }
+      #root {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 32px;
+        padding: 48px 40px 40px;
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        box-shadow: 0 40px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+      }
+    }
+
+    .wordmark {
+      font-size: 11px;
+      font-weight: 800;
+      color: rgba(255,255,255,0.28);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .chip {
+      font-size: 12px; font-weight: 600;
+      color: rgba(255,255,255,0.65);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 100px;
+      padding: 5px 13px;
+    }
+    .chip-kind { color: #c7d2fe; border-color: rgba(139,147,248,0.4); }
+    .chip-closed { color: #fbbf24; border-color: rgba(251,191,36,0.35); }
+
+    .title {
+      font-size: 26px; font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.6px;
+      line-height: 1.25;
+      margin-bottom: 10px;
+    }
+    .desc {
+      font-size: 15px;
+      color: rgba(255,255,255,0.52);
+      line-height: 1.55;
+      max-width: 300px;
+      margin-bottom: 16px;
+    }
+
+    .photo {
+      width: 100%;
+      max-height: 220px;
+      object-fit: cover;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.1);
+      margin-bottom: 18px;
+    }
+
+    .meta {
+      font-size: 13px;
+      color: rgba(255,255,255,0.38);
+      margin-bottom: 22px;
+    }
+
+    .author {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 26px;
+      text-decoration: none;
+    }
+    .author-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid rgba(255,255,255,0.5);
+    }
+    .author-ph {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1, #a78bfa);
+      font-size: 16px;
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid rgba(255,255,255,0.5);
+      overflow: hidden;
+    }
+    .author-name { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.75); }
+
+    .lead {
+      font-size: 14px;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 14px;
+    }
+
+    .badges { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
+    .badge { display: inline-block; }
+    .badge img { height: 52px; width: auto; display: block; border-radius: 10px; }
+    /* Google's official badge PNG carries built-in padding; oversize + clip so the
+       drawn badge matches the Apple one's visual height */
+    .badge-play { height: 52px; display: flex; align-items: center; overflow: visible; }
+    .badge-play img { height: 78px; width: auto; display: block; margin: 0 -10px; }
+
+    .footer { font-size: 12px; color: rgba(255,255,255,0.18); }
+
+    .spinner-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .spinner {
+      width: 32px; height: 32px;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-top-color: rgba(255,255,255,0.6);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { font-size: 14px; color: rgba(255,255,255,0.32); }
+    .error-text { font-size: 14px; color: rgba(255,255,255,0.38); padding: 40px 0; }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <div class="spinner-wrap">
+      <div class="spinner"></div>
+      <p class="loading-text">Loading&hellip;</p>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3b21zdHp6bXllZ3BiaWRpYmZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTA1NjksImV4cCI6MjA4ODM4NjU2OX0.sZBrK88ecSJBstXNBa2UUAHhBxNfy9-Ssac1JPY9i2k';
+    var APP_STORE = 'https://apps.apple.com/app/id6758919822';
+    var PLAY_STORE = 'https://play.google.com/store/apps/details?id=com.neighborlyhelp.app';
+
+    // Keys mirror the app's category taxonomy (src/data/sampleData.ts categoryConfig);
+    // labels mirror useLocalization.ts category.* strings. The tail entries are
+    // legacy values still present on old rows (grocery, rides, repairs, ...) -
+    // the app itself falls back to Other for anything unknown, and so do we.
+    var CAT_EN = {
+      'shopping': 'Shopping', 'borrow': 'Borrow', 'handyman': 'Handyman',
+      'moving': 'Moving', 'transportation': 'Rides', 'giveaway': 'Giveaway',
+      'tech-help': 'Tech Help', 'tutoring': 'Tutoring', 'elderly-care': 'Elderly Care',
+      'pro-advice': 'Pro Advice', 'activity': 'Activity', 'other': 'Other',
+      'grocery': 'Shopping', 'rides': 'Rides', 'repairs': 'Repairs',
+      'home-repair': 'Home Repair', 'language-help': 'Language Help'
+    };
+    var CAT_HE = {
+      'shopping': 'קניות', 'borrow': 'השאלה', 'handyman': 'הנדימן',
+      'moving': 'הובלות', 'transportation': 'טרמפ', 'giveaway': 'מסירה',
+      'tech-help': 'עזרה במחשב', 'tutoring': 'שיעורי עזר', 'elderly-care': 'עזרה לקשישים',
+      'pro-advice': 'ייעוץ מקצועי', 'activity': 'פעילות', 'other': 'אחר',
+      'grocery': 'קניות', 'rides': 'טרמפ', 'repairs': 'תיקונים',
+      'home-repair': 'תיקון בית', 'language-help': 'עזרה בשפה'
+    };
+
+    var T = {
+      en: {
+        kindRequest: 'Neighbor request', kindOffer: 'Neighbor offer',
+        closed: 'No longer active',
+        lead: 'Answer from the Helpy app',
+        leadClosed: 'More neighbors need a hand on Helpy',
+        footer: 'Real neighbors helping each other'
+      },
+      he: {
+        kindRequest: 'בקשה מהשכונה', kindOffer: 'הצעה מהשכונה',
+        closed: 'כבר לא פעיל',
+        lead: 'עונים מתוך האפליקציה של Helpy',
+        leadClosed: 'עוד שכנים מחכים לעזרה ב-Helpy',
+        footer: 'שכנים אמיתיים עוזרים אחד לשני'
+      }
+    };
+
+    var id = window.location.hash.slice(1);
+    if (!id) { window.location.href = 'https://help-y.com'; return; }
+
+    fetch('https://lwomstzzmyegpbidibfm.supabase.co/functions/v1/post-page'
+      + '?apikey=' + ANON_KEY + '&id=' + encodeURIComponent(id) + '&format=json')
+      .then(function (r) { return r.json(); })
+      .then(function (d) { d.error ? showError('Post not found.') : render(d); })
+      .catch(function () { showError('Could not load post.'); });
+
+    function esc(s) {
+      return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function render(p) {
+      // Page language follows the POST's script (a Hebrew post is shared into a
+      // Hebrew-speaking group whatever the author's app language), falling back
+      // to the author's app language.
+      var isHe = /[֐-׿]/.test(p.title || '')
+        || (!(/[A-Za-z]/.test(p.title || '')) && p.author && p.author.preferredLanguage === 'he');
+      var t = isHe ? T.he : T.en;
+      var CAT = isHe ? CAT_HE : CAT_EN;
+
+      if (isHe) {
+        document.documentElement.setAttribute('dir', 'rtl');
+        document.documentElement.setAttribute('lang', 'he');
+      }
+
+      document.title = esc(p.title) + ' - Helpy';
+
+      var kindLabel = p.type === 'offer' ? t.kindOffer : t.kindRequest;
+      var catLabel = CAT[p.category] || (isHe ? CAT_HE.other : CAT_EN.other);
+      var chipsHtml = '<div class="chips">'
+        + '<span class="chip chip-kind">' + esc(kindLabel) + '</span>'
+        + '<span class="chip">' + esc(catLabel) + '</span>'
+        + (p.isActive ? '' : '<span class="chip chip-closed">' + t.closed + '</span>')
+        + '</div>';
+
+      // Post photos live in a public bucket; anything non-URL is ignored.
+      var photoHtml = (p.image && /^https?:\/\//i.test(p.image))
+        ? '<img class="photo" src="' + esc(p.image) + '" alt="" onerror="this.remove()" />'
+        : '';
+
+      var city = isHe ? (p.city || p.cityEn) : (p.cityEn || p.city);
+      var metaHtml = city ? '<p class="meta">&#128205; ' + esc(city) + '</p>' : '';
+
+      // profiles.avatar holds either an image URL or (some users) a bare emoji.
+      var authorHtml = '';
+      if (p.author && p.author.name) {
+        var avatarIsUrl = /^https?:\/\//i.test(p.author.avatar || '');
+        window.__avatarPh = (p.author.avatar && !avatarIsUrl)
+          ? p.author.avatar
+          : ((p.author.name || '').trim().charAt(0) || '👤');
+        window.__avatarFail = function (img) {
+          var ph = document.createElement('div');
+          ph.className = 'author-ph';
+          ph.textContent = window.__avatarPh;
+          img.replaceWith(ph);
+        };
+        var avatarHtml = avatarIsUrl
+          ? '<img class="author-avatar" src="' + esc(p.author.avatar) + '" alt="" onerror="__avatarFail(this)" />'
+          : '<div class="author-ph">' + esc(window.__avatarPh) + '</div>';
+        authorHtml = '<a class="author" href="/p/#' + esc(p.author.id) + '">'
+          + avatarHtml
+          + '<span class="author-name">' + esc(p.author.name) + '</span>'
+          + '</a>';
+      }
+
+      document.getElementById('root').innerHTML =
+        '<p class="wordmark">Helpy</p>'
+        + chipsHtml
+        + '<h1 class="title">' + esc(p.title) + '</h1>'
+        + (p.description ? '<p class="desc">' + esc(p.description) + '</p>' : '')
+        + photoHtml
+        + metaHtml
+        + authorHtml
+        + '<p class="lead">' + (p.isActive ? t.lead : t.leadClosed) + '</p>'
+        + '<div class="badges">'
+        + '<a class="badge" href="' + APP_STORE + '">'
+        + '<img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" />'
+        + '</a>'
+        + '<a class="badge badge-play" href="' + PLAY_STORE + '">'
+        + '<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" />'
+        + '</a>'
+        + '</div>'
+        + '<p class="footer">' + t.footer + '</p>';
+    }
+
+    function showError(msg) {
+      document.getElementById('root').innerHTML = '<p class="error-text">' + esc(msg) + '</p>';
+    }
+  })();
+  </script>
+</body>
+</html>
