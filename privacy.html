@@ -52,7 +52,7 @@
     <div class="hero">
         <span class="hero-badge">Legal</span>
         <h1>Privacy Policy</h1>
-        <p>Last updated August 17, 2026</p>
+        <p>Last updated August 20, 2026</p>
     </div>
     <nav class="nav">
         <a href="/">Home</a>
@@ -74,7 +74,7 @@
         <div class="section">
             <h2>Who We Are (Data Controller)</h2>
             <p>Helpy is operated under the brand <strong>Razberry Apps</strong> by Nir Raz, based in Israel, who is the data controller responsible for your personal information. You can contact us about any privacy matter at <a href="mailto:support@help-y.com">support@help-y.com</a>.</p>
-            <p>Helpy is operated from Israel and is available internationally. If you use Helpy from the European Economic Area, the United Kingdom, or elsewhere, the protections described in this policy apply to you.</p>
+            <p>Helpy is operated from Israel and is directed primarily at users in Israel. This policy describes the protections we apply to all users, wherever you use Helpy.</p>
         </div>
 
         <div class="divider"></div>
@@ -89,17 +89,18 @@
                 <li><strong>Email address</strong> - Used for authentication and account recovery</li>
                 <li><strong>Profile photo</strong> - From your Google or Apple account if you sign in with those services</li>
                 <li><strong>Phone number</strong> - Collected only if you complete phone verification</li>
+                <li><strong>Device information</strong> - Your device platform (iOS or Android) and app version, so we can support your device and troubleshoot problems</li>
             </ul>
 
             <h3>Location Data</h3>
-            <p>We collect your approximate location (latitude and longitude) to:</p>
+            <p>We collect your location (latitude and longitude) to:</p>
             <ul>
                 <li>Show you help requests from nearby neighbors</li>
                 <li>Calculate distances to help requests</li>
                 <li>Help other users know approximately how far you are</li>
             </ul>
-            <p>Location is collected only when you use the app and with your explicit permission. You can revoke location access at any time in your device settings.</p>
-            <p>You can also set your area yourself - by typing a city, neighborhood, or street inside the app - instead of using your phone's location services. On that path the phone's location services are never turned on, and only the single point you choose is stored. You can change or remove your stored location at any time from within the app.</p>
+            <p>Location is collected only when you use the app and with your explicit permission. You can revoke location access at any time in your device settings. Other users are only ever shown an approximate location - not your exact coordinates (see "Data Sharing" below).</p>
+            <p>You can also set your area yourself - by typing a city, neighborhood, or street inside the app - instead of using your phone's location services. On that path the phone's location services are not used, and only the single point you choose is stored. You can change or remove your stored location at any time from within the app.</p>
 
             <h3>User-Generated Content</h3>
             <p>We store content you create within the app:</p>
@@ -108,17 +109,19 @@
                 <li>An optional life-situation tag you may choose to attach to a help request (for example "Miluim family", "Single parent", "Senior citizen", "New to Israel" or "New neighbor"). The tag is chosen from a fixed list, is entirely optional, and is displayed publicly alongside your request to nearby users. You can remove it at any time by editing the request or deleting it; it is deleted together with the request.</li>
                 <li>Chat messages between matched users</li>
                 <li>Ratings and reviews of other users</li>
-                <li>If our content filter blocks a draft post before publication (for example, a post that appears to sell goods or services), the draft text is logged for moderation-quality review - so we can catch cases where the filter blocked a legitimate post by mistake. Phone numbers are automatically redacted from the logged text, and nothing is published.</li>
-                <li>Chat messages are automatically scanned to detect that a phone number was exchanged. When that happens we store only a timestamp - never the number itself - so we can remind you to mark the help as completed and leave a rating.</li>
-                <li>To keep the community safe, the Helpy team may review posts and chat messages as part of routine safety monitoring or when handling reports. Such review is done by the team only, and only for that purpose.</li>
-                <li>When you delete your account, you may optionally tell us why - by picking a reason from a fixed list and/or writing a short note in your own words. Both are entirely optional and are never a condition for deleting. Your answer is detached from your account immediately upon deletion and kept only in anonymized form, so that we can understand why people leave. Please do not include personal details in the note.</li>
+                <li>If our content filter blocks a draft post before publication (for example, a post that appears to sell goods or services), the draft text is retained for reviewing and improving the accuracy of the filter, and a moderation notification is sent to the founder. We apply automated redaction to remove phone numbers from the retained text, and nothing is published.</li>
+                <li>New posts (their text and any attached images) are also checked by an automated safety classifier operated by Anthropic (see "With Service Providers" below). A post the classifier flags as harmful may be hidden temporarily; every such decision is reviewed by a human, and you can ask us to re-review it at <a href="mailto:support@help-y.com">support@help-y.com</a>.</li>
+                <li>Chat messages are processed automatically to detect that a phone number was exchanged. When that happens we record only the fact and time that a number was exchanged - we do not extract or save the number as a separate field. The message itself remains in your chat like any other message, and is subject to the safety review described below.</li>
+                <li>To keep the community safe and working well, our team may review posts and chat messages as part of routine safety monitoring, when handling reports, and to understand whether conversations are working (for example, how many chats receive a reply). This review is carried out by our team, and where needed by service providers acting on our behalf, over an authenticated admin interface.</li>
+                <li>Messages you send us in the in-app Helpy chat are read by our team in order to answer you.</li>
+                <li>When you delete your account, you may optionally tell us why - by picking a reason from a fixed list and/or writing a short note in your own words. Both are entirely optional and are not a condition for deleting. Your answer is detached from your account as part of the deletion process and kept only in anonymized form, so that we can understand why people leave. Please do not include personal details in the note.</li>
             </ul>
 
             <h3>Authentication Data</h3>
             <p>We support sign-in via Google and Apple. When using third-party sign-in, we receive only your name, email, and profile photo. We do not access your contacts, calendar, or other personal data from these services.</p>
 
             <h3>Is Providing This Data Required?</h3>
-            <p>Providing your name and email is necessary to create an account and use Helpy - this is a contractual requirement, and without it we cannot provide the service. Location and phone verification are optional, but some features will not work without them: if you do not share your location, we cannot show you nearby requests or distance-based matches, and if you do not verify your phone, you cannot post a request or offer help. Advertising-measurement data is shared only if you consent and is never required to use the app. You can withdraw any optional permission at any time (see "Your Rights" below).</p>
+            <p>Providing your name and email is necessary to create an account and use Helpy - this is a contractual requirement, and without it we cannot provide the service. Location and phone verification are optional, but some features will not work without them: if you do not share your location, we cannot show you nearby requests or distance-based matches, and if you do not verify your phone, you cannot post a request or offer help. Advertising-measurement data is shared only if you consent and is not required in order to use the app. You can withdraw any optional permission at any time (see "Your Rights" below).</p>
         </div>
 
         <div class="divider"></div>
@@ -130,7 +133,7 @@
                 <li>To send push notifications about new offers, messages, and updates</li>
                 <li>To display your profile to other users in your area</li>
                 <li>To calculate and show distances between users</li>
-                <li>To maintain trust through ratings and verification badges</li>
+                <li>To maintain trust through ratings and a phone-verification indicator - which confirms only that a phone number was verified, and does not verify a user's identity</li>
             </ul>
         </div>
 
@@ -138,28 +141,34 @@
 
         <div class="section">
             <h2>Data Storage & Security</h2>
-            <p>Your data is stored securely using Supabase, a trusted cloud database provider. All data is transmitted over encrypted HTTPS connections. We use Row Level Security (RLS) policies to ensure users can only access data they are authorized to see.</p>
+            <p>We apply technical and organisational measures appropriate to the risk to protect your information, including encryption of data in transit, access controls limiting each user to the data they are authorised to see, and the use of established cloud infrastructure providers. No method of transmission or storage is completely secure. If a breach affecting your personal data occurs, we will notify you and the relevant authority as required by law.</p>
+            <p>Our website (help-y.com) uses no cookies, no analytics, and no third-party trackers; fonts are served from our own servers. The site is hosted on GitHub Pages, which processes visitors' IP addresses in its server logs.</p>
         </div>
 
         <div class="divider"></div>
 
         <div class="section">
             <h2>Data Sharing</h2>
-            <p><strong>We never sell or rent your personal information.</strong> We do not trade your data for marketing purposes. We do, however, share limited data in the following ways in order to operate the app:</p>
+            <p><strong>We do not sell or rent your personal information, and we do not trade your data for marketing purposes.</strong> We do, however, share limited data in the following ways in order to operate the app:</p>
 
             <h3>With Other Users</h3>
             <p>Part of your profile is visible to other users so the service can work:</p>
             <ul>
                 <li>Other app users see your name, profile photo, ratings, and approximate location</li>
                 <li>Matched users can see the chat messages you exchange with them</li>
-                <li>Once you are matched, each of you sees the other's general locality (for example "Petah Tikva") so you can arrange the help. It is derived from your approximate location - never from an exact address - and is shown only to people you are already matched with.</li>
+                <li>Once you are matched, each of you sees the other's general locality (for example "Petah Tikva") so you can arrange the help. It is derived from your approximate location - not from an exact address - and is shown only to people you are already matched with.</li>
+                <li>Once you are matched, the other person may also see a coarse activity indicator ("active today" / "active this week") and whether you have opened their latest message. Exact times are never shown.</li>
+                <li><strong>Share pages:</strong> you can share a link to your profile (help-y.com/p/...) or to a post (help-y.com/r/...). Anyone holding such a link - including people who are not Helpy users - can see the fields it carries: for a profile, your name, photo, bio, rating and recent review texts; for a post, its title, description, category, city label, image, and your name. These pages are marked so that search engines do not index them, and a post's exact location is never shown on them.</li>
             </ul>
 
             <h3>With Service Providers (processors acting on our behalf)</h3>
-            <p>We use trusted third-party providers to run the app. These providers process data only on our behalf, under a data-processing agreement, and only as needed to provide their service - they do not use your data for their own purposes:</p>
+            <p>We use third-party providers to run the app. These providers process data on our behalf under data-processing terms, and only as needed to provide their service to us:</p>
             <ul>
                 <li><strong>Supabase</strong> - database, authentication, and storage hosting (EU region)</li>
-                <li><strong>Expo / push notification services</strong> - to deliver push notifications to your device</li>
+                <li><strong>Expo / push notification services</strong> - to deliver push notifications to your device, via Apple's and Google's push systems. Notification content (for example a sender's name or a message preview) passes through these services in order to be displayed on your device</li>
+                <li><strong>Twilio</strong> - sending the one-time SMS code when you verify your phone number (United States)</li>
+                <li><strong>Anthropic</strong> - automated safety classification of new posts: a post's text and any attached images are checked by Anthropic's Claude model (United States). The results are used only for content moderation, and flagged posts are reviewed by a human</li>
+                <li><strong>Telegram</strong> - operational alerts to the founder about activity in the app (for example a new signup, post, match, or report). These alerts include your name, your general area, your phone-verification status, and the content of posts - not your phone number and not the content of your private chat messages</li>
                 <li><strong>PostHog</strong> - product analytics, to understand how the app is used and improve it (EU region)</li>
                 <li><strong>Sentry</strong> - crash and error reporting, to detect and fix bugs</li>
             </ul>
@@ -167,11 +176,14 @@
             <h3>With Authentication Providers</h3>
             <p>When you choose to sign in with <strong>Google</strong> or <strong>Apple</strong>, they authenticate you and provide us your name, email, and profile photo. For their own sign-in services these companies act as independent data controllers under their own privacy policies, not as our processors.</p>
 
+            <h3>Maps</h3>
+            <p>The in-app map is rendered by <strong>Apple Maps</strong> (on iOS) and <strong>Google Maps</strong> (on Android). Loading the map sends the map viewport - the area you are looking at - to Apple or Google, which act as independent controllers for their map services under their own privacy policies.</p>
+
             <h3>Place-Name Lookup (Geocoding)</h3>
-            <p>Two OpenStreetMap-based services help us name places. To turn approximate coordinates into an area name (the city shown on posts and profiles) we query <strong>Nominatim</strong>, operated by the OpenStreetMap Foundation. To suggest places as you type when you set your location manually, we query <strong>Photon</strong>, operated by komoot GmbH (Germany). Each receives only the approximate coordinates or the text you typed - sent from our servers, never together with your name, account, or device address - and handles them under its own privacy policy. We do not store the text you type; only the point you then choose is saved to your profile.</p>
+            <p>Two OpenStreetMap-based services help us name places. To turn approximate coordinates into an area name (the city shown on posts and profiles) we query <strong>Nominatim</strong>, operated by the OpenStreetMap Foundation. To suggest places as you type when you set your location manually, we query <strong>Photon</strong>, operated by komoot GmbH (Germany). Each receives only the approximate coordinates or the text you typed - sent from our servers, without your name, account, or device address - and handles them under its own privacy policy. The text you type is not saved to your profile; only the point you then choose is stored.</p>
 
             <h3>With our Advertising Partner</h3>
-            <p>Only where you have given consent, we share limited app-event data with <strong>Meta (Facebook)</strong> for advertising measurement and attribution (see "Analytics &amp; Advertising" below). Unlike the service providers above, Meta may also use this data in accordance with its own terms. We do not share your name, email, or chat content with Meta, and you can withhold or withdraw consent at any time.</p>
+            <p>Only where you have given consent, we share limited app-event data and your device's advertising identifier (IDFA on iOS, Advertising ID on Android) with <strong>Meta (Facebook)</strong> for advertising measurement and attribution (see "Analytics &amp; Advertising" below). Unlike the service providers above, Meta may also use this data in accordance with its own terms. We do not share your name, email, or chat content with Meta, and you can withhold or withdraw consent at any time.</p>
 
             <h3>For Legal Reasons</h3>
             <p>We may disclose information if required to do so by law, or if we believe in good faith that disclosure is necessary to comply with a legal obligation, protect the safety of any person, or investigate fraud or a violation of our Terms.</p>
@@ -189,17 +201,17 @@
         <div class="section">
             <h2>Legal Basis, Retention &amp; International Transfers</h2>
             <p><strong>Legal basis (where GDPR applies):</strong> we process your data to perform our contract with you (providing the service), based on your consent (for location, promotional notifications, and advertising measurement), and for our legitimate interests (keeping the service safe, preventing fraud, and improving the product). Notifications about your own activity - an offer of help, an accepted offer, a message, a rating - are part of providing the service and are sent to perform our contract with you; promotional notifications are sent only with your consent, which you can withdraw at any time.</p>
-            <p><strong>Retention:</strong> we keep your data for as long as your account is active. When you delete your account, we anonymize your personal information (name, photo, phone, and location) immediately, and remove or anonymize remaining personal data within 90 days. Some records are kept in anonymized or limited form where we are required to retain them to comply with legal obligations, resolve disputes, or prevent fraud and abuse - for example, chat messages you sent remain visible to the other participant (shown as "Deleted User"), and proof of your acceptance of our Terms is retained.</p>
-            <p><strong>International transfers:</strong> our primary database is hosted in the European Union (Supabase, EU region), and our analytics provider (PostHog) is also in the EU. Israel - where we are based - benefits from a European Commission adequacy decision. Some providers and our advertising partner (for example, Meta, Sentry, and Expo) may process data in the United States or other countries. Where we transfer personal data outside the European Economic Area or the UK, we rely on appropriate safeguards: for providers certified under the EU-US Data Privacy Framework (and its UK Extension), transfers are covered by the European Commission's adequacy decision of 10 July 2023; for all other transfers, and as an additional safeguard, we rely on the European Commission's Standard Contractual Clauses (and the UK International Data Transfer Addendum). You can request a copy of the relevant safeguards at <a href="mailto:support@help-y.com">support@help-y.com</a>.</p>
-            <p><strong>Automated decision-making:</strong> we do not make decisions that produce legal or similarly significant effects about you based solely on automated processing. Our feed ranking and matching only help surface relevant nearby requests and do not make such decisions.</p>
+            <p><strong>Retention:</strong> we keep your data for as long as your account is active. When you delete your account, we begin the deletion process without undue delay: your name, photo, phone number, and location are anonymized as part of that process, and remaining personal data is deleted or anonymized within 90 days, including from routine backups within the ordinary backup-rotation cycle. Some records are kept in anonymized or limited form where we are required to retain them to comply with legal obligations, resolve disputes, or prevent fraud and abuse - for example, chat messages you sent remain visible to the other participant (shown as "Deleted User"), and proof of your acceptance of our Terms is retained. If your account was closed for a serious violation of our Terms, we keep your phone number and email on an internal blocklist so that the account cannot be recreated.</p>
+            <p><strong>International transfers:</strong> our primary database is hosted in the European Union (Supabase, EU region), and our analytics provider (PostHog) is also in the EU. Israel - where we are based - is the subject of a European Commission adequacy decision covering automated processing of personal data. Some providers and our advertising partner (for example, Meta, Sentry, Expo, Twilio, Anthropic, and Telegram) may process data in the United States or other countries. Where we transfer personal data outside the European Economic Area or the UK, we rely on appropriate safeguards: for providers certified under the EU-US Data Privacy Framework (and its UK Extension), transfers are covered by the European Commission's adequacy decision for that framework; for all other transfers, and as an additional safeguard, we rely on the European Commission's Standard Contractual Clauses (and the UK International Data Transfer Addendum). You can request a copy of the relevant safeguards at <a href="mailto:support@help-y.com">support@help-y.com</a>.</p>
+            <p><strong>Automated decision-making:</strong> we do not make decisions that produce legal or similarly significant effects about you based solely on automated processing. Automated content moderation may temporarily hide a post pending human review (see "User-Generated Content" above), and our feed ranking only helps surface relevant nearby requests; neither produces such effects.</p>
         </div>
 
         <div class="divider"></div>
 
         <div class="section">
             <h2>Push Notifications</h2>
-            <p>We send push notifications to inform you about new help offers, accepted offers, messages, and ratings. You can disable notifications at any time in your device settings.</p>
-            <p><strong>Quiet notifications on iPhone and iPad.</strong> If you choose not to turn notifications on when we ask, we may still deliver them quietly. Quiet notifications make no sound and do not appear on your lock screen - they collect in your Notification Center, and the first one your device receives carries buttons to keep them or turn them off. We use this only for notifications about your own activity: someone offering to help you, an offer of yours being accepted, a new message, a rating. We never send promotional or marketing notifications this way, and turning them off, in your device settings or on the notification itself, stops them immediately.</p>
+            <p>We send push notifications about your own activity - new help offers, accepted offers, messages, and ratings - and, only with your consent, occasional notifications about relevant activity nearby (for example, a new request near you or a reminder about your own post). You can turn off the promotional kind in the app, and disable all notifications at any time in your device settings.</p>
+            <p><strong>Quiet notifications on iPhone and iPad.</strong> If you choose not to turn notifications on when we ask, we may still deliver them quietly. Quiet notifications make no sound and do not appear on your lock screen - they collect in your Notification Center, and the first one your device receives carries buttons to keep them or turn them off. We use quiet notifications only for notifications about your own activity: someone offering to help you, an offer of yours being accepted, a new message, a rating. We do not use them for promotional or marketing messages. You can turn them off in your device settings or from the notification itself, and delivery stops once that setting takes effect.</p>
         </div>
 
         <div class="divider"></div>
@@ -217,7 +229,7 @@
                 <li><strong>Opt out</strong> of push notifications, and <strong>revoke</strong> location permissions, in your device settings - and <strong>remove</strong> a stored location from within the app</li>
                 <li><strong>Lodge a complaint</strong> with a data protection authority - in Israel, the Privacy Protection Authority (PPA); in the EEA or UK, your local supervisory authority</li>
             </ul>
-            <p>To exercise any of these rights, contact us at <a href="mailto:support@help-y.com">support@help-y.com</a>. Many actions (deleting your account, disabling notifications, revoking location) can also be done directly in the app.</p>
+            <p>To exercise any of these rights, contact us at <a href="mailto:support@help-y.com">support@help-y.com</a> - we respond to such requests within 30 days. Many actions (deleting your account, disabling notifications, revoking location) can also be done directly in the app.</p>
         </div>
 
         <div class="divider"></div>
@@ -231,7 +243,7 @@
 
         <div class="section">
             <h2>Changes to This Policy</h2>
-            <p>We may update this privacy policy from time to time. We will notify users of any significant changes through the app.</p>
+            <p>We may update this privacy policy from time to time. We will update the "Last updated" date above and, where a change materially affects how we use your personal data, we will take reasonable steps to notify you - for example, through the app.</p>
         </div>
 
         <div class="divider"></div>
@@ -245,7 +257,7 @@
         <div class="footer-logo">Helpy</div>
         <div class="footer-tagline">Neighbors Helping Neighbors</div>
         <div class="footer-links">
-            <a href="/">Privacy</a>
+            <a href="/privacy.html">Privacy</a>
             <a href="/terms.html">Terms</a>
             <a href="/delete-account.html">Delete Account</a>
             <a href="mailto:support@help-y.com">Contact</a>
