@@ -10,31 +10,44 @@
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
-  /* war-room identity: committed dark, brand indigo→violet (palette validated
-     against surface #1c1930 with the dataviz six-checks validator) */
+  /* mission-control identity: deep-space ground with a faint HUD grid, glass
+     panels, glowing Orbitron numerals (data palette validated with the dataviz
+     six-checks validator against the dark surface) */
   :root {
     color-scheme: dark;
-    --plane:#12101e; --surface:#1c1930;
+    --plane:#0b0a14; --surface:#171430;
+    --glass:rgba(26,22,50,0.62);
     --ink:#eceaf6; --ink2:#9b96bc; --muted:#6b678c;
-    --grid:#2a2547; --baseline:#3b3563; --hairline:rgba(255,255,255,0.08);
+    --grid:#2a2547; --baseline:#3b3563; --hairline:rgba(139,146,255,0.14);
     --s1:#6366f1; --s2:#d97706; --s3:#0d9488; --s7:#8b5cf6; --s5:#65a30d; --s8:#e11d48;
     --brand-hi:#8b92ff; --violet:#8b5cf6;
     --seq100:#262250; --seq250:#3d3a8c; --seq400:#5b5bd6; --seq550:#818cf8; --seq700:#b4bcfe;
     --good-text:#4ade80; --bad-text:#f87171; --warning:#fab219;
     --wash1:rgba(99,102,241,0.14); --wash-hover:rgba(255,255,255,0.05);
+    --num-glow:0 0 22px rgba(139,146,255,0.4);
   }
   * { box-sizing:border-box; margin:0; }
   html { background:var(--plane); }
-  body { background:var(--plane); color:var(--ink);
-         font:14px/1.5 "Heebo",system-ui,-apple-system,"Segoe UI",sans-serif; }
+  body { color:var(--ink);
+         font:14px/1.5 "Heebo",system-ui,-apple-system,"Segoe UI",sans-serif;
+         background:
+           radial-gradient(1100px 560px at 85% -8%, rgba(99,102,241,0.16), transparent 62%),
+           radial-gradient(900px 520px at 8% 108%, rgba(139,92,246,0.11), transparent 60%),
+           repeating-linear-gradient(0deg, rgba(139,146,255,0.028) 0 1px, transparent 1px 44px),
+           repeating-linear-gradient(90deg, rgba(139,146,255,0.028) 0 1px, transparent 1px 44px),
+           var(--plane);
+         background-attachment:fixed; }
   button { font:inherit; color:inherit; }
 
   /* ---- chrome ---- */
   header { display:flex; align-items:center; gap:10px; padding:12px 24px;
-           background:var(--surface); border-bottom:1px solid var(--hairline);
+           background:rgba(11,10,20,0.72);
+           backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+           border-bottom:1px solid var(--hairline);
            position:sticky; top:0; z-index:20; flex-wrap:wrap; }
-  .brand { display:flex; align-items:center; gap:8px; font-weight:400; font-size:16px;
-           font-family:"Suez One","Heebo",serif; }
+  .brand { display:flex; align-items:center; gap:9px; font-weight:600; font-size:13.5px;
+           font-family:"Orbitron","Heebo",sans-serif; letter-spacing:0.1em;
+           text-transform:uppercase; }
   .brand i { width:10px; height:10px; border-radius:50%;
              background:linear-gradient(135deg,var(--brand-hi),var(--violet));
              animation:pulse 2.4s ease-in-out infinite; }
@@ -75,8 +88,8 @@
 
   /* Stripe-pattern: period total + delta + previous-period figure above a chart */
   .cmp { display:flex; align-items:baseline; gap:10px; margin:2px 0 10px; }
-  .cmp b { font-family:"Suez One","Heebo",serif; font-weight:400; font-size:24px;
-           font-variant-numeric:tabular-nums; }
+  .cmp b { font-family:"Orbitron","Heebo",sans-serif; font-weight:600; font-size:19px;
+           font-variant-numeric:tabular-nums; text-shadow:var(--num-glow); }
   .cmp .delta { font-size:12.5px; font-weight:600; }
   .cmp .delta.up { color:var(--good-text); }
   .cmp .delta.down { color:var(--bad-text); }
@@ -86,11 +99,17 @@
   .tiles { display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
            gap:12px; margin-bottom:8px; }
   @media (max-width:900px){ .tiles{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
-  .tile.hero { border-top:3px solid var(--s1);
-               background:radial-gradient(circle at 85% -30%, rgba(139,92,246,0.22), transparent 60%),
-                          var(--surface); }
-  .sechead { font-size:16px; font-weight:400; margin:26px 2px 12px;
-             font-family:"Suez One","Heebo",serif;
+  .tile.hero { border-top:3px solid var(--s1); position:relative;
+               background:radial-gradient(circle at 85% -30%, rgba(139,92,246,0.28), transparent 60%),
+                          var(--glass); }
+  /* HUD corner brackets on the north-star tile */
+  .tile.hero::before, .tile.hero::after { content:""; position:absolute;
+               width:14px; height:14px; border:2px solid rgba(139,146,255,0.55);
+               pointer-events:none; }
+  .tile.hero::before { top:6px; inset-inline-start:6px; border-inline-end:none; border-bottom:none; }
+  .tile.hero::after  { bottom:6px; inset-inline-end:6px; border-inline-start:none; border-top:none; }
+  .sechead { font-size:13px; font-weight:700; margin:26px 2px 12px;
+             letter-spacing:0.08em; color:var(--ink2);
              display:flex; align-items:center; gap:8px; }
   .sechead::before { content:""; width:9px; height:9px; border-radius:3px;
                      background:var(--sec-c, var(--s1)); }
@@ -118,13 +137,26 @@
   .ins.bad  .dot { background:var(--bad-text); }
   .ins.info .dot { background:var(--baseline); }
   .ins b { font-variant-numeric:tabular-nums; }
-  .tile { background:var(--surface); border:1px solid var(--hairline);
+  .tile { background:var(--glass); border:1px solid var(--hairline);
+          backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
           border-radius:12px; padding:14px 16px 10px;
-          transition:transform .2s ease, box-shadow .2s ease; }
-  .tile:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.35); }
+          box-shadow:inset 0 1px 0 rgba(139,146,255,0.08);
+          transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+  .tile:hover { transform:translateY(-2px); border-color:rgba(139,146,255,0.32);
+                box-shadow:0 6px 22px rgba(0,0,0,0.4), 0 0 18px rgba(99,102,241,0.14); }
   .tile .lbl { font-size:12px; color:var(--ink2); }
-  .tile .val { font-size:28px; font-weight:400; margin:2px 0;
-               font-family:"Suez One","Heebo",serif; font-variant-numeric:tabular-nums; }
+  .tile .val { font-size:23px; font-weight:600; margin:4px 0;
+               font-family:"Orbitron","Heebo",sans-serif;
+               font-variant-numeric:tabular-nums; text-shadow:var(--num-glow); }
+  /* radial gauge variant (conic ring) */
+  .ring { width:64px; height:64px; border-radius:50%; margin:4px 0 2px; position:relative;
+          background:conic-gradient(var(--brand-hi) calc(var(--p)*1%), rgba(139,146,255,0.1) 0);
+          filter:drop-shadow(0 0 8px rgba(139,146,255,0.35)); }
+  .ring::after { content:""; position:absolute; inset:7px; border-radius:50%;
+                 background:var(--surface); }
+  .ring b { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+            z-index:1; font-family:"Orbitron","Heebo",sans-serif; font-size:14px;
+            font-weight:600; }
   .tile .sub { display:flex; align-items:baseline; gap:8px; min-height:18px; }
   .tile .delta { font-size:12px; font-weight:600; }
   .tile .delta.up { color:var(--good-text); }
@@ -135,7 +167,9 @@
   /* ---- panels & charts ---- */
   .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
   @media (max-width:880px){ .grid2{grid-template-columns:1fr;} }
-  .panel { background:var(--surface); border:1px solid var(--hairline);
+  .panel { background:var(--glass); border:1px solid var(--hairline);
+           backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+           box-shadow:inset 0 1px 0 rgba(139,146,255,0.08);
            border-radius:12px; padding:16px; margin-bottom:16px; min-width:0; }
   .panel h2 { font-size:13px; font-weight:600; margin-bottom:2px; }
   .panel .sub { font-size:12px; color:var(--muted); margin-bottom:10px; }
@@ -652,7 +686,8 @@
           return { name: s.name, type: "line", smooth: true,
             symbol: "circle", symbolSize: 7, showSymbol: false,
             emphasis: { focus: "series" },
-            lineStyle: { width: 2, color: s.color },
+            lineStyle: { width: 2, color: s.color,
+              shadowColor: s.color + "66", shadowBlur: 10, shadowOffsetY: 3 },
             itemStyle: { color: s.color, borderColor: surface, borderWidth: 2 },
             areaStyle: s.area ? { color: new echarts.graphic.LinearGradient(0,0,0,1,[
               { offset: 0, color: s.color + "44" },
@@ -772,9 +807,15 @@
         if(trg) trg.scrollIntoView({behavior:"smooth",block:"start"});
       });
     }
-    var valEl=el("div","val",value);
-    if(/^[\d,]+$/.test(value)) animNum(valEl, parseInt(value.replace(/,/g,""),10));
-    t.appendChild(valEl);
+    if(opts.ring!=null){
+      var ring=el("div","ring"); ring.style.setProperty("--p",opts.ring);
+      ring.appendChild(el("b",null,opts.ring+"%"));
+      t.appendChild(ring);
+    } else {
+      var valEl=el("div","val",value);
+      if(/^[\d,]+$/.test(value)) animNum(valEl, parseInt(value.replace(/,/g,""),10));
+      t.appendChild(valEl);
+    }
     var sub=el("div","sub");
     if(opts.delta!=null && opts.prev!=null){
       var d=opts.delta-opts.prev;
@@ -907,7 +948,8 @@
       {note:"שבוע: "+fmt(k.seen_7d)+" · חודש: "+fmt(k.seen_30d),
        spark:tail(DATA.dau_by_day,"dau"), dot:tok("--s1"), target:"chDau"}));
     host.appendChild(tile("דביקות DAU/MAU", pct(k.seen_1d,k.seen_30d),
-      {note:"משתמשים חיים: "+fmt(k.live_users), dot:S7, target:"cohorts"}));
+      {note:"משתמשים חיים: "+fmt(k.live_users), dot:S7, target:"cohorts",
+       ring: k.seen_30d? Math.round(100*k.seen_1d/k.seen_30d):0}));
     host.appendChild(tile("הודעות צ'אט · 7 ימים", fmt(dl.messages_7d),
       {delta:dl.messages_7d, prev:dl.messages_prev_7d,
        spark:tail(DATA.messages_by_day,"msgs"), dot:S3, target:"chMsgs"}));
