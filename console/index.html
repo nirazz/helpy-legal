@@ -1000,7 +1000,7 @@
         itemStyle: { color: tok("--muted") }, emphasis: { disabled: true },
         data: prevData
       }] : [])
-    });
+    }, { replaceMerge: ["series"] }); // segment switches DROP series - a plain merge keeps them
   }
   window.addEventListener("resize", function(){
     Object.keys(einsts).forEach(function(k){ einsts[k].resize(); });
