@@ -8,13 +8,14 @@
 <link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
   :root {
     color-scheme: light;
     --plane:#f9f9f7; --surface:#fcfcfb;
     --ink:#0b0b0b; --ink2:#52514e; --muted:#898781;
     --grid:#e1e0d9; --baseline:#c3c2b7; --hairline:rgba(11,11,11,0.10);
-    --s1:#2a78d6; --s2:#eb6834;
+    --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s7:#4a3aa7; --s5:#e87ba4; --s8:#e34948;
     --seq100:#cde2fb; --seq250:#86b6ef; --seq400:#3987e5; --seq550:#1c5cab; --seq700:#0d366b;
     --good-text:#006300; --bad-text:#d03b3b; --warning:#fab219;
     --wash1:rgba(42,120,214,0.10); --wash-hover:rgba(11,11,11,0.04);
@@ -25,7 +26,7 @@
       --plane:#0d0d0d; --surface:#1a1a19;
       --ink:#ffffff; --ink2:#c3c2b7; --muted:#898781;
       --grid:#2c2c2a; --baseline:#383835; --hairline:rgba(255,255,255,0.10);
-      --s1:#3987e5; --s2:#d95926;
+      --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s7:#9085e9; --s5:#d55181; --s8:#e66767;
       --good-text:#0ca30c; --bad-text:#d03b3b;
       --wash1:rgba(57,135,229,0.16); --wash-hover:rgba(255,255,255,0.05);
     }
@@ -71,7 +72,25 @@
            gap:12px; margin-bottom:8px; }
   @media (max-width:900px){ .tiles{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
   .tile.hero { border-top:3px solid var(--s1); }
-  .sechead { font-size:15px; font-weight:700; margin:26px 2px 12px; }
+  .sechead { font-size:15px; font-weight:700; margin:26px 2px 12px;
+             display:flex; align-items:center; gap:8px; }
+  .sechead::before { content:""; width:9px; height:9px; border-radius:3px;
+                     background:var(--sec-c, var(--s1)); }
+  .panel { opacity:0; transform:translateY(14px);
+           transition:opacity .5s ease, transform .5s ease,
+                      box-shadow .2s ease; }
+  .panel.vis { opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce){ .panel{ opacity:1; transform:none; } }
+  .clickable { cursor:pointer; }
+  .drillchip { background:var(--wash1); border:1px solid var(--s1); color:var(--ink);
+               border-radius:8px; padding:3px 10px; font-size:12px; display:flex;
+               gap:8px; align-items:center; }
+  .drillchip button { all:unset; cursor:pointer; font-weight:700; }
+  .seg.mini button { padding:2px 10px; font-size:12px; }
+  .filters input[type=date] { border:1px solid var(--hairline); background:var(--surface);
+      color:var(--ink); padding:5px 8px; border-radius:8px; font:inherit; font-size:13px; }
+  .tile .lbl { display:flex; align-items:center; gap:6px; }
+  .tile .lbl i { width:7px; height:7px; border-radius:2px; flex-shrink:0; }
   .ins { display:flex; gap:10px; align-items:flex-start; padding:7px 0;
          font-size:13.5px; border-bottom:1px solid var(--grid); }
   .ins:last-child { border-bottom:0; }
@@ -184,30 +203,56 @@
 
   /* ---- login ---- */
   #login { position:fixed; inset:0; background:var(--plane); display:flex;
-           align-items:center; justify-content:center; z-index:50; }
-  #login form { background:var(--surface); border:1px solid var(--hairline);
-                border-radius:16px; padding:36px 32px; width:330px; text-align:center;
-                box-shadow:0 8px 32px rgba(0,0,0,0.08); }
-  #login .brand { justify-content:center; font-size:18px; margin-bottom:4px; }
-  #login p { color:var(--muted); font-size:13px; }
-  #login input { width:100%; margin:18px 0 12px; border:1px solid var(--hairline);
+           align-items:center; justify-content:center; z-index:50; overflow:hidden; }
+  #login::before, #login::after {
+    content:""; position:absolute; border-radius:50%; filter:blur(70px); opacity:.35;
+    animation:drift 14s ease-in-out infinite alternate; }
+  #login::before { width:420px; height:420px; background:var(--s1);
+                   top:-120px; inset-inline-start:-100px; }
+  #login::after  { width:360px; height:360px; background:var(--s2);
+                   bottom:-120px; inset-inline-end:-80px; animation-delay:-7s; }
+  @keyframes drift { from{ transform:translate(0,0) scale(1); }
+                     to{ transform:translate(40px,30px) scale(1.15); } }
+  .login-card { position:relative; z-index:1; background:var(--surface);
+                border:1px solid var(--hairline); border-radius:20px;
+                padding:40px 36px 28px; width:340px; text-align:center;
+                box-shadow:0 20px 60px rgba(0,0,0,0.12); }
+  .login-card .brand { justify-content:center; font-size:19px; margin-bottom:6px; }
+  .login-card p { color:var(--muted); font-size:13px; margin-bottom:22px; }
+  .gbtn { display:flex; gap:10px; align-items:center; justify-content:center;
+          width:100%; padding:11px; border-radius:10px; border:1px solid var(--hairline);
+          background:var(--plane); color:var(--ink); font:inherit; font-weight:600;
+          cursor:pointer; transition:box-shadow .2s ease, transform .15s ease; }
+  .gbtn:hover { box-shadow:0 4px 14px rgba(0,0,0,0.1); transform:translateY(-1px); }
+  .gbtn svg { width:18px; height:18px; }
+  .linklike { all:unset; cursor:pointer; color:var(--muted); font-size:12px;
+              margin-top:18px; display:inline-block; }
+  .linklike:hover { color:var(--ink2); text-decoration:underline; }
+  #login input { width:100%; margin:14px 0 10px; border:1px solid var(--hairline);
                  background:var(--plane); color:var(--ink); padding:10px 12px;
                  border-radius:8px; font:inherit; }
   #login .cta { width:100%; background:var(--s1); color:#fff; border:none;
                 padding:10px; border-radius:8px; cursor:pointer; font-weight:600; }
-  #login .err { color:var(--bad-text); font-size:12px; min-height:16px; margin-top:10px; }
+  #login .err { color:var(--bad-text); font-size:12px; min-height:16px; margin-top:12px; }
   .hidden { display:none !important; }
 </style>
 </head>
 <body>
 <div id="login">
-  <form id="loginForm">
+  <div class="login-card">
     <div class="brand"><i></i>Helpy Console</div>
-    <p>גישה למפעיל בלבד</p>
-    <input id="keyInput" type="password" placeholder="מפתח גישה" autocomplete="current-password">
-    <button class="cta" type="submit">כניסה</button>
+    <p>קונסול הניהול של Helpy · הגישה למורשים בלבד</p>
+    <button class="gbtn" id="googleBtn" type="button">
+      <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.7 2.4 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.2C12.4 13.5 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.6c-.5-1.5-.8-3-.8-4.6s.3-3.1.8-4.6l-7.9-6.2C1 16.1 0 19.9 0 24s1 7.9 2.6 10.8l7.9-6.2z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.6l-7.7-6c-2.1 1.4-4.7 2.2-7.5 2.2-6.3 0-11.6-4-13.5-9.6l-7.9 6.2C6.5 42.6 14.6 48 24 48z"/></svg>
+      כניסה עם Google
+    </button>
     <div class="err" id="loginErr"></div>
-  </form>
+    <button class="linklike" id="keyToggle" type="button">כניסה עם מפתח גישה</button>
+    <form id="loginForm" class="hidden">
+      <input id="keyInput" type="password" placeholder="מפתח גישה" autocomplete="current-password">
+      <button class="cta" type="submit">כניסה</button>
+    </form>
+  </div>
 </div>
 
 <header class="hidden" id="hdr">
@@ -236,8 +281,11 @@
         <button data-d="90" class="on">90 יום</button>
         <button data-d="180">חצי שנה</button>
       </div>
-      <span class="cap">בתוך כל גרף אפשר לגרור את פס הטווח למטה כדי להתמקד בימים ספציפיים, וללחוץ על מקרא כדי להסתיר/להציג סדרה</span>
+      <span class="cap">או תאריכים:</span>
+      <input type="date" id="fromDate"> <span class="cap">עד</span> <input type="date" id="toDate">
+      <button class="ghost" id="applyRange">הצג</button>
     </div>
+    <p class="note" style="margin-bottom:14px">טיפ: בתוך כל גרף אפשר לגרור את פס הטווח שלמטה, ללחוץ על מקרא כדי להסתיר סדרה, וללחוץ על קטגוריות, משתמשים וכרטיסים כדי לצלול פנימה</p>
     <section class="panel">
       <h2>מה דורש תשומת לב</h2>
       <div class="sub">תובנות מחושבות מהנתונים של 30 הימים האחרונים</div>
@@ -245,15 +293,17 @@
     </section>
     <div class="tiles" id="tiles"></div>
 
-    <div class="sechead">צמיחה והפעלה</div>
+    <div class="sechead" id="secGrowth" style="--sec-c:var(--s1)">צמיחה והפעלה</div>
     <div class="grid2">
       <section class="panel"><h2>הרשמות</h2><div class="sub">משתמשים חדשים לפי פלטפורמה</div><div id="chSignups"></div></section>
       <section class="panel"><h2>משתמשים פעילים</h2><div class="sub">DAU ו-WAU מתוך דגימת last_seen_at יומית</div><div id="chDau"></div></section>
-      <section class="panel"><h2>משפך הפעלה · 14 יום</h2><div class="sub">מה עושה משתמש חדש אחרי ההרשמה</div><div id="funnel"></div></section>
+      <section class="panel"><h2 style="display:flex;align-items:center;gap:10px">משפך הפעלה
+        <span class="seg mini" id="funnelSeg"><button data-d="14" class="on">14 יום</button><button data-d="30">30 יום</button></span></h2>
+        <div class="sub">מה עושה משתמש חדש אחרי ההרשמה</div><div id="funnel"></div></section>
       <section class="panel"><h2>מאזן משתמשים</h2><div class="sub">חתך חי של כל המשתמשים הרשומים</div><div id="lifecycle"></div></section>
     </div>
 
-    <div class="sechead">מרקטפלייס</div>
+    <div class="sechead" id="secMarket" style="--sec-c:var(--s2)">מרקטפלייס</div>
     <div class="grid2">
       <section class="panel"><h2>פוסטים</h2><div class="sub">בקשות עזרה מול הצעות עזרה</div><div id="chPosts"></div></section>
       <section class="panel"><h2>התאמות והשלמות</h2><div class="sub">התאמות חדשות מול עזרות שסומנו כהושלמו</div><div id="chMatches"></div></section>
@@ -263,23 +313,23 @@
       <section class="panel"><h2>ערים מובילות · 30 יום</h2><div class="sub">לפי עיר הפוסט</div><div id="chCities"></div></section>
     </div>
 
-    <div class="sechead">מעורבות בצ'אט</div>
+    <div class="sechead" id="secChat" style="--sec-c:var(--s3)">מעורבות בצ'אט</div>
     <div class="grid2">
       <section class="panel"><h2>שיחות צ'אט</h2><div class="sub">הודעות שנשלחו (בטווח ארוך - סכום שבועי)</div><div id="chMsgs"></div></section>
       <section class="panel"><h2>בריאות הצ'אט · 30 יום</h2><div class="sub">האם פניות מקבלות מענה, ובאיזו מהירות</div><div id="chatHealth"></div></section>
     </div>
 
-    <div class="sechead">שימור ואיכות הפעלה</div>
+    <div class="sechead" id="secRetention" style="--sec-c:var(--s7)">שימור ואיכות הפעלה</div>
     <section class="panel">
       <h2>לפי שבוע הרשמה</h2>
       <div class="sub">שימור: אחוז שחזר אחרי יום / שבוע / חודש (לפי last_seen_at; שבועות שטרם הבשילו מסומנים -). איכות: אחוז שנתן מיקום והתראות</div>
       <div id="cohorts" style="overflow-x:auto"></div>
     </section>
 
-    <div class="sechead">משתמשים בולטים · 30 יום</div>
+    <div class="sechead" id="secUsers" style="--sec-c:var(--s5)">משתמשים בולטים · 30 יום</div>
     <section class="panel"><div id="topUsers" style="overflow-x:auto"></div></section>
 
-    <div class="sechead">אמון ובטיחות</div>
+    <div class="sechead" id="secSafety" style="--sec-c:var(--s8)">אמון ובטיחות</div>
     <section class="panel"><h2>30 הימים האחרונים</h2><div id="safety"></div></section>
   </div>
 
@@ -299,6 +349,7 @@
       <label><input type="checkbox" id="hideMock" checked> הסתרת חשבונות בדיקה</label>
       <label><input type="checkbox" id="onlyOneWay"> רק ללא מענה</label>
       <label><input type="checkbox" id="onlyPhone"> הוחלף בהן טלפון</label>
+      <span id="drillHost"></span>
     </div>
     <p class="note" style="margin-bottom:12px"><span id="chatCount"></span> · מוצג לצורכי פיקוח ובטיחות בלבד · לקריאה בלבד · מספרי טלפון מודגשים</p>
     <div id="convoList"></div>
@@ -312,6 +363,21 @@
   "use strict";
   var KEY = sessionStorage.getItem("helpy_dash_key") || "";
   var DATA = null;
+  var SESSION = null;
+  var CUSTOM = null;            // {from:"YYYY-MM-DD", to:"YYYY-MM-DD"} calendar range
+  var drill = { category: null }; // click-through filter into the chat tab
+  var sb = window.supabase ? window.supabase.createClient(
+    "https://lwomstzzmyegpbidibfm.supabase.co",
+    "sb_publishable_4UpbPcXm8El9N91W2Lp8Gg_Pp5Vg-_S",
+    { auth: { flowType: "pkce", detectSessionInUrl: true, storageKey: "helpy_console_auth" } }
+  ) : null;
+  // the full 8-slot categorical palette (validated order) for one-value-per-row bars
+  var PAL8 = ["#2a78d6","#eb6834","#1baf7a","#eda100","#e87ba4","#008300","#4a3aa7","#e34948"];
+  var PAL8D = ["#3987e5","#d95926","#199e70","#c98500","#d55181","#008300","#9085e9","#e66767"];
+  function pal(i){
+    var dark = window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches;
+    return (dark ? PAL8D : PAL8)[i % 8];
+  }
   var css = getComputedStyle(document.documentElement);
   function tok(n){ return css.getPropertyValue(n).trim(); }
   var $ = function(id){ return document.getElementById(id); };
@@ -547,6 +613,9 @@
             emphasis: { focus: "series" },
             lineStyle: { width: 2, color: s.color },
             itemStyle: { color: s.color, borderColor: surface, borderWidth: 2 },
+            areaStyle: s.area ? { color: new echarts.graphic.LinearGradient(0,0,0,1,[
+              { offset: 0, color: s.color + "44" },
+              { offset: 1, color: s.color + "00" }]) } : undefined,
             data: rows.map(function(r){ return +r[s.key] || 0; }) };
         }
         return { name: s.name, type: "bar",
@@ -624,15 +693,46 @@
       row.appendChild(track);
       row.appendChild(el("span","hval",fmt((it.v1||0)+(it.v2||0))+(it.suffix||"")));
       row.title=it.title||"";
+      if(it.onClick){
+        row.classList.add("clickable");
+        row.addEventListener("click",it.onClick);
+        row.title=(it.title? it.title+" · ":"")+"לחיצה לצלילה פנימה";
+      }
       host.appendChild(row);
     });
+  }
+
+  function switchTab(v){
+    document.querySelectorAll("#tabs button").forEach(function(b){
+      b.classList.toggle("on", b.getAttribute("data-v")===v);
+    });
+    $("metricsView").classList.toggle("hidden",v!=="metrics");
+    $("chatView").classList.toggle("hidden",v!=="chat");
+    if(v==="metrics") Object.keys(einsts).forEach(function(k){ einsts[k].resize(); });
+    window.scrollTo({top:0,behavior:"smooth"});
+  }
+  function drillToChat(opts){
+    drill.category=opts.category||null;
+    $("chatSearch").value=opts.search||"";
+    switchTab("chat");
+    renderChat();
   }
 
   // ---- tiles ---------------------------------------------------------------
   function tile(label, value, opts){
     opts=opts||{};
     var t=el("div","tile");
-    t.appendChild(el("div","lbl",label));
+    var lbl=el("div","lbl");
+    if(opts.dot){ var d=el("i"); d.style.background=opts.dot; lbl.appendChild(d); }
+    lbl.appendChild(document.createTextNode(label));
+    t.appendChild(lbl);
+    if(opts.target){
+      t.classList.add("clickable");
+      t.addEventListener("click",function(){
+        var trg=$(opts.target);
+        if(trg) trg.scrollIntoView({behavior:"smooth",block:"start"});
+      });
+    }
     var valEl=el("div","val",value);
     if(/^[\d,]+$/.test(value)) animNum(valEl, parseInt(value.replace(/,/g,""),10));
     t.appendChild(valEl);
@@ -652,6 +752,19 @@
 
   // aggregate daily rows into ISO-week buckets (sum) - used when the range is
   // long enough that daily bars turn into noise
+  function rangeRows(rows){
+    if(!CUSTOM) return rows;
+    return (rows||[]).filter(function(r){
+      var d=String(r.d).slice(0,10);
+      return d>=CUSTOM.from && d<=CUSTOM.to;
+    });
+  }
+  function spanDays(){
+    if(CUSTOM){
+      return Math.round((new Date(CUSTOM.to)-new Date(CUSTOM.from))/86400000)+1;
+    }
+    return segVal("rangeSeg");
+  }
   function byWeek(rows, keys){
     var out=[], cur=null, curKey="";
     (rows||[]).forEach(function(r){
@@ -664,15 +777,20 @@
     return out;
   }
   function maybeWeekly(rows, keys){
-    return segVal("rangeSeg")>=60 ? byWeek(rows,keys) : rows;
+    rows = rangeRows(rows);
+    return spanDays()>=60 ? byWeek(rows,keys) : rows;
   }
 
-  function insight(cls, html){ // html is built from trusted labels + numbers only
+  function insight(cls, html, onClick){ // html is built from trusted labels + numbers only
     var row=el("div","ins "+cls);
     row.appendChild(el("span","dot"));
     var span=el("span"); span.innerHTML=html;
     row.appendChild(span);
+    if(onClick){ row.classList.add("clickable"); row.addEventListener("click",onClick); }
     return row;
+  }
+  function scrollToEl(id){
+    return function(){ var t=$(id); if(t) t.scrollIntoView({behavior:"smooth",block:"center"}); };
   }
   function renderInsights(){
     var k=DATA.kpis, dl=DATA.deltas||{}, f=DATA.funnel_30d, L=DATA.liquidity,
@@ -681,20 +799,20 @@
     var rows=[];
     // ordered: serious -> warning -> good/info
     var msgPct=f.signups? Math.round(100*f.messaged/f.signups):0;
-    if(msgPct<10) rows.push(["bad","רק <b>"+msgPct+"%</b> מהנרשמים מגיעים לשיחה עם שכן - זה צוואר הבקבוק המרכזי במשפך ("+fmt(f.messaged)+" מתוך "+fmt(f.signups)+" ב-30 יום)"]);
+    if(msgPct<10) rows.push(["bad","רק <b>"+msgPct+"%</b> מהנרשמים מגיעים לשיחה עם שכן - זה צוואר הבקבוק המרכזי במשפך ("+fmt(f.messaged)+" מתוך "+fmt(f.signups)+" ב-30 יום)",scrollToEl("funnel")]);
     if(C.offer_convos>0){
       var op=Math.round(100*C.offer_answered/C.offer_convos);
       rows.push([op<60?"bad":"good","בעלי הצעות ענו ל-<b>"+op+"%</b> מהפניות אליהם ("+fmt(C.offer_answered)+" מתוך "+fmt(C.offer_convos)+")"+(op<60?" - פנייה שנשארת באוויר מייאשת שכנים":"")]);
     }
     var lq=L.requests_30d? Math.round(100*L.with_offer_24h/L.requests_30d):0;
     rows.push([lq<50?"warn":"good","<b>"+lq+"%</b> מהבקשות קיבלו הצעה תוך 24 שעות (יעד: 50%+)"]);
-    if(NO.count>0) rows.push(["warn","<b>"+fmt(NO.count)+"</b> בקשות פעילות עדיין בלי אף הצעה - רשימה בסקשן המרקטפלייס"]);
+    if(NO.count>0) rows.push(["warn","<b>"+fmt(NO.count)+"</b> בקשות פעילות עדיין בלי אף הצעה - לחיצה קופצת לרשימה",scrollToEl("noOffer")]);
     var fa=f.signups? Math.round(100*(dl.first_action_24h_30d||0)/f.signups):0;
     rows.push([fa<30?"warn":"info","<b>"+fa+"%</b> מהנרשמים החדשים עשו פעולה ראשונה (פוסט או פנייה) תוך 24 שעות"]);
     var d=k.signups_7d-(dl.signups_prev_7d||0);
     if(d!==0) rows.push([d>0?"good":"info","קצב ההרשמות "+(d>0?"עלה":"ירד")+" ב-<b>"+fmt(Math.abs(d))+"</b> השבוע ("+fmt(k.signups_7d)+" מול "+fmt(dl.signups_prev_7d||0)+")"]);
     if(lf.dormant_30d) rows.push(["info","<b>"+fmt(lf.dormant_30d)+"</b> מתוך "+fmt(k.live_users)+" המשתמשים רדומים (לא נראו 30+ יום) - קהל לרה-אקטיבציה"]);
-    rows.forEach(function(r){ host.appendChild(insight(r[0],r[1])); });
+    rows.forEach(function(r){ host.appendChild(insight(r[0],r[1],r[2])); });
   }
 
   function renderMetrics(){
@@ -702,32 +820,38 @@
     renderInsights();
     var host=$("tiles"); host.innerHTML="";
     function tail(series,key){ return (series||[]).slice(-14).map(function(r){return +r[key]||0;}); }
+    var S3=tok("--s3"), S7=tok("--s7"), S5=tok("--s5");
     var hero=tile("עזרות שהושלמו · 7 ימים ⭐", fmt(k.completed_7d),
-      {delta:k.completed_7d, prev:dl.completed_prev_7d, spark:tail(DATA.matches_by_day,"completed")});
+      {delta:k.completed_7d, prev:dl.completed_prev_7d,
+       spark:tail(DATA.matches_by_day,"completed"), target:"chMatches"});
     hero.classList.add("hero");
     host.appendChild(hero);
     host.appendChild(tile("הרשמות · 7 ימים", fmt(k.signups_7d),
-      {delta:k.signups_7d, prev:dl.signups_prev_7d, spark:tail(DATA.signups_by_day,"total")}));
+      {delta:k.signups_7d, prev:dl.signups_prev_7d,
+       spark:tail(DATA.signups_by_day,"total"), dot:tok("--s1"), target:"chSignups"}));
     host.appendChild(tile("פעילים היום", fmt(k.seen_1d),
       {note:"שבוע: "+fmt(k.seen_7d)+" · חודש: "+fmt(k.seen_30d),
-       spark:tail(DATA.dau_by_day,"dau")}));
+       spark:tail(DATA.dau_by_day,"dau"), dot:tok("--s1"), target:"chDau"}));
     host.appendChild(tile("דביקות DAU/MAU", pct(k.seen_1d,k.seen_30d),
-      {note:"משתמשים חיים: "+fmt(k.live_users)}));
+      {note:"משתמשים חיים: "+fmt(k.live_users), dot:S7, target:"cohorts"}));
     host.appendChild(tile("הודעות צ'אט · 7 ימים", fmt(dl.messages_7d),
-      {delta:dl.messages_7d, prev:dl.messages_prev_7d, spark:tail(DATA.messages_by_day,"msgs")}));
+      {delta:dl.messages_7d, prev:dl.messages_prev_7d,
+       spark:tail(DATA.messages_by_day,"msgs"), dot:S3, target:"chMsgs"}));
     host.appendChild(tile("התאמות · 7 ימים", fmt(k.matches_7d),
-      {delta:k.matches_7d, prev:dl.matches_prev_7d, spark:tail(DATA.matches_by_day,"created")}));
+      {delta:k.matches_7d, prev:dl.matches_prev_7d,
+       spark:tail(DATA.matches_by_day,"created"), dot:tok("--s2"), target:"chMatches"}));
     host.appendChild(tile("פוסטים · 7 ימים", fmt(dl.posts_7d),
-      {delta:dl.posts_7d, prev:dl.posts_prev_7d, spark:tail(DATA.posts_by_day,"requests")}));
+      {delta:dl.posts_7d, prev:dl.posts_prev_7d,
+       spark:tail(DATA.posts_by_day,"requests"), dot:tok("--s2"), target:"chPosts"}));
     host.appendChild(tile("בפיד עכשיו", fmt(k.active_requests)+" / "+fmt(k.active_offers),
-      {note:"בקשות / הצעות"}));
+      {note:"בקשות / הצעות", dot:S5, target:"noOffer"}));
 
     var S1=tok("--s1"), S2=tok("--s2");
     timeChart("chSignups",maybeWeekly(DATA.signups_by_day,["ios","android","total"]),[
       {key:"ios",name:"iOS",color:S1,type:"bar"},
       {key:"android",name:"Android",color:S2,type:"bar"}],{zoom:true});
-    timeChart("chDau",DATA.dau_by_day,[
-      {key:"dau",name:"DAU",color:S1,type:"line"},
+    timeChart("chDau",rangeRows(DATA.dau_by_day),[
+      {key:"dau",name:"DAU",color:S1,type:"line",area:true},
       {key:"wau",name:"WAU",color:S2,type:"line"}],{zoom:false});
     timeChart("chPosts",maybeWeekly(DATA.posts_by_day,["requests","offers"]),[
       {key:"requests",name:"בקשות",color:S1,type:"bar"},
@@ -736,7 +860,7 @@
       {key:"msgs",name:"הודעות",color:S1,type:"bar"}],{zoom:true});
     timeChart("chMatches",maybeWeekly(DATA.matches_by_day,["created","completed"]),[
       {key:"created",name:"התאמות",color:S1,type:"bar"},
-      {key:"completed",name:"השלמות",color:S2,type:"bar"}],{zoom:true,group:true});
+      {key:"completed",name:"השלמות",color:S3,type:"bar"}],{zoom:true,group:true});
 
     var lf=DATA.lifecycle||{};
     var lt0=el("table","plain");
@@ -750,7 +874,7 @@
     var lch=$("lifecycle"); lch.innerHTML=""; lch.appendChild(lt0);
 
     // funnel: ordinal sequential ramp (starts at step 250 per the ramp rule)
-    var f=DATA.funnel_14d;
+    var f=segVal("funnelSeg")===30? DATA.funnel_30d : DATA.funnel_14d;
     var ramp=[tok("--seq250"),tok("--seq400"),tok("--seq400"),tok("--seq550"),
               tok("--seq550"),tok("--seq700"),tok("--seq700")];
     var steps=[["נרשמו",f.signups],["שיתפו מיקום",f.location],["אישרו התראות",f.push],
@@ -762,10 +886,11 @@
 
     hbars("chCats",(DATA.categories_30d||[]).map(function(c){
       return {label:c.category, v1:c.requests, c1:S1, v2:c.offers, c2:S2,
-              title:"בקשות "+c.requests+" · הצעות "+c.offers};
+              title:"בקשות "+c.requests+" · הצעות "+c.offers,
+              onClick:function(){ drillToChat({category:c.category}); }};
     }));
-    hbars("chCities",(DATA.cities_30d||[]).map(function(c){
-      return {label:c.city, v1:c.posts, c1:S1};
+    hbars("chCities",(DATA.cities_30d||[]).map(function(c,i){
+      return {label:c.city, v1:c.posts, c1:pal(i)};
     }));
 
     // cohort heatmap on the sequential ramp; ink picked by fill luminance
@@ -855,6 +980,9 @@
       ut.appendChild(uh);
       TU.forEach(function(u){
         var tr=el("tr");
+        tr.classList.add("clickable");
+        tr.title="לחיצה מציגה את השיחות של "+u.name;
+        tr.addEventListener("click",function(){ drillToChat({search:u.name}); });
         tr.appendChild(el("td",null,u.name));
         tr.appendChild(el("td",null,fmt(u.posts)));
         tr.appendChild(el("td",null,fmt(u.matches)));
@@ -887,10 +1015,20 @@
     var hideMock=$("hideMock").checked, onlyOneWay=$("onlyOneWay").checked,
         onlyPhone=$("onlyPhone").checked,
         typeSel=document.querySelector("#chatTypeSeg button.on").getAttribute("data-t");
+    var dh=$("drillHost"); dh.innerHTML="";
+    if(drill.category){
+      var chip=el("span","drillchip");
+      chip.appendChild(document.createTextNode("קטגוריה: "+drill.category));
+      var x=el("button",null,"✕");
+      x.addEventListener("click",function(){ drill.category=null; renderChat(); });
+      chip.appendChild(x);
+      dh.appendChild(chip);
+    }
     var list=(DATA.conversations||[]).filter(function(c){
       if(hideMock && c.mock) return false;
       if(onlyOneWay && c.two_way) return false;
       if(typeSel!=="all" && c.post_type!==typeSel) return false;
+      if(drill.category && c.category!==drill.category) return false;
       if(onlyPhone && !c.messages.some(function(m){ return PHONE_RE.test(m.content); })) return false;
       if(q){
         var hay=(c.post_title+" "+c.helper.name+" "+c.requester.name+" "+
@@ -938,7 +1076,10 @@
   }
 
   // ---- data + auth ---------------------------------------------------------
-  function segVal(id){ return +document.querySelector("#"+id+" button.on").getAttribute("data-d"); }
+  function segVal(id){
+    var b=document.querySelector("#"+id+" button.on");
+    return b? +b.getAttribute("data-d") : 90;
+  }
   var lastLoadTs=null;
   function updateTicker(){
     if(!lastLoadTs) return;
@@ -950,12 +1091,24 @@
   function load(){
     $("app").classList.add("loading");
     $("refreshIcon").classList.add("spinning");
+    var fetchDays, chatDays;
+    if(CUSTOM){
+      fetchDays=Math.min(365, Math.max(7,
+        Math.ceil((Date.now()-new Date(CUSTOM.from).getTime())/86400000)+1));
+      chatDays=fetchDays;
+    } else {
+      fetchDays=segVal("rangeSeg"); chatDays=segVal("chatRangeSeg");
+    }
+    var hdrs={"content-type":"application/json"};
+    if(SESSION && SESSION.access_token) hdrs["authorization"]="Bearer "+SESSION.access_token;
+    else hdrs["x-dashboard-key"]=KEY;
     return fetch("https://lwomstzzmyegpbidibfm.supabase.co/functions/v1/admin-dashboard",{
       method:"POST",
-      headers:{"content-type":"application/json","x-dashboard-key":KEY},
-      body:JSON.stringify({days:segVal("rangeSeg"),chatDays:segVal("chatRangeSeg")})
+      headers:hdrs,
+      body:JSON.stringify({days:fetchDays,chatDays:chatDays})
     }).then(function(r){
       if(r.status===401) throw new Error("unauthorized");
+      if(r.status===403) throw new Error("forbidden");
       if(!r.ok) throw new Error("server");
       return r.json();
     }).then(function(d){
@@ -966,7 +1119,7 @@
       $("app").classList.remove("hidden");
       $("app").classList.remove("loading");
       $("refreshIcon").classList.remove("spinning");
-      renderMetrics(); renderChat();
+      renderMetrics(); renderChat(); observePanels();
     }).catch(function(e){
       $("app").classList.remove("loading");
       $("refreshIcon").classList.remove("spinning");
@@ -980,18 +1133,61 @@
     else if(autoTimer){ clearInterval(autoTimer); autoTimer=null; }
   });
 
+  // scroll-reveal: panels fade in the first time they enter the viewport
+  var io = "IntersectionObserver" in window && !REDUCED ?
+    new IntersectionObserver(function(ents){
+      ents.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add("vis"); io.unobserve(en.target); }
+      });
+    },{threshold:0.06}) : null;
+  function observePanels(){
+    document.querySelectorAll(".panel").forEach(function(p){
+      if(io && !p.classList.contains("vis")) io.observe(p);
+      else p.classList.add("vis");
+    });
+  }
+
+  function bootFail(err){
+    if(err.message==="forbidden"){
+      $("loginErr").textContent="החשבון הזה לא מורשה לקונסול";
+      if(sb) sb.auth.signOut();
+      SESSION=null;
+    } else if(err.message==="unauthorized"){
+      sessionStorage.removeItem("helpy_dash_key");
+    } else {
+      $("loginErr").textContent="שגיאת שרת, נסו שוב";
+    }
+  }
+
+  $("googleBtn").addEventListener("click",function(){
+    if(!sb){ $("loginErr").textContent="שירות ההתחברות לא נטען, רעננו את הדף"; return; }
+    sb.auth.signInWithOAuth({ provider:"google",
+      options:{ redirectTo:"https://help-y.com/console/" } });
+  });
+  $("keyToggle").addEventListener("click",function(){
+    $("loginForm").classList.toggle("hidden");
+  });
   $("loginForm").addEventListener("submit",function(e){
     e.preventDefault();
-    KEY=$("keyInput").value.trim();
+    KEY=$("keyInput").value.trim(); SESSION=null;
     load().then(function(){ sessionStorage.setItem("helpy_dash_key",KEY); })
       .catch(function(err){
         $("loginErr").textContent= err.message==="unauthorized" ? "מפתח שגוי" : "שגיאת שרת, נסו שוב";
       });
   });
   $("logoutBtn").addEventListener("click",function(){
-    sessionStorage.removeItem("helpy_dash_key"); location.reload();
+    sessionStorage.removeItem("helpy_dash_key");
+    if(sb && SESSION){ sb.auth.signOut().then(function(){ location.reload(); }); }
+    else location.reload();
   });
   $("refreshBtn").addEventListener("click",function(){ load().catch(function(){}); });
+  $("applyRange").addEventListener("click",function(){
+    var f=$("fromDate").value, t=$("toDate").value;
+    if(!f||!t||f>t) return;
+    CUSTOM={from:f,to:t};
+    document.querySelectorAll("#rangeSeg button").forEach(function(b){ b.classList.remove("on"); });
+    load().catch(function(){});
+  });
   function segWire(id,cb){
     document.querySelectorAll("#"+id+" button").forEach(function(b){
       b.addEventListener("click",function(){
@@ -1000,20 +1196,34 @@
       });
     });
   }
-  segWire("rangeSeg",function(){ load().catch(function(){}); });
+  segWire("rangeSeg",function(){
+    CUSTOM=null; $("fromDate").value=""; $("toDate").value="";
+    load().catch(function(){});
+  });
   segWire("chatRangeSeg",function(){ load().catch(function(){}); });
   segWire("chatTypeSeg",renderChat);
+  segWire("funnelSeg",function(){ if(DATA) renderMetrics(); });
   segWire("tabs",function(){
-    var v=document.querySelector("#tabs button.on").getAttribute("data-v");
-    $("metricsView").classList.toggle("hidden",v!=="metrics");
-    $("chatView").classList.toggle("hidden",v!=="chat");
-    if(v==="metrics") Object.keys(einsts).forEach(function(k){ einsts[k].resize(); });
+    switchTab(document.querySelector("#tabs button.on").getAttribute("data-v"));
   });
   ["chatSearch","hideMock","onlyOneWay","onlyPhone"].forEach(function(id){
     $(id).addEventListener("input",renderChat);
   });
 
-  if(KEY) load().catch(function(){ sessionStorage.removeItem("helpy_dash_key"); });
+  // ---- boot: Google session first, then the fallback key -------------------
+  if(sb){
+    sb.auth.onAuthStateChange(function(ev,session){
+      SESSION=session;
+      if(ev==="SIGNED_IN" && session && !DATA) load().catch(bootFail);
+    });
+    sb.auth.getSession().then(function(r){
+      SESSION=r.data.session;
+      if(SESSION) load().catch(bootFail);
+      else if(KEY) load().catch(bootFail);
+    });
+  } else if(KEY){
+    load().catch(bootFail);
+  }
 })();
 </script>
 </body>
