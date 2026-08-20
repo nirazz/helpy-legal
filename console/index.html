@@ -188,15 +188,17 @@
   .tile .val { font-size:23px; font-weight:600; margin:4px 0;
                font-family:"Orbitron","Heebo",sans-serif;
                font-variant-numeric:tabular-nums; text-shadow:var(--num-glow); }
-  /* radial gauge variant (conic ring) */
-  .ring { width:64px; height:64px; border-radius:50%; margin:4px 0 2px; position:relative;
-          background:conic-gradient(var(--s1) calc(var(--p)*1%), rgba(99,102,241,0.14) 0);
-          filter:drop-shadow(0 0 8px rgba(99,102,241,0.3)); }
-  .ring::after { content:""; position:absolute; inset:7px; border-radius:50%;
-                 background:var(--surface); }
-  .ring b { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-            z-index:1; font-family:"Orbitron","Heebo",sans-serif; font-size:14px;
-            font-weight:600; }
+  /* bullet graph (Few): qualitative bands + measure bar + target tick.
+     Replaces the earlier ring gauge - gauges are a documented dashboard
+     anti-pattern (angle encoding reads poorly). */
+  .bullet { position:relative; height:14px; border-radius:4px; overflow:hidden;
+            margin:8px 0 4px; background:var(--grid); direction:ltr; }
+  .bullet i { position:absolute; display:block; }
+  .bullet .band { top:0; bottom:0; }
+  .bullet .bval { top:4px; bottom:4px; left:0; border-radius:2px;
+                  background:linear-gradient(90deg,var(--s1),var(--violet));
+                  transition:width .7s cubic-bezier(.2,.8,.2,1); }
+  .bullet .btgt { top:-1px; bottom:-1px; width:2px; background:var(--ink2); }
   .tile .sub { display:flex; align-items:baseline; gap:8px; min-height:18px; }
   .tile .delta { font-size:12px; font-weight:600; }
   /* colored delta pills (tile + cmp) */
@@ -406,6 +408,12 @@
       <span class="cap" data-i18n="orDates">או תאריכים:</span>
       <input type="date" id="fromDate"> <span class="cap" data-i18n="until">עד</span> <input type="date" id="toDate">
       <button class="ghost" id="applyRange" data-i18n="show">הצג</button>
+      <span class="cap" data-i18n="grain">רזולוציה</span>
+      <div class="seg" id="grainSeg">
+        <button data-g="auto" class="on" data-i18n="gAuto">אוטו</button>
+        <button data-g="daily" data-i18n="gDaily">יומי</button>
+        <button data-g="weekly" data-i18n="gWeekly">שבועי</button>
+      </div>
     </div>
     <p class="note" style="margin-bottom:14px" data-i18n="tipLine">טיפ: בתוך כל גרף אפשר לגרור את פס הטווח שלמטה, ללחוץ על מקרא כדי להסתיר סדרה, וללחוץ על קטגוריות, משתמשים וכרטיסים כדי לצלול פנימה</p>
     <section class="panel" id="overviewTop">
@@ -453,9 +461,11 @@
 
     <div class="sechead" id="secRetention" style="--sec-c:var(--s7)" data-i18n="secRetentionT">שימור ואיכות הפעלה</div>
     <section class="panel">
-      <h2 data-i18n="cohortTitle">לפי שבוע הרשמה</h2>
-      <div class="sub" data-i18n="cohortSub">שימור: אחוז שחזר אחרי יום / שבוע / חודש (לפי last_seen_at; שבועות שטרם הבשילו מסומנים -). איכות: אחוז שנתן מיקום והתראות</div>
-      <div id="cohorts" style="overflow-x:auto"></div>
+      <h2 data-i18n="retTitle">עקומת שימור</h2>
+      <div class="sub" data-i18n="retSub">אחוז שחוזרים יום / שבוע / חודש אחרי ההרשמה (קוהורטות בשלות בלבד) · המקווקו = בנצ'מרק אפליקציות חברתיות</div>
+      <div id="chRetention"></div>
+      <button class="linklike" id="cohortToggle" type="button"></button>
+      <div id="cohorts" class="hidden" style="overflow-x:auto"></div>
     </section>
 
     <div class="sechead" id="secUsers" style="--sec-c:var(--s5)" data-i18n="secUsersT">משתמשים בולטים · 30 יום</div>
@@ -597,6 +607,13 @@
       insFirstAction:function(p){ return "<b>"+p+"%</b> מהנרשמים החדשים עשו פעולה ראשונה (פוסט או פנייה) תוך 24 שעות"; },
       insSignupPace:function(up,d,a,b){ return "קצב ההרשמות "+(up?"עלה":"ירד")+" ב-<b>"+d+"</b> השבוע ("+a+" מול "+b+")"; },
       insDormant:function(n,t){ return "<b>"+n+"</b> מתוך "+t+" המשתמשים רדומים (לא נראו 30+ יום) - קהל לרה-אקטיבציה"; },
+      grain:"רזולוציה", gAuto:"אוטו", gDaily:"יומי", gWeekly:"שבועי",
+      retTitle:"עקומת שימור",
+      retSub:"אחוז שחוזרים יום / שבוע / חודש אחרי ההרשמה (קוהורטות בשלות בלבד) · המקווקו = בנצ'מרק אפליקציות חברתיות",
+      retOurs:"Helpy", retBench:"בנצ'מרק (25/10/5%)",
+      showCohorts:"הצגת טבלת הקוהורטות המלאה + איכות הפעלה", hideCohorts:"הסתרת הטבלה",
+      liqTarget:"יעד",
+      insSupplyHeavy:function(r,rq,of){ return "צד ההיצע מוביל פי <b>"+r+"</b> ("+rq+" בקשות מול "+of+" הצעות ב-30 יום) - במרקטפלייס כבד-היצע כל מנופי הצמיחה צריכים להצביע על יצירת ביקוש"; },
       themeBtn:{light:"🌙 כהה", dark:"☀️ בהיר"}, langBtn:"English"
     },
     en: {
@@ -693,6 +710,13 @@
       insFirstAction:function(p){ return "<b>"+p+"%</b> of new signups took a first action (post or opener) within 24h"; },
       insSignupPace:function(up,d,a,b){ return "Signup pace "+(up?"rose":"fell")+" by <b>"+d+"</b> this week ("+a+" vs "+b+")"; },
       insDormant:function(n,t){ return "<b>"+n+"</b> of "+t+" users are dormant (unseen 30+ days) - a reactivation audience"; },
+      grain:"Grain", gAuto:"Auto", gDaily:"Daily", gWeekly:"Weekly",
+      retTitle:"Retention curve",
+      retSub:"% returning a day / week / month after signup (mature cohorts only) · dashed = social-app benchmark",
+      retOurs:"Helpy", retBench:"Benchmark (25/10/5%)",
+      showCohorts:"Show the full cohort table + activation quality", hideCohorts:"Hide the table",
+      liqTarget:"target",
+      insSupplyHeavy:function(r,rq,of){ return "Supply leads <b>"+r+"x</b> ("+rq+" requests vs "+of+" offers in 30 days) - in a supply-heavy marketplace every growth lever should point at demand creation"; },
       themeBtn:{light:"🌙 Dark", dark:"☀️ Light"}, langBtn:"עברית"
     }
   };
@@ -936,6 +960,7 @@
       });
     }
     var manySeries = series.length + (prevData ? 1 : 0) > 1;
+    var marks = opts.annot ? annotMarks(rows) : [];
     inst.setOption({
       animationDuration: 700,
       animationDurationUpdate: 450,
@@ -999,6 +1024,16 @@
         lineStyle: { width: 1.5, type: "dashed", color: tok("--muted") },
         itemStyle: { color: tok("--muted") }, emphasis: { disabled: true },
         data: prevData
+      }] : []).concat(marks.length ? [{
+        // nameless carrier series: exists only to draw event annotation lines
+        type: "line", data: [],
+        markLine: {
+          symbol: "none",
+          lineStyle: { type: "dashed", color: base, width: 1 },
+          label: { show: true, formatter: function(p){ return p.name; },
+                   fontSize: 9, color: muted, position: "insideEndTop", distance: 3 },
+          data: marks
+        }
       }] : [])
     }, { replaceMerge: ["series"] }); // segment switches DROP series - a plain merge keeps them
   }
@@ -1086,6 +1121,31 @@
   }
 
   // ---- tiles ---------------------------------------------------------------
+  // Few-style bullet graph: qualitative bands, measure bar, target tick
+  function bulletEl(val,target,max,bands){
+    var b=el("div","bullet");
+    var prev=0;
+    (bands||[]).forEach(function(bd,i){
+      var seg=el("i","band");
+      seg.style.left=(100*prev/max)+"%";
+      seg.style.width=(100*(Math.min(bd,max)-prev)/max)+"%";
+      seg.style.background="rgba(99,102,241,"+(0.05+i*0.05)+")";
+      b.appendChild(seg);
+      prev=bd;
+    });
+    var v=el("i","bval");
+    var w=Math.min(100,100*val/max);
+    b.appendChild(v);
+    if(target!=null){
+      var tgt=el("i","btgt");
+      tgt.style.left="calc("+(100*target/max)+"% - 1px)";
+      tgt.title=S.liqTarget+": "+target+"%";
+      b.appendChild(tgt);
+    }
+    if(REDUCED){ v.style.width=w+"%"; }
+    else { v.style.width="0%"; requestAnimationFrame(function(){ requestAnimationFrame(function(){ v.style.width=w+"%"; }); }); }
+    return b;
+  }
   function tile(label, value, opts){
     opts=opts||{};
     var t=el("div","tile");
@@ -1105,23 +1165,11 @@
         if(trg) trg.scrollIntoView({behavior:"smooth",block:"start"});
       });
     }
-    if(opts.ring!=null){
-      var ring=el("div","ring");
-      ring.appendChild(el("b",null,opts.ring+"%"));
-      t.appendChild(ring);
-      if(REDUCED){ ring.style.setProperty("--p",opts.ring); }
-      else {
-        var r0=performance.now();
-        (function sweep(now){
-          var pr=Math.min((now-r0)/700,1); pr=1-Math.pow(1-pr,3);
-          ring.style.setProperty("--p",Math.round(opts.ring*pr));
-          if(pr<1) requestAnimationFrame(sweep);
-        })(r0);
-      }
-    } else {
-      var valEl=el("div","val",value);
-      if(/^[\d,]+$/.test(value)) animNum(valEl, parseInt(value.replace(/,/g,""),10));
-      t.appendChild(valEl);
+    var valEl=el("div","val",value);
+    if(/^[\d,]+$/.test(value)) animNum(valEl, parseInt(value.replace(/,/g,""),10));
+    t.appendChild(valEl);
+    if(opts.bullet){
+      t.appendChild(bulletEl(opts.bullet.val,opts.bullet.target,opts.bullet.max,opts.bullet.bands));
     }
     var sub=el("div","sub");
     if(opts.delta!=null && opts.prev!=null){
@@ -1155,9 +1203,21 @@
       return String(r.d).slice(0,10)<CUSTOM.from;
     }).slice(-RANGE);
   }
+  // grain: at this volume daily counts of 0-3 events are noise, so weekly becomes
+  // the automatic default from 28d up; the raw daily grain stays one click away
+  function grain(){
+    var b=document.querySelector("#grainSeg button.on");
+    return b? b.getAttribute("data-g") : "auto";
+  }
+  function weeklyOn(){
+    var g=grain();
+    if(g==="daily") return false;
+    if(g==="weekly") return true;
+    return spanDays()>=28;
+  }
   function prevAgg(rows,keys){
     var p=prevRows(rows);
-    return spanDays()>=60 ? byWeek(p,keys) : p;
+    return weeklyOn() ? byWeek(p,keys) : p;
   }
   function sumRows(rows,keys){
     var t=0;(rows||[]).forEach(function(r){ keys.forEach(function(k){ t+=(+r[k]||0); }); });
@@ -1205,7 +1265,29 @@
   }
   function maybeWeekly(rows, keys){
     rows = rangeRows(rows);
-    return spanDays()>=60 ? byWeek(rows,keys) : rows;
+    return weeklyOn() ? byWeek(rows,keys) : rows;
+  }
+
+  // chart annotations: releases + campaign moments (Amazon-WBR / Datawrapper rule:
+  // a step-change without its cause marker is unattributable)
+  var ANNOT=[
+    {d:"2026-07-17", he:"קמפיין אנדרואיד v2", en:"Android ads v2"},
+    {d:"2026-07-29", he:"מיקוד ת\"א", en:"TLV-only ads"},
+    {d:"2026-07-30", he:"גרסה 1.1.15", en:"v1.1.15"},
+    {d:"2026-08-04", he:"גרסה 1.1.18", en:"v1.1.18"},
+    {d:"2026-08-16", he:"גל נאדג'ים", en:"nudge wave"}
+  ];
+  function annotMarks(rows){
+    if(!rows.length) return [];
+    var first=String(rows[0].d).slice(0,10), last=String(rows[rows.length-1].d).slice(0,10);
+    var marks=[];
+    ANNOT.forEach(function(a){
+      if(a.d<first || a.d>last) return;
+      var idx=0;
+      for(var i=0;i<rows.length;i++){ if(String(rows[i].d).slice(0,10)<=a.d) idx=i; else break; }
+      marks.push({ xAxis: idx, name: LANG==="he"? a.he : a.en });
+    });
+    return marks;
   }
 
   function insight(cls, html, onClick){ // html is built from trusted labels + numbers only
@@ -1233,6 +1315,10 @@
     }
     var lq=L.requests_30d? Math.round(100*L.with_offer_24h/L.requests_30d):0;
     rows.push([lq<50?"warn":"good",S.insLiq(lq)]);
+    var p30=(DATA.posts_by_day||[]).slice(-30);
+    var rq30=sumRows(p30,["requests"]), of30=sumRows(p30,["offers"]);
+    if(rq30>0 && of30>=rq30*1.5)
+      rows.push(["warn",S.insSupplyHeavy((of30/rq30).toFixed(1),fmt(rq30),fmt(of30))]);
     if(NO.count>0) rows.push(["warn",S.insNoOffer(fmt(NO.count)),scrollToEl("noOffer")]);
     var fa=f.signups? Math.round(100*(dl.first_action_24h_30d||0)/f.signups):0;
     rows.push([fa<30?"warn":"info",S.insFirstAction(fa)]);
@@ -1240,6 +1326,62 @@
     if(d!==0) rows.push([d>0?"good":"info",S.insSignupPace(d>0,fmt(Math.abs(d)),fmt(k.signups_7d),fmt(dl.signups_prev_7d||0))]);
     if(lf.dormant_30d) rows.push(["info",S.insDormant(fmt(lf.dormant_30d),fmt(k.live_users))]);
     rows.forEach(function(r){ host.appendChild(insight(r[0],r[1],r[2])); });
+  }
+
+  // blended retention curve (mature cohorts only) vs the social-app benchmark -
+  // the curve is the exec view; the triangle table sits one click behind it
+  function retentionCurve(){
+    var host=$("chRetention"); if(!host) return;
+    var C=DATA.cohorts||[];
+    var s1=0,n1=0,s7=0,n7=0,s30=0,n30=0;
+    C.forEach(function(c){
+      if(!c.size) return;
+      s1+=(+c.d1||0); n1+=c.size;
+      if(c.d7_mature){ s7+=(+c.d7||0); n7+=c.size; }
+      if(c.d30_mature){ s30+=(+c.d30||0); n30+=c.size; }
+    });
+    var ours=[n1?Math.round(100*s1/n1):null, n7?Math.round(100*s7/n7):null, n30?Math.round(100*s30/n30):null];
+    if(!ECH){ host.textContent=""; return; }
+    var inst=einsts["chRetention"];
+    if(!inst){
+      host.innerHTML="";
+      var box=el("div","echart"); box.style.height="220px";
+      host.appendChild(box);
+      inst=echarts.init(box); einsts["chRetention"]=inst;
+    }
+    var ink=tok("--ink"), muted=tok("--muted"), grid=tok("--grid"), surface=tok("--surface");
+    inst.setOption({
+      animationDuration:700,
+      textStyle:{ fontFamily:"Heebo, system-ui, sans-serif" },
+      grid:{ left:10, right:46, top:34, bottom:26 },
+      legend:{ top:0, right:0, itemWidth:12, itemHeight:8, textStyle:{ color:tok("--ink2"), fontSize:12 } },
+      tooltip:{ trigger:"axis", backgroundColor:surface, borderColor:grid,
+        textStyle:{ color:ink, fontSize:12 },
+        valueFormatter:function(v){ return v==null? "-" : v+"%"; } },
+      xAxis:{ type:"category", data:["D1","D7","D30"],
+        axisLine:{ lineStyle:{ color:tok("--baseline") } }, axisTick:{ show:false },
+        axisLabel:{ color:muted, fontSize:11 } },
+      yAxis:{ type:"value", position:"right", max:30,
+        splitLine:{ lineStyle:{ color:grid } },
+        axisLabel:{ color:muted, fontSize:10, formatter:"{value}%" } },
+      series:[
+        { name:S.retOurs, type:"line", data:ours,
+          lineStyle:{ width:3, color:tok("--s1") },
+          itemStyle:{ color:tok("--s1"), borderColor:surface, borderWidth:2 },
+          symbol:"circle", symbolSize:9,
+          label:{ show:true, formatter:function(p){ return p.value==null? "" : p.value+"%"; },
+                  color:ink, fontSize:11, fontWeight:600, position:"top" } },
+        { name:S.retBench, type:"line", data:[25,10,5],
+          lineStyle:{ width:1.5, type:"dashed", color:muted },
+          itemStyle:{ color:muted }, symbol:"none" }
+      ]
+    }, { replaceMerge:["series"] });
+  }
+  var cohortsShown=false;
+  function syncCohortToggle(){
+    var t=$("cohortToggle"); if(!t) return;
+    $("cohorts").classList.toggle("hidden",!cohortsShown);
+    t.textContent = cohortsShown? S.hideCohorts : S.showCohorts;
   }
 
   function renderMetrics(){
@@ -1262,9 +1404,10 @@
        tip:S.tileActiveTip,
        spark:tail(DATA.dau_by_day,"dau"), dot:tok("--s1"), target:"chDau"}));
     host.appendChild(tile(S.tileStick, pct(k.seen_1d,k.seen_30d),
-      {note:S.tileStickNote(fmt(k.live_users)), dot:S7, target:"cohorts",
+      {note:S.tileStickNote(fmt(k.live_users)), dot:S7, target:"chRetention",
        tip:S.tileStickTip,
-       ring: k.seen_30d? Math.round(100*k.seen_1d/k.seen_30d):0}));
+       bullet:{ val: k.seen_30d? Math.round(100*k.seen_1d/k.seen_30d):0,
+                target:20, max:30, bands:[10,20,30] }}));
     host.appendChild(tile(S.tileMsgs, fmt(dl.messages_7d),
       {delta:dl.messages_7d, prev:dl.messages_prev_7d,
        spark:tail(DATA.messages_by_day,"msgs"), dot:S3, target:"chMsgs"}));
@@ -1308,7 +1451,7 @@
     segChart("chSignups","segSignups",DATA.signups_by_day,[
       {key:"ios",name:"iOS",color:S1,type:"bar"},
       {key:"android",name:"Android",color:S2,type:"bar"}],
-      ["total"],{zoom:true});
+      ["total"],{zoom:true, annot:true});
     segChart("chDau","segDau",DATA.dau_by_day,[
       {key:"dau",name:S.serDau,color:S1,type:"line",area:true},
       {key:"wau",name:S.serWau,color:S2,type:"line"}],
@@ -1324,7 +1467,7 @@
     segChart("chMatches","segMatches",DATA.matches_by_day,[
       {key:"created",name:S.serCreated,color:S1,type:"bar"},
       {key:"completed",name:S.serCompleted,color:S3,type:"bar"}],
-      ["created"],{zoom:true,group:true});
+      ["created"],{zoom:true,group:true, annot:true});
 
     var lf=DATA.lifecycle||{};
     var lt0=el("table","plain");
@@ -1397,12 +1540,26 @@
       tbl.appendChild(tr);
     });
     var ch=$("cohorts"); ch.innerHTML=""; ch.appendChild(tbl);
+    retentionCurve();
+    syncCohortToggle();
 
     var L=DATA.liquidity;
+    var lq=$("liquidity"); lq.innerHTML="";
+    // the two fill-rate percentages as bullet bars vs explicit targets
+    // (24h target 50%, eventual target 80% - services-marketplace benchmarks)
+    [[S.liq2, L.requests_30d? Math.round(100*L.with_offer_24h/L.requests_30d):0, 50, [25,50,100]],
+     [S.liq3, L.requests_30d? Math.round(100*L.with_offer_ever/L.requests_30d):0, 80, [50,80,100]]
+    ].forEach(function(r){
+      var row=el("div","hrow");
+      row.appendChild(el("span","hl",r[0]));
+      var wrap=el("div"); wrap.appendChild(bulletEl(r[1],r[2],100,r[3]));
+      row.appendChild(wrap);
+      row.appendChild(el("span","hval",r[1]+"%"));
+      row.title=S.liqTarget+": "+r[2]+"%";
+      lq.appendChild(row);
+    });
     var lt=el("table","plain");
     [[S.liq1,fmt(L.requests_30d)],
-     [S.liq2,pct(L.with_offer_24h,L.requests_30d)],
-     [S.liq3,pct(L.with_offer_ever,L.requests_30d)],
      [S.liq4,L.median_minutes_to_first_offer==null?"-":
         (L.median_minutes_to_first_offer<120? fmt(L.median_minutes_to_first_offer)+" "+S.minutes :
          fmt(Math.round(L.median_minutes_to_first_offer/60))+" "+S.hours),
@@ -1414,7 +1571,7 @@
       tr.appendChild(th); tr.appendChild(el("td",null,r[1]));
       lt.appendChild(tr);
     });
-    var lq=$("liquidity"); lq.innerHTML=""; lq.appendChild(lt);
+    lq.appendChild(lt);
 
     var C=DATA.chat_stats||{};
     var ct=el("table","plain");
@@ -1683,8 +1840,11 @@
   segWire("chatRangeSeg",function(){ load().catch(function(){}); });
   segWire("chatTypeSeg",renderChat);
   segWire("funnelSeg",function(){ if(DATA) renderMetrics(); });
-  ["segSignups","segDau","segPosts","segMsgs","segMatches"].forEach(function(id){
+  ["segSignups","segDau","segPosts","segMsgs","segMatches","grainSeg"].forEach(function(id){
     segWire(id,function(){ if(DATA) renderMetrics(); });
+  });
+  $("cohortToggle").addEventListener("click",function(){
+    cohortsShown=!cohortsShown; syncCohortToggle();
   });
 
   // theme + language toggles: swap tokens/strings, then re-render everything
