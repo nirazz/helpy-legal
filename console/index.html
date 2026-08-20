@@ -56,8 +56,20 @@
   .filters .cap { color:var(--muted); font-size:12px; }
 
   /* ---- stat tiles ---- */
-  .tiles { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
-           gap:12px; margin-bottom:20px; }
+  .tiles { display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+           gap:12px; margin-bottom:8px; }
+  @media (max-width:900px){ .tiles{ grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  .tile.hero { border-top:3px solid var(--s1); }
+  .sechead { font-size:15px; font-weight:700; margin:26px 2px 12px; }
+  .ins { display:flex; gap:10px; align-items:flex-start; padding:7px 0;
+         font-size:13.5px; border-bottom:1px solid var(--grid); }
+  .ins:last-child { border-bottom:0; }
+  .ins .dot { width:9px; height:9px; border-radius:50%; margin-top:5px; flex-shrink:0; }
+  .ins.good .dot { background:#0ca30c; }
+  .ins.warn .dot { background:#fab219; }
+  .ins.bad  .dot { background:#ec835a; }
+  .ins.info .dot { background:var(--baseline); }
+  .ins b { font-variant-numeric:tabular-nums; }
   .tile { background:var(--surface); border:1px solid var(--hairline);
           border-radius:12px; padding:14px 16px 10px; }
   .tile .lbl { font-size:12px; color:var(--ink2); }
@@ -204,27 +216,49 @@
         <button data-d="90" class="on">90 יום</button>
       </div>
     </div>
+    <section class="panel">
+      <h2>מה דורש תשומת לב</h2>
+      <div class="sub">תובנות מחושבות מהנתונים של 30 הימים האחרונים</div>
+      <div id="insightsBody"></div>
+    </section>
     <div class="tiles" id="tiles"></div>
+
+    <div class="sechead">צמיחה והפעלה</div>
     <div class="grid2">
-      <section class="panel"><h2>הרשמות ליום</h2><div class="sub">משתמשים חדשים לפי פלטפורמה</div><div id="chSignups"></div></section>
+      <section class="panel"><h2>הרשמות</h2><div class="sub">משתמשים חדשים לפי פלטפורמה</div><div id="chSignups"></div></section>
       <section class="panel"><h2>משתמשים פעילים</h2><div class="sub">DAU ו-WAU מתוך דגימת last_seen_at יומית</div><div id="chDau"></div></section>
-      <section class="panel"><h2>פוסטים ליום</h2><div class="sub">בקשות עזרה מול הצעות עזרה</div><div id="chPosts"></div></section>
-      <section class="panel"><h2>שיחות צ'אט ליום</h2><div class="sub">הודעות שנשלחו ומספר הכותבים</div><div id="chMsgs"></div></section>
-      <section class="panel"><h2>התאמות והשלמות ליום</h2><div class="sub">התאמות חדשות מול עזרות שסומנו כהושלמו</div><div id="chMatches"></div></section>
       <section class="panel"><h2>משפך הפעלה · 14 יום</h2><div class="sub">מה עושה משתמש חדש אחרי ההרשמה</div><div id="funnel"></div></section>
+      <section class="panel"><h2>מאזן משתמשים</h2><div class="sub">חתך חי של כל המשתמשים הרשומים</div><div id="lifecycle"></div></section>
+    </div>
+
+    <div class="sechead">מרקטפלייס</div>
+    <div class="grid2">
+      <section class="panel"><h2>פוסטים</h2><div class="sub">בקשות עזרה מול הצעות עזרה</div><div id="chPosts"></div></section>
+      <section class="panel"><h2>התאמות והשלמות</h2><div class="sub">התאמות חדשות מול עזרות שסומנו כהושלמו</div><div id="chMatches"></div></section>
+      <section class="panel"><h2>נזילות · 30 יום</h2><div class="sub">כמה מהר בקשה פוגשת עוזר/ת</div><div id="liquidity"></div></section>
+      <section class="panel"><h2>בקשות בלי אף הצעה</h2><div class="sub">פעילות עכשיו בפיד וממתינות - הזדמנות לדחיפה</div><div id="noOffer"></div></section>
       <section class="panel"><h2>קטגוריות מובילות · 30 יום</h2><div class="sub">פוסטים לפי קטגוריה</div><div id="chCats"></div></section>
       <section class="panel"><h2>ערים מובילות · 30 יום</h2><div class="sub">לפי עיר הפוסט</div><div id="chCities"></div></section>
     </div>
+
+    <div class="sechead">מעורבות בצ'אט</div>
+    <div class="grid2">
+      <section class="panel"><h2>שיחות צ'אט</h2><div class="sub">הודעות שנשלחו (בטווח ארוך - סכום שבועי)</div><div id="chMsgs"></div></section>
+      <section class="panel"><h2>בריאות הצ'אט · 30 יום</h2><div class="sub">האם פניות מקבלות מענה, ובאיזו מהירות</div><div id="chatHealth"></div></section>
+    </div>
+
+    <div class="sechead">שימור ואיכות הפעלה</div>
     <section class="panel">
-      <h2>שימור לפי שבוע הרשמה</h2>
-      <div class="sub">אחוז שחזר אחרי יום / שבוע / חודש (לפי last_seen_at; שבועות שטרם הבשילו מסומנים -)</div>
+      <h2>לפי שבוע הרשמה</h2>
+      <div class="sub">שימור: אחוז שחזר אחרי יום / שבוע / חודש (לפי last_seen_at; שבועות שטרם הבשילו מסומנים -). איכות: אחוז שנתן מיקום והתראות</div>
       <div id="cohorts" style="overflow-x:auto"></div>
     </section>
-    <div class="grid2">
-      <section class="panel"><h2>נזילות מרקטפלייס · 30 יום</h2><div id="liquidity"></div></section>
-      <section class="panel"><h2>בריאות הצ'אט · 30 יום</h2><div id="chatHealth"></div></section>
-    </div>
-    <section class="panel"><h2>אמון ובטיחות · 30 יום</h2><div id="safety"></div></section>
+
+    <div class="sechead">משתמשים בולטים · 30 יום</div>
+    <section class="panel"><div id="topUsers" style="overflow-x:auto"></div></section>
+
+    <div class="sechead">אמון ובטיחות</div>
+    <section class="panel"><h2>30 הימים האחרונים</h2><div id="safety"></div></section>
   </div>
 
   <div id="chatView" class="hidden">
@@ -484,12 +518,62 @@
     return t;
   }
 
+  // aggregate daily rows into ISO-week buckets (sum) - used when the range is
+  // long enough that daily bars turn into noise
+  function byWeek(rows, keys){
+    var out=[], cur=null, curKey="";
+    (rows||[]).forEach(function(r){
+      var d=new Date(String(r.d).slice(0,10)+"T00:00:00");
+      var wk=new Date(d); wk.setDate(d.getDate()-((d.getDay()+6)%7)); // Monday
+      var wkStr=wk.toISOString().slice(0,10);
+      if(wkStr!==curKey){ cur={d:wkStr}; keys.forEach(function(key){ cur[key]=0; }); out.push(cur); curKey=wkStr; }
+      keys.forEach(function(key){ cur[key]+=(+r[key]||0); });
+    });
+    return out;
+  }
+  function maybeWeekly(rows, keys){
+    return segVal("rangeSeg")>=60 ? byWeek(rows,keys) : rows;
+  }
+
+  function insight(cls, html){ // html is built from trusted labels + numbers only
+    var row=el("div","ins "+cls);
+    row.appendChild(el("span","dot"));
+    var span=el("span"); span.innerHTML=html;
+    row.appendChild(span);
+    return row;
+  }
+  function renderInsights(){
+    var k=DATA.kpis, dl=DATA.deltas||{}, f=DATA.funnel_30d, L=DATA.liquidity,
+        C=DATA.chat_stats||{}, NO=DATA.no_offer_requests||{}, lf=DATA.lifecycle||{};
+    var host=$("insightsBody"); host.innerHTML="";
+    var rows=[];
+    // ordered: serious -> warning -> good/info
+    var msgPct=f.signups? Math.round(100*f.messaged/f.signups):0;
+    if(msgPct<10) rows.push(["bad","רק <b>"+msgPct+"%</b> מהנרשמים מגיעים לשיחה עם שכן - זה צוואר הבקבוק המרכזי במשפך ("+fmt(f.messaged)+" מתוך "+fmt(f.signups)+" ב-30 יום)"]);
+    if(C.offer_convos>0){
+      var op=Math.round(100*C.offer_answered/C.offer_convos);
+      rows.push([op<60?"bad":"good","בעלי הצעות ענו ל-<b>"+op+"%</b> מהפניות אליהם ("+fmt(C.offer_answered)+" מתוך "+fmt(C.offer_convos)+")"+(op<60?" - פנייה שנשארת באוויר מייאשת שכנים":"")]);
+    }
+    var lq=L.requests_30d? Math.round(100*L.with_offer_24h/L.requests_30d):0;
+    rows.push([lq<50?"warn":"good","<b>"+lq+"%</b> מהבקשות קיבלו הצעה תוך 24 שעות (יעד: 50%+)"]);
+    if(NO.count>0) rows.push(["warn","<b>"+fmt(NO.count)+"</b> בקשות פעילות עדיין בלי אף הצעה - רשימה בסקשן המרקטפלייס"]);
+    var fa=f.signups? Math.round(100*(dl.first_action_24h_30d||0)/f.signups):0;
+    rows.push([fa<30?"warn":"info","<b>"+fa+"%</b> מהנרשמים החדשים עשו פעולה ראשונה (פוסט או פנייה) תוך 24 שעות"]);
+    var d=k.signups_7d-(dl.signups_prev_7d||0);
+    if(d!==0) rows.push([d>0?"good":"info","קצב ההרשמות "+(d>0?"עלה":"ירד")+" ב-<b>"+fmt(Math.abs(d))+"</b> השבוע ("+fmt(k.signups_7d)+" מול "+fmt(dl.signups_prev_7d||0)+")"]);
+    if(lf.dormant_30d) rows.push(["info","<b>"+fmt(lf.dormant_30d)+"</b> מתוך "+fmt(k.live_users)+" המשתמשים רדומים (לא נראו 30+ יום) - קהל לרה-אקטיבציה"]);
+    rows.forEach(function(r){ host.appendChild(insight(r[0],r[1])); });
+  }
+
   function renderMetrics(){
     var k=DATA.kpis, dl=DATA.deltas||{};
+    renderInsights();
     var host=$("tiles"); host.innerHTML="";
     function tail(series,key){ return (series||[]).slice(-14).map(function(r){return +r[key]||0;}); }
-    host.appendChild(tile("עזרות שהושלמו · 7 ימים", fmt(k.completed_7d),
-      {delta:k.completed_7d, prev:dl.completed_prev_7d, spark:tail(DATA.matches_by_day,"completed")}));
+    var hero=tile("עזרות שהושלמו · 7 ימים ⭐", fmt(k.completed_7d),
+      {delta:k.completed_7d, prev:dl.completed_prev_7d, spark:tail(DATA.matches_by_day,"completed")});
+    hero.classList.add("hero");
+    host.appendChild(hero);
     host.appendChild(tile("הרשמות · 7 ימים", fmt(k.signups_7d),
       {delta:k.signups_7d, prev:dl.signups_prev_7d, spark:tail(DATA.signups_by_day,"total")}));
     host.appendChild(tile("פעילים היום", fmt(k.seen_1d),
@@ -507,21 +591,31 @@
       {note:"בקשות / הצעות"}));
 
     var S1=tok("--s1"), S2=tok("--s2");
-    chart("chSignups",DATA.signups_by_day,[
+    chart("chSignups",maybeWeekly(DATA.signups_by_day,["ios","android","total"]),[
       {key:"ios",name:"iOS",color:S1,type:"bar"},
       {key:"android",name:"Android",color:S2,type:"bar"}]);
     chart("chDau",DATA.dau_by_day,[
       {key:"dau",name:"DAU",color:S1,type:"line"},
       {key:"wau",name:"WAU",color:S2,type:"line"}]);
-    chart("chPosts",DATA.posts_by_day,[
+    chart("chPosts",maybeWeekly(DATA.posts_by_day,["requests","offers"]),[
       {key:"requests",name:"בקשות",color:S1,type:"bar"},
       {key:"offers",name:"הצעות",color:S2,type:"bar"}]);
-    chart("chMsgs",DATA.messages_by_day,[
-      {key:"msgs",name:"הודעות",color:S1,type:"bar"},
-      {key:"senders",name:"כותבים",color:S2,type:"line"}]);
-    chart("chMatches",DATA.matches_by_day,[
+    chart("chMsgs",maybeWeekly(DATA.messages_by_day,["msgs","senders"]),[
+      {key:"msgs",name:"הודעות",color:S1,type:"bar"}]);
+    chart("chMatches",maybeWeekly(DATA.matches_by_day,["created","completed"]),[
       {key:"created",name:"התאמות",color:S1,type:"bar"},
       {key:"completed",name:"השלמות",color:S2,type:"bar"}]);
+
+    var lf=DATA.lifecycle||{};
+    var lt0=el("table","plain");
+    [["חדשים (עד 7 ימים)",fmt(lf.new_7d)],
+     ["פעילים בשבוע האחרון",fmt(lf.active_7d)],
+     ["רדומים (30+ יום בלי כניסה)",fmt(lf.dormant_30d)],
+     ["סה״כ משתמשים חיים",fmt(k.live_users)]].forEach(function(r){
+      var tr=el("tr"); tr.appendChild(el("th",null,r[0])); tr.appendChild(el("td",null,r[1]));
+      lt0.appendChild(tr);
+    });
+    var lch=$("lifecycle"); lch.innerHTML=""; lch.appendChild(lt0);
 
     // funnel: ordinal sequential ramp (starts at step 250 per the ramp rule)
     var f=DATA.funnel_14d;
@@ -547,13 +641,15 @@
     function heat(p){ return seq[Math.min(4,Math.floor(p/0.2))]; }
     function inkFor(i){ return i>=3?"#ffffff":"#0b0b0b"; }
     var tbl=el("table","cohort");
-    var hd=el("tr"); ["שבוע","נרשמים","D1","D7","D30"].forEach(function(h){
+    var hd=el("tr"); ["שבוע","נרשמים","מיקום","התראות","D1","D7","D30"].forEach(function(h){
       hd.appendChild(el("th",null,h)); });
     tbl.appendChild(hd);
     (DATA.cohorts||[]).forEach(function(c){
       var tr=el("tr");
       tr.appendChild(el("td","meta",fmtDay(c.week)));
       tr.appendChild(el("td","meta",fmt(c.size)));
+      tr.appendChild(el("td","meta",pct(c.loc,c.size)));
+      tr.appendChild(el("td","meta",pct(c.push,c.size)));
       [[c.d1,true],[c.d7,c.d7_mature],[c.d30,c.d30_mature]].forEach(function(pair){
         var td=el("td");
         if(!pair[1]||!c.size){ td.textContent="-"; td.className="meta"; td.style.textAlign="center"; }
@@ -586,6 +682,8 @@
     var ct=el("table","plain");
     [["שיחות שנפתחו",fmt(C.convos_30d)],
      ["נענו (דו-כיווניות)",pct(C.two_way_30d,C.convos_30d)],
+     ["פניות לבעלי הצעות שנענו",C.offer_convos? pct(C.offer_answered,C.offer_convos)+" ("+fmt(C.offer_answered)+"/"+fmt(C.offer_convos)+")" : "-"],
+     ["פניות לבעלי בקשות שנענו",C.request_convos? pct(C.request_answered,C.request_convos)+" ("+fmt(C.request_answered)+"/"+fmt(C.request_convos)+")" : "-"],
      ["חציון זמן לתשובה ראשונה",C.median_first_reply_minutes==null?"-":
         (C.median_first_reply_minutes<120? fmt(C.median_first_reply_minutes)+" דקות" :
          fmt(Math.round(C.median_first_reply_minutes/60))+" שעות")]
@@ -594,6 +692,47 @@
       ct.appendChild(tr);
     });
     var chh=$("chatHealth"); chh.innerHTML=""; chh.appendChild(ct);
+
+    // active requests with zero offers
+    var NO=DATA.no_offer_requests||{count:0,items:[]};
+    var noHost=$("noOffer"); noHost.innerHTML="";
+    if(!NO.count){ noHost.appendChild(el("p","note","כל הבקשות הפעילות קיבלו לפחות הצעה אחת 🎉")); }
+    else {
+      noHost.appendChild(el("p","note","סה״כ "+fmt(NO.count)+" בקשות ממתינות; האחרונות:"));
+      var nt=el("table","plain");
+      var nh=el("tr"); ["בקשה","עיר","גיל"].forEach(function(h){ nh.appendChild(el("th",null,h)); });
+      nt.appendChild(nh);
+      (NO.items||[]).forEach(function(it){
+        var tr=el("tr");
+        tr.appendChild(el("td",null,it.title));
+        tr.appendChild(el("td",null,it.city||"-"));
+        tr.appendChild(el("td",null,it.days===0?"היום":fmt(it.days)+" ימים"));
+        nt.appendChild(tr);
+      });
+      noHost.appendChild(nt);
+    }
+
+    // most active users
+    var tuHost=$("topUsers"); tuHost.innerHTML="";
+    var TU=DATA.top_users||[];
+    if(!TU.length){ tuHost.appendChild(el("p","note","אין נתונים")); }
+    else {
+      var ut=el("table","plain");
+      var uh=el("tr"); ["שם","פוסטים","התאמות","הודעות","מאומת/ת","נראה לאחרונה"].forEach(function(h){
+        uh.appendChild(el("th",null,h)); });
+      ut.appendChild(uh);
+      TU.forEach(function(u){
+        var tr=el("tr");
+        tr.appendChild(el("td",null,u.name));
+        tr.appendChild(el("td",null,fmt(u.posts)));
+        tr.appendChild(el("td",null,fmt(u.matches)));
+        tr.appendChild(el("td",null,fmt(u.msgs)));
+        tr.appendChild(el("td",null,u.verified?"✓":"-"));
+        tr.appendChild(el("td",null,u.last_seen? fmtTime(u.last_seen):"-"));
+        ut.appendChild(tr);
+      });
+      tuHost.appendChild(ut);
+    }
 
     var S=DATA.safety;
     var st=el("table","plain");
