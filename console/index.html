@@ -27,6 +27,40 @@
     --wash1:rgba(99,102,241,0.10); --wash-hover:rgba(23,20,54,0.045);
     --num-glow:0 0 16px rgba(99,102,241,0.35);
   }
+  /* dark mode: the deep-space HUD variant, toggled from the header and persisted */
+  html[data-theme="dark"] {
+    color-scheme: dark;
+    --plane:#0b0a14; --surface:#171430;
+    --glass:rgba(26,22,50,0.62);
+    --ink:#eceaf6; --ink2:#9b96bc; --muted:#8a86ac;
+    --grid:#2a2547; --baseline:#3b3563; --hairline:rgba(139,146,255,0.14);
+    --s2:#d97706; --s5:#65a30d;
+    --seq100:#262250; --seq250:#3d3a8c; --seq400:#5b5bd6; --seq550:#818cf8; --seq700:#b4bcfe;
+    --good-text:#4ade80; --bad-text:#f87171; --warning:#fab219;
+    --wash1:rgba(99,102,241,0.14); --wash-hover:rgba(255,255,255,0.05);
+    --num-glow:0 0 22px rgba(139,146,255,0.4);
+  }
+  html[data-theme="dark"] body {
+    background:
+      radial-gradient(1100px 560px at 85% -8%, rgba(99,102,241,0.16), transparent 62%),
+      radial-gradient(900px 520px at 8% 108%, rgba(139,92,246,0.11), transparent 60%),
+      repeating-linear-gradient(0deg, rgba(139,146,255,0.028) 0 1px, transparent 1px 44px),
+      repeating-linear-gradient(90deg, rgba(139,146,255,0.028) 0 1px, transparent 1px 44px),
+      var(--plane);
+  }
+  html[data-theme="dark"] header { background:rgba(11,10,20,0.72); }
+  html[data-theme="dark"] .tile,
+  html[data-theme="dark"] .panel { box-shadow:inset 0 1px 0 rgba(139,146,255,0.08); }
+  html[data-theme="dark"] .tile:hover {
+      box-shadow:inset 0 1px 0 rgba(139,146,255,0.08),
+                 0 6px 22px rgba(0,0,0,0.4), 0 0 18px rgba(99,102,241,0.16); }
+  html[data-theme="dark"] .tile.hero {
+      background:radial-gradient(circle at 85% -30%, rgba(139,92,246,0.28), transparent 60%),
+                 var(--glass); }
+  html[data-theme="dark"] .seg button.on { box-shadow:0 1px 3px rgba(0,0,0,0.35); }
+  html[data-theme="dark"] #tt,
+  html[data-theme="dark"] .term::after { box-shadow:0 8px 24px rgba(0,0,0,0.45); }
+  html[data-theme="dark"] .login-card { box-shadow:0 20px 60px rgba(0,0,0,0.5); }
   * { box-sizing:border-box; margin:0; }
   html { background:var(--plane); }
   body { color:var(--ink);
@@ -114,7 +148,8 @@
              letter-spacing:0.08em; color:var(--ink2);
              display:flex; align-items:center; gap:8px; }
   .sechead::before { content:""; width:9px; height:9px; border-radius:3px;
-                     background:var(--sec-c, var(--s1)); }
+                     background:var(--sec-c, var(--s1));
+                     box-shadow:0 0 8px var(--sec-c, var(--s1)); }
   .panel { opacity:0; transform:translateY(14px);
            transition:opacity .5s ease, transform .5s ease,
                       box-shadow .2s ease; }
@@ -139,10 +174,12 @@
   .ins.bad  .dot { background:var(--bad-text); }
   .ins.info .dot { background:var(--baseline); }
   .ins b { font-variant-numeric:tabular-nums; }
+  @keyframes rise { from { opacity:0; transform:translateY(10px); } }
   .tile { background:var(--glass); border:1px solid var(--hairline);
           backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
           border-radius:12px; padding:14px 16px 10px;
           box-shadow:inset 0 1px 0 rgba(255,255,255,0.9), 0 2px 10px rgba(45,45,100,0.06);
+          animation:rise .45s ease both;
           transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
   .tile:hover { transform:translateY(-2px); border-color:rgba(99,102,241,0.4);
                 box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),
@@ -162,8 +199,12 @@
             font-weight:600; }
   .tile .sub { display:flex; align-items:baseline; gap:8px; min-height:18px; }
   .tile .delta { font-size:12px; font-weight:600; }
-  .tile .delta.up { color:var(--good-text); }
-  .tile .delta.down { color:var(--bad-text); }
+  /* colored delta pills (tile + cmp) */
+  .delta.up, .delta.down { padding:1px 8px; border-radius:999px; }
+  .delta.up { color:var(--good-text); background:rgba(21,128,61,0.10); }
+  .delta.down { color:var(--bad-text); background:rgba(220,38,38,0.10); }
+  html[data-theme="dark"] .delta.up { background:rgba(74,222,128,0.13); }
+  html[data-theme="dark"] .delta.down { background:rgba(248,113,113,0.13); }
   .tile .vs { font-size:11px; color:var(--muted); }
   .tile svg { display:block; margin-top:4px; }
 
@@ -224,10 +265,10 @@
   table.cohort th { color:var(--muted); font-weight:500; text-align:center; padding:2px 6px; }
   table.cohort td { text-align:center; padding:6px 4px; border-radius:6px;
                     font-variant-numeric:tabular-nums; min-width:52px; }
-  table.cohort td.meta { background:none; text-align:right; color:var(--ink2); }
+  table.cohort td.meta { background:none; text-align:start; color:var(--ink2); }
 
   table.plain { border-collapse:collapse; width:100%; font-size:13px; }
-  .plain th, .plain td { padding:6px 10px; text-align:right;
+  .plain th, .plain td { padding:6px 10px; text-align:start;
                          border-bottom:1px solid var(--grid); }
   .plain th { color:var(--muted); font-weight:500; }
   .plain td { font-variant-numeric:tabular-nums; }
@@ -311,131 +352,143 @@
 <div id="login">
   <div class="login-card">
     <div class="brand"><i></i>Helpy Console</div>
-    <p>קונסול הניהול של Helpy · הגישה למורשים בלבד</p>
+    <p data-i18n="loginSub">קונסול הניהול של Helpy · הגישה למורשים בלבד</p>
     <button class="gbtn" id="googleBtn" type="button">
       <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.7 2.4 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.2C12.4 13.5 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.5 28.6c-.5-1.5-.8-3-.8-4.6s.3-3.1.8-4.6l-7.9-6.2C1 16.1 0 19.9 0 24s1 7.9 2.6 10.8l7.9-6.2z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.6l-7.7-6c-2.1 1.4-4.7 2.2-7.5 2.2-6.3 0-11.6-4-13.5-9.6l-7.9 6.2C6.5 42.6 14.6 48 24 48z"/></svg>
-      כניסה עם Google
+      <span data-i18n="loginGoogle">כניסה עם Google</span>
     </button>
     <div class="err" id="loginErr"></div>
   </div>
 </div>
 
 <div id="connecting" class="hidden" style="position:fixed;inset:0;z-index:49;background:var(--plane);display:flex;align-items:center;justify-content:center">
-  <div class="brand"><i></i>מתחבר...</div>
+  <div class="brand"><i></i><span data-i18n="connecting">מתחבר...</span></div>
 </div>
 
 <header class="hidden" id="hdr">
   <div class="brand"><i></i>Helpy Console <small id="genAt"></small></div>
   <span class="grow"></span>
   <div class="seg" id="tabs">
-    <button data-v="metrics" class="on">מטריקות</button>
-    <button data-v="chat">צ'אט</button>
+    <button data-v="metrics" class="on" data-i18n="tabMetrics">מטריקות</button>
+    <button data-v="chat" data-i18n="tabChat">צ'אט</button>
   </div>
   <label class="ghost" style="display:flex;gap:6px;align-items:center;cursor:pointer">
-    <input type="checkbox" id="autoRef"> חי · כל דקה
+    <input type="checkbox" id="autoRef"> <span data-i18n="live">חי · כל דקה</span>
   </label>
-  <button class="ghost" id="refreshBtn"><span id="refreshIcon">⟳</span> רענון</button>
-  <button class="ghost" id="logoutBtn">יציאה</button>
+  <button class="ghost" id="refreshBtn"><span id="refreshIcon">⟳</span> <span data-i18n="refresh">רענון</span></button>
+  <button class="ghost" id="themeBtn" title=""></button>
+  <button class="ghost" id="langBtn"></button>
+  <button class="ghost" id="logoutBtn" data-i18n="logout">יציאה</button>
 </header>
 
 <nav id="rail" class="hidden">
-  <a data-t="overviewTop" class="on">סקירה</a>
-  <a data-t="secGrowth">צמיחה</a>
-  <a data-t="secMarket">מרקטפלייס</a>
-  <a data-t="secChat">צ'אט</a>
-  <a data-t="secRetention">שימור</a>
-  <a data-t="secUsers">משתמשים</a>
-  <a data-t="secSafety">בטיחות</a>
+  <a data-t="overviewTop" class="on" data-i18n="railOverview">סקירה</a>
+  <a data-t="secGrowth" data-i18n="railGrowth">צמיחה</a>
+  <a data-t="secMarket" data-i18n="railMarket">מרקטפלייס</a>
+  <a data-t="secChat" data-i18n="railChat">צ'אט</a>
+  <a data-t="secRetention" data-i18n="railRetention">שימור</a>
+  <a data-t="secUsers" data-i18n="railUsers">משתמשים</a>
+  <a data-t="secSafety" data-i18n="railSafety">בטיחות</a>
 </nav>
 
 <main class="hidden" id="app">
   <div id="metricsView">
     <div class="filters">
-      <span class="cap">טווח</span>
+      <span class="cap" data-i18n="range">טווח</span>
       <div class="seg" id="rangeSeg">
-        <button data-d="7">שבוע</button>
-        <button data-d="14">שבועיים</button>
-        <button data-d="30">30 יום</button>
-        <button data-d="60">60 יום</button>
-        <button data-d="90" class="on">90 יום</button>
-        <button data-d="180">חצי שנה</button>
+        <button data-d="7" data-i18n="r7">שבוע</button>
+        <button data-d="14" data-i18n="r14">שבועיים</button>
+        <button data-d="30" data-i18n="r30">30 יום</button>
+        <button data-d="60" data-i18n="r60">60 יום</button>
+        <button data-d="90" class="on" data-i18n="r90">90 יום</button>
+        <button data-d="180" data-i18n="r180">חצי שנה</button>
       </div>
-      <span class="cap">או תאריכים:</span>
-      <input type="date" id="fromDate"> <span class="cap">עד</span> <input type="date" id="toDate">
-      <button class="ghost" id="applyRange">הצג</button>
+      <span class="cap" data-i18n="orDates">או תאריכים:</span>
+      <input type="date" id="fromDate"> <span class="cap" data-i18n="until">עד</span> <input type="date" id="toDate">
+      <button class="ghost" id="applyRange" data-i18n="show">הצג</button>
     </div>
-    <p class="note" style="margin-bottom:14px">טיפ: בתוך כל גרף אפשר לגרור את פס הטווח שלמטה, ללחוץ על מקרא כדי להסתיר סדרה, וללחוץ על קטגוריות, משתמשים וכרטיסים כדי לצלול פנימה</p>
+    <p class="note" style="margin-bottom:14px" data-i18n="tipLine">טיפ: בתוך כל גרף אפשר לגרור את פס הטווח שלמטה, ללחוץ על מקרא כדי להסתיר סדרה, וללחוץ על קטגוריות, משתמשים וכרטיסים כדי לצלול פנימה</p>
     <section class="panel" id="overviewTop">
-      <h2>מה דורש תשומת לב</h2>
-      <div class="sub">תובנות מחושבות מהנתונים של 30 הימים האחרונים</div>
+      <h2 data-i18n="insightsTitle">מה דורש תשומת לב</h2>
+      <div class="sub" data-i18n="insightsSub">תובנות מחושבות מהנתונים של 30 הימים האחרונים</div>
       <div id="insightsBody"></div>
     </section>
     <div class="tiles" id="tiles"></div>
 
-    <div class="sechead" id="secGrowth" style="--sec-c:var(--s1)">צמיחה והפעלה</div>
+    <div class="sechead" id="secGrowth" style="--sec-c:var(--s1)" data-i18n="secGrowthT">צמיחה והפעלה</div>
     <div class="grid2">
-      <section class="panel"><h2>הרשמות</h2><div class="sub">משתמשים חדשים לפי פלטפורמה</div><div id="chSignups"></div></section>
-      <section class="panel"><h2>משתמשים פעילים</h2><div class="sub"><span class="term" data-tip="Daily Active Users - כמה משתמשים שונים פתחו את האפליקציה באותו יום">DAU</span> ו-<span class="term" data-tip="Weekly Active Users - כמה משתמשים שונים פתחו את האפליקציה בשבעת הימים האחרונים">WAU</span> מתוך <span class="term" data-tip="חותמת שהשרת מטביע פעם בשעה לכל משתמש שפותח את האפליקציה - מקור האמת למדידת פעילות">דגימת last_seen_at</span> יומית</div><div id="chDau"></div></section>
-      <section class="panel"><h2 style="display:flex;align-items:center;gap:10px">משפך הפעלה
-        <span class="seg mini" id="funnelSeg"><button data-d="14" class="on">14 יום</button><button data-d="30">30 יום</button></span></h2>
-        <div class="sub">מה עושה משתמש חדש אחרי ההרשמה</div><div id="funnel"></div></section>
-      <section class="panel"><h2>מאזן משתמשים</h2><div class="sub">חתך חי של כל המשתמשים הרשומים</div><div id="lifecycle"></div></section>
+      <section class="panel"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="signupsTitle">הרשמות</span>
+        <span class="seg mini" id="segSignups"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="ios">iOS</button><button data-k="android">Android</button></span></h2>
+        <div class="sub" data-i18n="signupsSub">משתמשים חדשים לפי פלטפורמה</div><div id="chSignups"></div></section>
+      <section class="panel"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="dauTitle">משתמשים פעילים</span>
+        <span class="seg mini" id="segDau"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="dau">DAU</button><button data-k="wau">WAU</button></span></h2>
+        <div class="sub" data-i18n-html="dauSub"></div><div id="chDau"></div></section>
+      <section class="panel"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="funnelTitle">משפך הפעלה</span>
+        <span class="seg mini" id="funnelSeg"><button data-d="14" class="on" data-i18n="d14">14 יום</button><button data-d="30" data-i18n="d30">30 יום</button></span></h2>
+        <div class="sub" data-i18n="funnelSub">מה עושה משתמש חדש אחרי ההרשמה</div><div id="funnel"></div></section>
+      <section class="panel"><h2 data-i18n="lifecycleTitle">מאזן משתמשים</h2><div class="sub" data-i18n="lifecycleSub">חתך חי של כל המשתמשים הרשומים</div><div id="lifecycle"></div></section>
     </div>
 
-    <div class="sechead" id="secMarket" style="--sec-c:var(--s2)">מרקטפלייס</div>
+    <div class="sechead" id="secMarket" style="--sec-c:var(--s2)" data-i18n="secMarketT">מרקטפלייס</div>
     <div class="grid2">
-      <section class="panel"><h2>פוסטים</h2><div class="sub">בקשות עזרה מול הצעות עזרה</div><div id="chPosts"></div></section>
-      <section class="panel"><h2>התאמות והשלמות</h2><div class="sub">התאמות חדשות מול עזרות שסומנו כהושלמו</div><div id="chMatches"></div></section>
-      <section class="panel"><h2><span class="term" data-tip="מדד הבריאות המרכזי של מרקטפלייס: כמה מהר צד הביקוש (בקשה) פוגש את צד ההיצע (עוזר/ת)">נזילות</span> · 30 יום</h2><div class="sub">כמה מהר בקשה פוגשת עוזר/ת</div><div id="liquidity"></div></section>
-      <section class="panel"><h2>בקשות בלי אף הצעה</h2><div class="sub">פעילות עכשיו בפיד וממתינות - הזדמנות לדחיפה</div><div id="noOffer"></div></section>
-      <section class="panel"><h2>קטגוריות מובילות · 30 יום</h2><div class="sub">פוסטים לפי קטגוריה</div><div id="chCats"></div></section>
-      <section class="panel"><h2>ערים מובילות · 30 יום</h2><div class="sub">לפי עיר הפוסט</div><div id="chCities"></div></section>
+      <section class="panel"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="postsTitle">פוסטים</span>
+        <span class="seg mini" id="segPosts"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="requests" data-i18n="segRequests">בקשות</button><button data-k="offers" data-i18n="segOffers">הצעות</button></span></h2>
+        <div class="sub" data-i18n="postsSub">בקשות עזרה מול הצעות עזרה</div><div id="chPosts"></div></section>
+      <section class="panel"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="matchesTitle">התאמות והשלמות</span>
+        <span class="seg mini" id="segMatches"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="created" data-i18n="segCreated">התאמות</button><button data-k="completed" data-i18n="segCompleted">השלמות</button></span></h2>
+        <div class="sub" data-i18n="matchesSub">התאמות חדשות מול עזרות שסומנו כהושלמו</div><div id="chMatches"></div></section>
+      <section class="panel"><h2 data-i18n-html="liqTitle"></h2><div class="sub" data-i18n="liqSub">כמה מהר בקשה פוגשת עוזר/ת</div><div id="liquidity"></div></section>
+      <section class="panel"><h2 data-i18n="noOfferTitle">בקשות בלי אף הצעה</h2><div class="sub" data-i18n="noOfferSub">פעילות עכשיו בפיד וממתינות - הזדמנות לדחיפה</div><div id="noOffer"></div></section>
+      <section class="panel"><h2 data-i18n="catsTitle">קטגוריות מובילות · 30 יום</h2><div class="sub" data-i18n="catsSub">פוסטים לפי קטגוריה</div><div id="chCats"></div></section>
+      <section class="panel"><h2 data-i18n="citiesTitle">ערים מובילות · 30 יום</h2><div class="sub" data-i18n="citiesSub">לפי עיר הפוסט</div><div id="chCities"></div></section>
     </div>
 
-    <div class="sechead" id="secChat" style="--sec-c:var(--s3)">מעורבות בצ'אט</div>
+    <div class="sechead" id="secChat" style="--sec-c:var(--s3)" data-i18n="secChatT">מעורבות בצ'אט</div>
     <div class="grid2">
-      <section class="panel"><h2>שיחות צ'אט</h2><div class="sub">הודעות שנשלחו (בטווח ארוך - סכום שבועי)</div><div id="chMsgs"></div></section>
-      <section class="panel"><h2>בריאות הצ'אט · 30 יום</h2><div class="sub">האם פניות מקבלות מענה, ובאיזו מהירות</div><div id="chatHealth"></div></section>
+      <section class="panel"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="msgsTitle">שיחות צ'אט</span>
+        <span class="seg mini" id="segMsgs"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="msgs" data-i18n="segMsgs2">הודעות</button><button data-k="senders" data-i18n="segSenders">שולחים ייחודיים</button></span></h2>
+        <div class="sub" data-i18n="msgsSub">הודעות שנשלחו (בטווח ארוך - סכום שבועי)</div><div id="chMsgs"></div></section>
+      <section class="panel"><h2 data-i18n="chatHealthTitle">בריאות הצ'אט · 30 יום</h2><div class="sub" data-i18n="chatHealthSub">האם פניות מקבלות מענה, ובאיזו מהירות</div><div id="chatHealth"></div></section>
     </div>
 
-    <div class="sechead" id="secRetention" style="--sec-c:var(--s7)">שימור ואיכות הפעלה</div>
+    <div class="sechead" id="secRetention" style="--sec-c:var(--s7)" data-i18n="secRetentionT">שימור ואיכות הפעלה</div>
     <section class="panel">
-      <h2>לפי שבוע הרשמה</h2>
-      <div class="sub">שימור: אחוז שחזר אחרי יום / שבוע / חודש (לפי last_seen_at; שבועות שטרם הבשילו מסומנים -). איכות: אחוז שנתן מיקום והתראות</div>
+      <h2 data-i18n="cohortTitle">לפי שבוע הרשמה</h2>
+      <div class="sub" data-i18n="cohortSub">שימור: אחוז שחזר אחרי יום / שבוע / חודש (לפי last_seen_at; שבועות שטרם הבשילו מסומנים -). איכות: אחוז שנתן מיקום והתראות</div>
       <div id="cohorts" style="overflow-x:auto"></div>
     </section>
 
-    <div class="sechead" id="secUsers" style="--sec-c:var(--s5)">משתמשים בולטים · 30 יום</div>
+    <div class="sechead" id="secUsers" style="--sec-c:var(--s5)" data-i18n="secUsersT">משתמשים בולטים · 30 יום</div>
     <section class="panel"><div id="topUsers" style="overflow-x:auto"></div></section>
 
-    <div class="sechead" id="secSafety" style="--sec-c:var(--s8)">אמון ובטיחות</div>
-    <section class="panel"><h2>30 הימים האחרונים</h2><div id="safety"></div></section>
+    <div class="sechead" id="secSafety" style="--sec-c:var(--s8)" data-i18n="secSafetyT">אמון ובטיחות</div>
+    <section class="panel"><h2 data-i18n="last30Title">30 הימים האחרונים</h2><div id="safety"></div></section>
   </div>
 
   <div id="chatView" class="hidden">
     <div class="chatbar">
-      <input type="text" id="chatSearch" placeholder="חיפוש בשם, בפוסט או בתוכן...">
+      <input type="text" id="chatSearch" placeholder="חיפוש בשם, בפוסט או בתוכן..." data-i18n-ph="searchPh">
       <div class="seg" id="chatRangeSeg">
-        <button data-d="7">שבוע</button>
-        <button data-d="30" class="on">30 יום</button>
-        <button data-d="90">90 יום</button>
+        <button data-d="7" data-i18n="r7">שבוע</button>
+        <button data-d="30" class="on" data-i18n="r30">30 יום</button>
+        <button data-d="90" data-i18n="r90">90 יום</button>
       </div>
       <div class="seg" id="chatTypeSeg">
-        <button data-t="all" class="on">הכל</button>
-        <button data-t="request">בקשות</button>
-        <button data-t="offer">הצעות</button>
+        <button data-t="all" class="on" data-i18n="segAll">הכל</button>
+        <button data-t="request" data-i18n="segRequests">בקשות</button>
+        <button data-t="offer" data-i18n="segOffers">הצעות</button>
       </div>
-      <label><input type="checkbox" id="hideMock" checked> הסתרת חשבונות בדיקה</label>
-      <label><input type="checkbox" id="onlyOneWay"> רק ללא מענה</label>
-      <label><input type="checkbox" id="onlyPhone"> הוחלף בהן טלפון</label>
+      <label><input type="checkbox" id="hideMock" checked> <span data-i18n="hideMockL">הסתרת חשבונות בדיקה</span></label>
+      <label><input type="checkbox" id="onlyOneWay"> <span data-i18n="onlyOneWayL">רק ללא מענה</span></label>
+      <label><input type="checkbox" id="onlyPhone"> <span data-i18n="onlyPhoneL">הוחלף בהן טלפון</span></label>
       <span id="drillHost"></span>
     </div>
-    <p class="note" style="margin-bottom:12px"><span id="chatCount"></span> · מוצג לצורכי פיקוח ובטיחות בלבד · לקריאה בלבד · מספרי טלפון מודגשים</p>
+    <p class="note" style="margin-bottom:12px"><span id="chatCount"></span> · <span data-i18n="chatNote">מוצג לצורכי פיקוח ובטיחות בלבד · לקריאה בלבד · מספרי טלפון מודגשים</span></p>
     <div id="convoList"></div>
   </div>
 </main>
 <div id="tt"></div>
-<footer>Helpy Console · הגישה מאובטחת ונרשמת ביומני המערכת</footer>
+<footer data-i18n="footerLine">Helpy Console · הגישה מאובטחת ונרשמת ביומני המערכת</footer>
 
 <script>
 (function(){
@@ -447,6 +500,227 @@
   var RANGE = 90;               // current window length (days); the fetch spans 2x of it
                                 // so every chart can show the previous period (Stripe pattern)
   var drill = { category: null }; // click-through filter into the chat tab
+
+  // ---- i18n + theme --------------------------------------------------------
+  var STRINGS = {
+    he: {
+      tabMetrics:"מטריקות", tabChat:"צ'אט", live:"חי · כל דקה", refresh:"רענון", logout:"יציאה",
+      railOverview:"סקירה", railGrowth:"צמיחה", railMarket:"מרקטפלייס", railChat:"צ'אט",
+      railRetention:"שימור", railUsers:"משתמשים", railSafety:"בטיחות",
+      range:"טווח", r7:"שבוע", r14:"שבועיים", r30:"30 יום", r60:"60 יום", r90:"90 יום", r180:"חצי שנה",
+      orDates:"או תאריכים:", until:"עד", show:"הצג",
+      tipLine:"טיפ: בתוך כל גרף אפשר לגרור את פס הטווח שלמטה, ללחוץ על מקרא כדי להסתיר סדרה, וללחוץ על קטגוריות, משתמשים וכרטיסים כדי לצלול פנימה",
+      insightsTitle:"מה דורש תשומת לב", insightsSub:"תובנות מחושבות מהנתונים של 30 הימים האחרונים",
+      secGrowthT:"צמיחה והפעלה", secMarketT:"מרקטפלייס", secChatT:"מעורבות בצ'אט",
+      secRetentionT:"שימור ואיכות הפעלה", secUsersT:"משתמשים בולטים · 30 יום", secSafetyT:"אמון ובטיחות",
+      signupsTitle:"הרשמות", signupsSub:"משתמשים חדשים לפי פלטפורמה",
+      dauTitle:"משתמשים פעילים",
+      dauSub:'<span class="term" data-tip="Daily Active Users - כמה משתמשים שונים פתחו את האפליקציה באותו יום">DAU</span> ו-<span class="term" data-tip="Weekly Active Users - כמה משתמשים שונים פתחו את האפליקציה בשבעת הימים האחרונים">WAU</span> מתוך <span class="term" data-tip="חותמת שהשרת מטביע פעם בשעה לכל משתמש שפותח את האפליקציה - מקור האמת למדידת פעילות">דגימת last_seen_at</span> יומית',
+      funnelTitle:"משפך הפעלה", d14:"14 יום", d30:"30 יום", funnelSub:"מה עושה משתמש חדש אחרי ההרשמה",
+      lifecycleTitle:"מאזן משתמשים", lifecycleSub:"חתך חי של כל המשתמשים הרשומים",
+      postsTitle:"פוסטים", postsSub:"בקשות עזרה מול הצעות עזרה",
+      matchesTitle:"התאמות והשלמות", matchesSub:"התאמות חדשות מול עזרות שסומנו כהושלמו",
+      liqTitle:'<span class="term" data-tip="מדד הבריאות המרכזי של מרקטפלייס: כמה מהר צד הביקוש (בקשה) פוגש את צד ההיצע (עוזר/ת)">נזילות</span> · 30 יום',
+      liqSub:"כמה מהר בקשה פוגשת עוזר/ת",
+      noOfferTitle:"בקשות בלי אף הצעה", noOfferSub:"פעילות עכשיו בפיד וממתינות - הזדמנות לדחיפה",
+      catsTitle:"קטגוריות מובילות · 30 יום", catsSub:"פוסטים לפי קטגוריה",
+      citiesTitle:"ערים מובילות · 30 יום", citiesSub:"לפי עיר הפוסט",
+      msgsTitle:"שיחות צ'אט", msgsSub:"הודעות שנשלחו (בטווח ארוך - סכום שבועי)",
+      chatHealthTitle:"בריאות הצ'אט · 30 יום", chatHealthSub:"האם פניות מקבלות מענה, ובאיזו מהירות",
+      cohortTitle:"לפי שבוע הרשמה",
+      cohortSub:"שימור: אחוז שחזר אחרי יום / שבוע / חודש (לפי last_seen_at; שבועות שטרם הבשילו מסומנים -). איכות: אחוז שנתן מיקום והתראות",
+      last30Title:"30 הימים האחרונים",
+      segAll:"הכל", segRequests:"בקשות", segOffers:"הצעות", segCreated:"התאמות",
+      segCompleted:"השלמות", segMsgs2:"הודעות", segSenders:"שולחים ייחודיים",
+      searchPh:"חיפוש בשם, בפוסט או בתוכן...", hideMockL:"הסתרת חשבונות בדיקה",
+      onlyOneWayL:"רק ללא מענה", onlyPhoneL:"הוחלף בהן טלפון",
+      chatNote:"מוצג לצורכי פיקוח ובטיחות בלבד · לקריאה בלבד · מספרי טלפון מודגשים",
+      footerLine:"Helpy Console · הגישה מאובטחת ונרשמת ביומני המערכת",
+      loginSub:"קונסול הניהול של Helpy · הגישה למורשים בלבד", loginGoogle:"כניסה עם Google",
+      connecting:"מתחבר...",
+      errForbidden:"החשבון הזה לא מורשה לקונסול", errServer:"שגיאת שרת, נסו שוב",
+      errNoAuth:"שירות ההתחברות לא נטען, רעננו את הדף",
+      updatedAgo:function(s){ return s<60? "עודכן לפני "+s+" שנ׳" : "עודכן לפני "+Math.round(s/60)+" דק׳"; },
+      tileHero:"עזרות שהושלמו · 7 ימים ⭐",
+      tileHeroTip:"המדד הצפוני של Helpy: עזרות שמקבל/ת העזרה סימנו שבוצעו בפועל",
+      tileSignups:"הרשמות · 7 ימים",
+      tileActive:"פעילים היום",
+      tileActiveTip:"משתמשים שפתחו את האפליקציה היום, לפי חותמת last_seen_at שהשרת מטביע פעם בשעה",
+      tileActiveNote:function(w,m){ return "שבוע: "+w+" · חודש: "+m; },
+      tileStick:"דביקות DAU/MAU",
+      tileStickTip:"Stickiness: איזה חלק מהמשתמשים החודשיים נכנסים ביום נתון - מדד הרגל. באפליקציות חברתיות גדולות 20%+ נחשב מצוין",
+      tileStickNote:function(n){ return "משתמשים חיים: "+n; },
+      tileMsgs:"הודעות צ'אט · 7 ימים", tileMsgsNote:function(n){ return "בין "+n+" חיבורים פעילים"; },
+      tileMatches:"התאמות · 7 ימים",
+      tileMatchesTip:"חיבור בין שני שכנים סביב פוסט: סוויפ על הצעה פותח צ'אט מיד, סוויפ על בקשה ממתין לאישור",
+      tilePosts:"פוסטים · 7 ימים",
+      tileFeed:"בפיד עכשיו", tileFeedNote:"בקשות / הצעות",
+      prevWeek:function(n){ return "שבוע קודם: "+n; },
+      serDau:"DAU", serWau:"WAU", serRequests:"בקשות", serOffers:"הצעות",
+      serMsgs:"הודעות", serSenders:"שולחים", serCreated:"התאמות", serCompleted:"השלמות",
+      serPrev:"התקופה הקודמת",
+      cmpNoPrev:"אין נתוני תקופה קודמת להשוואה", cmpPrevLabel:"התקופה הקודמת",
+      cmpDauPrev:"ממוצע DAU בתקופה הקודמת",
+      f1:"נרשמו", f2:"שיתפו מיקום", f3:"אישרו התראות", f4:"אימתו טלפון",
+      f5:"פרסמו פוסט", f6:"הגיעו להתאמה", f7:"שלחו הודעה",
+      lf1:"חדשים (עד 7 ימים)", lf2:"פעילים בשבוע האחרון", lf3:"רדומים (30+ יום בלי כניסה)", lf4:"סה״כ משתמשים חיים",
+      liq1:"בקשות חדשות", liq2:"קיבלו הצעה תוך 24 שעות", liq3:"קיבלו הצעה בסוף", liq4:"חציון זמן להצעה ראשונה",
+      liqMedianTip:"הערך האמצעי: מחצית מהבקשות קיבלו הצעה מהר מזה. עמיד לחריגים, בניגוד לממוצע",
+      minutes:"דקות", hours:"שעות",
+      ch1:"שיחות שנפתחו", ch2:"נענו (דו-כיווניות)",
+      ch2Tip:"שיחות שבהן שני הצדדים כתבו לפחות הודעה אחת - פנייה שנענתה באמת",
+      ch3:"פניות לבעלי הצעות שנענו", ch4:"פניות לבעלי בקשות שנענו", ch5:"חציון זמן לתשובה ראשונה",
+      ch5Tip:"הערך האמצעי: מחצית מהפניות נענו מהר מזה. עמיד לחריגים, בניגוד לממוצע",
+      noOfferAllGood:"כל הבקשות הפעילות קיבלו לפחות הצעה אחת 🎉",
+      noOfferCount:function(n){ return "סה״כ "+n+" בקשות ממתינות; האחרונות:"; },
+      noH1:"בקשה", noH2:"עיר", noH3:"גיל", today:"היום", daysUnit:"ימים",
+      tu1:"שם", tu2:"פוסטים", tu3:"התאמות", tu4:"הודעות", tu5:"מאומת/ת", tu6:"נראה לאחרונה",
+      tuRowTitle:function(n){ return "לחיצה מציגה את השיחות של "+n; },
+      sf1:"דיווחים", sf2:"חסימות", sf3:"מחיקות חשבון",
+      cohWeek:"שבוע", cohSignups:"נרשמים", cohLoc:"מיקום", cohPush:"התראות",
+      cohTips:{
+        loc:"אחוז מהנרשמים באותו שבוע שנתנו הרשאת מיקום",
+        push:"אחוז מהנרשמים באותו שבוע שאישרו התראות פוש",
+        d1:"שימור יום 1: אחוז שחזרו לאפליקציה יום אחרי ההרשמה",
+        d7:"שימור שבוע: אחוז שחזרו שבוע או יותר אחרי ההרשמה",
+        d30:"שימור חודש: אחוז שחזרו חודש או יותר אחרי ההרשמה" },
+      drillCat:function(c){ return "קטגוריה: "+c; },
+      chatShowing:function(a,b){ return "מציג "+a+" מתוך "+b+" שיחות בטווח"; },
+      noConvos:"אין שיחות בטווח או בסינון הנוכחי",
+      msgsCount:function(n){ return n+" הודעות"; },
+      tagOffer:"הצעה", tagRequest:"בקשה", tagOneway:"ללא מענה", tagMock:"בדיקה",
+      noData:"אין נתונים", noDataRange:"אין נתונים בטווח",
+      insFunnel:function(p,a,b){ return "רק <b>"+p+"%</b> מהנרשמים מגיעים לשיחה עם שכן - זה צוואר הבקבוק המרכזי במשפך ("+a+" מתוך "+b+" ב-30 יום)"; },
+      insOfferAns:function(p,a,b,bad){ return "בעלי הצעות ענו ל-<b>"+p+"%</b> מהפניות אליהם ("+a+" מתוך "+b+")"+(bad?" - פנייה שנשארת באוויר מייאשת שכנים":""); },
+      insLiq:function(p){ return "<b>"+p+"%</b> מהבקשות קיבלו הצעה תוך 24 שעות (יעד: 50%+)"; },
+      insNoOffer:function(n){ return "<b>"+n+"</b> בקשות פעילות עדיין בלי אף הצעה - לחיצה קופצת לרשימה"; },
+      insFirstAction:function(p){ return "<b>"+p+"%</b> מהנרשמים החדשים עשו פעולה ראשונה (פוסט או פנייה) תוך 24 שעות"; },
+      insSignupPace:function(up,d,a,b){ return "קצב ההרשמות "+(up?"עלה":"ירד")+" ב-<b>"+d+"</b> השבוע ("+a+" מול "+b+")"; },
+      insDormant:function(n,t){ return "<b>"+n+"</b> מתוך "+t+" המשתמשים רדומים (לא נראו 30+ יום) - קהל לרה-אקטיבציה"; },
+      themeBtn:{light:"🌙 כהה", dark:"☀️ בהיר"}, langBtn:"English"
+    },
+    en: {
+      tabMetrics:"Metrics", tabChat:"Chat", live:"Live · 1 min", refresh:"Refresh", logout:"Sign out",
+      railOverview:"Overview", railGrowth:"Growth", railMarket:"Marketplace", railChat:"Chat",
+      railRetention:"Retention", railUsers:"Users", railSafety:"Safety",
+      range:"Range", r7:"Week", r14:"2 weeks", r30:"30 days", r60:"60 days", r90:"90 days", r180:"Half year",
+      orDates:"or dates:", until:"to", show:"Show",
+      tipLine:"Tip: drag the range slider under any chart, click a legend item to hide a series, and click categories, users and tiles to drill in",
+      insightsTitle:"What needs attention", insightsSub:"Insights computed from the last 30 days",
+      secGrowthT:"Growth & activation", secMarketT:"Marketplace", secChatT:"Chat engagement",
+      secRetentionT:"Retention & activation quality", secUsersT:"Top users · 30 days", secSafetyT:"Trust & safety",
+      signupsTitle:"Signups", signupsSub:"New users by platform",
+      dauTitle:"Active users",
+      dauSub:'<span class="term" data-tip="Daily Active Users - distinct users who opened the app that day">DAU</span> and <span class="term" data-tip="Weekly Active Users - distinct users who opened the app in the last 7 days">WAU</span> from the daily <span class="term" data-tip="a server-side stamp written once an hour for every user who opens the app - the source of truth for activity">last_seen_at sample</span>',
+      funnelTitle:"Activation funnel", d14:"14 days", d30:"30 days", funnelSub:"What a new user does after signing up",
+      lifecycleTitle:"User balance", lifecycleSub:"A live cut of all registered users",
+      postsTitle:"Posts", postsSub:"Help requests vs. help offers",
+      matchesTitle:"Matches & completions", matchesSub:"New matches vs. helps marked completed",
+      liqTitle:'<span class="term" data-tip="The core marketplace health metric: how fast demand (a request) meets supply (a helper)">Liquidity</span> · 30 days',
+      liqSub:"How fast a request meets a helper",
+      noOfferTitle:"Requests with zero offers", noOfferSub:"Live in the feed and waiting - a push opportunity",
+      catsTitle:"Top categories · 30 days", catsSub:"Posts by category",
+      citiesTitle:"Top cities · 30 days", citiesSub:"By post city",
+      msgsTitle:"Chat activity", msgsSub:"Messages sent (weekly sums on long ranges)",
+      chatHealthTitle:"Chat health · 30 days", chatHealthSub:"Do openers get answered, and how fast",
+      cohortTitle:"By signup week",
+      cohortSub:"Retention: % who returned after a day / week / month (by last_seen_at; immature weeks show -). Quality: % who granted location and push",
+      last30Title:"Last 30 days",
+      segAll:"All", segRequests:"Requests", segOffers:"Offers", segCreated:"Matches",
+      segCompleted:"Completions", segMsgs2:"Messages", segSenders:"Unique senders",
+      searchPh:"Search names, posts or content...", hideMockL:"Hide test accounts",
+      onlyOneWayL:"Unanswered only", onlyPhoneL:"Phone number exchanged",
+      chatNote:"Shown for safety monitoring only · read-only · phone numbers highlighted",
+      footerLine:"Helpy Console · Access is secured and logged",
+      loginSub:"The Helpy admin console · authorized access only", loginGoogle:"Sign in with Google",
+      connecting:"Connecting...",
+      errForbidden:"This account is not authorized for the console", errServer:"Server error, try again",
+      errNoAuth:"Sign-in service failed to load - refresh the page",
+      updatedAgo:function(s){ return s<60? "updated "+s+"s ago" : "updated "+Math.round(s/60)+"m ago"; },
+      tileHero:"Helps completed · 7 days ⭐",
+      tileHeroTip:"Helpy's north star: helps the receiver marked as actually done",
+      tileSignups:"Signups · 7 days",
+      tileActive:"Active today",
+      tileActiveTip:"Users who opened the app today, by the hourly server-side last_seen_at stamp",
+      tileActiveNote:function(w,m){ return "week: "+w+" · month: "+m; },
+      tileStick:"DAU/MAU stickiness",
+      tileStickTip:"What share of monthly users show up on a given day - the habit metric. 20%+ is excellent for big social apps",
+      tileStickNote:function(n){ return "live users: "+n; },
+      tileMsgs:"Chat messages · 7 days", tileMsgsNote:function(n){ return "across "+n+" active matches"; },
+      tileMatches:"Matches · 7 days",
+      tileMatchesTip:"A connection between two neighbors around a post: swiping an offer opens chat instantly, swiping a request awaits approval",
+      tilePosts:"Posts · 7 days",
+      tileFeed:"In the feed now", tileFeedNote:"requests / offers",
+      prevWeek:function(n){ return "prev week: "+n; },
+      serDau:"DAU", serWau:"WAU", serRequests:"Requests", serOffers:"Offers",
+      serMsgs:"Messages", serSenders:"Senders", serCreated:"Matches", serCompleted:"Completions",
+      serPrev:"Previous period",
+      cmpNoPrev:"No previous-period data to compare", cmpPrevLabel:"previous period",
+      cmpDauPrev:"avg DAU previous period",
+      f1:"Signed up", f2:"Shared location", f3:"Allowed push", f4:"Verified phone",
+      f5:"Posted", f6:"Got matched", f7:"Sent a message",
+      lf1:"New (up to 7 days)", lf2:"Active this week", lf3:"Dormant (30+ days)", lf4:"Total live users",
+      liq1:"New requests", liq2:"Got an offer within 24h", liq3:"Got an offer eventually", liq4:"Median time to first offer",
+      liqMedianTip:"The middle value: half the requests got an offer faster. Robust to outliers, unlike the mean",
+      minutes:"min", hours:"hours",
+      ch1:"Conversations opened", ch2:"Answered (two-way)",
+      ch2Tip:"Conversations where both sides wrote at least one message - a truly answered opener",
+      ch3:"Openers to offer owners answered", ch4:"Openers to request owners answered", ch5:"Median time to first reply",
+      ch5Tip:"The middle value: half the openers were answered faster. Robust to outliers, unlike the mean",
+      noOfferAllGood:"Every live request has at least one offer 🎉",
+      noOfferCount:function(n){ return n+" requests waiting in total; most recent:"; },
+      noH1:"Request", noH2:"City", noH3:"Age", today:"today", daysUnit:"days",
+      tu1:"Name", tu2:"Posts", tu3:"Matches", tu4:"Messages", tu5:"Verified", tu6:"Last seen",
+      tuRowTitle:function(n){ return "Click to see "+n+"'s conversations"; },
+      sf1:"Reports", sf2:"Blocks", sf3:"Account deletions",
+      cohWeek:"Week", cohSignups:"Signups", cohLoc:"Location", cohPush:"Push",
+      cohTips:{
+        loc:"% of that week's signups who granted location permission",
+        push:"% of that week's signups who allowed push notifications",
+        d1:"Day-1 retention: % who returned the day after signup",
+        d7:"Week retention: % who returned a week or more after signup",
+        d30:"Month retention: % who returned a month or more after signup" },
+      drillCat:function(c){ return "Category: "+c; },
+      chatShowing:function(a,b){ return "Showing "+a+" of "+b+" conversations in range"; },
+      noConvos:"No conversations in this range or filter",
+      msgsCount:function(n){ return n+" messages"; },
+      tagOffer:"offer", tagRequest:"request", tagOneway:"unanswered", tagMock:"test",
+      noData:"No data", noDataRange:"No data in range",
+      insFunnel:function(p,a,b){ return "Only <b>"+p+"%</b> of signups reach a conversation with a neighbor - the funnel's main bottleneck ("+a+" of "+b+" in 30 days)"; },
+      insOfferAns:function(p,a,b,bad){ return "Offer owners answered <b>"+p+"%</b> of openers ("+a+" of "+b+")"+(bad?" - an unanswered opener discourages neighbors":""); },
+      insLiq:function(p){ return "<b>"+p+"%</b> of requests got an offer within 24h (target: 50%+)"; },
+      insNoOffer:function(n){ return "<b>"+n+"</b> live requests still have zero offers - click to jump to the list"; },
+      insFirstAction:function(p){ return "<b>"+p+"%</b> of new signups took a first action (post or opener) within 24h"; },
+      insSignupPace:function(up,d,a,b){ return "Signup pace "+(up?"rose":"fell")+" by <b>"+d+"</b> this week ("+a+" vs "+b+")"; },
+      insDormant:function(n,t){ return "<b>"+n+"</b> of "+t+" users are dormant (unseen 30+ days) - a reactivation audience"; },
+      themeBtn:{light:"🌙 Dark", dark:"☀️ Light"}, langBtn:"עברית"
+    }
+  };
+  var LANG = localStorage.getItem("helpy_console_lang") || "he";
+  if(!STRINGS[LANG]) LANG="he";
+  var S = STRINGS[LANG];
+  var THEME = localStorage.getItem("helpy_console_theme") || "light";
+  function isDark(){ return THEME==="dark"; }
+  function applyChrome(){
+    S = STRINGS[LANG];
+    document.documentElement.lang = LANG;
+    document.documentElement.dir = LANG==="he" ? "rtl" : "ltr";
+    if(THEME==="dark") document.documentElement.setAttribute("data-theme","dark");
+    else document.documentElement.removeAttribute("data-theme");
+    document.querySelectorAll("[data-i18n]").forEach(function(n){
+      var v=S[n.getAttribute("data-i18n")]; if(typeof v==="string") n.textContent=v;
+    });
+    document.querySelectorAll("[data-i18n-html]").forEach(function(n){
+      var v=S[n.getAttribute("data-i18n-html")]; if(typeof v==="string") n.innerHTML=v; // trusted: our own dictionary
+    });
+    document.querySelectorAll("[data-i18n-ph]").forEach(function(n){
+      var v=S[n.getAttribute("data-i18n-ph")]; if(typeof v==="string") n.placeholder=v;
+    });
+    var tb=document.getElementById("themeBtn"), lb=document.getElementById("langBtn");
+    if(tb) tb.textContent = S.themeBtn[THEME];
+    if(lb) lb.textContent = S.langBtn;
+  }
+  applyChrome();
   var sb = window.supabase ? window.supabase.createClient(
     "https://lwomstzzmyegpbidibfm.supabase.co",
     "sb_publishable_4UpbPcXm8El9N91W2Lp8Gg_Pp5Vg-_S",
@@ -458,9 +732,10 @@
     document.getElementById("login").classList.add("hidden");
     document.getElementById("connecting").classList.remove("hidden");
   }
-  // single committed dark theme - validated 8-slot order vs surface #1c1930
-  var PAL8 = ["#6366f1","#b45309","#0d9488","#c026d3","#4d7c0f","#0284c7","#8b5cf6","#e11d48"];
-  function pal(i){ return PAL8[i % 8]; }
+  // 8-slot categorical palettes, each validated against its own surface
+  var PAL8L = ["#6366f1","#b45309","#0d9488","#c026d3","#4d7c0f","#0284c7","#8b5cf6","#e11d48"];
+  var PAL8D = ["#6366f1","#d97706","#0d9488","#c026d3","#65a30d","#0284c7","#8b5cf6","#e11d48"];
+  function pal(i){ return (isDark()? PAL8D : PAL8L)[i % 8]; }
   var css = getComputedStyle(document.documentElement);
   function tok(n){ return css.getPropertyValue(n).trim(); }
   var $ = function(id){ return document.getElementById(id); };
@@ -469,9 +744,10 @@
   function fmt(n){ return n==null? "-" : nfmt.format(n); }
   function fmtDay(d){ var p=String(d).slice(0,10).split("-"); return p[2]+"."+p[1]; }
   function fmtTime(iso){
+    var loc = LANG==="he" ? "he-IL" : "en-GB";
     var dt=new Date(iso);
-    return dt.toLocaleDateString("he-IL",{day:"2-digit",month:"2-digit"})+" "+
-           dt.toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit"});
+    return dt.toLocaleDateString(loc,{day:"2-digit",month:"2-digit"})+" "+
+           dt.toLocaleTimeString(loc,{hour:"2-digit",minute:"2-digit"});
   }
   function pct(a,b){ return b? Math.round(100*a/b)+"%" : "-"; }
   function niceMax(v){
@@ -533,7 +809,7 @@
   }
   function chart(hostId, rows, series){
     var host=$(hostId); host.innerHTML="";
-    if(!rows||!rows.length){ host.appendChild(el("p","note","אין נתונים בטווח")); return; }
+    if(!rows||!rows.length){ host.appendChild(el("p","note",S.noDataRange)); return; }
     var box=el("div","chartbox");
     // legend (>=2 series)
     if(series.length>1){
@@ -719,7 +995,7 @@
           emphasis: { focus: "series" },
           data: rows.map(function(r){ return +r[s.key] || 0; }) };
       }).concat(prevData ? [{
-        name: "התקופה הקודמת", type: "line", smooth: true, showSymbol: false, z: 1,
+        name: S.serPrev, type: "line", smooth: true, showSymbol: false, z: 1,
         lineStyle: { width: 1.5, type: "dashed", color: tok("--muted") },
         itemStyle: { color: tok("--muted") }, emphasis: { disabled: true },
         data: prevData
@@ -766,7 +1042,7 @@
   // horizontal bars (categories/cities/funnel) - value labeled at the tip
   function hbars(hostId, items){
     var host=$(hostId); host.innerHTML="";
-    if(!items||!items.length){ host.appendChild(el("p","note","אין נתונים")); return; }
+    if(!items||!items.length){ host.appendChild(el("p","note",S.noData)); return; }
     var max=1;
     items.forEach(function(it){ max=Math.max(max,(it.v1||0)+(it.v2||0)); });
     items.forEach(function(it){
@@ -830,9 +1106,18 @@
       });
     }
     if(opts.ring!=null){
-      var ring=el("div","ring"); ring.style.setProperty("--p",opts.ring);
+      var ring=el("div","ring");
       ring.appendChild(el("b",null,opts.ring+"%"));
       t.appendChild(ring);
+      if(REDUCED){ ring.style.setProperty("--p",opts.ring); }
+      else {
+        var r0=performance.now();
+        (function sweep(now){
+          var pr=Math.min((now-r0)/700,1); pr=1-Math.pow(1-pr,3);
+          ring.style.setProperty("--p",Math.round(opts.ring*pr));
+          if(pr<1) requestAnimationFrame(sweep);
+        })(r0);
+      }
     } else {
       var valEl=el("div","val",value);
       if(/^[\d,]+$/.test(value)) animNum(valEl, parseInt(value.replace(/,/g,""),10));
@@ -845,7 +1130,7 @@
       var arrow=d>0?"▲":d<0?"▼":"";
       var span=el("span","delta "+cls,arrow+" "+fmt(Math.abs(d)));
       sub.appendChild(span);
-      sub.appendChild(el("span","vs","שבוע קודם: "+fmt(opts.prev)));
+      sub.appendChild(el("span","vs",S.prevWeek(fmt(opts.prev))));
     } else if(opts.note){ sub.appendChild(el("span","vs",opts.note)); }
     t.appendChild(sub);
     if(opts.spark){ var s=sparkline(opts.spark); if(s) t.appendChild(s); }
@@ -887,14 +1172,19 @@
     c.innerHTML="";
     c.appendChild(el("b",null,fmt(cur)));
     if(prev==null){
-      c.appendChild(el("span","vs","אין נתוני תקופה קודמת להשוואה"));
+      c.appendChild(el("span","vs",S.cmpNoPrev));
       return;
     }
     var d=cur-prev;
     var cls=d>0?"up":d<0?"down":"";
     var txt=prev>0? Math.round(100*Math.abs(d)/prev)+"%" : fmt(Math.abs(d));
     c.appendChild(el("span","delta "+cls,(d>0?"▲":d<0?"▼":"=")+" "+txt));
-    c.appendChild(el("span","vs",(label||"התקופה הקודמת")+": "+fmt(prev)));
+    c.appendChild(el("span","vs",(label||S.cmpPrevLabel)+": "+fmt(prev)));
+  }
+  // per-chart segment picker: reads the .on button's data-k ("all" or a series key)
+  function segK(id){
+    var b=document.querySelector("#"+id+" button.on");
+    return b? b.getAttribute("data-k") : "all";
   }
   function spanDays(){
     if(CUSTOM){
@@ -936,19 +1226,19 @@
     var rows=[];
     // ordered: serious -> warning -> good/info
     var msgPct=f.signups? Math.round(100*f.messaged/f.signups):0;
-    if(msgPct<10) rows.push(["bad","רק <b>"+msgPct+"%</b> מהנרשמים מגיעים לשיחה עם שכן - זה צוואר הבקבוק המרכזי במשפך ("+fmt(f.messaged)+" מתוך "+fmt(f.signups)+" ב-30 יום)",scrollToEl("funnel")]);
+    if(msgPct<10) rows.push(["bad",S.insFunnel(msgPct,fmt(f.messaged),fmt(f.signups)),scrollToEl("funnel")]);
     if(C.offer_convos>0){
       var op=Math.round(100*C.offer_answered/C.offer_convos);
-      rows.push([op<60?"bad":"good","בעלי הצעות ענו ל-<b>"+op+"%</b> מהפניות אליהם ("+fmt(C.offer_answered)+" מתוך "+fmt(C.offer_convos)+")"+(op<60?" - פנייה שנשארת באוויר מייאשת שכנים":"")]);
+      rows.push([op<60?"bad":"good",S.insOfferAns(op,fmt(C.offer_answered),fmt(C.offer_convos),op<60)]);
     }
     var lq=L.requests_30d? Math.round(100*L.with_offer_24h/L.requests_30d):0;
-    rows.push([lq<50?"warn":"good","<b>"+lq+"%</b> מהבקשות קיבלו הצעה תוך 24 שעות (יעד: 50%+)"]);
-    if(NO.count>0) rows.push(["warn","<b>"+fmt(NO.count)+"</b> בקשות פעילות עדיין בלי אף הצעה - לחיצה קופצת לרשימה",scrollToEl("noOffer")]);
+    rows.push([lq<50?"warn":"good",S.insLiq(lq)]);
+    if(NO.count>0) rows.push(["warn",S.insNoOffer(fmt(NO.count)),scrollToEl("noOffer")]);
     var fa=f.signups? Math.round(100*(dl.first_action_24h_30d||0)/f.signups):0;
-    rows.push([fa<30?"warn":"info","<b>"+fa+"%</b> מהנרשמים החדשים עשו פעולה ראשונה (פוסט או פנייה) תוך 24 שעות"]);
+    rows.push([fa<30?"warn":"info",S.insFirstAction(fa)]);
     var d=k.signups_7d-(dl.signups_prev_7d||0);
-    if(d!==0) rows.push([d>0?"good":"info","קצב ההרשמות "+(d>0?"עלה":"ירד")+" ב-<b>"+fmt(Math.abs(d))+"</b> השבוע ("+fmt(k.signups_7d)+" מול "+fmt(dl.signups_prev_7d||0)+")"]);
-    if(lf.dormant_30d) rows.push(["info","<b>"+fmt(lf.dormant_30d)+"</b> מתוך "+fmt(k.live_users)+" המשתמשים רדומים (לא נראו 30+ יום) - קהל לרה-אקטיבציה"]);
+    if(d!==0) rows.push([d>0?"good":"info",S.insSignupPace(d>0,fmt(Math.abs(d)),fmt(k.signups_7d),fmt(dl.signups_prev_7d||0))]);
+    if(lf.dormant_30d) rows.push(["info",S.insDormant(fmt(lf.dormant_30d),fmt(k.live_users))]);
     rows.forEach(function(r){ host.appendChild(insight(r[0],r[1],r[2])); });
   }
 
@@ -958,81 +1248,90 @@
     var host=$("tiles"); host.innerHTML="";
     function tail(series,key){ return (series||[]).slice(-14).map(function(r){return +r[key]||0;}); }
     var S3=tok("--s3"), S7=tok("--s7"), S5=tok("--s5");
-    var hero=tile("עזרות שהושלמו · 7 ימים ⭐", fmt(k.completed_7d),
+    var hero=tile(S.tileHero, fmt(k.completed_7d),
       {delta:k.completed_7d, prev:dl.completed_prev_7d,
-       tip:"המדד הצפוני של Helpy: עזרות שמקבל/ת העזרה סימנו שבוצעו בפועל",
+       tip:S.tileHeroTip,
        spark:tail(DATA.matches_by_day,"completed"), target:"chMatches"});
     hero.classList.add("hero");
     host.appendChild(hero);
-    host.appendChild(tile("הרשמות · 7 ימים", fmt(k.signups_7d),
+    host.appendChild(tile(S.tileSignups, fmt(k.signups_7d),
       {delta:k.signups_7d, prev:dl.signups_prev_7d,
        spark:tail(DATA.signups_by_day,"total"), dot:tok("--s1"), target:"chSignups"}));
-    host.appendChild(tile("פעילים היום", fmt(k.seen_1d),
-      {note:"שבוע: "+fmt(k.seen_7d)+" · חודש: "+fmt(k.seen_30d),
-       tip:"משתמשים שפתחו את האפליקציה היום, לפי חותמת last_seen_at שהשרת מטביע פעם בשעה",
+    host.appendChild(tile(S.tileActive, fmt(k.seen_1d),
+      {note:S.tileActiveNote(fmt(k.seen_7d),fmt(k.seen_30d)),
+       tip:S.tileActiveTip,
        spark:tail(DATA.dau_by_day,"dau"), dot:tok("--s1"), target:"chDau"}));
-    host.appendChild(tile("דביקות DAU/MAU", pct(k.seen_1d,k.seen_30d),
-      {note:"משתמשים חיים: "+fmt(k.live_users), dot:S7, target:"cohorts",
-       tip:"Stickiness: איזה חלק מהמשתמשים החודשיים נכנסים ביום נתון - מדד הרגל. באפליקציות חברתיות גדולות 20%+ נחשב מצוין",
+    host.appendChild(tile(S.tileStick, pct(k.seen_1d,k.seen_30d),
+      {note:S.tileStickNote(fmt(k.live_users)), dot:S7, target:"cohorts",
+       tip:S.tileStickTip,
        ring: k.seen_30d? Math.round(100*k.seen_1d/k.seen_30d):0}));
-    host.appendChild(tile("הודעות צ'אט · 7 ימים", fmt(dl.messages_7d),
+    host.appendChild(tile(S.tileMsgs, fmt(dl.messages_7d),
       {delta:dl.messages_7d, prev:dl.messages_prev_7d,
        spark:tail(DATA.messages_by_day,"msgs"), dot:S3, target:"chMsgs"}));
-    host.appendChild(tile("התאמות · 7 ימים", fmt(k.matches_7d),
+    host.appendChild(tile(S.tileMatches, fmt(k.matches_7d),
       {delta:k.matches_7d, prev:dl.matches_prev_7d,
-       tip:"חיבור בין שני שכנים סביב פוסט: סוויפ על הצעה פותח צ'אט מיד, סוויפ על בקשה ממתין לאישור",
+       tip:S.tileMatchesTip,
        spark:tail(DATA.matches_by_day,"created"), dot:tok("--s2"), target:"chMatches"}));
-    host.appendChild(tile("פוסטים · 7 ימים", fmt(dl.posts_7d),
+    host.appendChild(tile(S.tilePosts, fmt(dl.posts_7d),
       {delta:dl.posts_7d, prev:dl.posts_prev_7d,
        spark:tail(DATA.posts_by_day,"requests"), dot:tok("--s2"), target:"chPosts"}));
-    host.appendChild(tile("בפיד עכשיו", fmt(k.active_requests)+" / "+fmt(k.active_offers),
-      {note:"בקשות / הצעות", dot:S5, target:"noOffer"}));
+    host.appendChild(tile(S.tileFeed, fmt(k.active_requests)+" / "+fmt(k.active_offers),
+      {note:S.tileFeedNote, dot:S5, target:"noOffer"}));
+    // staggered entrance
+    Array.prototype.forEach.call(host.children,function(tl,i){
+      tl.style.animationDelay=(i*55)+"ms";
+    });
 
     var S1=tok("--s1"), S2=tok("--s2");
-    timeChart("chSignups",maybeWeekly(DATA.signups_by_day,["ios","android","total"]),[
+    // each chart carries its own segment picker (data-analyst dimension filter);
+    // the previous-period overlay and the header total follow the selected segment
+    function segChart(chartId, segId, source, defs, sumKeys, opts){
+      var sel = segK(segId);
+      var series = sel==="all" ? defs : defs.filter(function(d){ return d.key===sel; });
+      var keys = sel==="all" ? sumKeys : [sel];
+      opts = opts || {};
+      // avg-type metrics (DAU) must never be summed into weekly buckets
+      var rows = opts.avg ? rangeRows(source)
+                          : maybeWeekly(source, defs.map(function(d){return d.key;}).concat(sumKeys));
+      opts.prev = { rows: opts.avg ? prevRows(source) : prevAgg(source, keys), keys: keys };
+      timeChart(chartId, rows, series, opts);
+      var cur = rangeRows(source), prv = prevRows(source);
+      if(opts.avg){
+        cmpLine(chartId,
+          cur.length? Math.round(sumRows(cur,keys)/cur.length):0,
+          prv.length? Math.round(sumRows(prv,keys)/prv.length):null,
+          opts.avgLabel);
+      } else {
+        cmpLine(chartId, sumRows(cur,keys), prv.length? sumRows(prv,keys):null);
+      }
+    }
+    segChart("chSignups","segSignups",DATA.signups_by_day,[
       {key:"ios",name:"iOS",color:S1,type:"bar"},
       {key:"android",name:"Android",color:S2,type:"bar"}],
-      {zoom:true, prev:{rows:prevAgg(DATA.signups_by_day,["total"]),keys:["total"]}});
-    timeChart("chDau",rangeRows(DATA.dau_by_day),[
-      {key:"dau",name:"DAU",color:S1,type:"line",area:true},
-      {key:"wau",name:"WAU",color:S2,type:"line"}],
-      {zoom:false, prev:{rows:prevRows(DATA.dau_by_day),keys:["dau"]}});
-    timeChart("chPosts",maybeWeekly(DATA.posts_by_day,["requests","offers"]),[
-      {key:"requests",name:"בקשות",color:S1,type:"bar"},
-      {key:"offers",name:"הצעות",color:S2,type:"bar"}],
-      {zoom:true, prev:{rows:prevAgg(DATA.posts_by_day,["requests","offers"]),keys:["requests","offers"]}});
-    timeChart("chMsgs",maybeWeekly(DATA.messages_by_day,["msgs","senders"]),[
-      {key:"msgs",name:"הודעות",color:S1,type:"bar"}],
-      {zoom:true, prev:{rows:prevAgg(DATA.messages_by_day,["msgs"]),keys:["msgs"]}});
-    timeChart("chMatches",maybeWeekly(DATA.matches_by_day,["created","completed"]),[
-      {key:"created",name:"התאמות",color:S1,type:"bar"},
-      {key:"completed",name:"השלמות",color:S3,type:"bar"}],
-      {zoom:true,group:true, prev:{rows:prevAgg(DATA.matches_by_day,["created"]),keys:["created"]}});
-
-    // Stripe-pattern totals above each time chart: current window vs the one before it
-    var curS=rangeRows(DATA.signups_by_day), prvS=prevRows(DATA.signups_by_day);
-    cmpLine("chSignups", sumRows(curS,["total"]), prvS.length? sumRows(prvS,["total"]) : null);
-    var curD=rangeRows(DATA.dau_by_day), prvD=prevRows(DATA.dau_by_day);
-    cmpLine("chDau",
-      curD.length? Math.round(sumRows(curD,["dau"])/curD.length):0,
-      prvD.length? Math.round(sumRows(prvD,["dau"])/prvD.length):null,
-      "ממוצע DAU בתקופה הקודמת");
-    var prvP=prevRows(DATA.posts_by_day);
-    cmpLine("chPosts", sumRows(rangeRows(DATA.posts_by_day),["requests","offers"]),
-                       prvP.length? sumRows(prvP,["requests","offers"]) : null);
-    var prvM=prevRows(DATA.messages_by_day);
-    cmpLine("chMsgs", sumRows(rangeRows(DATA.messages_by_day),["msgs"]),
-                      prvM.length? sumRows(prvM,["msgs"]) : null);
-    var prvT=prevRows(DATA.matches_by_day);
-    cmpLine("chMatches", sumRows(rangeRows(DATA.matches_by_day),["created"]),
-                         prvT.length? sumRows(prvT,["created"]) : null);
+      ["total"],{zoom:true});
+    segChart("chDau","segDau",DATA.dau_by_day,[
+      {key:"dau",name:S.serDau,color:S1,type:"line",area:true},
+      {key:"wau",name:S.serWau,color:S2,type:"line"}],
+      ["dau"],{zoom:false, avg:true, avgLabel:S.cmpDauPrev});
+    segChart("chPosts","segPosts",DATA.posts_by_day,[
+      {key:"requests",name:S.serRequests,color:S1,type:"bar"},
+      {key:"offers",name:S.serOffers,color:S2,type:"bar"}],
+      ["requests","offers"],{zoom:true});
+    segChart("chMsgs","segMsgs",DATA.messages_by_day,[
+      {key:"msgs",name:S.serMsgs,color:S1,type:"bar"},
+      {key:"senders",name:S.serSenders,color:S3,type:"line"}],
+      ["msgs"],{zoom:true});
+    segChart("chMatches","segMatches",DATA.matches_by_day,[
+      {key:"created",name:S.serCreated,color:S1,type:"bar"},
+      {key:"completed",name:S.serCompleted,color:S3,type:"bar"}],
+      ["created"],{zoom:true,group:true});
 
     var lf=DATA.lifecycle||{};
     var lt0=el("table","plain");
-    [["חדשים (עד 7 ימים)",fmt(lf.new_7d)],
-     ["פעילים בשבוע האחרון",fmt(lf.active_7d)],
-     ["רדומים (30+ יום בלי כניסה)",fmt(lf.dormant_30d)],
-     ["סה״כ משתמשים חיים",fmt(k.live_users)]].forEach(function(r){
+    [[S.lf1,fmt(lf.new_7d)],
+     [S.lf2,fmt(lf.active_7d)],
+     [S.lf3,fmt(lf.dormant_30d)],
+     [S.lf4,fmt(k.live_users)]].forEach(function(r){
       var tr=el("tr"); tr.appendChild(el("th",null,r[0])); tr.appendChild(el("td",null,r[1]));
       lt0.appendChild(tr);
     });
@@ -1042,9 +1341,9 @@
     var f=segVal("funnelSeg")===30? DATA.funnel_30d : DATA.funnel_14d;
     var ramp=[tok("--seq250"),tok("--seq400"),tok("--seq400"),tok("--seq550"),
               tok("--seq550"),tok("--seq700"),tok("--seq700")];
-    var steps=[["נרשמו",f.signups],["שיתפו מיקום",f.location],["אישרו התראות",f.push],
-      ["אימתו טלפון",f.verified],["פרסמו פוסט",f.posted],["הגיעו להתאמה",f.matched],
-      ["שלחו הודעה",f.messaged]];
+    var steps=[[S.f1,f.signups],[S.f2,f.location],[S.f3,f.push],
+      [S.f4,f.verified],[S.f5,f.posted],[S.f6,f.matched],
+      [S.f7,f.messaged]];
     hbars("funnel",steps.map(function(s,i){
       return {label:s[0], v1:s[1], c1:ramp[i], suffix:" · "+pct(s[1],f.signups)};
     }));
@@ -1061,21 +1360,22 @@
     // cohort heatmap on the sequential ramp; ink picked by fill luminance
     var seq=[tok("--seq100"),tok("--seq250"),tok("--seq400"),tok("--seq550"),tok("--seq700")];
     function heat(p){ return seq[Math.min(4,Math.floor(p/0.2))]; }
-    // light ramp runs light→dark: dark ink on the light low steps, white on the dark high steps
-    function inkFor(i){ return i>=3?"#ffffff":"#171436"; }
+    // light theme: ramp runs light→dark (dark ink low, white high);
+    // dark theme: ramp runs dark→light (light ink low, dark ink high)
+    function inkFor(i){
+      return isDark() ? (i>=3?"#12101e":"#eceaf6") : (i>=3?"#ffffff":"#171436");
+    }
     var tbl=el("table","cohort");
-    var COH_TIPS={
-      "מיקום":"אחוז מהנרשמים באותו שבוע שנתנו הרשאת מיקום",
-      "התראות":"אחוז מהנרשמים באותו שבוע שאישרו התראות פוש",
-      "D1":"שימור יום 1: אחוז שחזרו לאפליקציה יום אחרי ההרשמה",
-      "D7":"שימור שבוע: אחוז שחזרו שבוע או יותר אחרי ההרשמה",
-      "D30":"שימור חודש: אחוז שחזרו חודש או יותר אחרי ההרשמה" };
-    var hd=el("tr"); ["שבוע","נרשמים","מיקום","התראות","D1","D7","D30"].forEach(function(h){
+    var cohHeads=[
+      [S.cohWeek], [S.cohSignups],
+      [S.cohLoc, S.cohTips.loc], [S.cohPush, S.cohTips.push],
+      ["D1", S.cohTips.d1], ["D7", S.cohTips.d7], ["D30", S.cohTips.d30]];
+    var hd=el("tr"); cohHeads.forEach(function(h){
       var th=el("th");
-      if(COH_TIPS[h]){
-        var sp=el("span","term below",h); sp.setAttribute("data-tip",COH_TIPS[h]);
+      if(h[1]){
+        var sp=el("span","term below",h[0]); sp.setAttribute("data-tip",h[1]);
         th.appendChild(sp);
-      } else { th.textContent=h; }
+      } else { th.textContent=h[0]; }
       hd.appendChild(th); });
     tbl.appendChild(hd);
     (DATA.cohorts||[]).forEach(function(c){
@@ -1100,13 +1400,13 @@
 
     var L=DATA.liquidity;
     var lt=el("table","plain");
-    [["בקשות חדשות",fmt(L.requests_30d)],
-     ["קיבלו הצעה תוך 24 שעות",pct(L.with_offer_24h,L.requests_30d)],
-     ["קיבלו הצעה בסוף",pct(L.with_offer_ever,L.requests_30d)],
-     ["חציון זמן להצעה ראשונה",L.median_minutes_to_first_offer==null?"-":
-        (L.median_minutes_to_first_offer<120? fmt(L.median_minutes_to_first_offer)+" דקות" :
-         fmt(Math.round(L.median_minutes_to_first_offer/60))+" שעות"),
-      "הערך האמצעי: מחצית מהבקשות קיבלו הצעה מהר מזה. עמיד לחריגים, בניגוד לממוצע"]
+    [[S.liq1,fmt(L.requests_30d)],
+     [S.liq2,pct(L.with_offer_24h,L.requests_30d)],
+     [S.liq3,pct(L.with_offer_ever,L.requests_30d)],
+     [S.liq4,L.median_minutes_to_first_offer==null?"-":
+        (L.median_minutes_to_first_offer<120? fmt(L.median_minutes_to_first_offer)+" "+S.minutes :
+         fmt(Math.round(L.median_minutes_to_first_offer/60))+" "+S.hours),
+      S.liqMedianTip]
     ].forEach(function(r){
       var tr=el("tr"), th=el("th");
       if(r[2]){ var sp=el("span","term",r[0]); sp.setAttribute("data-tip",r[2]); th.appendChild(sp); }
@@ -1118,15 +1418,14 @@
 
     var C=DATA.chat_stats||{};
     var ct=el("table","plain");
-    [["שיחות שנפתחו",fmt(C.convos_30d)],
-     ["נענו (דו-כיווניות)",pct(C.two_way_30d,C.convos_30d),
-      "שיחות שבהן שני הצדדים כתבו לפחות הודעה אחת - פנייה שנענתה באמת"],
-     ["פניות לבעלי הצעות שנענו",C.offer_convos? pct(C.offer_answered,C.offer_convos)+" ("+fmt(C.offer_answered)+"/"+fmt(C.offer_convos)+")" : "-"],
-     ["פניות לבעלי בקשות שנענו",C.request_convos? pct(C.request_answered,C.request_convos)+" ("+fmt(C.request_answered)+"/"+fmt(C.request_convos)+")" : "-"],
-     ["חציון זמן לתשובה ראשונה",C.median_first_reply_minutes==null?"-":
-        (C.median_first_reply_minutes<120? fmt(C.median_first_reply_minutes)+" דקות" :
-         fmt(Math.round(C.median_first_reply_minutes/60))+" שעות"),
-      "הערך האמצעי: מחצית מהפניות נענו מהר מזה. עמיד לחריגים, בניגוד לממוצע"]
+    [[S.ch1,fmt(C.convos_30d)],
+     [S.ch2,pct(C.two_way_30d,C.convos_30d),S.ch2Tip],
+     [S.ch3,C.offer_convos? pct(C.offer_answered,C.offer_convos)+" ("+fmt(C.offer_answered)+"/"+fmt(C.offer_convos)+")" : "-"],
+     [S.ch4,C.request_convos? pct(C.request_answered,C.request_convos)+" ("+fmt(C.request_answered)+"/"+fmt(C.request_convos)+")" : "-"],
+     [S.ch5,C.median_first_reply_minutes==null?"-":
+        (C.median_first_reply_minutes<120? fmt(C.median_first_reply_minutes)+" "+S.minutes :
+         fmt(Math.round(C.median_first_reply_minutes/60))+" "+S.hours),
+      S.ch5Tip]
     ].forEach(function(r){
       var tr=el("tr"), th=el("th");
       if(r[2]){ var sp=el("span","term",r[0]); sp.setAttribute("data-tip",r[2]); th.appendChild(sp); }
@@ -1139,17 +1438,17 @@
     // active requests with zero offers
     var NO=DATA.no_offer_requests||{count:0,items:[]};
     var noHost=$("noOffer"); noHost.innerHTML="";
-    if(!NO.count){ noHost.appendChild(el("p","note","כל הבקשות הפעילות קיבלו לפחות הצעה אחת 🎉")); }
+    if(!NO.count){ noHost.appendChild(el("p","note",S.noOfferAllGood)); }
     else {
-      noHost.appendChild(el("p","note","סה״כ "+fmt(NO.count)+" בקשות ממתינות; האחרונות:"));
+      noHost.appendChild(el("p","note",S.noOfferCount(fmt(NO.count))));
       var nt=el("table","plain");
-      var nh=el("tr"); ["בקשה","עיר","גיל"].forEach(function(h){ nh.appendChild(el("th",null,h)); });
+      var nh=el("tr"); [S.noH1,S.noH2,S.noH3].forEach(function(h){ nh.appendChild(el("th",null,h)); });
       nt.appendChild(nh);
       (NO.items||[]).forEach(function(it){
         var tr=el("tr");
         tr.appendChild(el("td",null,it.title));
         tr.appendChild(el("td",null,it.city||"-"));
-        tr.appendChild(el("td",null,it.days===0?"היום":fmt(it.days)+" ימים"));
+        tr.appendChild(el("td",null,it.days===0?S.today:fmt(it.days)+" "+S.daysUnit));
         nt.appendChild(tr);
       });
       noHost.appendChild(nt);
@@ -1158,16 +1457,16 @@
     // most active users
     var tuHost=$("topUsers"); tuHost.innerHTML="";
     var TU=DATA.top_users||[];
-    if(!TU.length){ tuHost.appendChild(el("p","note","אין נתונים")); }
+    if(!TU.length){ tuHost.appendChild(el("p","note",S.noData)); }
     else {
       var ut=el("table","plain");
-      var uh=el("tr"); ["שם","פוסטים","התאמות","הודעות","מאומת/ת","נראה לאחרונה"].forEach(function(h){
+      var uh=el("tr"); [S.tu1,S.tu2,S.tu3,S.tu4,S.tu5,S.tu6].forEach(function(h){
         uh.appendChild(el("th",null,h)); });
       ut.appendChild(uh);
       TU.forEach(function(u){
         var tr=el("tr");
         tr.classList.add("clickable");
-        tr.title="לחיצה מציגה את השיחות של "+u.name;
+        tr.title=S.tuRowTitle(u.name);
         tr.addEventListener("click",function(){ drillToChat({search:u.name}); });
         tr.appendChild(el("td",null,u.name));
         tr.appendChild(el("td",null,fmt(u.posts)));
@@ -1180,10 +1479,10 @@
       tuHost.appendChild(ut);
     }
 
-    var S=DATA.safety;
+    var SF=DATA.safety;
     var st=el("table","plain");
-    [["דיווחים",fmt(S.reports_30d)],["חסימות",fmt(S.blocks_30d)],
-     ["מחיקות חשבון",fmt(S.deletions_30d)]].forEach(function(r){
+    [[S.sf1,fmt(SF.reports_30d)],[S.sf2,fmt(SF.blocks_30d)],
+     [S.sf3,fmt(SF.deletions_30d)]].forEach(function(r){
       var tr=el("tr"); tr.appendChild(el("th",null,r[0])); tr.appendChild(el("td",null,r[1]));
       st.appendChild(tr);
     });
@@ -1204,7 +1503,7 @@
     var dh=$("drillHost"); dh.innerHTML="";
     if(drill.category){
       var chip=el("span","drillchip");
-      chip.appendChild(document.createTextNode("קטגוריה: "+drill.category));
+      chip.appendChild(document.createTextNode(S.drillCat(drill.category)));
       var x=el("button",null,"✕");
       x.addEventListener("click",function(){ drill.category=null; renderChat(); });
       chip.appendChild(x);
@@ -1224,9 +1523,9 @@
       return true;
     });
     var total=(DATA.conversations||[]).length;
-    $("chatCount").textContent="מציג "+fmt(list.length)+" מתוך "+fmt(total)+" שיחות בטווח";
+    $("chatCount").textContent=S.chatShowing(fmt(list.length),fmt(total));
     var host=$("convoList"); host.innerHTML="";
-    if(!list.length){ host.appendChild(el("p","note","אין שיחות בטווח או בסינון הנוכחי")); return; }
+    if(!list.length){ host.appendChild(el("p","note",S.noConvos)); return; }
     list.forEach(function(c){
       var box=el("div","convo");
       var btn=el("button");
@@ -1239,10 +1538,10 @@
       main.appendChild(el("div","cnames",c.helper.name+" ↔ "+c.requester.name));
       var meta=el("div","cmeta");
       meta.appendChild(el("span",null,c.post_title));
-      meta.appendChild(el("span",null,fmt(c.msg_count)+" הודעות"));
-      meta.appendChild(el("span","tag",c.post_type==="offer"?"הצעה":"בקשה"));
-      if(!c.two_way) meta.appendChild(el("span","tag oneway","ללא מענה"));
-      if(c.mock) meta.appendChild(el("span","tag mock","בדיקה"));
+      meta.appendChild(el("span",null,S.msgsCount(fmt(c.msg_count))));
+      meta.appendChild(el("span","tag",c.post_type==="offer"?S.tagOffer:S.tagRequest));
+      if(!c.two_way) meta.appendChild(el("span","tag oneway",S.tagOneway));
+      if(c.mock) meta.appendChild(el("span","tag mock",S.tagMock));
       main.appendChild(meta);
       btn.appendChild(main);
       btn.appendChild(el("span","cside",fmtTime(c.messages[c.messages.length-1].at)));
@@ -1270,7 +1569,7 @@
   function updateTicker(){
     if(!lastLoadTs) return;
     var s=Math.round((Date.now()-lastLoadTs)/1000);
-    $("genAt").textContent= s<60? "עודכן לפני "+s+" שנ׳" : "עודכן לפני "+Math.round(s/60)+" דק׳";
+    $("genAt").textContent = S.updatedAgo(s);
   }
   setInterval(updateTicker,5000);
 
@@ -1342,18 +1641,18 @@
     $("connecting").classList.add("hidden");
     $("login").classList.remove("hidden");
     if(err.message==="forbidden"){
-      $("loginErr").textContent="החשבון הזה לא מורשה לקונסול";
+      $("loginErr").textContent=S.errForbidden;
       if(sb) sb.auth.signOut();
       SESSION=null;
     } else if(err.message==="unauthorized"){
       sessionStorage.removeItem("helpy_dash_key");
     } else {
-      $("loginErr").textContent="שגיאת שרת, נסו שוב";
+      $("loginErr").textContent=S.errServer;
     }
   }
 
   $("googleBtn").addEventListener("click",function(){
-    if(!sb){ $("loginErr").textContent="שירות ההתחברות לא נטען, רעננו את הדף"; return; }
+    if(!sb){ $("loginErr").textContent=S.errNoAuth; return; }
     sb.auth.signInWithOAuth({ provider:"google",
       options:{ redirectTo:"https://help-y.com/console/" } });
   });
@@ -1384,6 +1683,27 @@
   segWire("chatRangeSeg",function(){ load().catch(function(){}); });
   segWire("chatTypeSeg",renderChat);
   segWire("funnelSeg",function(){ if(DATA) renderMetrics(); });
+  ["segSignups","segDau","segPosts","segMsgs","segMatches"].forEach(function(id){
+    segWire(id,function(){ if(DATA) renderMetrics(); });
+  });
+
+  // theme + language toggles: swap tokens/strings, then re-render everything
+  function rerenderAll(){
+    Object.keys(einsts).forEach(function(id){ einsts[id].dispose(); });
+    einsts={};
+    applyChrome();
+    if(DATA){ renderMetrics(); renderChat(); }
+  }
+  $("themeBtn").addEventListener("click",function(){
+    THEME = THEME==="dark" ? "light" : "dark";
+    localStorage.setItem("helpy_console_theme",THEME);
+    rerenderAll();
+  });
+  $("langBtn").addEventListener("click",function(){
+    LANG = LANG==="he" ? "en" : "he";
+    localStorage.setItem("helpy_console_lang",LANG);
+    rerenderAll();
+  });
   segWire("tabs",function(){
     switchTab(document.querySelector("#tabs button.on").getAttribute("data-v"));
   });
