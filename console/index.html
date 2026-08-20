@@ -59,9 +59,28 @@
            padding:5px 14px; cursor:pointer; color:var(--ink2); font-size:13px; }
   .ghost:hover { background:var(--wash-hover); }
 
-  main { max-width:1240px; margin:0 auto; padding:20px 24px 48px; }
+  main { max-width:1120px; margin:0 auto; padding:20px 24px 48px; }
   .filters { display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
   .filters .cap { color:var(--muted); font-size:12px; }
+
+  /* Stripe-pattern: jobs-based side rail (scrollspy-highlighted) */
+  #rail { position:fixed; top:78px; inset-inline-start:20px; width:130px; z-index:15;
+          display:flex; flex-direction:column; gap:2px; }
+  #rail a { padding:6px 10px; border-radius:8px; font-size:13px; color:var(--ink2);
+            cursor:pointer; user-select:none; }
+  #rail a:hover { background:var(--wash-hover); }
+  #rail a.on { background:var(--wash1); color:var(--ink); font-weight:600; }
+  @media (max-width:1400px){ #rail { display:none; } }
+  .sechead, #overviewTop { scroll-margin-top:64px; }
+
+  /* Stripe-pattern: period total + delta + previous-period figure above a chart */
+  .cmp { display:flex; align-items:baseline; gap:10px; margin:2px 0 10px; }
+  .cmp b { font-family:"Suez One","Heebo",serif; font-weight:400; font-size:24px;
+           font-variant-numeric:tabular-nums; }
+  .cmp .delta { font-size:12.5px; font-weight:600; }
+  .cmp .delta.up { color:var(--good-text); }
+  .cmp .delta.down { color:var(--bad-text); }
+  .cmp .vs { font-size:12px; color:var(--muted); }
 
   /* ---- stat tiles ---- */
   .tiles { display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
@@ -268,6 +287,16 @@
   <button class="ghost" id="logoutBtn">יציאה</button>
 </header>
 
+<nav id="rail" class="hidden">
+  <a data-t="overviewTop" class="on">סקירה</a>
+  <a data-t="secGrowth">צמיחה</a>
+  <a data-t="secMarket">מרקטפלייס</a>
+  <a data-t="secChat">צ'אט</a>
+  <a data-t="secRetention">שימור</a>
+  <a data-t="secUsers">משתמשים</a>
+  <a data-t="secSafety">בטיחות</a>
+</nav>
+
 <main class="hidden" id="app">
   <div id="metricsView">
     <div class="filters">
@@ -285,7 +314,7 @@
       <button class="ghost" id="applyRange">הצג</button>
     </div>
     <p class="note" style="margin-bottom:14px">טיפ: בתוך כל גרף אפשר לגרור את פס הטווח שלמטה, ללחוץ על מקרא כדי להסתיר סדרה, וללחוץ על קטגוריות, משתמשים וכרטיסים כדי לצלול פנימה</p>
-    <section class="panel">
+    <section class="panel" id="overviewTop">
       <h2>מה דורש תשומת לב</h2>
       <div class="sub">תובנות מחושבות מהנתונים של 30 הימים האחרונים</div>
       <div id="insightsBody"></div>
@@ -364,6 +393,8 @@
   var DATA = null;
   var SESSION = null;
   var CUSTOM = null;            // {from:"YYYY-MM-DD", to:"YYYY-MM-DD"} calendar range
+  var RANGE = 90;               // current window length (days); the fetch spans 2x of it
+                                // so every chart can show the previous period (Stripe pattern)
   var drill = { category: null }; // click-through filter into the chat tab
   var sb = window.supabase ? window.supabase.createClient(
     "https://lwomstzzmyegpbidibfm.supabase.co",
@@ -569,13 +600,22 @@
     var hasBar = series.some(function(s){ return s.type === "bar"; });
     var barSeries = series.filter(function(s){ return s.type === "bar"; });
     var lastBarKey = barSeries.length ? barSeries[barSeries.length-1].key : null;
+    // previous-period overlay: a dashed muted line of the prior window, aligned by index
+    var prevData = null;
+    if(opts.prev && opts.prev.rows && opts.prev.rows.length){
+      var pk = opts.prev.keys;
+      prevData = opts.prev.rows.slice(0, rows.length).map(function(r){
+        var t = 0; pk.forEach(function(k){ t += (+r[k] || 0); }); return t;
+      });
+    }
+    var manySeries = series.length + (prevData ? 1 : 0) > 1;
     inst.setOption({
       animationDuration: 700,
       animationDurationUpdate: 450,
       textStyle: { fontFamily: "Heebo, system-ui, sans-serif" },
-      grid: { left: 10, right: 46, top: series.length > 1 ? 36 : 18,
+      grid: { left: 10, right: 46, top: manySeries ? 36 : 18,
               bottom: opts.zoom ? 56 : 26 },
-      legend: series.length > 1 ? {
+      legend: manySeries ? {
         top: 0, right: 0, itemWidth: 12, itemHeight: 8,
         textStyle: { color: ink2, fontSize: 12 }
       } : undefined,
@@ -626,7 +666,12 @@
             borderRadius: (opts.group || s.key === lastBarKey) ? [3,3,0,0] : 0 },
           emphasis: { focus: "series" },
           data: rows.map(function(r){ return +r[s.key] || 0; }) };
-      })
+      }).concat(prevData ? [{
+        name: "התקופה הקודמת", type: "line", smooth: true, showSymbol: false, z: 1,
+        lineStyle: { width: 1.5, type: "dashed", color: tok("--muted") },
+        itemStyle: { color: tok("--muted") }, emphasis: { disabled: true },
+        data: prevData
+      }] : [])
     });
   }
   window.addEventListener("resize", function(){
@@ -701,6 +746,7 @@
     });
     $("metricsView").classList.toggle("hidden",v!=="metrics");
     $("chatView").classList.toggle("hidden",v!=="chat");
+    $("rail").classList.toggle("hidden",v!=="metrics");
     if(v==="metrics") Object.keys(einsts).forEach(function(k){ einsts[k].resize(); });
     window.scrollTo({top:0,behavior:"smooth"});
   }
@@ -736,7 +782,7 @@
       var arrow=d>0?"▲":d<0?"▼":"";
       var span=el("span","delta "+cls,arrow+" "+fmt(Math.abs(d)));
       sub.appendChild(span);
-      sub.appendChild(el("span","vs","מול 7 הימים הקודמים"));
+      sub.appendChild(el("span","vs","שבוע קודם: "+fmt(opts.prev)));
     } else if(opts.note){ sub.appendChild(el("span","vs",opts.note)); }
     t.appendChild(sub);
     if(opts.spark){ var s=sparkline(opts.spark); if(s) t.appendChild(s); }
@@ -746,11 +792,46 @@
   // aggregate daily rows into ISO-week buckets (sum) - used when the range is
   // long enough that daily bars turn into noise
   function rangeRows(rows){
-    if(!CUSTOM) return rows;
-    return (rows||[]).filter(function(r){
+    rows=rows||[];
+    if(!CUSTOM) return rows.slice(-RANGE); // the fetch holds 2x - keep the current window
+    return rows.filter(function(r){
       var d=String(r.d).slice(0,10);
       return d>=CUSTOM.from && d<=CUSTOM.to;
     });
+  }
+  // the same-length window immediately before the current one (Stripe comparison)
+  function prevRows(rows){
+    rows=rows||[];
+    if(!CUSTOM) return rows.slice(0,Math.max(0,rows.length-RANGE)).slice(-RANGE);
+    return rows.filter(function(r){
+      return String(r.d).slice(0,10)<CUSTOM.from;
+    }).slice(-RANGE);
+  }
+  function prevAgg(rows,keys){
+    var p=prevRows(rows);
+    return spanDays()>=60 ? byWeek(p,keys) : p;
+  }
+  function sumRows(rows,keys){
+    var t=0;(rows||[]).forEach(function(r){ keys.forEach(function(k){ t+=(+r[k]||0); }); });
+    return t;
+  }
+  // Stripe-pattern header above a chart: period total, % delta, previous period in small text
+  function cmpLine(chartId, cur, prev, label){
+    var host=$(chartId); if(!host) return;
+    var panel=host.closest("section.panel"); if(!panel) return;
+    var c=panel.querySelector(".cmp");
+    if(!c){ c=el("div","cmp"); panel.insertBefore(c,host); }
+    c.innerHTML="";
+    c.appendChild(el("b",null,fmt(cur)));
+    if(prev==null){
+      c.appendChild(el("span","vs","אין נתוני תקופה קודמת להשוואה"));
+      return;
+    }
+    var d=cur-prev;
+    var cls=d>0?"up":d<0?"down":"";
+    var txt=prev>0? Math.round(100*Math.abs(d)/prev)+"%" : fmt(Math.abs(d));
+    c.appendChild(el("span","delta "+cls,(d>0?"▲":d<0?"▼":"=")+" "+txt));
+    c.appendChild(el("span","vs",(label||"התקופה הקודמת")+": "+fmt(prev)));
   }
   function spanDays(){
     if(CUSTOM){
@@ -842,18 +923,41 @@
     var S1=tok("--s1"), S2=tok("--s2");
     timeChart("chSignups",maybeWeekly(DATA.signups_by_day,["ios","android","total"]),[
       {key:"ios",name:"iOS",color:S1,type:"bar"},
-      {key:"android",name:"Android",color:S2,type:"bar"}],{zoom:true});
+      {key:"android",name:"Android",color:S2,type:"bar"}],
+      {zoom:true, prev:{rows:prevAgg(DATA.signups_by_day,["total"]),keys:["total"]}});
     timeChart("chDau",rangeRows(DATA.dau_by_day),[
       {key:"dau",name:"DAU",color:S1,type:"line",area:true},
-      {key:"wau",name:"WAU",color:S2,type:"line"}],{zoom:false});
+      {key:"wau",name:"WAU",color:S2,type:"line"}],
+      {zoom:false, prev:{rows:prevRows(DATA.dau_by_day),keys:["dau"]}});
     timeChart("chPosts",maybeWeekly(DATA.posts_by_day,["requests","offers"]),[
       {key:"requests",name:"בקשות",color:S1,type:"bar"},
-      {key:"offers",name:"הצעות",color:S2,type:"bar"}],{zoom:true});
+      {key:"offers",name:"הצעות",color:S2,type:"bar"}],
+      {zoom:true, prev:{rows:prevAgg(DATA.posts_by_day,["requests","offers"]),keys:["requests","offers"]}});
     timeChart("chMsgs",maybeWeekly(DATA.messages_by_day,["msgs","senders"]),[
-      {key:"msgs",name:"הודעות",color:S1,type:"bar"}],{zoom:true});
+      {key:"msgs",name:"הודעות",color:S1,type:"bar"}],
+      {zoom:true, prev:{rows:prevAgg(DATA.messages_by_day,["msgs"]),keys:["msgs"]}});
     timeChart("chMatches",maybeWeekly(DATA.matches_by_day,["created","completed"]),[
       {key:"created",name:"התאמות",color:S1,type:"bar"},
-      {key:"completed",name:"השלמות",color:S3,type:"bar"}],{zoom:true,group:true});
+      {key:"completed",name:"השלמות",color:S3,type:"bar"}],
+      {zoom:true,group:true, prev:{rows:prevAgg(DATA.matches_by_day,["created"]),keys:["created"]}});
+
+    // Stripe-pattern totals above each time chart: current window vs the one before it
+    var curS=rangeRows(DATA.signups_by_day), prvS=prevRows(DATA.signups_by_day);
+    cmpLine("chSignups", sumRows(curS,["total"]), prvS.length? sumRows(prvS,["total"]) : null);
+    var curD=rangeRows(DATA.dau_by_day), prvD=prevRows(DATA.dau_by_day);
+    cmpLine("chDau",
+      curD.length? Math.round(sumRows(curD,["dau"])/curD.length):0,
+      prvD.length? Math.round(sumRows(prvD,["dau"])/prvD.length):null,
+      "ממוצע DAU בתקופה הקודמת");
+    var prvP=prevRows(DATA.posts_by_day);
+    cmpLine("chPosts", sumRows(rangeRows(DATA.posts_by_day),["requests","offers"]),
+                       prvP.length? sumRows(prvP,["requests","offers"]) : null);
+    var prvM=prevRows(DATA.messages_by_day);
+    cmpLine("chMsgs", sumRows(rangeRows(DATA.messages_by_day),["msgs"]),
+                      prvM.length? sumRows(prvM,["msgs"]) : null);
+    var prvT=prevRows(DATA.matches_by_day);
+    cmpLine("chMatches", sumRows(rangeRows(DATA.matches_by_day),["created"]),
+                         prvT.length? sumRows(prvT,["created"]) : null);
 
     var lf=DATA.lifecycle||{};
     var lt0=el("table","plain");
@@ -1087,11 +1191,14 @@
     $("refreshIcon").classList.add("spinning");
     var fetchDays, chatDays;
     if(CUSTOM){
-      fetchDays=Math.min(365, Math.max(7,
-        Math.ceil((Date.now()-new Date(CUSTOM.from).getTime())/86400000)+1));
-      chatDays=fetchDays;
+      var backDays=Math.ceil((Date.now()-new Date(CUSTOM.from).getTime())/86400000)+1;
+      RANGE=Math.round((new Date(CUSTOM.to)-new Date(CUSTOM.from))/86400000)+1;
+      fetchDays=Math.min(365, Math.max(7, backDays+RANGE));
+      chatDays=Math.min(365, Math.max(1, backDays));
     } else {
-      fetchDays=segVal("rangeSeg"); chatDays=segVal("chatRangeSeg");
+      RANGE=segVal("rangeSeg");
+      fetchDays=Math.min(365, RANGE*2);
+      chatDays=segVal("chatRangeSeg");
     }
     var hdrs={"content-type":"application/json"};
     if(SESSION && SESSION.access_token) hdrs["authorization"]="Bearer "+SESSION.access_token;
@@ -1111,6 +1218,8 @@
       $("login").classList.add("hidden");
       $("hdr").classList.remove("hidden");
       $("app").classList.remove("hidden");
+      $("rail").classList.toggle("hidden",
+        document.querySelector("#tabs button.on").getAttribute("data-v")!=="metrics");
       $("app").classList.remove("loading");
       $("refreshIcon").classList.remove("spinning");
       renderMetrics(); renderChat(); observePanels();
@@ -1193,6 +1302,30 @@
   ["chatSearch","hideMock","onlyOneWay","onlyPhone"].forEach(function(id){
     $(id).addEventListener("input",renderChat);
   });
+
+  // side rail: click to jump, scrollspy highlights the section in view
+  var RAIL_IDS=["overviewTop","secGrowth","secMarket","secChat","secRetention","secUsers","secSafety"];
+  document.querySelectorAll("#rail a").forEach(function(a){
+    a.addEventListener("click",function(){
+      var t=$(a.getAttribute("data-t"));
+      if(t) t.scrollIntoView({behavior:"smooth",block:"start"});
+    });
+  });
+  var spyPending=false;
+  function railSpy(){
+    if(spyPending) return; spyPending=true;
+    requestAnimationFrame(function(){
+      spyPending=false;
+      var cur=RAIL_IDS[0];
+      RAIL_IDS.forEach(function(id){
+        var t=$(id); if(t && t.getBoundingClientRect().top<=150) cur=id;
+      });
+      document.querySelectorAll("#rail a").forEach(function(a){
+        a.classList.toggle("on",a.getAttribute("data-t")===cur);
+      });
+    });
+  }
+  window.addEventListener("scroll",railSpy,{passive:true});
 
   // ---- boot: Google session only --------------------------------------------
   if(sb){
