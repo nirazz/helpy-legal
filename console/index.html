@@ -247,11 +247,6 @@
       כניסה עם Google
     </button>
     <div class="err" id="loginErr"></div>
-    <button class="linklike" id="keyToggle" type="button">כניסה עם מפתח גישה</button>
-    <form id="loginForm" class="hidden">
-      <input id="keyInput" type="password" placeholder="מפתח גישה" autocomplete="current-password">
-      <button class="cta" type="submit">כניסה</button>
-    </form>
   </div>
 </div>
 
@@ -365,7 +360,7 @@
 <script>
 (function(){
   "use strict";
-  var KEY = sessionStorage.getItem("helpy_dash_key") || "";
+  sessionStorage.removeItem("helpy_dash_key"); // key auth retired - SSO only
   var DATA = null;
   var SESSION = null;
   var CUSTOM = null;            // {from:"YYYY-MM-DD", to:"YYYY-MM-DD"} calendar range
@@ -1110,7 +1105,6 @@
     }
     var hdrs={"content-type":"application/json"};
     if(SESSION && SESSION.access_token) hdrs["authorization"]="Bearer "+SESSION.access_token;
-    else hdrs["x-dashboard-key"]=KEY;
     return fetch("https://lwomstzzmyegpbidibfm.supabase.co/functions/v1/admin-dashboard",{
       method:"POST",
       headers:hdrs,
@@ -1176,19 +1170,7 @@
     sb.auth.signInWithOAuth({ provider:"google",
       options:{ redirectTo:"https://help-y.com/console/" } });
   });
-  $("keyToggle").addEventListener("click",function(){
-    $("loginForm").classList.toggle("hidden");
-  });
-  $("loginForm").addEventListener("submit",function(e){
-    e.preventDefault();
-    KEY=$("keyInput").value.trim(); SESSION=null;
-    load().then(function(){ sessionStorage.setItem("helpy_dash_key",KEY); })
-      .catch(function(err){
-        $("loginErr").textContent= err.message==="unauthorized" ? "מפתח שגוי" : "שגיאת שרת, נסו שוב";
-      });
-  });
   $("logoutBtn").addEventListener("click",function(){
-    sessionStorage.removeItem("helpy_dash_key");
     if(sb && SESSION){ sb.auth.signOut().then(function(){ location.reload(); }); }
     else location.reload();
   });
@@ -1222,7 +1204,7 @@
     $(id).addEventListener("input",renderChat);
   });
 
-  // ---- boot: Google session first, then the fallback key -------------------
+  // ---- boot: Google session only --------------------------------------------
   if(sb){
     sb.auth.onAuthStateChange(function(ev,session){
       SESSION=session;
@@ -1231,10 +1213,7 @@
     sb.auth.getSession().then(function(r){
       SESSION=r.data.session;
       if(SESSION) load().catch(bootFail);
-      else if(KEY) load().catch(bootFail);
     });
-  } else if(KEY){
-    load().catch(bootFail);
   }
 })();
 </script>
