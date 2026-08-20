@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Helpy Console</title>
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
 <style>
   :root {
     color-scheme: light;
@@ -30,7 +33,7 @@
   * { box-sizing:border-box; margin:0; }
   html { background:var(--plane); }
   body { background:var(--plane); color:var(--ink);
-         font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
+         font:14px/1.5 "Heebo",system-ui,-apple-system,"Segoe UI",sans-serif; }
   button { font:inherit; color:inherit; }
 
   /* ---- chrome ---- */
@@ -38,7 +41,15 @@
            background:var(--surface); border-bottom:1px solid var(--hairline);
            position:sticky; top:0; z-index:20; flex-wrap:wrap; }
   .brand { display:flex; align-items:center; gap:8px; font-weight:600; font-size:15px; }
-  .brand i { width:10px; height:10px; border-radius:50%; background:var(--s1); }
+  .brand i { width:10px; height:10px; border-radius:50%; background:var(--s1);
+             animation:pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{ box-shadow:0 0 0 0 rgba(42,120,214,0.45); }
+                     50%{ box-shadow:0 0 0 7px rgba(42,120,214,0); } }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .spinning { animation:spin .8s linear infinite; display:inline-block; }
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after { animation:none !important; transition:none !important; }
+  }
   .brand small { color:var(--muted); font-weight:400; }
   .grow { flex:1; }
   .seg { display:flex; background:var(--plane); border:1px solid var(--hairline);
@@ -71,7 +82,9 @@
   .ins.info .dot { background:var(--baseline); }
   .ins b { font-variant-numeric:tabular-nums; }
   .tile { background:var(--surface); border:1px solid var(--hairline);
-          border-radius:12px; padding:14px 16px 10px; }
+          border-radius:12px; padding:14px 16px 10px;
+          transition:transform .2s ease, box-shadow .2s ease; }
+  .tile:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.07); }
   .tile .lbl { font-size:12px; color:var(--ink2); }
   .tile .val { font-size:26px; font-weight:600; margin:2px 0; }
   .tile .sub { display:flex; align-items:baseline; gap:8px; min-height:18px; }
@@ -112,7 +125,9 @@
           align-items:center; margin-bottom:7px; font-size:13px; }
   .hrow .hl { color:var(--ink2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .htrack { height:16px; display:flex; gap:2px; direction:ltr; }
-  .hseg { height:16px; border-radius:0 4px 4px 0; }
+  .hseg { height:16px; border-radius:0 4px 4px 0;
+          transition:width .6s cubic-bezier(.2,.8,.2,1); }
+  .echart { direction:ltr; width:100%; height:280px; }
   .hval { font-weight:600; font-variant-numeric:tabular-nums; text-align:left; direction:ltr; }
 
   /* cohort heatmap */
@@ -202,7 +217,10 @@
     <button data-v="metrics" class="on">מטריקות</button>
     <button data-v="chat">צ'אט</button>
   </div>
-  <button class="ghost" id="refreshBtn">רענון</button>
+  <label class="ghost" style="display:flex;gap:6px;align-items:center;cursor:pointer">
+    <input type="checkbox" id="autoRef"> חי · כל דקה
+  </label>
+  <button class="ghost" id="refreshBtn"><span id="refreshIcon">⟳</span> רענון</button>
   <button class="ghost" id="logoutBtn">יציאה</button>
 </header>
 
@@ -211,10 +229,14 @@
     <div class="filters">
       <span class="cap">טווח</span>
       <div class="seg" id="rangeSeg">
+        <button data-d="7">שבוע</button>
+        <button data-d="14">שבועיים</button>
         <button data-d="30">30 יום</button>
         <button data-d="60">60 יום</button>
         <button data-d="90" class="on">90 יום</button>
+        <button data-d="180">חצי שנה</button>
       </div>
+      <span class="cap">בתוך כל גרף אפשר לגרור את פס הטווח למטה כדי להתמקד בימים ספציפיים, וללחוץ על מקרא כדי להסתיר/להציג סדרה</span>
     </div>
     <section class="panel">
       <h2>מה דורש תשומת לב</h2>
@@ -269,10 +291,16 @@
         <button data-d="30" class="on">30 יום</button>
         <button data-d="90">90 יום</button>
       </div>
+      <div class="seg" id="chatTypeSeg">
+        <button data-t="all" class="on">הכל</button>
+        <button data-t="request">בקשות</button>
+        <button data-t="offer">הצעות</button>
+      </div>
       <label><input type="checkbox" id="hideMock" checked> הסתרת חשבונות בדיקה</label>
       <label><input type="checkbox" id="onlyOneWay"> רק ללא מענה</label>
+      <label><input type="checkbox" id="onlyPhone"> הוחלף בהן טלפון</label>
     </div>
-    <p class="note" style="margin-bottom:12px">מוצג לצורכי פיקוח ובטיחות בלבד · לקריאה בלבד · מספרי טלפון מודגשים</p>
+    <p class="note" style="margin-bottom:12px"><span id="chatCount"></span> · מוצג לצורכי פיקוח ובטיחות בלבד · לקריאה בלבד · מספרי טלפון מודגשים</p>
     <div id="convoList"></div>
   </div>
 </main>
@@ -453,6 +481,108 @@
     host.appendChild(box);
   }
 
+  // ---- live charts (ECharts when the CDN loaded; SVG fallback otherwise) ---
+  var ECH = typeof echarts !== "undefined";
+  var einsts = {};
+  function timeChart(id, rows, series, opts){
+    opts = opts || {};
+    if(!ECH){ chart(id, rows, series); return; }
+    rows = rows || [];
+    var host = $(id), inst = einsts[id];
+    if(!inst){
+      host.innerHTML = "";
+      var box = el("div","echart");
+      if(opts.zoom) box.style.height = "320px";
+      host.appendChild(box);
+      inst = echarts.init(box);
+      einsts[id] = inst;
+    }
+    var ink = tok("--ink"), ink2 = tok("--ink2"), muted = tok("--muted"),
+        grid = tok("--grid"), surface = tok("--surface"), base = tok("--baseline");
+    var hasBar = series.some(function(s){ return s.type === "bar"; });
+    var barSeries = series.filter(function(s){ return s.type === "bar"; });
+    var lastBarKey = barSeries.length ? barSeries[barSeries.length-1].key : null;
+    inst.setOption({
+      animationDuration: 700,
+      animationDurationUpdate: 450,
+      textStyle: { fontFamily: "Heebo, system-ui, sans-serif" },
+      grid: { left: 10, right: 46, top: series.length > 1 ? 36 : 18,
+              bottom: opts.zoom ? 56 : 26 },
+      legend: series.length > 1 ? {
+        top: 0, right: 0, itemWidth: 12, itemHeight: 8,
+        textStyle: { color: ink2, fontSize: 12 }
+      } : undefined,
+      tooltip: {
+        trigger: "axis",
+        axisPointer: { type: hasBar ? "shadow" : "line" },
+        backgroundColor: surface, borderColor: grid,
+        textStyle: { color: ink, fontSize: 12 },
+        valueFormatter: function(v){ return fmt(v); }
+      },
+      xAxis: {
+        type: "category",
+        data: rows.map(function(r){ return fmtDay(r.d); }),
+        axisLine: { lineStyle: { color: base } },
+        axisTick: { show: false },
+        axisLabel: { color: muted, fontSize: 10 }
+      },
+      yAxis: {
+        type: "value", position: "right", minInterval: 1,
+        splitLine: { lineStyle: { color: grid } },
+        axisLabel: { color: muted, fontSize: 10 }
+      },
+      dataZoom: opts.zoom ? [
+        { type: "slider", height: 20, bottom: 8, borderColor: grid,
+          backgroundColor: "transparent",
+          fillerColor: "rgba(42,120,214,0.14)",
+          handleStyle: { color: tok("--s1") },
+          textStyle: { color: muted, fontSize: 9 },
+          brushSelect: false },
+        { type: "inside" }
+      ] : undefined,
+      series: series.map(function(s){
+        if(s.type === "line"){
+          return { name: s.name, type: "line", smooth: true,
+            symbol: "circle", symbolSize: 7, showSymbol: false,
+            emphasis: { focus: "series" },
+            lineStyle: { width: 2, color: s.color },
+            itemStyle: { color: s.color, borderColor: surface, borderWidth: 2 },
+            data: rows.map(function(r){ return +r[s.key] || 0; }) };
+        }
+        return { name: s.name, type: "bar",
+          stack: opts.group ? undefined : "t",
+          barMaxWidth: 20, barGap: "10%",
+          itemStyle: { color: s.color,
+            borderRadius: (opts.group || s.key === lastBarKey) ? [3,3,0,0] : 0 },
+          emphasis: { focus: "series" },
+          data: rows.map(function(r){ return +r[s.key] || 0; }) };
+      })
+    });
+  }
+  window.addEventListener("resize", function(){
+    Object.keys(einsts).forEach(function(k){ einsts[k].resize(); });
+  });
+  if(window.matchMedia){
+    matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function(){
+      Object.keys(einsts).forEach(function(k){ einsts[k].dispose(); });
+      einsts = {};
+      if(DATA) renderMetrics();
+    });
+  }
+
+  var REDUCED = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function animNum(elm, target){
+    if(REDUCED || target <= 0){ elm.textContent = fmt(target); return; }
+    var t0 = performance.now(), dur = 650;
+    function step(t){
+      var p = Math.min((t - t0) / dur, 1);
+      p = 1 - Math.pow(1 - p, 3);
+      elm.textContent = fmt(Math.round(target * p));
+      if(p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
   function sparkline(values){
     var W=140,H=30,n=values.length;
     if(n<2) return null;
@@ -503,7 +633,9 @@
     opts=opts||{};
     var t=el("div","tile");
     t.appendChild(el("div","lbl",label));
-    t.appendChild(el("div","val",value));
+    var valEl=el("div","val",value);
+    if(/^[\d,]+$/.test(value)) animNum(valEl, parseInt(value.replace(/,/g,""),10));
+    t.appendChild(valEl);
     var sub=el("div","sub");
     if(opts.delta!=null && opts.prev!=null){
       var d=opts.delta-opts.prev;
@@ -591,20 +723,20 @@
       {note:"בקשות / הצעות"}));
 
     var S1=tok("--s1"), S2=tok("--s2");
-    chart("chSignups",maybeWeekly(DATA.signups_by_day,["ios","android","total"]),[
+    timeChart("chSignups",maybeWeekly(DATA.signups_by_day,["ios","android","total"]),[
       {key:"ios",name:"iOS",color:S1,type:"bar"},
-      {key:"android",name:"Android",color:S2,type:"bar"}]);
-    chart("chDau",DATA.dau_by_day,[
+      {key:"android",name:"Android",color:S2,type:"bar"}],{zoom:true});
+    timeChart("chDau",DATA.dau_by_day,[
       {key:"dau",name:"DAU",color:S1,type:"line"},
-      {key:"wau",name:"WAU",color:S2,type:"line"}]);
-    chart("chPosts",maybeWeekly(DATA.posts_by_day,["requests","offers"]),[
+      {key:"wau",name:"WAU",color:S2,type:"line"}],{zoom:false});
+    timeChart("chPosts",maybeWeekly(DATA.posts_by_day,["requests","offers"]),[
       {key:"requests",name:"בקשות",color:S1,type:"bar"},
-      {key:"offers",name:"הצעות",color:S2,type:"bar"}]);
-    chart("chMsgs",maybeWeekly(DATA.messages_by_day,["msgs","senders"]),[
-      {key:"msgs",name:"הודעות",color:S1,type:"bar"}]);
-    chart("chMatches",maybeWeekly(DATA.matches_by_day,["created","completed"]),[
+      {key:"offers",name:"הצעות",color:S2,type:"bar"}],{zoom:true});
+    timeChart("chMsgs",maybeWeekly(DATA.messages_by_day,["msgs","senders"]),[
+      {key:"msgs",name:"הודעות",color:S1,type:"bar"}],{zoom:true});
+    timeChart("chMatches",maybeWeekly(DATA.matches_by_day,["created","completed"]),[
       {key:"created",name:"התאמות",color:S1,type:"bar"},
-      {key:"completed",name:"השלמות",color:S2,type:"bar"}]);
+      {key:"completed",name:"השלמות",color:S2,type:"bar"}],{zoom:true,group:true});
 
     var lf=DATA.lifecycle||{};
     var lt0=el("table","plain");
@@ -742,8 +874,6 @@
       st.appendChild(tr);
     });
     var sf=$("safety"); sf.innerHTML=""; sf.appendChild(st);
-
-    $("genAt").textContent="עודכן "+fmtTime(DATA.generated_at);
   }
 
   // ---- chat view -----------------------------------------------------------
@@ -751,12 +881,17 @@
     var parts=(name||"?").trim().split(/\s+/);
     return (parts[0]||"?").charAt(0)+((parts[1]||"").charAt(0)||"");
   }
+  var PHONE_RE=/(0\d[\d -]{7,11}\d|\+972[\d -]{8,12}\d)/;
   function renderChat(){
     var q=($("chatSearch").value||"").trim();
-    var hideMock=$("hideMock").checked, onlyOneWay=$("onlyOneWay").checked;
+    var hideMock=$("hideMock").checked, onlyOneWay=$("onlyOneWay").checked,
+        onlyPhone=$("onlyPhone").checked,
+        typeSel=document.querySelector("#chatTypeSeg button.on").getAttribute("data-t");
     var list=(DATA.conversations||[]).filter(function(c){
       if(hideMock && c.mock) return false;
       if(onlyOneWay && c.two_way) return false;
+      if(typeSel!=="all" && c.post_type!==typeSel) return false;
+      if(onlyPhone && !c.messages.some(function(m){ return PHONE_RE.test(m.content); })) return false;
       if(q){
         var hay=(c.post_title+" "+c.helper.name+" "+c.requester.name+" "+
           c.messages.map(function(m){return m.content;}).join(" "));
@@ -764,6 +899,8 @@
       }
       return true;
     });
+    var total=(DATA.conversations||[]).length;
+    $("chatCount").textContent="מציג "+fmt(list.length)+" מתוך "+fmt(total)+" שיחות בטווח";
     var host=$("convoList"); host.innerHTML="";
     if(!list.length){ host.appendChild(el("p","note","אין שיחות בטווח או בסינון הנוכחי")); return; }
     list.forEach(function(c){
@@ -802,8 +939,17 @@
 
   // ---- data + auth ---------------------------------------------------------
   function segVal(id){ return +document.querySelector("#"+id+" button.on").getAttribute("data-d"); }
+  var lastLoadTs=null;
+  function updateTicker(){
+    if(!lastLoadTs) return;
+    var s=Math.round((Date.now()-lastLoadTs)/1000);
+    $("genAt").textContent= s<60? "עודכן לפני "+s+" שנ׳" : "עודכן לפני "+Math.round(s/60)+" דק׳";
+  }
+  setInterval(updateTicker,5000);
+
   function load(){
     $("app").classList.add("loading");
+    $("refreshIcon").classList.add("spinning");
     return fetch("https://lwomstzzmyegpbidibfm.supabase.co/functions/v1/admin-dashboard",{
       method:"POST",
       headers:{"content-type":"application/json","x-dashboard-key":KEY},
@@ -814,13 +960,25 @@
       return r.json();
     }).then(function(d){
       DATA=d;
+      lastLoadTs=Date.now(); updateTicker();
       $("login").classList.add("hidden");
       $("hdr").classList.remove("hidden");
       $("app").classList.remove("hidden");
       $("app").classList.remove("loading");
+      $("refreshIcon").classList.remove("spinning");
       renderMetrics(); renderChat();
-    }).catch(function(e){ $("app").classList.remove("loading"); throw e; });
+    }).catch(function(e){
+      $("app").classList.remove("loading");
+      $("refreshIcon").classList.remove("spinning");
+      throw e;
+    });
   }
+
+  var autoTimer=null;
+  $("autoRef").addEventListener("change",function(){
+    if(this.checked){ autoTimer=setInterval(function(){ load().catch(function(){}); },60000); }
+    else if(autoTimer){ clearInterval(autoTimer); autoTimer=null; }
+  });
 
   $("loginForm").addEventListener("submit",function(e){
     e.preventDefault();
@@ -844,12 +1002,14 @@
   }
   segWire("rangeSeg",function(){ load().catch(function(){}); });
   segWire("chatRangeSeg",function(){ load().catch(function(){}); });
+  segWire("chatTypeSeg",renderChat);
   segWire("tabs",function(){
     var v=document.querySelector("#tabs button.on").getAttribute("data-v");
     $("metricsView").classList.toggle("hidden",v!=="metrics");
     $("chatView").classList.toggle("hidden",v!=="chat");
+    if(v==="metrics") Object.keys(einsts).forEach(function(k){ einsts[k].resize(); });
   });
-  ["chatSearch","hideMock","onlyOneWay"].forEach(function(id){
+  ["chatSearch","hideMock","onlyOneWay","onlyPhone"].forEach(function(id){
     $(id).addEventListener("input",renderChat);
   });
 
