@@ -255,6 +255,10 @@
   </div>
 </div>
 
+<div id="connecting" class="hidden" style="position:fixed;inset:0;z-index:49;background:var(--plane);display:flex;align-items:center;justify-content:center">
+  <div class="brand"><i></i>מתחבר...</div>
+</div>
+
 <header class="hidden" id="hdr">
   <div class="brand"><i></i>Helpy Console <small id="genAt"></small></div>
   <span class="grow"></span>
@@ -372,6 +376,11 @@
     { auth: { flowType: "pkce", detectSessionInUrl: true, storageKey: "helpy_console_auth" } }
   ) : null;
   // the full 8-slot categorical palette (validated order) for one-value-per-row bars
+  // returning from the OAuth redirect: show "connecting" instead of a login flash
+  if(location.search.indexOf("code=")>-1 || location.hash.indexOf("access_token")>-1){
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("connecting").classList.remove("hidden");
+  }
   var PAL8 = ["#2a78d6","#eb6834","#1baf7a","#eda100","#e87ba4","#008300","#4a3aa7","#e34948"];
   var PAL8D = ["#3987e5","#d95926","#199e70","#c98500","#d55181","#008300","#9085e9","#e66767"];
   function pal(i){
@@ -1114,6 +1123,7 @@
     }).then(function(d){
       DATA=d;
       lastLoadTs=Date.now(); updateTicker();
+      $("connecting").classList.add("hidden");
       $("login").classList.add("hidden");
       $("hdr").classList.remove("hidden");
       $("app").classList.remove("hidden");
@@ -1148,6 +1158,8 @@
   }
 
   function bootFail(err){
+    $("connecting").classList.add("hidden");
+    $("login").classList.remove("hidden");
     if(err.message==="forbidden"){
       $("loginErr").textContent="החשבון הזה לא מורשה לקונסול";
       if(sb) sb.auth.signOut();
