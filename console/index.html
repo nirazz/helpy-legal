@@ -189,6 +189,20 @@
         border:1px solid var(--hairline); border-radius:8px; padding:8px 12px;
         box-shadow:0 8px 24px rgba(45,45,100,0.18); font-size:12px; display:none;
         direction:rtl; min-width:120px; }
+  /* glossary terms: dotted underline + hover explanation (data-tip) */
+  .term { border-bottom:1px dotted var(--muted); cursor:help; position:relative; }
+  .term::after { content:attr(data-tip); position:absolute;
+        bottom:calc(100% + 8px); inset-inline-start:50%; transform:translateX(50%);
+        width:max-content; max-width:250px; white-space:normal;
+        background:var(--surface); color:var(--ink); border:1px solid var(--hairline);
+        border-radius:8px; padding:8px 12px; font-size:12px; font-weight:400;
+        line-height:1.5; text-align:start; letter-spacing:normal; text-transform:none;
+        text-shadow:none; box-shadow:0 8px 24px rgba(45,45,100,0.18);
+        opacity:0; pointer-events:none; transition:opacity .15s; z-index:35; }
+  .term:hover::after { opacity:1; }
+  /* inside overflow containers (cohort table) the tip opens downward so it isn't clipped */
+  .term.below::after { bottom:auto; top:calc(100% + 8px); }
+
   #tt .tdate { color:var(--muted); font-size:11px; margin-bottom:4px; }
   #tt .trow { display:flex; align-items:center; gap:6px; }
   #tt .tkey { width:12px; height:2px; border-radius:1px; }
@@ -361,7 +375,7 @@
     <div class="sechead" id="secGrowth" style="--sec-c:var(--s1)">צמיחה והפעלה</div>
     <div class="grid2">
       <section class="panel"><h2>הרשמות</h2><div class="sub">משתמשים חדשים לפי פלטפורמה</div><div id="chSignups"></div></section>
-      <section class="panel"><h2>משתמשים פעילים</h2><div class="sub">DAU ו-WAU מתוך דגימת last_seen_at יומית</div><div id="chDau"></div></section>
+      <section class="panel"><h2>משתמשים פעילים</h2><div class="sub"><span class="term" data-tip="Daily Active Users - כמה משתמשים שונים פתחו את האפליקציה באותו יום">DAU</span> ו-<span class="term" data-tip="Weekly Active Users - כמה משתמשים שונים פתחו את האפליקציה בשבעת הימים האחרונים">WAU</span> מתוך <span class="term" data-tip="חותמת שהשרת מטביע פעם בשעה לכל משתמש שפותח את האפליקציה - מקור האמת למדידת פעילות">דגימת last_seen_at</span> יומית</div><div id="chDau"></div></section>
       <section class="panel"><h2 style="display:flex;align-items:center;gap:10px">משפך הפעלה
         <span class="seg mini" id="funnelSeg"><button data-d="14" class="on">14 יום</button><button data-d="30">30 יום</button></span></h2>
         <div class="sub">מה עושה משתמש חדש אחרי ההרשמה</div><div id="funnel"></div></section>
@@ -372,7 +386,7 @@
     <div class="grid2">
       <section class="panel"><h2>פוסטים</h2><div class="sub">בקשות עזרה מול הצעות עזרה</div><div id="chPosts"></div></section>
       <section class="panel"><h2>התאמות והשלמות</h2><div class="sub">התאמות חדשות מול עזרות שסומנו כהושלמו</div><div id="chMatches"></div></section>
-      <section class="panel"><h2>נזילות · 30 יום</h2><div class="sub">כמה מהר בקשה פוגשת עוזר/ת</div><div id="liquidity"></div></section>
+      <section class="panel"><h2><span class="term" data-tip="מדד הבריאות המרכזי של מרקטפלייס: כמה מהר צד הביקוש (בקשה) פוגש את צד ההיצע (עוזר/ת)">נזילות</span> · 30 יום</h2><div class="sub">כמה מהר בקשה פוגשת עוזר/ת</div><div id="liquidity"></div></section>
       <section class="panel"><h2>בקשות בלי אף הצעה</h2><div class="sub">פעילות עכשיו בפיד וממתינות - הזדמנות לדחיפה</div><div id="noOffer"></div></section>
       <section class="panel"><h2>קטגוריות מובילות · 30 יום</h2><div class="sub">פוסטים לפי קטגוריה</div><div id="chCats"></div></section>
       <section class="panel"><h2>ערים מובילות · 30 יום</h2><div class="sub">לפי עיר הפוסט</div><div id="chCities"></div></section>
@@ -801,7 +815,12 @@
     var t=el("div","tile");
     var lbl=el("div","lbl");
     if(opts.dot){ var d=el("i"); d.style.background=opts.dot; lbl.appendChild(d); }
-    lbl.appendChild(document.createTextNode(label));
+    if(opts.tip){
+      var tx=el("span","term",label); tx.setAttribute("data-tip",opts.tip);
+      lbl.appendChild(tx);
+    } else {
+      lbl.appendChild(document.createTextNode(label));
+    }
     t.appendChild(lbl);
     if(opts.target){
       t.classList.add("clickable");
@@ -941,6 +960,7 @@
     var S3=tok("--s3"), S7=tok("--s7"), S5=tok("--s5");
     var hero=tile("עזרות שהושלמו · 7 ימים ⭐", fmt(k.completed_7d),
       {delta:k.completed_7d, prev:dl.completed_prev_7d,
+       tip:"המדד הצפוני של Helpy: עזרות שמקבל/ת העזרה סימנו שבוצעו בפועל",
        spark:tail(DATA.matches_by_day,"completed"), target:"chMatches"});
     hero.classList.add("hero");
     host.appendChild(hero);
@@ -949,15 +969,18 @@
        spark:tail(DATA.signups_by_day,"total"), dot:tok("--s1"), target:"chSignups"}));
     host.appendChild(tile("פעילים היום", fmt(k.seen_1d),
       {note:"שבוע: "+fmt(k.seen_7d)+" · חודש: "+fmt(k.seen_30d),
+       tip:"משתמשים שפתחו את האפליקציה היום, לפי חותמת last_seen_at שהשרת מטביע פעם בשעה",
        spark:tail(DATA.dau_by_day,"dau"), dot:tok("--s1"), target:"chDau"}));
     host.appendChild(tile("דביקות DAU/MAU", pct(k.seen_1d,k.seen_30d),
       {note:"משתמשים חיים: "+fmt(k.live_users), dot:S7, target:"cohorts",
+       tip:"Stickiness: איזה חלק מהמשתמשים החודשיים נכנסים ביום נתון - מדד הרגל. באפליקציות חברתיות גדולות 20%+ נחשב מצוין",
        ring: k.seen_30d? Math.round(100*k.seen_1d/k.seen_30d):0}));
     host.appendChild(tile("הודעות צ'אט · 7 ימים", fmt(dl.messages_7d),
       {delta:dl.messages_7d, prev:dl.messages_prev_7d,
        spark:tail(DATA.messages_by_day,"msgs"), dot:S3, target:"chMsgs"}));
     host.appendChild(tile("התאמות · 7 ימים", fmt(k.matches_7d),
       {delta:k.matches_7d, prev:dl.matches_prev_7d,
+       tip:"חיבור בין שני שכנים סביב פוסט: סוויפ על הצעה פותח צ'אט מיד, סוויפ על בקשה ממתין לאישור",
        spark:tail(DATA.matches_by_day,"created"), dot:tok("--s2"), target:"chMatches"}));
     host.appendChild(tile("פוסטים · 7 ימים", fmt(dl.posts_7d),
       {delta:dl.posts_7d, prev:dl.posts_prev_7d,
@@ -1041,8 +1064,19 @@
     // light ramp runs light→dark: dark ink on the light low steps, white on the dark high steps
     function inkFor(i){ return i>=3?"#ffffff":"#171436"; }
     var tbl=el("table","cohort");
+    var COH_TIPS={
+      "מיקום":"אחוז מהנרשמים באותו שבוע שנתנו הרשאת מיקום",
+      "התראות":"אחוז מהנרשמים באותו שבוע שאישרו התראות פוש",
+      "D1":"שימור יום 1: אחוז שחזרו לאפליקציה יום אחרי ההרשמה",
+      "D7":"שימור שבוע: אחוז שחזרו שבוע או יותר אחרי ההרשמה",
+      "D30":"שימור חודש: אחוז שחזרו חודש או יותר אחרי ההרשמה" };
     var hd=el("tr"); ["שבוע","נרשמים","מיקום","התראות","D1","D7","D30"].forEach(function(h){
-      hd.appendChild(el("th",null,h)); });
+      var th=el("th");
+      if(COH_TIPS[h]){
+        var sp=el("span","term below",h); sp.setAttribute("data-tip",COH_TIPS[h]);
+        th.appendChild(sp);
+      } else { th.textContent=h; }
+      hd.appendChild(th); });
     tbl.appendChild(hd);
     (DATA.cohorts||[]).forEach(function(c){
       var tr=el("tr");
@@ -1071,9 +1105,13 @@
      ["קיבלו הצעה בסוף",pct(L.with_offer_ever,L.requests_30d)],
      ["חציון זמן להצעה ראשונה",L.median_minutes_to_first_offer==null?"-":
         (L.median_minutes_to_first_offer<120? fmt(L.median_minutes_to_first_offer)+" דקות" :
-         fmt(Math.round(L.median_minutes_to_first_offer/60))+" שעות")]
+         fmt(Math.round(L.median_minutes_to_first_offer/60))+" שעות"),
+      "הערך האמצעי: מחצית מהבקשות קיבלו הצעה מהר מזה. עמיד לחריגים, בניגוד לממוצע"]
     ].forEach(function(r){
-      var tr=el("tr"); tr.appendChild(el("th",null,r[0])); tr.appendChild(el("td",null,r[1]));
+      var tr=el("tr"), th=el("th");
+      if(r[2]){ var sp=el("span","term",r[0]); sp.setAttribute("data-tip",r[2]); th.appendChild(sp); }
+      else th.textContent=r[0];
+      tr.appendChild(th); tr.appendChild(el("td",null,r[1]));
       lt.appendChild(tr);
     });
     var lq=$("liquidity"); lq.innerHTML=""; lq.appendChild(lt);
@@ -1081,14 +1119,19 @@
     var C=DATA.chat_stats||{};
     var ct=el("table","plain");
     [["שיחות שנפתחו",fmt(C.convos_30d)],
-     ["נענו (דו-כיווניות)",pct(C.two_way_30d,C.convos_30d)],
+     ["נענו (דו-כיווניות)",pct(C.two_way_30d,C.convos_30d),
+      "שיחות שבהן שני הצדדים כתבו לפחות הודעה אחת - פנייה שנענתה באמת"],
      ["פניות לבעלי הצעות שנענו",C.offer_convos? pct(C.offer_answered,C.offer_convos)+" ("+fmt(C.offer_answered)+"/"+fmt(C.offer_convos)+")" : "-"],
      ["פניות לבעלי בקשות שנענו",C.request_convos? pct(C.request_answered,C.request_convos)+" ("+fmt(C.request_answered)+"/"+fmt(C.request_convos)+")" : "-"],
      ["חציון זמן לתשובה ראשונה",C.median_first_reply_minutes==null?"-":
         (C.median_first_reply_minutes<120? fmt(C.median_first_reply_minutes)+" דקות" :
-         fmt(Math.round(C.median_first_reply_minutes/60))+" שעות")]
+         fmt(Math.round(C.median_first_reply_minutes/60))+" שעות"),
+      "הערך האמצעי: מחצית מהפניות נענו מהר מזה. עמיד לחריגים, בניגוד לממוצע"]
     ].forEach(function(r){
-      var tr=el("tr"); tr.appendChild(el("th",null,r[0])); tr.appendChild(el("td",null,r[1]));
+      var tr=el("tr"), th=el("th");
+      if(r[2]){ var sp=el("span","term",r[0]); sp.setAttribute("data-tip",r[2]); th.appendChild(sp); }
+      else th.textContent=r[0];
+      tr.appendChild(th); tr.appendChild(el("td",null,r[1]));
       ct.appendChild(tr);
     });
     var chh=$("chatHealth"); chh.innerHTML=""; chh.appendChild(ct);
