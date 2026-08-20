@@ -449,6 +449,8 @@
       <section class="panel"><h2 data-i18n="noOfferTitle">בקשות בלי אף הצעה</h2><div class="sub" data-i18n="noOfferSub">פעילות עכשיו בפיד וממתינות - הזדמנות לדחיפה</div><div id="noOffer"></div></section>
       <section class="panel"><h2 data-i18n="catsTitle">קטגוריות מובילות · 30 יום</h2><div class="sub" data-i18n="catsSub">פוסטים לפי קטגוריה</div><div id="chCats"></div></section>
       <section class="panel"><h2 data-i18n="citiesTitle">ערים מובילות · 30 יום</h2><div class="sub" data-i18n="citiesSub">לפי עיר הפוסט</div><div id="chCities"></div></section>
+      <section class="panel"><h2 data-i18n="cityLiqTitle">נזילות לפי עיר · 30 יום</h2><div class="sub" data-i18n="cityLiqSub">הרשת האטומית: ממוצע ארצי מסתיר אם יש עיר אחת שבאמת עובדת</div><div id="cityLiq" style="overflow-x:auto"></div></section>
+      <section class="panel"><h2 data-i18n="supplyTitle">בריאות צד ההיצע</h2><div class="sub" data-i18n="supplySub">הצעה שיושבת בלי פנייה = עוזר/ת שעומדים לאבד</div><div id="supplyHealth"></div></section>
     </div>
 
     <div class="sechead" id="secChat" style="--sec-c:var(--s3)" data-i18n="secChatT">מעורבות בצ'אט</div>
@@ -460,6 +462,10 @@
     </div>
 
     <div class="sechead" id="secRetention" style="--sec-c:var(--s7)" data-i18n="secRetentionT">שימור ואיכות הפעלה</div>
+    <div class="grid2">
+      <section class="panel"><h2 data-i18n="statesTitle">מצבי משתמש · השבוע</h2><div class="sub" data-i18n="statesSub">מודל Duolingo: מאיפה הגיעו הפעילים של השבוע</div><div id="userStates"></div></section>
+      <section class="panel"><h2 data-i18n="repeatTitle">חזרה לבקש שוב</h2><div class="sub" data-i18n="repeatSub">בקשה שנייה תוך 90 יום - עדות ה-PMF החזקה ביותר במרקטפלייס</div><div id="repeatRate"></div></section>
+    </div>
     <section class="panel">
       <h2 data-i18n="retTitle">עקומת שימור</h2>
       <div class="sub" data-i18n="retSub">אחוז שחוזרים יום / שבוע / חודש אחרי ההרשמה (קוהורטות בשלות בלבד) · המקווקו = בנצ'מרק אפליקציות חברתיות</div>
@@ -614,6 +620,25 @@
       showCohorts:"הצגת טבלת הקוהורטות המלאה + איכות הפעלה", hideCohorts:"הסתרת הטבלה",
       liqTarget:"יעד",
       insSupplyHeavy:function(r,rq,of){ return "צד ההיצע מוביל פי <b>"+r+"</b> ("+rq+" בקשות מול "+of+" הצעות ב-30 יום) - במרקטפלייס כבד-היצע כל מנופי הצמיחה צריכים להצביע על יצירת ביקוש"; },
+      insSupplyUtil:function(p,idle){ return "רק <b>"+p+"%</b> מההצעות החיות קיבלו פנייה ב-30 יום ("+idle+" הצעות יושבות בלי כלום) - מתחת ל-30% מספקים נוטשים, זו אזעקת נטישת עוזרים"; },
+      insRepeat:function(p,a,b){ return "<b>"+p+"%</b> מהמבקשים חזרו לבקש תוך 90 יום ("+a+" מתוך "+b+"; הרף המצוטט להתרחבות: 35%)"; },
+      cityLiqTitle:"נזילות לפי עיר · 30 יום",
+      cityLiqSub:"הרשת האטומית: ממוצע ארצי מסתיר אם יש עיר אחת שבאמת עובדת",
+      clCity:"עיר", clReqs:"בקשות", clFill:"מולאו ב-24 שעות", clComp:"הושלמו",
+      supplyTitle:"בריאות צד ההיצע", supplySub:"הצעה שיושבת בלי פנייה = עוזר/ת שעומדים לאבד",
+      supUtil:"ניצולת הצעות (30 יום)",
+      supUtilTip:"אחוז ההצעות החיות שקיבלו לפחות פנייה אחת ב-30 יום. מתחת ל-30% מספקי שירות נוטשים - זו אזעקת נטישת העוזרים",
+      supNewHelpers:"עוזרים חדשים (90 יום)", supMatched:"מתוכם קיבלו פנייה",
+      supTtfm:"חציון זמן לפנייה ראשונה",
+      supTtfmTip:"כמה זמן עובר מרגע פרסום ההצעה ועד הפנייה הראשונה. ניתוב ביקוש להיצע חדש זול יותר מגיוס עוזרים חדשים",
+      statesTitle:"מצבי משתמש · השבוע", statesSub:"מודל Duolingo: מאיפה הגיעו הפעילים של השבוע",
+      stNew:"חדשים", stCurrent:"ממשיכים", stReact:"חזרו (1-4 שבועות)", stResurr:"קמו לתחייה (30+ יום)",
+      stCaption:"החישוב מסתמך על עדות מחויבת (פוסטים, הודעות, התאמות) - פותחים פסיביים נספרים כ\"קמו לתחייה\"",
+      repeatTitle:"חזרה לבקש שוב", repeatSub:"בקשה שנייה תוך 90 יום - עדות ה-PMF החזקה ביותר במרקטפלייס",
+      repRequesters:"מבקשים ייחודיים אי-פעם", repRepeat:"חזרו לבקש תוך 90 יום",
+      repTip:"אחוז מהמבקשים שפרסמו בקשה שנייה תוך 90 יום מהראשונה. 35% הוא הרף שמצוטט כשער להתרחבות",
+      happyTitle:"עזרות מאושרות", happyRated:"מתוכן דורגו", happy45:"דורגו 4-5 כוכבים",
+      happyTip:"Happy GMV: לא כל השלמה שווה - זו שדורגה גבוה היא זו שבנתה אמון",
       themeBtn:{light:"🌙 כהה", dark:"☀️ בהיר"}, langBtn:"English"
     },
     en: {
@@ -717,6 +742,25 @@
       showCohorts:"Show the full cohort table + activation quality", hideCohorts:"Hide the table",
       liqTarget:"target",
       insSupplyHeavy:function(r,rq,of){ return "Supply leads <b>"+r+"x</b> ("+rq+" requests vs "+of+" offers in 30 days) - in a supply-heavy marketplace every growth lever should point at demand creation"; },
+      insSupplyUtil:function(p,idle){ return "Only <b>"+p+"%</b> of live offers got an opener in 30 days ("+idle+" sitting untouched) - providers churn below 30%, this is the helper-churn alarm"; },
+      insRepeat:function(p,a,b){ return "<b>"+p+"%</b> of requesters came back within 90 days ("+a+" of "+b+"; cited expansion gate: 35%)"; },
+      cityLiqTitle:"Liquidity by city · 30 days",
+      cityLiqSub:"The atomic network: a national average hides whether any one city actually works",
+      clCity:"City", clReqs:"Requests", clFill:"Filled in 24h", clComp:"Completed",
+      supplyTitle:"Supply-side health", supplySub:"An offer sitting untouched is a helper you are about to lose",
+      supUtil:"Offer utilization (30d)",
+      supUtilTip:"Share of live offers that got at least one opener in 30 days. Providers churn sharply below 30% - this is the helper-churn alarm",
+      supNewHelpers:"New helpers (90d)", supMatched:"of them got an opener",
+      supTtfm:"Median time to first opener",
+      supTtfmTip:"How long from posting an offer to the first opener. Routing demand to new supply is cheaper than recruiting more helpers",
+      statesTitle:"User states · this week", statesSub:"Duolingo model: where this week's actives came from",
+      stNew:"New", stCurrent:"Current", stReact:"Reactivated (1-4 weeks)", stResurr:"Resurrected (30+ days)",
+      stCaption:"Computed from committed evidence (posts, messages, matches) - passive openers count as \"resurrected\"",
+      repeatTitle:"Came back to ask again", repeatSub:"A second request within 90 days - the strongest PMF evidence in a marketplace",
+      repRequesters:"Distinct requesters ever", repRepeat:"Asked again within 90 days",
+      repTip:"Share of requesters who posted a second request within 90 days of their first. 35% is the cited expansion gate",
+      happyTitle:"Happy completions", happyRated:"of them rated", happy45:"rated 4-5 stars",
+      happyTip:"Happy GMV: not every completion is equal - the highly-rated one is what built trust",
       themeBtn:{light:"🌙 Dark", dark:"☀️ Light"}, langBtn:"עברית"
     }
   };
@@ -1324,6 +1368,19 @@
     rows.push([fa<30?"warn":"info",S.insFirstAction(fa)]);
     var d=k.signups_7d-(dl.signups_prev_7d||0);
     if(d!==0) rows.push([d>0?"good":"info",S.insSignupPace(d>0,fmt(Math.abs(d)),fmt(k.signups_7d),fmt(dl.signups_prev_7d||0))]);
+    var R=DATA.research;
+    if(R){
+      var SU=R.supply_util||{};
+      if(SU.active_offers>=10){
+        var util=Math.round(100*SU.engaged_30d/SU.active_offers);
+        if(util<30) rows.push(["bad",S.insSupplyUtil(util,fmt(SU.active_offers-SU.engaged_30d)),scrollToEl("supplyHealth")]);
+      }
+      var RP=R.repeat||{};
+      if(RP.requesters>=20){
+        var rp=Math.round(100*RP.repeated_90d/RP.requesters);
+        rows.push([rp<35?"warn":"good",S.insRepeat(rp,fmt(RP.repeated_90d),fmt(RP.requesters)),scrollToEl("repeatRate")]);
+      }
+    }
     if(lf.dormant_30d) rows.push(["info",S.insDormant(fmt(lf.dormant_30d),fmt(k.live_users))]);
     rows.forEach(function(r){ host.appendChild(insight(r[0],r[1],r[2])); });
   }
@@ -1377,6 +1434,108 @@
       ]
     }, { replaceMerge:["series"] });
   }
+  // ---- research metrics (RPC v4: repeat, supply, states, per-city) ---------
+  // one labelled row with a value; opts.tip adds a glossary hover
+  function statRow(host,label,value,tip){
+    var tr=el("tr"), th=el("th");
+    if(tip){ var sp=el("span","term",label); sp.setAttribute("data-tip",tip); th.appendChild(sp); }
+    else th.textContent=label;
+    tr.appendChild(th); tr.appendChild(el("td",null,value));
+    host.appendChild(tr);
+  }
+  function renderResearch(){
+    var R=DATA.research;
+    // additive by design: without the research payload these panels just say so
+    ["cityLiq","supplyHealth","userStates","repeatRate"].forEach(function(id){
+      var h=$(id); if(h && !R){ h.innerHTML=""; h.appendChild(el("p","note",S.noData)); }
+    });
+    if(!R) return;
+
+    // per-city liquidity: the atomic network, ordered by request volume
+    var cl=$("cityLiq"); cl.innerHTML="";
+    var CL=R.cities_liq||[];
+    if(!CL.length){ cl.appendChild(el("p","note",S.noData)); }
+    else {
+      var ct=el("table","plain");
+      var ch=el("tr"); [S.clCity,S.clReqs,S.clFill,S.clComp].forEach(function(h){
+        ch.appendChild(el("th",null,h)); });
+      ct.appendChild(ch);
+      CL.forEach(function(c){
+        var tr=el("tr");
+        tr.appendChild(el("td",null,c.city));
+        tr.appendChild(el("td",null,fmt(c.requests)));
+        tr.appendChild(el("td",null,pct(c.filled_24h,c.requests)+" ("+fmt(c.filled_24h)+")"));
+        tr.appendChild(el("td",null,fmt(c.completed)));
+        ct.appendChild(tr);
+      });
+      cl.appendChild(ct);
+    }
+
+    // supply health: utilization bullet (target 30% - the churn line) + ttfm
+    var sh=$("supplyHealth"); sh.innerHTML="";
+    var SU=R.supply_util||{}, TT=R.helper_ttfm||{};
+    var util=SU.active_offers? Math.round(100*SU.engaged_30d/SU.active_offers):0;
+    var urow=el("div","hrow");
+    var ul=el("span","hl");
+    var uterm=el("span","term",S.supUtil); uterm.setAttribute("data-tip",S.supUtilTip);
+    ul.appendChild(uterm);
+    urow.appendChild(ul);
+    var uwrap=el("div"); uwrap.appendChild(bulletEl(util,30,100,[30,60,100]));
+    urow.appendChild(uwrap);
+    urow.appendChild(el("span","hval",util+"%"));
+    sh.appendChild(urow);
+    var st=el("table","plain");
+    statRow(st,S.supNewHelpers,fmt(TT.new_helpers));
+    statRow(st,S.supMatched,TT.new_helpers? pct(TT.matched,TT.new_helpers)+" ("+fmt(TT.matched)+")":"-");
+    statRow(st,S.supTtfm,TT.median_days==null?"-":TT.median_days+" "+S.daysUnit,S.supTtfmTip);
+    var H=R.happy||{};
+    statRow(st,S.happyTitle,fmt(H.completed),S.happyTip);
+    statRow(st,S.happy45,H.completed? fmt(H.rated_45)+" / "+fmt(H.completed):"-");
+    sh.appendChild(st);
+
+    // user states: one stacked bar, direct-labelled (Duolingo decomposition)
+    var us=$("userStates"); us.innerHTML="";
+    var ST=R.user_states||{};
+    var parts=[[S.stNew,ST.new_u,tok("--s1")],[S.stCurrent,ST.current_u,tok("--s3")],
+               [S.stReact,ST.reactivated_u,tok("--s2")],[S.stResurr,ST.resurrected_u,tok("--s7")]];
+    var totalU=parts.reduce(function(a,p){ return a+(+p[1]||0); },0);
+    if(!totalU){ us.appendChild(el("p","note",S.noData)); }
+    else {
+      var bar=el("div","balance");
+      parts.forEach(function(p){
+        if(!p[1]) return;
+        var seg=el("div"); seg.style.background=p[2];
+        seg.style.flexGrow=p[1]; seg.style.flexBasis="0";
+        seg.textContent=p[1];
+        seg.title=p[0]+": "+p[1];
+        bar.appendChild(seg);
+      });
+      us.appendChild(bar);
+      var lt2=el("table","plain");
+      parts.forEach(function(p){ statRow(lt2,p[0],fmt(p[1]||0)+" · "+pct(p[1]||0,totalU)); });
+      us.appendChild(lt2);
+      us.appendChild(el("p","note",S.stCaption));
+    }
+
+    // requester repeat rate vs the 35% expansion gate
+    var rr=$("repeatRate"); rr.innerHTML="";
+    var RP=R.repeat||{};
+    var rpct=RP.requesters? Math.round(100*RP.repeated_90d/RP.requesters):0;
+    var rrow=el("div","hrow");
+    var rl=el("span","hl");
+    var rterm=el("span","term",S.repRepeat); rterm.setAttribute("data-tip",S.repTip);
+    rl.appendChild(rterm);
+    rrow.appendChild(rl);
+    var rwrap=el("div"); rwrap.appendChild(bulletEl(rpct,35,100,[20,35,100]));
+    rrow.appendChild(rwrap);
+    rrow.appendChild(el("span","hval",rpct+"%"));
+    rr.appendChild(rrow);
+    var rt2=el("table","plain");
+    statRow(rt2,S.repRequesters,fmt(RP.requesters));
+    statRow(rt2,S.repRepeat,fmt(RP.repeated_90d));
+    rr.appendChild(rt2);
+  }
+
   var cohortsShown=false;
   function syncCohortToggle(){
     var t=$("cohortToggle"); if(!t) return;
@@ -1635,6 +1794,8 @@
       });
       tuHost.appendChild(ut);
     }
+
+    renderResearch();
 
     var SF=DATA.safety;
     var st=el("table","plain");
