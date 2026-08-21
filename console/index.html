@@ -536,6 +536,19 @@
     .tiles { grid-template-columns:1fr; }
     .tile .val { font-size:24px; }
   }
+  /* event feed: one scannable line per thing that happened */
+  .evrow { display:flex; align-items:flex-start; gap:10px; padding:9px 2px;
+           border-bottom:1px solid var(--grid); font-size:13px; }
+  .evrow:last-child { border-bottom:0; }
+  .evrow .evi { width:22px; height:22px; border-radius:7px; flex-shrink:0;
+                display:flex; align-items:center; justify-content:center;
+                font-size:12px; font-weight:700; color:#fff; }
+  .evrow .evb { flex:1; min-width:0; }
+  .evrow .evt { font-weight:600; }
+  .evrow .evs { color:var(--muted); font-size:12px; margin-top:1px;
+                overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .evrow .evw { color:var(--muted); font-size:11.5px; white-space:nowrap;
+                flex-shrink:0; font-variant-numeric:tabular-nums; }
   .hidden { display:none !important; }
 </style>
 </head>
@@ -677,6 +690,14 @@
 
     <div class="sechead" id="secUsers" style="--sec-c:var(--s5)" data-i18n="secUsersT">משתמשים בולטים · {win}</div>
     <section class="panel"><div id="topUsers" style="overflow-x:auto"></div></section>
+
+    <div class="sechead" id="secEvents" style="--sec-c:var(--s3)" data-i18n="secEventsT">מה קרה לאחרונה</div>
+    <section class="panel">
+      <h2 data-i18n="feedTitle">יומן אירועים · 14 יום</h2>
+      <div class="sub" data-i18n="feedSub">אותם אירועים שמגיעים אליך בטלגרם, בצורה קריאה ומסוננת</div>
+      <div class="flowbar" id="feedFilter"></div>
+      <div id="eventFeed"></div>
+    </section>
 
     <div class="sechead" id="secSafety" style="--sec-c:var(--s8)" data-i18n="secSafetyT">אמון ובטיחות</div>
     <section class="panel"><h2 data-i18n="last30Title"></h2><div id="safety"></div></section>
@@ -902,6 +923,16 @@
       recRepeat:" <b>ההמלצה: לפנות למי שכבר ביקש פעם אחת ונענה.</b> בקשה שנייה היא המדד החזק ביותר ל-PMF, והקהל הזה קטן ומוכר - קל להגיע אליו.",
       recChat:" <b>ההמלצה: להקדים את התזכורת לפנייה שלא נענתה.</b> מי שעונה עונה תוך דקות, ולכן פנייה שלא נענתה תוך שעות כנראה לא נראתה בכלל.",
       recDorm:function(n){ return " <b>ההמלצה: רה-אקטיבציה היא הצמיחה הזולה ביותר שיש לך.</b> "+n+" אנשים כבר הורידו, נרשמו ושילמת עליהם - הם עולים פחות מכל משתמש חדש."; },
+      secEventsT:"מה קרה לאחרונה", feedTitle:"יומן אירועים · 14 יום",
+      feedSub:"אותם אירועים שמגיעים אליך בטלגרם, בצורה קריאה ומסוננת",
+      evAll:"הכל", evDeclined:"נדחו", evDone:"הושלמו", evFailed:"לא יצאו לפועל", evSafety:"בטיחות",
+      evK:{declined:"הצעה נדחתה", completed:"עזרה הושלמה", not_completed:"לא יצא לפועל",
+           expired:"פג תוקף", report:"דיווח", block:"חסימה", deleted:"מחיקת חשבון"},
+      evVia:{manual:"נסגר ידנית", auto:"נסגר אוטומטית", dispute:"ערעור", request_closed:"הפוסט נסגר"},
+      evAfter:function(d){ return "אחרי "+d; },
+      evBetween:function(a,b){ return a+" ↔ "+b; },
+      feedEmpty:"לא קרה כלום בטווח הזה",
+      rdFeed:function(d,n,dp){ return "מתוך <b>"+n+"</b> האירועים בשבועיים האחרונים, <b>"+d+"</b> הם הצעות שנדחו או שלא יצאו לפועל (<b>"+dp+"</b>). זה מה שהשכנים חווים בפועל - לא כישלון טכני אלא הבטחה שלא הבשילה, וכל אחת מהן היא מישהו שכנראה לא ינסה שוב."; },
       intelTitle:"מה הביקוש באמת מבקש",
       intelSub:"אשכולות מתוך הטקסט של הבקשות עצמן, לא לפי הקטגוריה שנבחרה - כך מתגלה קטגוריה שחסרה",
       intelCluster:"סוג הבקשה", intelReqs:"בקשות", intelShare:"מהביקוש", intelMatch:"נענו",
@@ -1097,6 +1128,16 @@
       recRepeat:" <b>Recommendation: go to the people who already asked once and were answered.</b> A second request is the strongest PMF signal there is, and that audience is small and known - easy to reach.",
       recChat:" <b>Recommendation: send the unanswered-opener reminder earlier.</b> Those who reply do so within minutes, so an opener unanswered for hours was probably never seen.",
       recDorm:function(n){ return " <b>Recommendation: reactivation is the cheapest growth you have.</b> "+n+" people already installed, signed up and were paid for - they cost less than any new user."; },
+      secEventsT:"What just happened", feedTitle:"Event log · 14 days",
+      feedSub:"The same events that reach you on Telegram, readable and filterable",
+      evAll:"All", evDeclined:"Declined", evDone:"Completed", evFailed:"Fell through", evSafety:"Safety",
+      evK:{declined:"Offer declined", completed:"Help completed", not_completed:"Fell through",
+           expired:"Expired", report:"Report", block:"Block", deleted:"Account deleted"},
+      evVia:{manual:"closed by hand", auto:"closed automatically", dispute:"disputed", request_closed:"post was closed"},
+      evAfter:function(d){ return "after "+d; },
+      evBetween:function(a,b){ return a+" ↔ "+b; },
+      feedEmpty:"Nothing happened in this range",
+      rdFeed:function(d,n,dp){ return "Of <b>"+n+"</b> events in the last fortnight, <b>"+d+"</b> are offers declined or fallen through (<b>"+dp+"</b>). That is what neighbours actually experience - not a technical failure but a promise that did not mature, and each one is somebody who probably will not try again."; },
       intelTitle:"What demand is really asking for",
       intelSub:"Clusters read from the text of the requests themselves, not the category chosen - this is how a missing category shows up",
       intelCluster:"Kind of request", intelReqs:"Requests", intelShare:"of demand", intelMatch:"answered",
@@ -1749,6 +1790,70 @@
     box.appendChild(el("span",null,msg));
     host.appendChild(box);
     return box;
+  }
+
+  // ---- event feed ----------------------------------------------------------
+  // The readable counterpart of the Telegram alert stream. Same events, but
+  // scannable, filterable, and with durations in words rather than raw seconds.
+  var EV_COLOR={declined:"--s8", completed:"--s3", not_completed:"--s2",
+                expired:"--baseline", report:"--s8", block:"--s8", deleted:"--muted"};
+  var EV_MARK={declined:"\u2715", completed:"\u2713", not_completed:"!", expired:"\u22EF",
+               report:"\u2691", block:"\u2298", deleted:"\u2013"};
+  var feedFilter="all";
+  function humanDur(sec){
+    if(sec==null) return "";
+    var m=Math.round(sec/60);
+    if(m<60) return m+" "+S.minutes;
+    if(m<48*60) return Math.round(m/60)+" "+S.hours;
+    return Math.round(m/1440)+" "+S.daysUnit;
+  }
+  function renderFeed(){
+    var host=$("eventFeed"); if(!host) return;
+    var F=(DATA.event_feed||{}).events||[];
+    var bar=$("feedFilter");
+    if(bar && !bar.childNodes.length){
+      [["all",S.evAll],["declined",S.evDeclined],["completed",S.evDone],
+       ["failed",S.evFailed],["safety",S.evSafety]].forEach(function(o){
+        var b=el("button",null,o[1]); b.type="button"; b.setAttribute("data-f",o[0]);
+        b.addEventListener("click",function(){ feedFilter=o[0]; renderFeed(); });
+        bar.appendChild(b);
+      });
+    }
+    if(bar) Array.prototype.forEach.call(bar.children,function(b){
+      b.classList.toggle("on", b.getAttribute("data-f")===feedFilter); });
+    var list=F.filter(function(e){
+      if(feedFilter==="all") return true;
+      if(feedFilter==="declined") return e.kind==="declined";
+      if(feedFilter==="completed") return e.kind==="completed";
+      if(feedFilter==="failed") return e.kind==="not_completed"||e.kind==="expired";
+      return e.kind==="report"||e.kind==="block"||e.kind==="deleted";
+    });
+    host.innerHTML="";
+    if(!list.length){ emptyState(host,S.feedEmpty,"activity"); return; }
+    list.forEach(function(e){
+      var row=el("div","evrow");
+      var ic=el("div","evi",EV_MARK[e.kind]||"\u2022");
+      ic.style.background="var("+(EV_COLOR[e.kind]||"--baseline")+")";
+      row.appendChild(ic);
+      var body=el("div","evb");
+      var title=(S.evK[e.kind]||e.kind);
+      if(e.via && S.evVia[e.via]) title+=" · "+S.evVia[e.via];
+      body.appendChild(el("div","evt",title));
+      var parts=[];
+      if(e.a && e.b) parts.push(S.evBetween(e.a,e.b));
+      else if(e.a) parts.push(e.a);
+      if(e.subject) parts.push(e.subject);
+      if(e.took_s!=null) parts.push(S.evAfter(humanDur(e.took_s)));
+      var sub=el("div","evs",parts.join(" · "));
+      sub.title=parts.join(" · ");
+      body.appendChild(sub);
+      row.appendChild(body);
+      row.appendChild(el("span","evw",fmtTime(e.at)));
+      host.appendChild(row);
+    });
+    var bad=F.filter(function(e){ return e.kind==="declined"||e.kind==="not_completed"; }).length;
+    if(F.length) panelRead("eventFeed", bad/F.length>0.5?"warn":"",
+      S.rdFeed(fmt(bad), fmt(F.length), pct(bad,F.length)));
   }
 
   // A section-level brief: what the panels below add up to. Inserted right
@@ -2543,6 +2648,7 @@
     }
 
     renderResearch();
+    renderFeed();
     renderSectionBriefs();
 
     var SF=DATA.safety;
