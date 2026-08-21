@@ -404,6 +404,50 @@
   #login .cta { width:100%; background:var(--s1); color:#fff; border:none;
                 padding:10px; border-radius:8px; cursor:pointer; font-weight:600; }
   #login .err { color:var(--bad-text); font-size:12px; min-height:16px; margin-top:12px; }
+  /* ---- architecture map ---- */
+  .flowbar { display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 10px; }
+  .flowbar button { border:1px solid var(--hairline); background:var(--surface);
+      color:var(--ink2); border-radius:999px; padding:6px 14px; font-size:13px;
+      cursor:pointer; transition:all .2s ease; }
+  .flowbar button:hover { border-color:var(--s1); color:var(--ink); }
+  .flowbar button.on { background:var(--s1); border-color:var(--s1); color:#fff; font-weight:600; }
+  .flowcap { min-height:44px; display:flex; align-items:center; gap:9px;
+      font-size:13.5px; line-height:1.45; padding:9px 12px; border-radius:10px;
+      background:var(--wash1); border-inline-start:3px solid var(--s1);
+      margin-bottom:14px; }
+  .flowcap .step { flex-shrink:0; width:22px; height:22px; border-radius:50%;
+      background:var(--s1); color:#fff; font-size:12px; font-weight:700;
+      display:flex; align-items:center; justify-content:center; }
+  .flowcap.idle { background:transparent; border-inline-start-color:var(--grid);
+      color:var(--muted); }
+
+  .archcanvas { position:relative; overflow-x:auto; padding:4px 0 8px; }
+  .archwires { position:absolute; inset:0; width:100%; height:100%;
+      pointer-events:none; z-index:0; }
+  .archcols { position:relative; z-index:1; display:grid;
+      grid-template-columns:repeat(5,minmax(150px,1fr)); gap:22px; min-width:820px; }
+  .archcol h3 { font-size:11px; font-weight:700; letter-spacing:.08em;
+      color:var(--muted); margin-bottom:9px; text-align:center; }
+  .archnode { background:var(--surface); border:1px solid var(--hairline);
+      border-radius:11px; padding:9px 11px; margin-bottom:9px; cursor:pointer;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,0.8), 0 1px 4px rgba(45,45,100,0.05);
+      transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
+  html[data-theme="dark"] .archnode { box-shadow:inset 0 1px 0 rgba(139,146,255,0.07); }
+  .archnode:hover { transform:translateY(-2px); border-color:var(--s1); }
+  .archnode .nl { font-size:13px; font-weight:600; display:flex; align-items:center; gap:6px; }
+  .archnode .ns { font-size:11.5px; color:var(--muted); margin-top:2px; }
+  .archnode .nv { font-size:11.5px; color:var(--s1); font-weight:700;
+      font-variant-numeric:tabular-nums; margin-top:3px; }
+  .archnode i.dotc { width:8px; height:8px; border-radius:2px; flex-shrink:0; }
+  .archnode.lit { border-color:var(--s1); box-shadow:0 0 0 3px var(--wash1),
+      0 6px 18px rgba(99,102,241,0.18); transform:translateY(-2px); }
+  .archnode.dim { opacity:.35; }
+  .archdetail { margin-top:14px; font-size:13.5px; line-height:1.55;
+      padding:12px 14px; border-radius:10px; background:var(--plane);
+      border:1px solid var(--hairline); min-height:20px; }
+  .archdetail h4 { font-size:14px; margin-bottom:4px; }
+  .archdetail .muted { color:var(--muted); font-size:12.5px; }
+  @media (prefers-reduced-motion: reduce){ .archwires .pkt { display:none; } }
   .hidden { display:none !important; }
 </style>
 </head>
@@ -430,6 +474,7 @@
   <div class="seg" id="tabs">
     <button data-v="metrics" class="on" data-i18n="tabMetrics">מטריקות</button>
     <button data-v="chat" data-i18n="tabChat">צ'אט</button>
+    <button data-v="arch" data-i18n="tabArch">ארכיטקטורה</button>
   </div>
   <label class="ghost" style="display:flex;gap:6px;align-items:center;cursor:pointer">
     <input type="checkbox" id="autoRef"> <span data-i18n="live">חי · כל דקה</span>
@@ -558,6 +603,20 @@
     </div>
     <p class="note" style="margin-bottom:12px"><span id="chatCount"></span> · <span data-i18n="chatNote">מוצג לצורכי פיקוח ובטיחות בלבד · לקריאה בלבד · מספרי טלפון מודגשים</span></p>
     <div id="convoList"></div>
+  </div>
+
+  <div id="archView" class="hidden">
+    <section class="panel" style="opacity:1;transform:none">
+      <h2 data-i18n="archTitle">איך Helpy עובד</h2>
+      <div class="sub" data-i18n="archSub">כל רכיב, מה מחובר למה, ואיפה כל דבר מאוחסן · הריחוף על מונח מקוצר מסביר אותו</div>
+      <div class="flowbar" id="flowBar"></div>
+      <div class="flowcap" id="flowCap"></div>
+      <div id="archCanvas" class="archcanvas">
+        <svg class="archwires" id="archWires" aria-hidden="true"></svg>
+        <div class="archcols" id="archCols"></div>
+      </div>
+      <div id="archDetail" class="archdetail"></div>
+    </section>
   </div>
 </main>
 <div id="tt"></div>
@@ -723,6 +782,12 @@
       rdLifecycle:function(d,t,p){ return "<b>"+d+"</b> מתוך <b>"+t+"</b> המשתמשים (<b>"+p+"</b>) לא נראו מעל 30 יום. זהו הנכס הגדול ביותר שלך וגם החוב הגדול ביותר - קהל שכבר שילמת עליו ואינו פעיל."; },
       insMore:function(n){ return "הצגת "+n+" תובנות נוספות"; },
       insLess:"הצגת המובילות בלבד",
+      tabArch:"ארכיטקטורה",
+      archTitle:"איך Helpy עובד",
+      archSub:"כל רכיב, מה מחובר למה, ואיפה כל דבר מאוחסן · ריחוף על מונח מקוצר מסביר אותו",
+      archPickFlow:"בחר/י זרימה למעלה כדי לראות איך בקשה עוברת במערכת, שלב אחר שלב",
+      archPickNode:"לחיצה על רכיב מציגה מה הוא עושה ולמה הוא שם",
+      archStop:"עצירה",
       tileJump:"לחיצה קופצת לגרף המלא ומדגישה אותו",
       sparkTip:"12 שבועות אחרונים · סכום שבועי",
       themeBtn:{light:"🌙 כהה", dark:"☀️ בהיר"}, langBtn:"English"
@@ -874,6 +939,12 @@
       rdLifecycle:function(d,t,p){ return "<b>"+d+"</b> of <b>"+t+"</b> users (<b>"+p+"</b>) have not been seen in over 30 days. That is both your biggest asset and your biggest debt - an audience you already paid for that is not active."; },
       insMore:function(n){ return "Show "+n+" more insights"; },
       insLess:"Show only the top ones",
+      tabArch:"Architecture",
+      archTitle:"How Helpy works",
+      archSub:"Every component, what talks to what, and where things are stored · hover any abbreviation for an explanation",
+      archPickFlow:"Pick a flow above to watch a request travel through the system, step by step",
+      archPickNode:"Click a component to see what it does and why it is there",
+      archStop:"Stop",
       tileJump:"Click to jump to the full chart and highlight it",
       sparkTip:"Last 12 weeks · weekly totals",
       themeBtn:{light:"🌙 Dark", dark:"☀️ Light"}, langBtn:"עברית"
@@ -1318,7 +1389,9 @@
     });
     $("metricsView").classList.toggle("hidden",v!=="metrics");
     $("chatView").classList.toggle("hidden",v!=="chat");
+    $("archView").classList.toggle("hidden",v!=="arch");
     $("rail").classList.toggle("hidden",v!=="metrics");
+    if(v==="arch") renderArch();
     if(v==="metrics") Object.keys(einsts).forEach(function(k){ einsts[k].resize(); });
     window.scrollTo({top:0,behavior:"smooth"});
   }
@@ -2202,6 +2275,366 @@
       host.appendChild(box);
     });
   }
+
+  // ---- architecture map ----------------------------------------------------
+  // A living map of the system: nodes are the real components, wires are the
+  // real calls, and the flow player walks a request through them step by step.
+  // Live counts come from the dashboard payload so the map is never a stale
+  // drawing; structural facts (edge fn / cron counts) are stated as such.
+  var ARCH_COLS=[
+    {id:"client", he:"מכשירי השכנים", en:"Neighbour devices"},
+    {id:"gate",   he:"כניסה ואימות",  en:"Access & identity"},
+    {id:"core",   he:"ליבת Supabase", en:"Supabase core"},
+    {id:"auto",   he:"אוטומציות",     en:"Automation"},
+    {id:"out",    he:"שירותים חיצוניים", en:"External services"}
+  ];
+  var T=function(o){ return LANG==="he"? o.he : o.en; };
+  var ARCH_NODES=[
+    {id:"app", col:"client", c:"--s1",
+     he:"אפליקציית Helpy", en:"Helpy app",
+     shE:"React Native · Expo · iOS + Android", shH:"React Native · Expo · iOS + אנדרואיד",
+     dH:"אפליקציה אחת בקוד אחד לשתי הפלטפורמות. כל מסך (עיון, פרסום, צ׳אט, פרופיל) מדבר ישירות מול Supabase - אין שרת אפליקציה משלנו באמצע.",
+     dE:"One codebase for both platforms. Every screen (browse, post, chat, profile) talks straight to Supabase - there is no app server of ours in between."},
+    {id:"cache", col:"client", c:"--s7",
+     he:"מטמון מקומי", en:"On-device cache",
+     shH:"AsyncStorage", shE:"AsyncStorage",
+     dH:"שומר את הפרופיל, דגלים חד-פעמיים והעדפות על המכשיר, כדי שהאפליקציה תצייר מסך מיד בפתיחה במקום להמתין לרשת.",
+     dE:"Keeps the profile, one-time flags and preferences on the device so the app paints a screen immediately instead of waiting for the network."},
+    {id:"auth", col:"gate", c:"--s3",
+     he:"אימות זהות", en:"Identity",
+     shH:"Supabase Auth · JWT", shE:"Supabase Auth · JWT",
+     dH:"כניסה עם Google (עיקרי), Apple ואימייל. בסיום מונפק JWT - כרטיס חתום שהאפליקציה מצרפת לכל בקשה, וממנו מסד הנתונים יודע מי אתה.",
+     dE:"Sign-in with Google (primary), Apple and email. It issues a JWT - a signed ticket the app attaches to every request, and from which the database knows who you are."},
+    {id:"phone", col:"gate", c:"--s3",
+     he:"אימות טלפון", en:"Phone verification",
+     shH:"OTP · edge function", shE:"OTP · edge function",
+     dH:"נפרד מהכניסה: לפני שמציעים עזרה או מפרסמים, נשלח קוד חד-פעמי ב-SMS. זהו שער נגד שימוש לרעה, וטלפון חסום לא יכול להירשם מחדש.",
+     dE:"Separate from sign-in: before offering help or posting, a one-time code is sent by SMS. It is the anti-abuse gate, and a banned phone cannot register again."},
+    {id:"rls", col:"gate", c:"--s8",
+     he:"הרשאות שורה", en:"Row-level security",
+     shH:"RLS · על כל טבלה", shE:"RLS · on every table",
+     dH:"החוקים שמחליטים איזו שורה כל משתמש רשאי לראות או לשנות, ונאכפים במסד הנתונים עצמו - לא באפליקציה. גם אם מישהו יכתוב לקוח משלו, הוא לא יעקוף אותם.",
+     dE:"The rules deciding which row each user may read or change, enforced in the database itself - not in the app. Even a hand-rolled client cannot get around them."},
+    {id:"db", col:"core", c:"--s1",
+     he:"מסד הנתונים", en:"The database",
+     shH:"PostgreSQL", shE:"PostgreSQL",
+     dH:"הלב. שבע טבלאות ליבה: פרופילים, פוסטים, התאמות, הודעות, דירוגים, דיווחים וחסימות. כל כתיבה רגישה עוברת דרך פונקציה אחת אטומית ולא דרך הלקוח.",
+     dE:"The heart. Seven core tables: profiles, posts, matches, messages, ratings, reports and blocks. Every sensitive write goes through one atomic function, never straight from the client."},
+    {id:"rpc", col:"core", c:"--s7",
+     he:"פונקציות מסד", en:"Database functions",
+     shH:"RPC · SECURITY DEFINER", shE:"RPC · SECURITY DEFINER",
+     dH:"פעולה מורכבת (יצירת התאמה, סגירת פוסט, מחיקת חשבון) רצה כפונקציה אחת בתוך המסד, כך שהיא או מצליחה כולה או נכשלת כולה - ולא משאירה חצי מצב.",
+     dE:"A compound action (create a match, close a post, delete an account) runs as one function inside the database, so it either fully succeeds or fully fails - never half-done."},
+    {id:"realtime", col:"core", c:"--s3",
+     he:"עדכון חי", en:"Realtime",
+     shH:"WebSocket", shE:"WebSocket",
+     dH:"מנוי חי על שינויים: הודעה שנכתבת מופיעה אצל הצד השני בלי לרענן. מוגבל לעמודות מסוימות כדי שלא ידלוף מידע דרך הערוץ.",
+     dE:"A live subscription to changes: a message written appears on the other side without a refresh. Limited to specific columns so nothing leaks through the channel."},
+    {id:"storage", col:"core", c:"--s5",
+     he:"אחסון קבצים", en:"File storage",
+     shH:"Storage buckets", shE:"Storage buckets",
+     dH:"תמונות פרופיל ותמונות פוסטים. תמונות צ׳אט יושבות בדלי פרטי ונגישות רק דרך קישור חתום שפג - לא בכתובת פומבית.",
+     dE:"Avatars and post photos. Chat images sit in a private bucket reachable only through an expiring signed link - never a public URL."},
+    {id:"edge", col:"core", c:"--s2",
+     he:"פונקציות קצה", en:"Edge functions",
+     shH:"Deno · 21 פונקציות", shE:"Deno · 21 functions",
+     dH:"קוד שרת קטן שרץ קרוב למשתמש. כאן יושבת כל עבודה שאסור לתת ללקוח: שליחת התראות, מודרציה, התראות מייסד, וה-API של הקונסולה הזו.",
+     dE:"Small server code running close to the user. Everything the client must not be trusted with lives here: sending notifications, moderation, founder alerts, and this console's own API."},
+    {id:"cron", col:"auto", c:"--s2",
+     he:"משימות מתוזמנות", en:"Scheduled jobs",
+     shH:"pg_cron · ~24 משימות", shE:"pg_cron · ~24 jobs",
+     dH:"שעון בתוך המסד שמפעיל משימות לפי לוח זמנים: תזכורות, סגירת התאמות שנתקעו, השלמת שמות ערים, דוח יומי. כולן מוגבלות לשעות היום בישראל.",
+     dE:"A clock inside the database firing jobs on a schedule: reminders, closing stalled matches, filling in city names, the daily digest. All are limited to daytime hours in Israel."},
+    {id:"nudge", col:"auto", c:"--s2",
+     he:"שכבת התזכורות", en:"Nudge layer",
+     shH:"re-engage · דחיפה מדודה", shE:"re-engage · metered push",
+     dH:"מחליטה מי מקבל תזכורת ומתי. חסם קשיח: הודעה שיווקית אחת לשבוע לאדם, בהסכמה בלבד; הודעות תפעוליות (מישהו ענה לך) אינן מוגבלות.",
+     dE:"Decides who gets a nudge and when. Hard cap: one marketing message per person per week, consent only; operational messages (someone replied to you) are not capped."},
+    {id:"moderation", col:"auto", c:"--s8",
+     he:"מודרציה", en:"Moderation",
+     shH:"מסנן מילים + מודל שפה", shE:"Word filter + language model",
+     dH:"שתי שכבות: רשימת מילים אסורות בזמן הקלדה, ואחריה בדיקה של מודל שפה. תוכן מזיק מוסתר אוטומטית; חשד מסחרי רק מסומן לבדיקה.",
+     dE:"Two layers: a blocklist while typing, then a language-model check. Harmful content is hidden automatically; a commercial suspicion is only flagged for review."},
+    {id:"expo", col:"out", c:"--s1",
+     he:"שירות ההתראות", en:"Push service",
+     shH:"Expo Push", shE:"Expo Push",
+     dH:"הצינור שמעביר התראה מהשרת שלנו אל מסך הנעילה. אם מכשיר מסיר את האפליקציה, השירות מחזיר סימון והטוקן שלו מנוקה.",
+     dE:"The pipe carrying a notification from our server to the lock screen. If a device uninstalls, the service reports back and its token is cleared."},
+    {id:"idp", col:"out", c:"--s3",
+     he:"ספקי זהות", en:"Identity providers",
+     shH:"Google · Apple", shE:"Google · Apple",
+     dH:"הם מאמתים מי אתה ומחזירים לנו זהות חתומה. אנחנו לעולם לא רואים את הסיסמה שלך.",
+     dE:"They verify who you are and hand us back a signed identity. We never see your password."},
+    {id:"sms", col:"out", c:"--s3",
+     he:"שליחת SMS", en:"SMS delivery",
+     shH:"ספק סלולרי", shE:"Telecom provider",
+     dH:"מעביר את הקוד החד-פעמי לטלפון. משמש אך ורק לאימות - לא לשיווק.",
+     dE:"Carries the one-time code to the phone. Used strictly for verification - never marketing."},
+    {id:"llm", col:"out", c:"--s8",
+     he:"מודל שפה", en:"Language model",
+     shH:"Claude Haiku", shE:"Claude Haiku",
+     dH:"קורא פוסט חדש ומחליט אם הוא מזיק. בנוי להיכשל לכיוון המתירני: אם הוא לא זמין או לא בטוח - הפוסט עולה.",
+     dE:"Reads a new post and decides whether it is harmful. Built to fail permissive: if it is unavailable or unsure, the post goes live."},
+    {id:"geo", col:"out", c:"--s5",
+     he:"שירותי מפה", en:"Map services",
+     shH:"Photon · Nominatim", shE:"Photon · Nominatim",
+     dH:"ממירים כתובת שהוקלדה לנקודה, ונקודה לשם עיר. שום דבר שנכתב בשדה החיפוש אינו נשמר אצלנו.",
+     dE:"Turn a typed address into a point, and a point into a city name. Nothing typed into the search field is stored by us."},
+    {id:"ops", col:"out", c:"--s2",
+     he:"ניטור והתראות", en:"Monitoring & alerts",
+     shH:"Sentry · PostHog · Telegram", shE:"Sentry · PostHog · Telegram",
+     dH:"קריסות, מדדי שימוש, והתראות מיידיות למייסד על אירוע חשוב - הרשמה, התאמה, דיווח או חסימה.",
+     dE:"Crashes, usage metrics, and instant founder alerts on anything important - a signup, a match, a report or a block."},
+    {id:"web", col:"out", c:"--s7",
+     he:"אתר help-y.com", en:"help-y.com",
+     shH:"דפי שיתוף · מסמכים · קונסולה", shE:"Share pages · legal · console",
+     dH:"אתר סטטי נפרד: מסמכי הפרטיות והתנאים, דפי שיתוף לפוסט ולפרופיל, והקונסולה שאתה מסתכל בה עכשיו.",
+     dE:"A separate static site: the privacy and terms documents, share pages for a post and a profile, and the console you are looking at now."}
+  ];
+  var ARCH_WIRES=[
+    ["app","cache"],["app","auth"],["app","phone"],["app","db"],["app","storage"],
+    ["app","realtime"],["app","ops"],["auth","idp"],["auth","rls"],["phone","sms"],
+    ["rls","db"],["db","rpc"],["db","realtime"],["db","edge"],["cron","edge"],
+    ["cron","db"],["edge","expo"],["edge","llm"],["edge","ops"],["edge","geo"],
+    ["nudge","edge"],["moderation","edge"],["web","edge"]
+  ];
+  var ARCH_FLOWS=[
+    {id:"signup", he:"הרשמה", en:"Sign-up",
+     steps:[
+      {n:["app"], he:"שכן מתקין את האפליקציה ובוחר להיכנס עם Google.", en:"A neighbour installs the app and chooses to sign in with Google."},
+      {n:["idp","auth"], he:"Google מאמת אותו ומחזיר זהות חתומה; Supabase מנפיק JWT.", en:"Google verifies them and returns a signed identity; Supabase issues a JWT."},
+      {n:["db"], he:"נוצרת שורת פרופיל, והרשאות השורה נקבעות מהרגע הזה לפי הזהות.", en:"A profile row is created, and row permissions apply from this moment by that identity."},
+      {n:["ops"], he:"התראה מיידית נשלחת למייסד - כך אתה יודע על כל שכן חדש בזמן אמת.", en:"An instant alert reaches the founder - that is how you learn of every new neighbour in real time."}
+     ]},
+    {id:"post", he:"פרסום בקשה", en:"Posting a request",
+     steps:[
+      {n:["app"], he:"השכן כותב בקשה, בוחר קטגוריה ודחיפות, ומצרף תמונה.", en:"The neighbour writes a request, picks a category and urgency, and attaches a photo."},
+      {n:["moderation","llm"], he:"מסנן המילים בודק תוך כדי הקלדה, ואז מודל שפה קורא את הטקסט. תוכן מזיק נחסם - ספק נרשם לבדיקה בלבד.", en:"The word filter checks as they type, then a language model reads the text. Harmful content is blocked - a doubt is only logged for review."},
+      {n:["db","storage"], he:"הפוסט נשמר, התמונה עולה לאחסון, והמיקום המדויק מטושטש לכ-קילומטר לפני שהוא נחשף למישהו.", en:"The post is saved, the photo goes to storage, and the exact location is fuzzed by about a kilometre before anyone sees it."},
+      {n:["cron","geo"], he:"משימה מתוזמנת משלימה את שם העיר משירות המפות - שתי שפות, כתיבה אחת, כדי שלא ייווצרו גרסאות סותרות.", en:"A scheduled job fills in the city name from the map service - two languages, one writer, so no conflicting versions appear."}
+     ]},
+    {id:"match", he:"התאמה", en:"A match",
+     steps:[
+      {n:["app"], he:"שכן אחר רואה את הבקשה בפיד ומחליק ימינה כדי להציע עזרה.", en:"Another neighbour sees the request in the feed and swipes right to offer help."},
+      {n:["rpc","db"], he:"פונקציה אחת אטומית יוצרת את ההתאמה. על הצעת עזרה הצ׳אט נפתח מיד; על בקשה - ממתין לאישור המבקש.", en:"One atomic function creates the match. On a help offer the chat opens immediately; on a request it waits for the asker's approval."},
+      {n:["edge","expo"], he:"טריגר במסד מפעיל פונקציית קצה ששולחת התראה - כך שהצד השני יודע גם כשהאפליקציה סגורה.", en:"A database trigger fires an edge function that sends the notification - so the other side knows even with the app closed."},
+      {n:["app"], he:"ההתראה נוחתת אצל השכן השני ופותחת בדיוק את השיחה הנכונה.", en:"The notification lands on the other neighbour's phone and opens exactly the right conversation."}
+     ]},
+    {id:"chat", he:"שיחה", en:"The conversation",
+     steps:[
+      {n:["app","db"], he:"הודעה נכתבת ונשמרת. חסימה נאכפת כאן - משתמש חסום לא יכול להכניס הודעה בכלל.", en:"A message is written and stored. Blocking is enforced here - a blocked user cannot insert a message at all."},
+      {n:["realtime"], he:"העדכון החי דוחף אותה למכשיר השני מיד, בלי רענון.", en:"Realtime pushes it to the other device at once, with no refresh."},
+      {n:["cron","nudge"], he:"אם ההודעה לא נקראה 24 שעות, תזכורת אחת נשלחת. מי שקרא ובחר לא לענות - לא מוטרד.", en:"If it goes unread for 24 hours, one reminder is sent. Someone who read it and chose not to answer is never nagged."},
+      {n:["expo","app"], he:"התזכורת מגיעה כהתראה תפעולית - היא אינה נספרת במכסת ההודעות השיווקיות.", en:"The reminder arrives as an operational notification - it does not count against the marketing quota."}
+     ]},
+    {id:"done", he:"סגירת מעגל", en:"Closing the loop",
+     steps:[
+      {n:["app","rpc"], he:"מקבל/ת העזרה מסמנ/ת שהעזרה בוצעה - רק הצד שקיבל יכול לסגור, לא הצד שהציע.", en:"The receiver marks the help as done - only the side that received can close it, never the side that offered."},
+      {n:["db"], he:"ההתאמה מסומנת כהושלמה, והפוסט נסגר רק אם הוא באמת מוצה.", en:"The match is marked completed, and the post closes only if it is genuinely used up."},
+      {n:["db","rpc"], he:"נפתח דירוג. הדירוג מתפרסם רק כששני הצדדים דירגו או אחרי שבוע - כדי שאיש לא יגיב לדירוג של האחר.", en:"A rating opens. It publishes only once both sides rated or after a week - so nobody reacts to the other's score."},
+      {n:["ops"], he:"זה הרגע היחיד שנספר במדד הצפוני: עזרה שבוצעה בפועל.", en:"This is the only moment counted in the north star: help that actually happened."}
+     ]}
+  ];
+
+  // Abbreviations get a hover explanation wherever they appear in the map -
+  // Nir's standing rule: never print a shorthand without a way to decode it.
+  var ARCH_GLOSS={
+    "JWT":{he:"JSON Web Token - כרטיס זהות חתום דיגיטלית שהאפליקציה מצרפת לכל בקשה. השרת מאמת את החתימה ויודע מי אתה, בלי לשמור סשן.",
+           en:"JSON Web Token - a digitally signed identity ticket the app attaches to every request. The server verifies the signature and knows who you are, with no stored session."},
+    "RLS":{he:"Row Level Security - חוקים שנאכפים בתוך מסד הנתונים וקובעים איזו שורה כל משתמש רשאי לראות או לשנות. גם לקוח מזויף לא עוקף אותם.",
+           en:"Row Level Security - rules enforced inside the database deciding which row each user may read or change. Even a forged client cannot bypass them."},
+    "RPC":{he:"Remote Procedure Call - קריאה לפונקציה שרצה בתוך מסד הנתונים במקום סדרת פקודות מהלקוח, כך שהפעולה כולה מצליחה או נכשלת יחד.",
+           en:"Remote Procedure Call - calling a function that runs inside the database instead of a series of client commands, so the whole action succeeds or fails together."},
+    "SECURITY DEFINER":{he:"פונקציה שרצה בהרשאות מי שכתב אותה ולא בהרשאות הקורא - כך היא יכולה לבצע פעולה מבוקרת שהמשתמש עצמו אינו מורשה לעשות ישירות.",
+           en:"A function that runs with its author's privileges rather than the caller's - letting it perform a controlled action the user is not allowed to do directly."},
+    "OTP":{he:"One Time Password - קוד חד-פעמי קצר תוקף שנשלח ב-SMS כדי להוכיח שהטלפון באמת שלך.",
+           en:"One Time Password - a short-lived code sent by SMS to prove the phone is really yours."},
+    "pg_cron":{he:"מתזמן משימות שרץ בתוך PostgreSQL עצמו ומפעיל פקודות לפי לוח זמנים, בלי שרת חיצוני.",
+           en:"A job scheduler running inside PostgreSQL itself, firing commands on a schedule with no external server."},
+    "PostgreSQL":{he:"מסד הנתונים היחסי שבו יושב כל המידע של Helpy - משתמשים, פוסטים, התאמות והודעות.",
+           en:"The relational database holding all of Helpy's data - users, posts, matches and messages."},
+    "WebSocket":{he:"חיבור פתוח דו-כיווני בין המכשיר לשרת, שמאפשר לשרת לדחוף עדכון ברגע שהוא קורה במקום שהאפליקציה תשאל שוב ושוב.",
+           en:"An open two-way connection between device and server, letting the server push an update the moment it happens instead of the app polling."},
+    "Deno":{he:"סביבת ההרצה של פונקציות הקצה - קוד TypeScript שרץ בשרתים מבוזרים קרוב למשתמש.",
+           en:"The runtime for edge functions - TypeScript running on distributed servers close to the user."},
+    "React Native":{he:"מסגרת שמאפשרת לכתוב קוד אחד ולקבל אפליקציה מקורית גם ל-iOS וגם לאנדרואיד.",
+           en:"A framework letting one codebase produce a native app for both iOS and Android."},
+    "Expo":{he:"ערכת הכלים שעוטפת את React Native ומספקת בנייה, עדכונים והתראות בלי לגעת בקוד מקורי.",
+           en:"The toolkit wrapping React Native, providing builds, updates and notifications without touching native code."},
+    "AsyncStorage":{he:"אחסון מקומי פשוט על המכשיר עצמו, ששורד סגירה של האפליקציה. נמחק בהתנתקות.",
+           en:"Simple local storage on the device itself that survives closing the app. Cleared on sign-out."},
+    "Supabase":{he:"הפלטפורמה שמאחדת את מסד הנתונים, האימות, האחסון והפונקציות - התשתית שעליה Helpy רץ.",
+           en:"The platform bundling the database, auth, storage and functions - the infrastructure Helpy runs on."},
+    "Claude Haiku":{he:"מודל שפה קטן ומהיר שקורא פוסט חדש ומחליט אם יש בו תוכן מזיק.",
+           en:"A small, fast language model that reads a new post and judges whether it contains harmful content."},
+    "Photon":{he:"שירות מפה שמשלים כתובת תוך כדי הקלדה. שום דבר שהוקלד אינו נשמר אצלנו.",
+           en:"A map service completing an address as you type. Nothing typed is stored by us."},
+    "Nominatim":{he:"שירות שממיר נקודת ציון לשם עיר. משמש להשלמת שם העיר על פוסט.",
+           en:"A service turning coordinates into a city name. Used to fill in a post's city."},
+    "Sentry":{he:"מערכת שמדווחת על קריסות ושגיאות באפליקציה בזמן אמת.",
+           en:"A system reporting app crashes and errors in real time."},
+    "PostHog":{he:"מערכת ניתוח שימוש - אילו מסכים נצפו ואילו פעולות בוצעו, ללא תוכן אישי.",
+           en:"A product-analytics system - which screens were seen and which actions taken, with no personal content."},
+    "Telegram":{he:"הערוץ שדרכו נשלחות התראות מיידיות למייסד על אירוע חשוב במערכת.",
+           en:"The channel carrying instant founder alerts about anything important in the system."},
+    "Expo Push":{he:"השירות שמעביר התראה מהשרת שלנו אל מסך הנעילה של המכשיר.",
+           en:"The service carrying a notification from our server to the device's lock screen."}
+  };
+  // wrap known abbreviations inside a text node with hoverable spans
+  function glossify(host, text){
+    var keys=Object.keys(ARCH_GLOSS).sort(function(a,b){ return b.length-a.length; });
+    var rest=text, guard=0;
+    while(rest.length && guard++ < 40){
+      var best=null, bestAt=-1;
+      keys.forEach(function(k){
+        var at=rest.indexOf(k);
+        if(at>-1 && (bestAt===-1 || at<bestAt)){ bestAt=at; best=k; }
+      });
+      if(best===null){ host.appendChild(document.createTextNode(rest)); return; }
+      if(bestAt>0) host.appendChild(document.createTextNode(rest.slice(0,bestAt)));
+      var sp=el("span","term",best);
+      sp.setAttribute("data-tip", LANG==="he"? ARCH_GLOSS[best].he : ARCH_GLOSS[best].en);
+      host.appendChild(sp);
+      rest=rest.slice(bestAt+best.length);
+    }
+    if(rest) host.appendChild(document.createTextNode(rest));
+  }
+  var archBuilt=false, flowTimer=null, flowIdx=-1;
+  function archLiveValue(id){
+    if(!DATA) return null;
+    var k=DATA.kpis||{};
+    if(id==="db") return LANG==="he"
+      ? fmt(k.live_users)+" פרופילים · "+fmt(k.active_requests+k.active_offers)+" פוסטים חיים"
+      : fmt(k.live_users)+" profiles · "+fmt(k.active_requests+k.active_offers)+" live posts";
+    if(id==="app") return LANG==="he"
+      ? fmt(k.seen_7d)+" פעילים השבוע" : fmt(k.seen_7d)+" active this week";
+    if(id==="expo") return LANG==="he"
+      ? fmt(k.push_tokens)+" מכשירים רשומים" : fmt(k.push_tokens)+" registered devices";
+    if(id==="realtime") return LANG==="he"
+      ? fmt((DATA.deltas||{}).messages_7d)+" הודעות השבוע" : fmt((DATA.deltas||{}).messages_7d)+" messages this week";
+    if(id==="phone") return LANG==="he"
+      ? fmt(k.phone_verified)+" אומתו בטלפון" : fmt(k.phone_verified)+" phone-verified";
+    return null;
+  }
+  function buildArch(){
+    var cols=$("archCols"); cols.innerHTML="";
+    ARCH_COLS.forEach(function(c){
+      var box=el("div","archcol");
+      box.appendChild(el("h3",null,T(c)));
+      ARCH_NODES.filter(function(n){ return n.col===c.id; }).forEach(function(n){
+        var card=el("div","archnode"); card.setAttribute("data-id",n.id);
+        var lbl=el("div","nl");
+        var dot=el("i","dotc"); dot.style.background="var("+n.c+")"; lbl.appendChild(dot);
+        lbl.appendChild(document.createTextNode(T(n)));
+        card.appendChild(lbl);
+        var sub=el("div","ns"); glossify(sub, LANG==="he"? n.shH : n.shE);
+        card.appendChild(sub);
+        var lv=archLiveValue(n.id);
+        if(lv) card.appendChild(el("div","nv",lv));
+        card.addEventListener("click",function(){ showArchDetail(n.id); });
+        box.appendChild(card);
+      });
+      cols.appendChild(box);
+    });
+    drawWires();
+  }
+  function nodeEl(id){ return document.querySelector('.archnode[data-id="'+id+'"]'); }
+  function drawWires(){
+    var svg=$("archWires"), canvas=$("archCanvas");
+    if(!svg||!canvas) return;
+    svg.innerHTML="";
+    var cb=canvas.getBoundingClientRect();
+    svg.setAttribute("viewBox","0 0 "+cb.width+" "+cb.height);
+    ARCH_WIRES.forEach(function(w,i){
+      var a=nodeEl(w[0]), b=nodeEl(w[1]);
+      if(!a||!b) return;
+      var ra=a.getBoundingClientRect(), rb=b.getBoundingClientRect();
+      var x1=ra.left-cb.left+ra.width/2, y1=ra.top-cb.top+ra.height/2;
+      var x2=rb.left-cb.left+rb.width/2, y2=rb.top-cb.top+rb.height/2;
+      var mx=(x1+x2)/2;
+      var d="M"+x1+","+y1+" C"+mx+","+y1+" "+mx+","+y2+" "+x2+","+y2;
+      var path=sv("path",{d:d,fill:"none",stroke:tok("--grid"),"stroke-width":1.5,
+        "data-w":w[0]+"|"+w[1], class:"wire"});
+      svg.appendChild(path);
+      if(!REDUCED){
+        var dot=sv("circle",{r:2.6,fill:tok("--baseline"),class:"pkt",opacity:.75});
+        var mo=sv("animateMotion",{dur:(5+ (i%5))+"s",repeatCount:"indefinite",path:d,
+          begin:(i*0.35)+"s"});
+        dot.appendChild(mo);
+        svg.appendChild(dot);
+      }
+    });
+  }
+  function showArchDetail(id){
+    var n=ARCH_NODES.filter(function(x){ return x.id===id; })[0];
+    var host=$("archDetail"); host.innerHTML="";
+    if(!n) return;
+    host.appendChild(el("h4",null,T(n)));
+    var dsub=el("div","muted"); glossify(dsub, LANG==="he"? n.shH : n.shE);
+    host.appendChild(dsub);
+    var p=el("p",null, LANG==="he"? n.dH : n.dE);
+    p.style.marginTop="6px";
+    host.appendChild(p);
+    document.querySelectorAll(".archnode").forEach(function(c){
+      c.classList.toggle("lit", c.getAttribute("data-id")===id);
+      c.classList.remove("dim");
+    });
+  }
+  function stopFlow(){
+    if(flowTimer){ clearTimeout(flowTimer); flowTimer=null; }
+    flowIdx=-1;
+    document.querySelectorAll(".archnode").forEach(function(c){
+      c.classList.remove("lit"); c.classList.remove("dim");
+    });
+    document.querySelectorAll("#flowBar button").forEach(function(b){ b.classList.remove("on"); });
+    var cap=$("flowCap"); cap.className="flowcap idle"; cap.innerHTML="";
+    cap.appendChild(el("span",null,S.archPickFlow));
+  }
+  function playFlow(fid){
+    var f=ARCH_FLOWS.filter(function(x){ return x.id===fid; })[0];
+    if(!f) return;
+    if(flowTimer){ clearTimeout(flowTimer); flowTimer=null; }
+    document.querySelectorAll("#flowBar button").forEach(function(b){
+      b.classList.toggle("on", b.getAttribute("data-f")===fid);
+    });
+    var i=0;
+    function step(){
+      if(i>=f.steps.length){ flowTimer=setTimeout(stopFlow,3200); return; }
+      var st=f.steps[i];
+      document.querySelectorAll(".archnode").forEach(function(c){
+        var on=st.n.indexOf(c.getAttribute("data-id"))>-1;
+        c.classList.toggle("lit",on);
+        c.classList.toggle("dim",!on);
+      });
+      var cap=$("flowCap"); cap.className="flowcap"; cap.innerHTML="";
+      cap.appendChild(el("span","step",String(i+1)));
+      cap.appendChild(el("span",null, LANG==="he"? st.he : st.en));
+      var first=nodeEl(st.n[0]);
+      if(first && i===0) first.scrollIntoView({behavior:"smooth",block:"nearest",inline:"nearest"});
+      i++;
+      flowTimer=setTimeout(step, REDUCED? 5200 : 3900);
+    }
+    step();
+  }
+  function renderArch(){
+    if(!archBuilt){ archBuilt=true; }
+    buildArch();
+    var bar=$("flowBar"); bar.innerHTML="";
+    ARCH_FLOWS.forEach(function(f){
+      var b=el("button",null,T(f)); b.type="button"; b.setAttribute("data-f",f.id);
+      b.addEventListener("click",function(){ playFlow(f.id); });
+      bar.appendChild(b);
+    });
+    var stop=el("button",null,S.archStop); stop.type="button";
+    stop.addEventListener("click",stopFlow);
+    bar.appendChild(stop);
+    stopFlow();
+    $("archDetail").innerHTML="";
+    $("archDetail").appendChild(el("p","muted",S.archPickNode));
+  }
+  window.addEventListener("resize",function(){
+    if(!$("archView").classList.contains("hidden")) drawWires();
+  });
 
   // ---- data + auth ---------------------------------------------------------
   function segVal(id){
