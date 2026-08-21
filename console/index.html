@@ -708,21 +708,21 @@
       errExpired:"ההתחברות פגה - התחברו שוב",
       errTimeout:"השרת לא הגיב תוך 25 שניות - נסו שוב",
       updatedAgo:function(s){ return s<60? "עודכן לפני "+s+" שנ׳" : "עודכן לפני "+Math.round(s/60)+" דק׳"; },
-      tileHero:"עזרות שהושלמו · 7 ימים ⭐",
+      tileHero:"עזרות שהושלמו · {win} ⭐",
       tileHeroTip:"המדד הצפוני של Helpy: עזרות שמקבל/ת העזרה סימנו שבוצעו בפועל",
-      tileSignups:"הרשמות · 7 ימים",
-      tileActive:"פעילים היום",
+      tileSignups:"הרשמות · {win}",
+      tileActive:"פעילים היום · עכשיו",
       tileActiveTip:"משתמשים שפתחו את האפליקציה היום, לפי חותמת last_seen_at שהשרת מטביע פעם בשעה",
       tileActiveNote:function(w,m){ return "שבוע: "+w+" · חודש: "+m; },
-      tileStick:"דביקות DAU/MAU",
+      tileStick:"דביקות DAU/MAU · עכשיו",
       tileStickTip:"Stickiness: איזה חלק מהמשתמשים החודשיים נכנסים ביום נתון - מדד הרגל. באפליקציות חברתיות גדולות 20%+ נחשב מצוין",
       tileStickNote:function(n){ return "משתמשים חיים: "+n; },
-      tileMsgs:"הודעות צ'אט · 7 ימים", tileMsgsNote:function(n){ return "בין "+n+" חיבורים פעילים"; },
-      tileMatches:"התאמות · 7 ימים",
+      tileMsgs:"הודעות צ'אט · {win}", tileMsgsNote:function(n){ return "בין "+n+" חיבורים פעילים"; },
+      tileMatches:"התאמות · {win}",
       tileMatchesTip:"חיבור בין שני שכנים סביב פוסט: סוויפ על הצעה פותח צ'אט מיד, סוויפ על בקשה ממתין לאישור",
-      tilePosts:"פוסטים · 7 ימים",
-      tileFeed:"בפיד עכשיו", tileFeedNote:"בקשות / הצעות",
-      prevWeek:function(n){ return "שבוע קודם: "+n; },
+      tilePosts:"פוסטים · {win}",
+      tileFeed:"בפיד · עכשיו", tileFeedNote:"בקשות / הצעות",
+      prevWeek:function(n){ return "התקופה הקודמת: "+n; },
       serDau:"DAU", serWau:"WAU", serRequests:"בקשות", serOffers:"הצעות",
       serMsgs:"הודעות", serSenders:"שולחים", serCreated:"התאמות", serCompleted:"השלמות",
       serPrev:"התקופה הקודמת",
@@ -886,21 +886,21 @@
       errExpired:"Your session expired - sign in again",
       errTimeout:"The server did not answer within 25 seconds - try again",
       updatedAgo:function(s){ return s<60? "updated "+s+"s ago" : "updated "+Math.round(s/60)+"m ago"; },
-      tileHero:"Helps completed · 7 days ⭐",
+      tileHero:"Helps completed · {win} ⭐",
       tileHeroTip:"Helpy's north star: helps the receiver marked as actually done",
-      tileSignups:"Signups · 7 days",
-      tileActive:"Active today",
+      tileSignups:"Signups · {win}",
+      tileActive:"Active today · now",
       tileActiveTip:"Users who opened the app today, by the hourly server-side last_seen_at stamp",
       tileActiveNote:function(w,m){ return "week: "+w+" · month: "+m; },
-      tileStick:"DAU/MAU stickiness",
+      tileStick:"DAU/MAU stickiness · now",
       tileStickTip:"What share of monthly users show up on a given day - the habit metric. 20%+ is excellent for big social apps",
       tileStickNote:function(n){ return "live users: "+n; },
-      tileMsgs:"Chat messages · 7 days", tileMsgsNote:function(n){ return "across "+n+" active matches"; },
-      tileMatches:"Matches · 7 days",
+      tileMsgs:"Chat messages · {win}", tileMsgsNote:function(n){ return "across "+n+" active matches"; },
+      tileMatches:"Matches · {win}",
       tileMatchesTip:"A connection between two neighbors around a post: swiping an offer opens chat instantly, swiping a request awaits approval",
-      tilePosts:"Posts · 7 days",
-      tileFeed:"In the feed now", tileFeedNote:"requests / offers",
-      prevWeek:function(n){ return "prev week: "+n; },
+      tilePosts:"Posts · {win}",
+      tileFeed:"In the feed · now", tileFeedNote:"requests / offers",
+      prevWeek:function(n){ return "previous period: "+n; },
       serDau:"DAU", serWau:"WAU", serRequests:"Requests", serOffers:"Offers",
       serMsgs:"Messages", serSenders:"Senders", serCreated:"Matches", serCompleted:"Completions",
       serPrev:"Previous period",
@@ -2104,14 +2104,22 @@
     var host=$("tiles"); host.innerHTML="";
     function tail(series,key,avg){ return sparkSeries(series,key,avg); }
     var S3=tok("--s3"), S7=tok("--s7"), S5=tok("--s5");
-    var hero=tile(S.tileHero, fmt(k.completed_7d),
-      {delta:k.completed_7d, prev:dl.completed_prev_7d,
+    // Tiles read the SAME window as the rest of the page: computed from the
+    // daily series, not from the fixed 7-day KPIs, so picking 90 days can never
+    // leave a tile claiming "7 days".
+    function winSum(series,keys){ return sumRows(rangeRows(series),keys); }
+    function prevSum(series,keys){ var pr=prevRows(series); return pr.length? sumRows(pr,keys):null; }
+
+    var hero=tile(S.tileHero, fmt(winSum(DATA.matches_by_day,["completed"])),
+      {delta:winSum(DATA.matches_by_day,["completed"]),
+       prev:prevSum(DATA.matches_by_day,["completed"]),
        tip:S.tileHeroTip,
        spark:tail(DATA.matches_by_day,"completed"), target:"chMatches"});
     hero.classList.add("hero");
     host.appendChild(hero);
-    host.appendChild(tile(S.tileSignups, fmt(k.signups_7d),
-      {delta:k.signups_7d, prev:dl.signups_prev_7d,
+    host.appendChild(tile(S.tileSignups, fmt(winSum(DATA.signups_by_day,["total"])),
+      {delta:winSum(DATA.signups_by_day,["total"]),
+       prev:prevSum(DATA.signups_by_day,["total"]),
        spark:tail(DATA.signups_by_day,"total"), dot:tok("--s1"), target:"chSignups"}));
     host.appendChild(tile(S.tileActive, fmt(k.seen_1d),
       {note:S.tileActiveNote(fmt(k.seen_7d),fmt(k.seen_30d)),
@@ -2122,15 +2130,18 @@
        tip:S.tileStickTip,
        bullet:{ val: k.seen_30d? Math.round(100*k.seen_1d/k.seen_30d):0,
                 target:20, max:30, bands:[10,20,30] }}));
-    host.appendChild(tile(S.tileMsgs, fmt(dl.messages_7d),
-      {delta:dl.messages_7d, prev:dl.messages_prev_7d,
+    host.appendChild(tile(S.tileMsgs, fmt(winSum(DATA.messages_by_day,["msgs"])),
+      {delta:winSum(DATA.messages_by_day,["msgs"]),
+       prev:prevSum(DATA.messages_by_day,["msgs"]),
        spark:tail(DATA.messages_by_day,"msgs"), dot:S3, target:"chMsgs"}));
-    host.appendChild(tile(S.tileMatches, fmt(k.matches_7d),
-      {delta:k.matches_7d, prev:dl.matches_prev_7d,
+    host.appendChild(tile(S.tileMatches, fmt(winSum(DATA.matches_by_day,["created"])),
+      {delta:winSum(DATA.matches_by_day,["created"]),
+       prev:prevSum(DATA.matches_by_day,["created"]),
        tip:S.tileMatchesTip,
        spark:tail(DATA.matches_by_day,"created"), dot:tok("--s2"), target:"chMatches"}));
-    host.appendChild(tile(S.tilePosts, fmt(dl.posts_7d),
-      {delta:dl.posts_7d, prev:dl.posts_prev_7d,
+    host.appendChild(tile(S.tilePosts, fmt(winSum(DATA.posts_by_day,["requests","offers"])),
+      {delta:winSum(DATA.posts_by_day,["requests","offers"]),
+       prev:prevSum(DATA.posts_by_day,["requests","offers"]),
        spark:tail(DATA.posts_by_day,"requests"), dot:tok("--s2"), target:"chPosts"}));
     host.appendChild(tile(S.tileFeed, fmt(k.active_requests)+" / "+fmt(k.active_offers),
       {note:S.tileFeedNote, dot:S5, target:"noOffer"}));
