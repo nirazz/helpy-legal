@@ -553,6 +553,7 @@
       <section class="panel"><h2 data-i18n="citiesTitle">ערים מובילות · {win}</h2><div class="sub" data-i18n="citiesSub">לפי עיר הפוסט</div><div id="chCities"></div></section>
       <section class="panel"><h2 data-i18n="cityLiqTitle">נזילות לפי עיר · {win}</h2><div class="sub" data-i18n="cityLiqSub">הרשת האטומית: ממוצע ארצי מסתיר אם יש עיר אחת שבאמת עובדת</div><div id="cityLiq" style="overflow-x:auto"></div></section>
       <section class="panel"><h2 data-i18n="supplyTitle">בריאות צד ההיצע</h2><div class="sub" data-i18n="supplySub">הצעה שיושבת בלי פנייה = עוזר/ת שעומדים לאבד</div><div id="supplyHealth"></div></section>
+      <section class="panel"><h2 data-i18n="densTitle">צפיפות שכנים סביב בקשה</h2><div class="sub" data-i18n="densSub">כמה שכנים היו יכולים באמת לראות את הבקשה, מול הסיכוי שהיא נענתה</div><div id="density"></div></section>
     </div>
 
     <div class="sechead" id="secChat" style="--sec-c:var(--s3)" data-i18n="secChatT">מעורבות בצ'אט</div>
@@ -782,6 +783,13 @@
       rdLifecycle:function(d,t,p){ return "<b>"+d+"</b> מתוך <b>"+t+"</b> המשתמשים (<b>"+p+"</b>) לא נראו מעל 30 יום. זהו הנכס הגדול ביותר שלך וגם החוב הגדול ביותר - קהל שכבר שילמת עליו ואינו פעיל."; },
       insMore:function(n){ return "הצגת "+n+" תובנות נוספות"; },
       insLess:"הצגת המובילות בלבד",
+      densTitle:"צפיפות שכנים סביב בקשה",
+      densSub:"כמה שכנים היו יכולים באמת לראות את הבקשה, מול הסיכוי שהיא נענתה",
+      densBand:"שכנים בטווח", densReqs:"בקשות", densAny:"קיבלו הצעה", dens24:"תוך 24 שעות",
+      densTip:"שכן נספר רק אם רדיוס החיפוש שלו מכסה את הבקשה, יש לו טוקן התראות, והוא פתח את האפליקציה ב-30 הימים האחרונים - כלומר מישהו שבאמת יכול היה לראות אותה",
+      densAvgAns:"ממוצע שכנים · בקשות שנענו", densAvgSil:"ממוצע שכנים · בקשות ששתקו",
+      densThin:"בקשות חיות באזור דליל (מתחת ל-10 שכנים)",
+      rdDens:function(ans,sil,thin){ return "בקשה שנענתה הייתה מוקפת <b>"+ans+"</b> שכנים בממוצע; בקשה ששתקה - <b>"+sil+"</b> בלבד. מתחת ל-10 שכנים בטווח, אף בקשה לא קיבלה מענה באותו יום. המסקנה חדה: המוצר עובד היכן שיש צפיפות ונכשל היכן שאין, ולכן <b>"+thin+"</b> הבקשות החיות באזור דליל הן אנשים שיקבלו שתיקה. זו הצדקה ישירה לרכז את כל תקציב הרכישה בעיר אחת במקום לפזר."; },
       tabArch:"ארכיטקטורה",
       archTitle:"איך Helpy עובד",
       archSub:"כל רכיב, מה מחובר למה, ואיפה כל דבר מאוחסן · ריחוף על מונח מקוצר מסביר אותו",
@@ -939,6 +947,13 @@
       rdLifecycle:function(d,t,p){ return "<b>"+d+"</b> of <b>"+t+"</b> users (<b>"+p+"</b>) have not been seen in over 30 days. That is both your biggest asset and your biggest debt - an audience you already paid for that is not active."; },
       insMore:function(n){ return "Show "+n+" more insights"; },
       insLess:"Show only the top ones",
+      densTitle:"Neighbour density around a request",
+      densSub:"How many neighbours could genuinely have seen it, against the odds it was answered",
+      densBand:"Neighbours in range", densReqs:"Requests", densAny:"Got an offer", dens24:"Within 24h",
+      densTip:"A neighbour counts only if their search radius covers the request, they hold a push token, and they opened the app in the last 30 days - someone who could actually have seen it",
+      densAvgAns:"Avg neighbours · answered requests", densAvgSil:"Avg neighbours · silent requests",
+      densThin:"Live requests in a thin area (under 10 neighbours)",
+      rdDens:function(ans,sil,thin){ return "An answered request sat among <b>"+ans+"</b> neighbours on average; a silent one among just <b>"+sil+"</b>. Below 10 neighbours in range, not one request was answered the same day. The conclusion is sharp: the product works where density exists and fails where it does not, so the <b>"+thin+"</b> live requests in thin areas are people about to be met with silence. This is direct justification for concentrating every acquisition shekel in one city instead of spreading."; },
       tabArch:"Architecture",
       archTitle:"How Helpy works",
       archSub:"Every component, what talks to what, and where things are stored · hover any abbreviation for an explanation",
@@ -1797,7 +1812,7 @@
   function renderResearch(){
     var R=DATA.research;
     // additive by design: without the research payload these panels just say so
-    ["cityLiq","supplyHealth","userStates","repeatRate"].forEach(function(id){
+    ["cityLiq","supplyHealth","userStates","repeatRate","density"].forEach(function(id){
       var h=$(id); if(h && !R){ h.innerHTML=""; h.appendChild(el("p","note",S.noData)); }
     });
     if(!R) return;
@@ -1885,6 +1900,41 @@
       us.appendChild(el("p","note",S.stCaption));
       panelRead("userStates", (ST.new_u/totalU)>0.5?"warn":"",
         S.rdStates(pct(ST.new_u,totalU), pct(ST.current_u,totalU)));
+    }
+
+    // neighbour density: the measured liquidity driver
+    var dn=$("density");
+    if(dn){
+      dn.innerHTML="";
+      var D=R.density;
+      if(!D || !D.requests){ dn.appendChild(el("p","note",S.noData)); }
+      else {
+        var dt=el("table","plain");
+        var dh=el("tr");
+        var th0=el("th");
+        var dterm=el("span","term",S.densBand); dterm.setAttribute("data-tip",S.densTip);
+        th0.appendChild(dterm); dh.appendChild(th0);
+        [S.densReqs,S.densAny,S.dens24].forEach(function(h){ dh.appendChild(el("th",null,h)); });
+        dt.appendChild(dh);
+        (D.buckets||[]).forEach(function(b){
+          var tr=el("tr");
+          tr.appendChild(el("td",null,b.band));
+          tr.appendChild(el("td",null,fmt(b.requests)));
+          tr.appendChild(el("td",null,b.any_offer+"%"));
+          var td=el("td",null,b.offer_24h+"%");
+          if(b.offer_24h===0) td.style.color="var(--bad-text)";
+          tr.appendChild(td);
+          dt.appendChild(tr);
+        });
+        dn.appendChild(dt);
+        var dt2=el("table","plain");
+        statRow(dt2,S.densAvgAns,fmt(D.avg_reach_answered));
+        statRow(dt2,S.densAvgSil,fmt(D.avg_reach_silent));
+        statRow(dt2,S.densThin,fmt(D.thin_live));
+        dn.appendChild(dt2);
+        panelRead("density", D.thin_live>0?"bad":"good",
+          S.rdDens(fmt(D.avg_reach_answered), fmt(D.avg_reach_silent), fmt(D.thin_live)));
+      }
     }
 
     // requester repeat rate vs the 35% expansion gate
