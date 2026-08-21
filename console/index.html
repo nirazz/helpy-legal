@@ -124,8 +124,8 @@
 
   /* Stripe-pattern: period total + delta + previous-period figure above a chart */
   .cmp { display:flex; align-items:baseline; gap:10px; margin:2px 0 10px; }
-  .cmp b { font-family:"Orbitron","Heebo",sans-serif; font-weight:600; font-size:19px;
-           font-variant-numeric:tabular-nums; text-shadow:var(--num-glow); }
+  .cmp b { font-family:"Heebo",system-ui,sans-serif; font-weight:800; font-size:21px;
+           letter-spacing:.01em; font-variant-numeric:tabular-nums; }
   .cmp .delta { font-size:12.5px; font-weight:600; }
   .cmp .delta.up { color:var(--good-text); }
   .cmp .delta.down { color:var(--bad-text); }
@@ -168,6 +168,19 @@
   .panel.vis { opacity:1; transform:none; }
   @media (prefers-reduced-motion: reduce){ .panel{ opacity:1; transform:none; } }
   .clickable { cursor:pointer; }
+  /* proportional segmented bar (user states, supply/demand mix).
+     Must never wrap - a wrapped "stacked" bar reads as N full-width bars. */
+  .segbar { display:flex; flex-wrap:nowrap; height:30px; border-radius:8px;
+            overflow:hidden; gap:2px; margin:6px 0 12px; direction:ltr; }
+  .segbar span { display:flex; align-items:center; justify-content:center;
+                 min-width:0; overflow:hidden; color:#fff; font-size:12px;
+                 font-weight:700; font-variant-numeric:tabular-nums;
+                 transition:flex-grow .6s cubic-bezier(.2,.8,.2,1); }
+  .seglegend { display:flex; flex-wrap:wrap; gap:6px 16px; font-size:12.5px;
+               color:var(--ink2); margin-bottom:4px; }
+  .seglegend i { width:9px; height:9px; border-radius:3px; display:inline-block;
+                 margin-inline-end:6px; vertical-align:-1px; }
+  .seglegend b { color:var(--ink); font-variant-numeric:tabular-nums; }
   /* Depth the Apple way: material, light and elevation - NOT 3D chart geometry
      (3D distorts value reading; NN/g lists it as a dashboard anti-pattern).
      Panels sit on layered light: a specular top edge, a soft cast shadow, and
@@ -213,6 +226,9 @@
   .ins.bad  .dot { background:var(--bad-text); }
   .ins.info .dot { background:var(--baseline); }
   .ins b { font-variant-numeric:tabular-nums; }
+  .ins.lead { font-size:14.5px; font-weight:500; padding:10px 0; }
+  .ins.lead .dot { width:11px; height:11px; }
+  .ins.rest { font-size:13px; color:var(--ink2); }
   @keyframes rise { from { opacity:0; transform:translateY(10px); } }
   .tile { background:var(--glass); border:1px solid var(--hairline);
           backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
@@ -224,9 +240,11 @@
                 box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),
                            0 8px 24px rgba(45,45,100,0.14), 0 0 18px rgba(99,102,241,0.14); }
   .tile .lbl { font-size:12px; color:var(--ink2); }
-  .tile .val { font-size:23px; font-weight:600; margin:4px 0;
-               font-family:"Orbitron","Heebo",sans-serif;
-               font-variant-numeric:tabular-nums; text-shadow:var(--num-glow); }
+  /* NUMBERS use Heebo 800: Orbitron draws a slashed zero, so a north-star of 0
+     read as an error glyph. Orbitron stays for identity (brand, eyebrows). */
+  .tile .val { font-size:26px; font-weight:800; margin:4px 0; letter-spacing:.01em;
+               font-family:"Heebo",system-ui,sans-serif;
+               font-variant-numeric:tabular-nums; }
   /* bullet graph (Few): qualitative bands + measure bar + target tick.
      Replaces the earlier ring gauge - gauges are a documented dashboard
      anti-pattern (angle encoding reads poorly). */
@@ -571,7 +589,7 @@
       signupsTitle:"הרשמות", signupsSub:"משתמשים חדשים לפי פלטפורמה",
       dauTitle:"משתמשים פעילים",
       dauSub:'<span class="term" data-tip="Daily Active Users - כמה משתמשים שונים פתחו את האפליקציה באותו יום">DAU</span> ו-<span class="term" data-tip="Weekly Active Users - כמה משתמשים שונים פתחו את האפליקציה בשבעת הימים האחרונים">WAU</span> מתוך <span class="term" data-tip="חותמת שהשרת מטביע פעם בשעה לכל משתמש שפותח את האפליקציה - מקור האמת למדידת פעילות">דגימת last_seen_at</span> יומית',
-      funnelTitle:"משפך הפעלה", d14:"14 יום", d30:"30 יום", funnelSub:"מה עושה משתמש חדש אחרי ההרשמה",
+      funnelTitle:"פעולות אחרי הרשמה", d14:"14 יום", d30:"30 יום", funnelSub:"מה עושה משתמש חדש אחרי ההרשמה · השלבים נמדדים במקביל, לא כרצף",
       lifecycleTitle:"מאזן משתמשים", lifecycleSub:"חתך חי של כל המשתמשים הרשומים",
       postsTitle:"פוסטים", postsSub:"בקשות עזרה מול הצעות עזרה",
       matchesTitle:"התאמות והשלמות", matchesSub:"התאמות חדשות מול עזרות שסומנו כהושלמו",
@@ -688,6 +706,23 @@
       },
       vNoBase:function(cur,unit){ return "<b>"+cur+"</b> "+unit+" בטווח הנבחר · אין תקופה קודמת להשוואה."; },
       vPeak:function(v,d){ return "השיא: <b>"+v+"</b> ב-"+d+"."; },
+      vSmallBase:function(cur,prev,unit){ return "<b>"+cur+"</b> "+unit+" מול "+prev+" בתקופה הקודמת - הבסיס קטן מדי מכדי שאחוז שינוי יהיה משמעותי."; },
+      rdLiq:function(p,med,tgt){ return "מתוך הבקשות שנפתחו, <b>"+p+"%</b> קיבלו הצעה תוך 24 שעות והחציון עומד על <b>"+med+"</b>. ביקוש שממתין יותר מיממה כמעט אף פעם לא חוזר לבקש - זה המקום שבו נשברת הנזילות."; },
+      rdLiqGood:function(p,med){ return "<b>"+p+"%</b> מהבקשות נענות תוך 24 שעות (חציון <b>"+med+"</b>) - צד הביקוש מקבל שירות סביר."; },
+      rdSupply:function(u,idle,ttfm){ return "<b>"+u+"%</b> ניצולת: <b>"+idle+"</b> הצעות יושבות בלי פנייה אחת, וחציון ההמתנה לפנייה ראשונה הוא <b>"+ttfm+"</b>. עוזר שלא קיבל פנייה בשבועיים הראשונים כמעט תמיד נוטש - ניתוב ביקוש להצעות החדשות זול בהרבה מגיוס עוזרים נוספים."; },
+      rdCities:function(city,n,p,others){ return "<b>"+city+"</b> מרכזת <b>"+n+"</b> בקשות עם מילוי של <b>"+p+"</b>, וכל שאר הערים יחד מגיעות ל-"+others+" בקשות בלבד. אפקט רשת נבנה בעיר אחת - פיזור ארצי מדלל אותו."; },
+      rdStates:function(np,rp){ return "<b>"+np+"</b> מהפעילים השבוע הם נרשמים חדשים ורק <b>"+rp+"</b> הם ממשיכים מהשבוע שעבר - הצמיחה כרגע היא רכישה, לא הצטברות. אם קצב הרכישה ייעצר, הפעילות תיעלם כמעט כולה."; },
+      rdRepeat:function(p,a,b){ return "רק <b>"+a+"</b> מתוך <b>"+b+"</b> המבקשים חזרו לבקש שוב (<b>"+p+"%</b> מול רף מקובל של 35%). חזרה לבקש היא עדות ה-PMF החזקה ביותר - בלעדיה כל בקשה היא רכישה מחדש."; },
+      rdChat:function(tw,med){ return "<b>"+tw+"</b> מהשיחות קיבלו מענה דו-כיווני, בחציון של <b>"+med+"</b>. מי שכן עונה - עונה מהר; הבעיה אינה מהירות אלא כמות הפניות שנשארות ללא מענה."; },
+      rdCats:function(cat,n){ return "<b>"+cat+"</b> היא הקטגוריה הגדולה ביותר (<b>"+n+"</b> פוסטים). בכל הקטגוריות ההצעות עולות על הבקשות - התמהיל מאשר שהמחסור הוא בביקוש, לא בהיצע."; },
+      rdNoOffer:function(n,oldest){ return "<b>"+n+"</b> בקשות פתוחות ללא ולו הצעה אחת, הוותיקה שבהן בת <b>"+oldest+"</b>. בקשה שלא נענתה תוך שבוע כבר לא רלוונטית למבקש - כדאי לסגור או לרענן אותן."; },
+      rdRet:function(d1,d7,d30){ return "יום ראשון <b>"+d1+"%</b> (מתחת לבנצ׳מרק 25%), אבל שבוע <b>"+d7+"%</b> וחודש <b>"+d30+"%</b> מעל הבנצ׳מרק. מי שנשאר נדבק חזק מהממוצע - הבעיה ממוקדת ביום הראשון, לא בשימור לאורך זמן."; },
+      rdFunnel:function(a,b){ return "מתוך <b>"+a+"</b> נרשמים רק <b>"+b+"</b> שלחו הודעה. שים לב שהשלבים כאן אינם רצף - מיקום והתראות נמדדים במקביל, לא זה אחרי זה."; },
+      rdSafety:function(r,bl,dl){ return "<b>"+dl+"</b> מחיקות חשבון מול <b>"+r+"</b> דיווחים ו-<b>"+bl+"</b> חסימות. נטישה שקטה, לא בעיית בטיחות - אנשים לא נפגעים, הם פשוט לא מוצאים ערך."; },
+      rdTopUsers:function(name,share){ return "<b>"+name+"</b> לבד אחראי/ת ל-<b>"+share+"</b> מפעילות המשתמשים הבולטים. ריכוז כזה אומר שהמדדים רגישים מאוד לאדם בודד - אם הוא עוזב, הגרפים ייפלו."; },
+      rdLifecycle:function(d,t,p){ return "<b>"+d+"</b> מתוך <b>"+t+"</b> המשתמשים (<b>"+p+"</b>) לא נראו מעל 30 יום. זהו הנכס הגדול ביותר שלך וגם החוב הגדול ביותר - קהל שכבר שילמת עליו ואינו פעיל."; },
+      insMore:function(n){ return "הצגת "+n+" תובנות נוספות"; },
+      insLess:"הצגת המובילות בלבד",
       tileJump:"לחיצה קופצת לגרף המלא ומדגישה אותו",
       sparkTip:"12 שבועות אחרונים · סכום שבועי",
       themeBtn:{light:"🌙 כהה", dark:"☀️ בהיר"}, langBtn:"English"
@@ -705,7 +740,7 @@
       signupsTitle:"Signups", signupsSub:"New users by platform",
       dauTitle:"Active users",
       dauSub:'<span class="term" data-tip="Daily Active Users - distinct users who opened the app that day">DAU</span> and <span class="term" data-tip="Weekly Active Users - distinct users who opened the app in the last 7 days">WAU</span> from the daily <span class="term" data-tip="a server-side stamp written once an hour for every user who opens the app - the source of truth for activity">last_seen_at sample</span>',
-      funnelTitle:"Activation funnel", d14:"14 days", d30:"30 days", funnelSub:"What a new user does after signing up",
+      funnelTitle:"Actions after signup", d14:"14 days", d30:"30 days", funnelSub:"What a new user does after signing up · steps are measured in parallel, not as a sequence",
       lifecycleTitle:"User balance", lifecycleSub:"A live cut of all registered users",
       postsTitle:"Posts", postsSub:"Help requests vs. help offers",
       matchesTitle:"Matches & completions", matchesSub:"New matches vs. helps marked completed",
@@ -822,6 +857,23 @@
       },
       vNoBase:function(cur,unit){ return "<b>"+cur+"</b> "+unit+" in range · no previous period to compare."; },
       vPeak:function(v,d){ return "Peak: <b>"+v+"</b> on "+d+"."; },
+      vSmallBase:function(cur,prev,unit){ return "<b>"+cur+"</b> "+unit+" vs "+prev+" in the previous period - the base is too small for a percentage to mean anything."; },
+      rdLiq:function(p,med,tgt){ return "Of the requests opened, <b>"+p+"%</b> got an offer within 24h and the median wait is <b>"+med+"</b>. Demand that waits longer than a day rarely comes back to ask again - this is where liquidity breaks."; },
+      rdLiqGood:function(p,med){ return "<b>"+p+"%</b> of requests are answered within 24h (median <b>"+med+"</b>) - the demand side is getting reasonable service."; },
+      rdSupply:function(u,idle,ttfm){ return "<b>"+u+"%</b> utilization: <b>"+idle+"</b> offers sit without a single opener, and the median wait for a first opener is <b>"+ttfm+"</b>. A helper who gets nothing in the first fortnight almost always churns - routing demand to new offers is far cheaper than recruiting more helpers."; },
+      rdCities:function(city,n,p,others){ return "<b>"+city+"</b> holds <b>"+n+"</b> requests at <b>"+p+"</b> fill, while every other city combined reaches only "+others+". Network effects build in one city - spreading nationally dilutes them."; },
+      rdStates:function(np,rp){ return "<b>"+np+"</b> of this week's actives are brand-new signups and only <b>"+rp+"</b> carried over from last week - growth right now is acquisition, not accumulation. Stop the spend and the activity nearly vanishes."; },
+      rdRepeat:function(p,a,b){ return "Only <b>"+a+"</b> of <b>"+b+"</b> requesters came back to ask again (<b>"+p+"%</b> vs a 35% norm). Asking twice is the strongest PMF evidence there is - without it every request is a fresh acquisition."; },
+      rdChat:function(tw,med){ return "<b>"+tw+"</b> of conversations got a two-way reply, at a median of <b>"+med+"</b>. Those who answer, answer fast; the problem is not speed but how many openers get no answer at all."; },
+      rdCats:function(cat,n){ return "<b>"+cat+"</b> is the largest category (<b>"+n+"</b> posts). Offers outnumber requests in every category - the mix confirms the shortage is demand, not supply."; },
+      rdNoOffer:function(n,oldest){ return "<b>"+n+"</b> open requests have not a single offer, the oldest <b>"+oldest+"</b> old. A request unanswered for a week is no longer relevant to its asker - close or refresh them."; },
+      rdRet:function(d1,d7,d30){ return "Day one is <b>"+d1+"%</b> (below the 25% benchmark), but week <b>"+d7+"%</b> and month <b>"+d30+"%</b> are above it. Whoever stays sticks harder than average - the problem is concentrated in day one, not in long-term retention."; },
+      rdFunnel:function(a,b){ return "Of <b>"+a+"</b> signups only <b>"+b+"</b> sent a message. Note these steps are not a sequence - location and push are measured in parallel, not one after the other."; },
+      rdSafety:function(r,bl,dl){ return "<b>"+dl+"</b> account deletions against <b>"+r+"</b> reports and <b>"+bl+"</b> blocks. This is quiet churn, not a safety problem - people are not getting hurt, they are just not finding value."; },
+      rdTopUsers:function(name,share){ return "<b>"+name+"</b> alone accounts for <b>"+share+"</b> of top-user activity. That concentration makes the metrics hostage to one person - if they leave, the charts fall."; },
+      rdLifecycle:function(d,t,p){ return "<b>"+d+"</b> of <b>"+t+"</b> users (<b>"+p+"</b>) have not been seen in over 30 days. That is both your biggest asset and your biggest debt - an audience you already paid for that is not active."; },
+      insMore:function(n){ return "Show "+n+" more insights"; },
+      insLess:"Show only the top ones",
       tileJump:"Click to jump to the full chart and highlight it",
       sparkTip:"Last 12 weeks · weekly totals",
       themeBtn:{light:"🌙 Dark", dark:"☀️ Light"}, langBtn:"עברית"
@@ -1415,6 +1467,12 @@
     var txt, cls="";
     if(prev==null || prev===0){
       txt=S.vNoBase(fmt(cur), opts.unit||S.uItems);
+    } else if(prev < 10){
+      // a % change off a base this small is noise, not information - state the
+      // raw move instead of printing "up 1244%"
+      var d0=cur-prev;
+      cls = d0>0?"good":d0<0?"bad":"";
+      txt=S.vSmallBase(fmt(cur), fmt(prev), opts.unit||S.uItems);
     } else {
       var pc=Math.round(100*(cur-prev)/prev);
       var dir=pc>0?"up":pc<0?"down":"flat";
@@ -1427,6 +1485,26 @@
     if(cls) v.classList.add(cls);
     v.appendChild(el("span","vi", cls==="good"?"\u25B2":cls==="bad"?"\u25BC":cls==="warn"?"\u2192":"\u2022"));
     var body=el("span"); body.innerHTML=txt; // trusted: our own dictionary + numbers
+    v.appendChild(body);
+  }
+
+  function humanMin(m){
+    if(m==null) return "-";
+    if(m<120) return fmt(m)+" "+S.minutes;
+    if(m<48*60) return fmt(Math.round(m/60))+" "+S.hours;
+    return fmt(Math.round(m/1440))+" "+S.daysUnit;
+  }
+  // An expert reading for a panel that is not a time chart. Appended at the END
+  // of the panel (a table needs its numbers first, then the interpretation).
+  function panelRead(hostId, cls, html){
+    var host=$(hostId); if(!host) return;
+    var panel=host.closest("section.panel"); if(!panel) return;
+    var v=panel.querySelector(".verdict.read");
+    if(!v){ v=el("div","verdict read"); panel.appendChild(v); }
+    v.className="verdict read"+(cls?" "+cls:"");
+    v.innerHTML="";
+    v.appendChild(el("span","vi", cls==="good"?"\u25B2":cls==="bad"?"\u25BC":cls==="warn"?"\u2192":"\u25CF"));
+    var body=el("span"); body.innerHTML=html; // trusted: our dictionary + numbers
     v.appendChild(body);
   }
 
@@ -1478,13 +1556,23 @@
       for(var i=0;i<rows.length;i++){ if(String(rows[i].d).slice(0,10)<=a.d) idx=i; else break; }
       (byIdx[idx]=byIdx[idx]||[]).push(LANG==="he"? a.he : a.en);
     });
-    return Object.keys(byIdx).map(function(idx,i){
-      var nm=byIdx[idx].join(" · ");
-      if(nm.length>22) nm=nm.slice(0,21)+"…";
+    // merge marks that land too close to each other to be labelled separately
+    // (at weekly grain three releases can share two adjacent buckets)
+    var idxs=Object.keys(byIdx).map(Number).sort(function(a,b){return a-b;});
+    var minGap=Math.max(2, Math.round(rows.length/9));
+    var merged=[];
+    idxs.forEach(function(ix){
+      var last=merged[merged.length-1];
+      if(last && ix-last.idx < minGap) last.names=last.names.concat(byIdx[ix]);
+      else merged.push({idx:ix, names:byIdx[ix].slice()});
+    });
+    return merged.map(function(m,i){
+      var nm=m.names.join(" · ");
+      if(nm.length>20) nm=nm.slice(0,19)+"…";
       return {
-        xAxis:+idx, name:nm,
-        // horizontal labels at the top, staggered so neighbours never overlap
-        label:{ distance:[0,(i%2)*12] }
+        xAxis:m.idx, name:nm,
+        // horizontal labels above the plot, alternating over 2 rows
+        label:{ distance:[0,(i%2)*13] }
       };
     });
   }
@@ -1514,6 +1602,7 @@
     },380);
   }
   function scrollToEl(id){ return function(){ flashTo(id); }; }
+  var insightsAll=false;
   function renderInsights(){
     var k=DATA.kpis, dl=DATA.deltas||{}, f=DATA.funnel_30d, L=DATA.liquidity,
         C=DATA.chat_stats||{}, NO=DATA.no_offer_requests||{}, lf=DATA.lifecycle||{};
@@ -1551,7 +1640,23 @@
       }
     }
     if(lf.dormant_30d) rows.push(["info",S.insDormant(fmt(lf.dormant_30d),fmt(k.live_users))]);
-    rows.forEach(function(r){ host.appendChild(insight(r[0],r[1],r[2])); });
+    // severity order first, then only the top 3 stay loud - a wall of ten
+    // equal rows means nothing stands out (Few: attention is zero-sum)
+    var rank={bad:0,warn:1,good:2,info:3};
+    rows.sort(function(a,b){ return (rank[a[0]]||9)-(rank[b[0]]||9); });
+    rows.forEach(function(r,i){
+      var row=insight(r[0],r[1],r[2]);
+      if(i<3) row.classList.add("lead");
+      else { row.classList.add("rest"); if(!insightsAll) row.classList.add("hidden"); }
+      host.appendChild(row);
+    });
+    if(rows.length>3){
+      var more=el("button","linklike",
+        insightsAll? S.insLess : S.insMore(rows.length-3));
+      more.type="button";
+      more.addEventListener("click",function(){ insightsAll=!insightsAll; renderInsights(); });
+      host.appendChild(more);
+    }
   }
 
   // blended retention curve (mature cohorts only) vs the social-app benchmark -
@@ -1602,6 +1707,10 @@
           itemStyle:{ color:muted }, symbol:"none" }
       ]
     }, { replaceMerge:["series"] });
+    if(ours[0]!=null){
+      panelRead("chRetention", ours[0]<25?"warn":"good",
+        S.rdRet(ours[0], ours[1]==null?"-":ours[1], ours[2]==null?"-":ours[2]));
+    }
   }
   // ---- research metrics (RPC v4: repeat, supply, states, per-city) ---------
   // one labelled row with a value; opts.tip adds a glossary hover
@@ -1670,19 +1779,29 @@
     var totalU=parts.reduce(function(a,p){ return a+(+p[1]||0); },0);
     if(!totalU){ us.appendChild(el("p","note",S.noData)); }
     else {
-      var bar=el("div","balance");
+      // legend above, one proportional bar below - a share is read by LENGTH
+      var lg=el("div","seglegend");
       parts.forEach(function(p){
         if(!p[1]) return;
-        var seg=el("div"); seg.style.background=p[2];
+        var it=el("span");
+        var sw=el("i"); sw.style.background=p[2]; it.appendChild(sw);
+        it.appendChild(document.createTextNode(p[0]+" "));
+        var b=el("b",null,fmt(p[1])+" ("+pct(p[1],totalU)+")");
+        it.appendChild(b);
+        lg.appendChild(it);
+      });
+      us.appendChild(lg);
+      var bar=el("div","segbar");
+      parts.forEach(function(p){
+        if(!p[1]) return;
+        var seg=el("span"); seg.style.background=p[2];
         seg.style.flexGrow=p[1]; seg.style.flexBasis="0";
-        seg.textContent=p[1];
-        seg.title=p[0]+": "+p[1];
+        // only label a slice wide enough to hold the number
+        if(p[1]/totalU >= 0.08) seg.textContent=fmt(p[1]);
+        seg.title=p[0]+": "+fmt(p[1])+" ("+pct(p[1],totalU)+")";
         bar.appendChild(seg);
       });
       us.appendChild(bar);
-      var lt2=el("table","plain");
-      parts.forEach(function(p){ statRow(lt2,p[0],fmt(p[1]||0)+" · "+pct(p[1]||0,totalU)); });
-      us.appendChild(lt2);
       us.appendChild(el("p","note",S.stCaption));
     }
 
@@ -1810,6 +1929,9 @@
       lt0.appendChild(tr);
     });
     var lch=$("lifecycle"); lch.innerHTML=""; lch.appendChild(lt0);
+    if(k.live_users) panelRead("lifecycle",
+      (lf.dormant_30d/k.live_users)>0.5?"warn":"",
+      S.rdLifecycle(fmt(lf.dormant_30d), fmt(k.live_users), pct(lf.dormant_30d,k.live_users)));
 
     // funnel: ordinal sequential ramp (starts at step 250 per the ramp rule)
     var f=segVal("funnelSeg")===30? DATA.funnel_30d : DATA.funnel_14d;
@@ -1821,6 +1943,8 @@
     hbars("funnel",steps.map(function(s,i){
       return {label:s[0], v1:s[1], c1:ramp[i], suffix:" · "+pct(s[1],f.signups)};
     }));
+    panelRead("funnel", (f.messaged/Math.max(f.signups,1))<0.1?"bad":"warn",
+      S.rdFunnel(fmt(f.signups), fmt(f.messaged)));
 
     hbars("chCats",(DATA.categories_30d||[]).map(function(c){
       return {label:c.category, v1:c.requests, c1:S1, v2:c.offers, c2:S2,
@@ -1830,6 +1954,8 @@
     hbars("chCities",(DATA.cities_30d||[]).map(function(c,i){
       return {label:c.city, v1:c.posts, c1:pal(i)};
     }));
+    var CT=DATA.categories_30d||[];
+    if(CT.length) panelRead("chCats","",S.rdCats(CT[0].category, fmt(CT[0].requests+CT[0].offers)));
 
     // cohort heatmap on the sequential ramp; ink picked by fill luminance
     var seq=[tok("--seq100"),tok("--seq250"),tok("--seq400"),tok("--seq550"),tok("--seq700")];
@@ -1903,6 +2029,10 @@
       lt.appendChild(tr);
     });
     lq.appendChild(lt);
+    var lq24=L.requests_30d? Math.round(100*L.with_offer_24h/L.requests_30d):0;
+    panelRead("liquidity", lq24<50?"bad":"good",
+      lq24<50 ? S.rdLiq(lq24, humanMin(L.median_minutes_to_first_offer))
+              : S.rdLiqGood(lq24, humanMin(L.median_minutes_to_first_offer)));
 
     var C=DATA.chat_stats||{};
     var ct=el("table","plain");
@@ -1922,6 +2052,9 @@
       ct.appendChild(tr);
     });
     var chh=$("chatHealth"); chh.innerHTML=""; chh.appendChild(ct);
+    if(C.convos_30d) panelRead("chatHealth",
+      (C.two_way_30d/C.convos_30d)<0.6?"warn":"good",
+      S.rdChat(pct(C.two_way_30d,C.convos_30d), humanMin(C.median_first_reply_minutes)));
 
     // active requests with zero offers
     var NO=DATA.no_offer_requests||{count:0,items:[]};
@@ -1940,6 +2073,9 @@
         nt.appendChild(tr);
       });
       noHost.appendChild(nt);
+      var oldest=(NO.items||[]).reduce(function(a,it){ return Math.max(a,it.days||0); },0);
+      panelRead("noOffer", NO.count>5?"warn":"",
+        S.rdNoOffer(fmt(NO.count), oldest? fmt(oldest)+" "+S.daysUnit : S.today));
     }
 
     // most active users
@@ -1965,6 +2101,10 @@
         ut.appendChild(tr);
       });
       tuHost.appendChild(ut);
+      var score=function(u){ return (u.posts||0)*2+(u.matches||0)*3+(u.msgs||0); };
+      var tot=TU.reduce(function(a,u){ return a+score(u); },0);
+      if(tot) panelRead("topUsers", score(TU[0])/tot>0.3?"warn":"",
+        S.rdTopUsers(TU[0].name, pct(score(TU[0]),tot)));
     }
 
     renderResearch();
@@ -1977,6 +2117,8 @@
       st.appendChild(tr);
     });
     var sf=$("safety"); sf.innerHTML=""; sf.appendChild(st);
+    panelRead("safety", SF.deletions_30d > (SF.reports_30d+SF.blocks_30d)*3 ? "warn" : "",
+      S.rdSafety(fmt(SF.reports_30d), fmt(SF.blocks_30d), fmt(SF.deletions_30d)));
   }
 
   // ---- chat view -----------------------------------------------------------
