@@ -825,9 +825,9 @@
       tileActive:"פעילים היום · עכשיו",
       tileActiveTip:"משתמשים שפתחו את האפליקציה היום, לפי חותמת last_seen_at שהשרת מטביע פעם בשעה",
       tileActiveNote:function(w,m){ return "שבוע: "+w+" · חודש: "+m; },
-      tileStick:"דביקות DAU/MAU · עכשיו",
-      tileStickTip:"Stickiness: איזה חלק מהמשתמשים החודשיים נכנסים ביום נתון. הרף המקובל של 20% מגיע מאפליקציות לשימוש יומי - Helpy אפיזודית, ולכן הרף הזה כנראה אינו המדד הנכון עבורה",
-      tileStickNote:function(n){ return "משתמשים חיים: "+n; },
+      tileStick:"דביקות WAU/MAU · עכשיו",
+      tileStickTip:"דביקות: איזה חלק מהמשתמשים החודשיים נכנסו במהלך השבוע האחרון. זהו המדד ההוגן לאפליקציה אפיזודית כמו Helpy - פותחים אותה כשצריך עזרה, לא כל יום. יעד סביר: 40-50%",
+      tileStickNote:function(w,m){ return w+" בשבוע · "+m+" בחודש"; },
       tileMsgs:"הודעות צ'אט · {win}", tileMsgsNote:function(n){ return "בין "+n+" חיבורים פעילים"; },
       tileMatches:"התאמות · {win}",
       tileMatchesTip:"חיבור בין שני שכנים סביב פוסט: סוויפ על הצעה פותח צ'אט מיד, סוויפ על בקשה ממתין לאישור",
@@ -952,7 +952,7 @@
         repeat:"מקור חיצוני: 35% חזרה תוך 90 יום מצוטט כשער להתרחבות במרקטפלייסים. הרף גבוה יחסית ומתאים למרקטפלייס בוגר - בשלב שלך הכיוון חשוב יותר מהמספר עצמו.",
         fill24:"היעד הזה נקבע על ידי, לא מתוך מקור: מחקרי מרקטפלייס שירותים מדברים על 80% מילוי תוך 48 שעות. 50% תוך 24 שעות הוא יעד ביניים ריאלי לשלב הנוכחי, ולא סטנדרט תעשייה.",
         util:"מקור חיצוני: ספקי שירות נוטשים בחדות כשהניצולת יורדת מתחת ל-30% מהזמינות שלהם. זהו הרף שמצוטט במרקטפלייסים של שירותים.",
-        stick:"זהירות: 20% DAU/MAU מגיע מאפליקציות שנועדו לשימוש יומי. Helpy היא אפליקציה אפיזודית - משתמשים בה כשצריך עזרה - ולכן הרף הזה כנראה אינו המדד הנכון עבורה. WAU/MAU יהיה מדד הוגן יותר.",
+        stick:"מקור חיצוני, עם התאמה: 40-50% WAU/MAU הוא שאיפה סבירה לאפליקציה אפיזודית. הכרטיס הזה הציג בעבר DAU/MAU מול רף של 20% - רף שמגיע מאפליקציות לשימוש יומי והשווה את Helpy למבחן שלא נועדה לעבור.",
         density:"נמדד מהנתונים שלך, לא ממקור חיצוני: מתוך הבקשות ב-90 הימים האחרונים, אף בקשה עם פחות מ-10 שכנים בטווח לא קיבלה מענה באותו יום, מול 90% מענה בבקשות עם 60+ שכנים.",
         cluster:"הסף נקבע על ידי: אשכול שמחזיק 25% מהביקוש הוא גדול מספיק כדי להצדיק קטגוריה משלו. זו הערכה מוצרית ולא מספר מהספרות."
       },
@@ -1065,9 +1065,9 @@
       tileActive:"Active today · now",
       tileActiveTip:"Users who opened the app today, by the hourly server-side last_seen_at stamp",
       tileActiveNote:function(w,m){ return "week: "+w+" · month: "+m; },
-      tileStick:"DAU/MAU stickiness · now",
-      tileStickTip:"What share of monthly users show up on a given day. The usual 20% bar comes from daily-use apps - Helpy is episodic, so that bar is probably the wrong measure for it",
-      tileStickNote:function(n){ return "live users: "+n; },
+      tileStick:"WAU/MAU stickiness · now",
+      tileStickTip:"Stickiness: what share of monthly users showed up during the last week. This is the fair measure for an episodic app like Helpy - opened when help is needed, not daily. A sane aspiration: 40-50%",
+      tileStickNote:function(w,m){ return w+" weekly · "+m+" monthly"; },
       tileMsgs:"Chat messages · {win}", tileMsgsNote:function(n){ return "across "+n+" active matches"; },
       tileMatches:"Matches · {win}",
       tileMatchesTip:"A connection between two neighbors around a post: swiping an offer opens chat instantly, swiping a request awaits approval",
@@ -1192,7 +1192,7 @@
         repeat:"External source: 35% repeat within 90 days is cited as a marketplace expansion gate. It is a high bar suited to a mature marketplace - at your stage the direction matters more than the number.",
         fill24:"This target is mine, not from a source: services-marketplace research cites 80% filled within 48 hours. 50% within 24 hours is a realistic interim target for this stage, not an industry standard.",
         util:"External source: service providers churn sharply once utilization falls below 30% of their availability - the figure cited for services marketplaces.",
-        stick:"Caution: 20% DAU/MAU comes from apps designed for daily use. Helpy is episodic - people open it when they need help - so this bar is probably the wrong measure for it. WAU/MAU would be fairer.",
+        stick:"External source, adjusted: 40-50% WAU/MAU is a sane aspiration for an episodic app. This tile previously showed DAU/MAU against a 20% bar - a bar borrowed from daily-use apps that graded Helpy against a test it was never built to pass.",
         density:"Measured from your own data, not an external source: among requests in the last 90 days, not one with fewer than 10 neighbours in range was answered same-day, against 90% answered where there were 60+.",
         cluster:"The threshold is mine: a cluster holding 25% of demand is large enough to justify its own category. A product judgement, not a figure from the literature."
       },
@@ -2554,11 +2554,13 @@
       {note:S.tileActiveNote(fmt(k.seen_7d),fmt(k.seen_30d)),
        tip:S.tileActiveTip,
        spark:tail(DATA.dau_by_day,"dau",true), dot:tok("--s1"), target:"chDau"}));
-    host.appendChild(tile(S.tileStick, pct(k.seen_1d,k.seen_30d),
-      {note:S.tileStickNote(fmt(k.live_users)), dot:S7, target:"chRetention",
+    // WAU/MAU, not DAU/MAU: Helpy is episodic - opened when help is needed -
+    // so a daily-use ratio grades it against a bar it was never built to clear.
+    host.appendChild(tile(S.tileStick, pct(k.seen_7d,k.seen_30d),
+      {note:S.tileStickNote(fmt(k.seen_7d), fmt(k.seen_30d)), dot:S7, target:"chRetention",
        tip:S.tileStickTip,
-       bullet:{ val: k.seen_30d? Math.round(100*k.seen_1d/k.seen_30d):0,
-                target:20, max:30, bands:[10,20,30] }}));
+       bullet:{ val: k.seen_30d? Math.round(100*k.seen_7d/k.seen_30d):0,
+                target:40, max:70, bands:[20,40,70] }}));
     host.appendChild(tile(S.tileMsgs, fmt(winSum(DATA.messages_by_day,["msgs"])),
       {delta:winSum(DATA.messages_by_day,["msgs"]),
        prev:prevSum(DATA.messages_by_day,["msgs"]),
