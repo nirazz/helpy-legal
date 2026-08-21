@@ -830,7 +830,11 @@
       dtSteps:{requests:"בקשות שפורסמו", filled:"קיבלו לפחות הצעה אחת", accepted:"הגיעו לשיחה פתוחה", completed:"הושלמו בפועל"},
       dtOffers:"ועוד {n} השלמות שנולדו מהצעות עזרה",
       dtPrev:"בתקופה הקודמת: {v}",
-      nsHeadline:function(cur,prev,mover){ var t="<b>"+cur+"</b> עזרות הושלמו ב{win}"+(prev!=null?" (מול <b>"+prev+"</b> בתקופה הקודמת)":"");
+      nsHeadline:function(cur,prev,mover){
+        var w=winLabel(), bw=(/^[0-9]/.test(w)? "ב-":"ב")+w;
+        var t= cur==="1"? "עזרה <b>אחת</b> הושלמה "+bw
+             : "<b>"+cur+"</b> עזרות הושלמו "+bw;
+        if(prev!=null) t+=" (מול "+(prev==="1"?"אחת":"<b>"+prev+"</b>")+" בתקופה הקודמת)";
         if(mover) t+=" · הגורם שהשתנה הכי הרבה: <b>"+mover+"</b>"; return t+"."; },
       rdDtree:function(step,a,b){ return "הצוואר כרגע הוא <b>"+step+"</b>: "+a+" מתוך "+b+" עוברים את השלב. זה הגורם שהזזה שלו תזיז הכי הרבה את מדד הצפון."; },
       rdDtreeZero:"אפס השלמות בטווח. לפני שמתקנים שלבים באמצע - זה המספר שצריך לדבר עליו.",
@@ -852,7 +856,10 @@
       depTitle:"מי נושא את השוק · 90 יום",
       depSub:"אחוז ההשלמות שנשען על העוזרים המובילים - ומי מהם כבר לא מגיע. בקנה מידה כזה, לאבד אחד מהם זה אירוע",
       depShare:"מההשלמות", depInactive:"לא נראה/תה {n} ימים", depActive:"פעיל/ה",
-      depHead:function(share,total){ return "שלושת העוזרים המובילים מחזיקים <b>"+share+"%</b> מתוך <b>"+total+"</b> ההשלמות ב-90 יום."; },
+      depHead:function(share,total,n){
+        if(total==="1") return "השלמה <b>אחת</b> בלבד ב-90 יום - וכולה על הכתפיים שמופיעות כאן.";
+        if(n<3) return "כל <b>"+total+"</b> ההשלמות ב-90 יום נשענות על מי שמופיע/ה כאן.";
+        return "שלושת העוזרים המובילים מחזיקים <b>"+share+"%</b> מתוך <b>"+total+"</b> ההשלמות ב-90 יום."; },
       depEmpty:"אין השלמות ב-90 הימים האחרונים - אין עדיין על מי להישען.",
       rdDep:function(name,share,days){ return "<b>"+name+"</b> מחזיק/ה "+share+"% מההשלמות ולא נראה/תה כבר <b>"+days+" ימים</b>. זו לא שורה בטבלה - זו שיחת טלפון אישית ששווה לעשות השבוע."; },
       rdDepOk:"אין תלות מסוכנת בעוזר אחד, ואף עוזר מוביל לא נעלם. להמשיך לעקוב.",
@@ -1107,7 +1114,10 @@
       dtSteps:{requests:"Requests posted", filled:"Got at least one offer", accepted:"Reached an open chat", completed:"Actually completed"},
       dtOffers:"plus {n} completions born from help offers",
       dtPrev:"previous period: {v}",
-      nsHeadline:function(cur,prev,mover){ var t="<b>"+cur+"</b> helps completed in the last {win}"+(prev!=null?" (vs <b>"+prev+"</b> the period before)":"");
+      nsHeadline:function(cur,prev,mover){
+        var t= cur==="1"? "<b>One</b> help completed in the last {win}"
+             : "<b>"+cur+"</b> helps completed in the last {win}";
+        if(prev!=null) t+=" (vs "+(prev==="1"?"one":"<b>"+prev+"</b>")+" the period before)";
         if(mover) t+=" · biggest factor change: <b>"+mover+"</b>"; return t+"."; },
       rdDtree:function(step,a,b){ return "The bottleneck right now is <b>"+step+"</b>: "+a+" of "+b+" pass that stage. Moving it moves the north star more than anything else."; },
       rdDtreeZero:"Zero completions in range. Before fixing middle stages - this is the number to talk about.",
@@ -1129,7 +1139,10 @@
       depTitle:"Who carries the marketplace · 90 days",
       depSub:"The share of completions resting on the top helpers - and which of them has stopped showing up. At this scale, losing one is an event",
       depShare:"of completions", depInactive:"not seen for {n} days", depActive:"active",
-      depHead:function(share,total){ return "The top three helpers carry <b>"+share+"%</b> of <b>"+total+"</b> completions in 90 days."; },
+      depHead:function(share,total,n){
+        if(total==="1") return "Just <b>one</b> completion in 90 days - and it rests entirely on the shoulders listed here.";
+        if(n<3) return "All <b>"+total+"</b> completions in 90 days rest on the people listed here.";
+        return "The top three helpers carry <b>"+share+"%</b> of <b>"+total+"</b> completions in 90 days."; },
       depEmpty:"No completions in the last 90 days - nobody to lean on yet.",
       rdDep:function(name,share,days){ return "<b>"+name+"</b> carries "+share+"% of completions and has not been seen for <b>"+days+" days</b>. That is not a table row - it is a personal phone call worth making this week."; },
       rdDepOk:"No dangerous dependence on a single helper, and no top helper has gone quiet. Keep watching.",
@@ -2829,7 +2842,7 @@
       if(!HD.total){ hd.appendChild(el("div","note",S.depEmpty)); }
       else{
         var head=el("div","note");
-        head.innerHTML=S.depHead(HD.top3_share, fmt(HD.total)); // trusted: dictionary + numbers
+        head.innerHTML=S.depHead(HD.top3_share, fmt(HD.total), (HD.helpers||[]).length); // trusted: dictionary + numbers
         hd.appendChild(head);
         (HD.helpers||[]).forEach(function(h){
           var risk=h.share>30 && h.days_inactive>14;
