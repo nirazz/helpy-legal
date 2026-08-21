@@ -595,6 +595,8 @@
       connecting:"מתחבר...",
       errForbidden:"החשבון הזה לא מורשה לקונסול", errServer:"שגיאת שרת, נסו שוב",
       errNoAuth:"שירות ההתחברות לא נטען, רעננו את הדף",
+      errExpired:"ההתחברות פגה - התחברו שוב",
+      errTimeout:"השרת לא הגיב תוך 25 שניות - נסו שוב",
       updatedAgo:function(s){ return s<60? "עודכן לפני "+s+" שנ׳" : "עודכן לפני "+Math.round(s/60)+" דק׳"; },
       tileHero:"עזרות שהושלמו · 7 ימים ⭐",
       tileHeroTip:"המדד הצפוני של Helpy: עזרות שמקבל/ת העזרה סימנו שבוצעו בפועל",
@@ -727,6 +729,8 @@
       connecting:"Connecting...",
       errForbidden:"This account is not authorized for the console", errServer:"Server error, try again",
       errNoAuth:"Sign-in service failed to load - refresh the page",
+      errExpired:"Your session expired - sign in again",
+      errTimeout:"The server did not answer within 25 seconds - try again",
       updatedAgo:function(s){ return s<60? "updated "+s+"s ago" : "updated "+Math.round(s/60)+"m ago"; },
       tileHero:"Helps completed · 7 days ⭐",
       tileHeroTip:"Helpy's north star: helps the receiver marked as actually done",
@@ -2075,11 +2079,21 @@
     }
     var hdrs={"content-type":"application/json"};
     if(SESSION && SESSION.access_token) hdrs["authorization"]="Bearer "+SESSION.access_token;
+    // a request that never settles used to leave the page in a silent
+    // "loading" limbo showing stale numbers - always bound it
+    var ctl = ("AbortController" in window) ? new AbortController() : null;
+    var killed = false;
+    var killer = setTimeout(function(){
+      killed = true;
+      if(ctl) ctl.abort();
+    }, 25000);
     return fetch("https://lwomstzzmyegpbidibfm.supabase.co/functions/v1/admin-dashboard",{
       method:"POST",
       headers:hdrs,
+      signal: ctl ? ctl.signal : undefined,
       body:JSON.stringify({days:fetchDays,chatDays:chatDays,window:RANGE})
     }).then(function(r){
+      clearTimeout(killer);
       if(r.status===401) throw new Error("unauthorized");
       if(r.status===403) throw new Error("forbidden");
       if(!r.ok) throw new Error("server");
@@ -2098,9 +2112,10 @@
       applyChrome(); // re-stamp the "{win}" labels for the range just fetched
       renderMetrics(); renderChat(); observePanels();
     }).catch(function(e){
+      clearTimeout(killer);
       $("app").classList.remove("loading");
       $("refreshIcon").classList.remove("spinning");
-      throw e;
+      throw killed ? new Error("timeout") : e;
     });
   }
 
@@ -2133,6 +2148,9 @@
       SESSION=null;
     } else if(err.message==="unauthorized"){
       sessionStorage.removeItem("helpy_dash_key");
+      $("loginErr").textContent=S.errExpired;
+    } else if(err.message==="timeout"){
+      $("loginErr").textContent=S.errTimeout;
     } else {
       $("loginErr").textContent=S.errServer;
     }
