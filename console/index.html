@@ -895,6 +895,13 @@
       emptyDens:"אין בקשות עם מיקום בטווח הזה, ולכן אי אפשר לחשב צפיפות",
       emptyCities:"אף בקשה בטווח לא נושאת שם עיר · שם העיר מושלם אוטומטית תוך כשעה",
       emptyStates:"אף אחד לא נכנס לאפליקציה השבוע",
+      recCity:function(c,p){ return " <b>ההמלצה: לרכז את תקציב הרכישה ב"+c+".</b> שם שיעור המילוי הוא <b>"+p+"</b>, ובכל שאר הערים כמעט אפס - שכן שנרכש מחוץ לעיר צפופה מקבל שתיקה ונוטש."; },
+      recSupply:function(n){ return " <b>ההמלצה: לנתב את הבקשות הפתוחות אל "+n+" ההצעות שיושבות ללא פנייה.</b> זה זול בהרבה מגיוס עוזרים חדשים, והם כבר כאן ומחכים."; },
+      recRet:" <b>ההמלצה: לתקן את היום הראשון, לא את השימור.</b> מי שנשאר יומיים כבר נדבק מעל הממוצע - כדאי לעבור על שלושת המסכים הראשונים שמשתמש חדש רואה.",
+      recNoOffer:function(n){ return " <b>ההמלצה: לדחוף את "+n+" הבקשות האלה לשכנים בסביבה, או לסגור אותן.</b> בקשה שנשארת פתוחה בלי מענה היא חוויה גרועה שממשיכה לרוץ."; },
+      recRepeat:" <b>ההמלצה: לפנות למי שכבר ביקש פעם אחת ונענה.</b> בקשה שנייה היא המדד החזק ביותר ל-PMF, והקהל הזה קטן ומוכר - קל להגיע אליו.",
+      recChat:" <b>ההמלצה: להקדים את התזכורת לפנייה שלא נענתה.</b> מי שעונה עונה תוך דקות, ולכן פנייה שלא נענתה תוך שעות כנראה לא נראתה בכלל.",
+      recDorm:function(n){ return " <b>ההמלצה: רה-אקטיבציה היא הצמיחה הזולה ביותר שיש לך.</b> "+n+" אנשים כבר הורידו, נרשמו ושילמת עליהם - הם עולים פחות מכל משתמש חדש."; },
       intelTitle:"מה הביקוש באמת מבקש",
       intelSub:"אשכולות מתוך הטקסט של הבקשות עצמן, לא לפי הקטגוריה שנבחרה - כך מתגלה קטגוריה שחסרה",
       intelCluster:"סוג הבקשה", intelReqs:"בקשות", intelShare:"מהביקוש", intelMatch:"נענו",
@@ -1083,6 +1090,13 @@
       emptyDens:"No located requests in this range, so density cannot be computed",
       emptyCities:"No request in range carries a city name · it is filled in automatically within the hour",
       emptyStates:"Nobody opened the app this week",
+      recCity:function(c,p){ return " <b>Recommendation: concentrate acquisition spend on "+c+".</b> Fill rate there is <b>"+p+"</b> and nearly zero everywhere else - a neighbour acquired outside a dense city meets silence and churns."; },
+      recSupply:function(n){ return " <b>Recommendation: route the open requests to the "+n+" offers sitting untouched.</b> Far cheaper than recruiting more helpers, and they are already here waiting."; },
+      recRet:" <b>Recommendation: fix day one, not retention.</b> Anyone who lasts two days already sticks above average - go through the first three screens a new user sees.",
+      recNoOffer:function(n){ return " <b>Recommendation: push these "+n+" requests to nearby neighbours, or close them.</b> A request left open with no answer is a bad experience that keeps running."; },
+      recRepeat:" <b>Recommendation: go to the people who already asked once and were answered.</b> A second request is the strongest PMF signal there is, and that audience is small and known - easy to reach.",
+      recChat:" <b>Recommendation: send the unanswered-opener reminder earlier.</b> Those who reply do so within minutes, so an opener unanswered for hours was probably never seen.",
+      recDorm:function(n){ return " <b>Recommendation: reactivation is the cheapest growth you have.</b> "+n+" people already installed, signed up and were paid for - they cost less than any new user."; },
       intelTitle:"What demand is really asking for",
       intelSub:"Clusters read from the text of the requests themselves, not the category chosen - this is how a missing category shows up",
       intelCluster:"Kind of request", intelReqs:"Requests", intelShare:"of demand", intelMatch:"answered",
@@ -2015,8 +2029,9 @@
       ]
     }, { replaceMerge:["series"] });
     if(ours[0]!=null){
-      panelRead("chRetention", ours[0]<25?"warn":"good",
-        S.rdRet(ours[0], ours[1]==null?"-":ours[1], ours[2]==null?"-":ours[2]));
+      var retRead=S.rdRet(ours[0], ours[1]==null?"-":ours[1], ours[2]==null?"-":ours[2]);
+      if(ours[0]<25) retRead+=S.recRet;
+      panelRead("chRetention", ours[0]<25?"warn":"good", retRead);
     }
   }
   // ---- research metrics (RPC v4: repeat, supply, states, per-city) ---------
@@ -2056,8 +2071,9 @@
       cl.appendChild(ct);
       var topC=CL[0];
       var othersC=CL.slice(1).reduce(function(a,c){ return a+c.requests; },0);
-      panelRead("cityLiq", othersC < topC.requests/2 ? "warn":"",
-        S.rdCities(topC.city, fmt(topC.requests), pct(topC.filled_24h,topC.requests), fmt(othersC)));
+      var cityRead=S.rdCities(topC.city, fmt(topC.requests), pct(topC.filled_24h,topC.requests), fmt(othersC));
+      if(othersC < topC.requests/2) cityRead+=S.recCity(topC.city, pct(topC.filled_24h,topC.requests));
+      panelRead("cityLiq", othersC < topC.requests/2 ? "warn":"", cityRead);
     }
 
     // supply health: utilization bullet (target 30% - the churn line) + ttfm
@@ -2081,9 +2097,11 @@
     statRow(st,S.happyTitle,fmt(H.completed),S.happyTip);
     statRow(st,S.happy45,H.completed? fmt(H.rated_45)+" / "+fmt(H.completed):"-");
     sh.appendChild(st);
-    panelRead("supplyHealth", util<30?"bad":"warn",
-      S.rdSupply(util, fmt(SU.active_offers-SU.engaged_30d),
-                 TT.median_days==null?"-":TT.median_days+" "+S.daysUnit));
+    var idleN=SU.active_offers-SU.engaged_30d;
+    var supRead=S.rdSupply(util, fmt(idleN),
+      TT.median_days==null?"-":TT.median_days+" "+S.daysUnit);
+    if(idleN>=20) supRead+=S.recSupply(fmt(idleN));
+    panelRead("supplyHealth", util<30?"bad":"warn", supRead);
 
     // user states: one stacked bar, direct-labelled (Duolingo decomposition)
     var us=$("userStates"); us.innerHTML="";
@@ -2171,8 +2189,11 @@
     statRow(rt2,S.repRequesters,fmt(RP.requesters));
     statRow(rt2,S.repRepeat,fmt(RP.repeated_90d));
     rr.appendChild(rt2);
-    if(RP.requesters) panelRead("repeatRate", rpct<35?"warn":"good",
-      S.rdRepeat(rpct, fmt(RP.repeated_90d), fmt(RP.requesters)));
+    if(RP.requesters){
+      var repRead=S.rdRepeat(rpct, fmt(RP.repeated_90d), fmt(RP.requesters));
+      if(rpct<35) repRead+=S.recRepeat;
+      panelRead("repeatRate", rpct<35?"warn":"good", repRead);
+    }
   }
 
   var cohortsShown=false;
@@ -2291,9 +2312,11 @@
       lt0.appendChild(tr);
     });
     var lch=$("lifecycle"); lch.innerHTML=""; lch.appendChild(lt0);
-    if(k.live_users) panelRead("lifecycle",
-      (lf.dormant_30d/k.live_users)>0.5?"warn":"",
-      S.rdLifecycle(fmt(lf.dormant_30d), fmt(k.live_users), pct(lf.dormant_30d,k.live_users)));
+    if(k.live_users){
+      var lfRead=S.rdLifecycle(fmt(lf.dormant_30d), fmt(k.live_users), pct(lf.dormant_30d,k.live_users));
+      if((lf.dormant_30d/k.live_users)>0.5) lfRead+=S.recDorm(fmt(lf.dormant_30d));
+      panelRead("lifecycle", (lf.dormant_30d/k.live_users)>0.5?"warn":"", lfRead);
+    }
 
     // funnel: ordinal sequential ramp (starts at step 250 per the ramp rule)
     var f=segVal("funnelSeg")===30? DATA.funnel_30d : DATA.funnel_14d;
@@ -2461,9 +2484,11 @@
       ct.appendChild(tr);
     });
     var chh=$("chatHealth"); chh.innerHTML=""; chh.appendChild(ct);
-    if(C.convos_30d) panelRead("chatHealth",
-      (C.two_way_30d/C.convos_30d)<0.6?"warn":"good",
-      S.rdChat(pct(C.two_way_30d,C.convos_30d), humanMin(C.median_first_reply_minutes)));
+    if(C.convos_30d){
+      var chRead=S.rdChat(pct(C.two_way_30d,C.convos_30d), humanMin(C.median_first_reply_minutes));
+      if((C.two_way_30d/C.convos_30d)<0.6) chRead+=S.recChat;
+      panelRead("chatHealth", (C.two_way_30d/C.convos_30d)<0.6?"warn":"good", chRead);
+    }
 
     // active requests with zero offers
     var NO=DATA.no_offer_requests||{count:0,items:[]};
@@ -2483,8 +2508,9 @@
       });
       noHost.appendChild(nt);
       var oldest=(NO.items||[]).reduce(function(a,it){ return Math.max(a,it.days||0); },0);
-      panelRead("noOffer", NO.count>5?"warn":"",
-        S.rdNoOffer(fmt(NO.count), oldest? fmt(oldest)+" "+S.daysUnit : S.today));
+      var noRead=S.rdNoOffer(fmt(NO.count), oldest? fmt(oldest)+" "+S.daysUnit : S.today);
+      if(NO.count>5) noRead+=S.recNoOffer(fmt(NO.count));
+      panelRead("noOffer", NO.count>5?"warn":"", noRead);
     }
 
     // most active users
