@@ -1431,6 +1431,15 @@
   if(location.search.indexOf("code=")>-1 || location.hash.indexOf("access_token")>-1){
     document.getElementById("login").classList.add("hidden");
     document.getElementById("connecting").classList.remove("hidden");
+  } else {
+    // a stored session means this is almost certainly a signed-in refresh:
+    // show "connecting" instead of flashing the login card for half a second
+    try{
+      if(localStorage.getItem("helpy_console_auth")){
+        document.getElementById("login").classList.add("hidden");
+        document.getElementById("connecting").classList.remove("hidden");
+      }
+    }catch(e){}
   }
   // 8-slot categorical palettes, each validated against its own surface
   var PAL8L = ["#6366f1","#b45309","#0d9488","#c026d3","#4d7c0f","#0284c7","#8b5cf6","#e11d48"];
@@ -4073,6 +4082,11 @@
     sb.auth.getSession().then(function(r){
       SESSION=r.data.session;
       if(SESSION) load().catch(bootFail);
+      else {
+        // the stored key was stale - fall back to the real login card
+        $("connecting").classList.add("hidden");
+        $("login").classList.remove("hidden");
+      }
     });
   }
 })();
