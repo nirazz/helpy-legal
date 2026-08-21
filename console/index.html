@@ -2358,6 +2358,13 @@
   function flashTo(id){
     var t=$(id); if(!t) return;
     var surface=t.closest("section.panel")||t;
+    // the destination may live inside a collapsed section (the phone default) -
+    // scrolling to display:none goes nowhere, so open its section first
+    var top=surface;
+    while(top.parentElement && top.parentElement.id!=="metricsView") top=top.parentElement;
+    var head=top;
+    while(head && !(head.classList && head.classList.contains("sechead"))) head=head.previousElementSibling;
+    if(head && typeof openSec==="function") openSec(head.id);
     surface.scrollIntoView({behavior:"smooth",block:"center"});
     document.querySelectorAll(".landed").forEach(function(n){ n.classList.remove("landed"); });
     if(landTimer) clearTimeout(landTimer);
