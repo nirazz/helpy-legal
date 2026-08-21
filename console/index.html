@@ -637,6 +637,7 @@
       <section class="panel"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="funnelTitle">משפך הפעלה</span>
         <span class="seg mini" id="funnelSeg"><button data-d="14" class="on" data-i18n="d14">14 יום</button><button data-d="30" data-i18n="d30">30 יום</button></span></h2>
         <div class="sub" data-i18n="funnelSub">מה עושה משתמש חדש אחרי ההרשמה</div><div id="funnel"></div></section>
+      <section class="panel wide"><h2 data-i18n="glogTitle">יומן צמיחה · שבוע אחר שבוע</h2><div class="sub" data-i18n="glogSub">מה קרה בכל שבוע, מה השתנה, ומה גרם לזה</div><div id="growthLog"></div></section>
       <section class="panel"><h2 data-i18n="lifecycleTitle">מאזן משתמשים</h2><div class="sub" data-i18n="lifecycleSub">חתך חי של כל המשתמשים הרשומים</div><div id="lifecycle"></div></section>
     </div>
 
@@ -923,6 +924,18 @@
       recRepeat:" <b>ההמלצה: לפנות למי שכבר ביקש פעם אחת ונענה.</b> בקשה שנייה היא המדד החזק ביותר ל-PMF, והקהל הזה קטן ומוכר - קל להגיע אליו.",
       recChat:" <b>ההמלצה: להקדים את התזכורת לפנייה שלא נענתה.</b> מי שעונה עונה תוך דקות, ולכן פנייה שלא נענתה תוך שעות כנראה לא נראתה בכלל.",
       recDorm:function(n){ return " <b>ההמלצה: רה-אקטיבציה היא הצמיחה הזולה ביותר שיש לך.</b> "+n+" אנשים כבר הורידו, נרשמו ושילמת עליהם - הם עולים פחות מכל משתמש חדש."; },
+      glogTitle:"יומן צמיחה · שבוע אחר שבוע",
+      glogSub:"מה קרה בכל שבוע, מה השתנה, ומה גרם לזה",
+      glWeek:function(d){ return "שבוע "+d; },
+      glSignups:function(n){ return n+" נרשמים"; },
+      glChange:function(up,p){ return (up?"▲ ":"▼ ")+p+"% מהשבוע שלפניו"; },
+      glFlat:"ללא שינוי מהותי",
+      glFirst:"השבוע הראשון בטווח - אין מול מה להשוות",
+      glPeak:"השבוע החזק ביותר בטווח",
+      glLow:"השבוע החלש ביותר בטווח",
+      glSplit:function(i,a){ return i+" iOS · "+a+" אנדרואיד"; },
+      glogEmpty:"אין מספיק שבועות בטווח כדי לבנות יומן",
+      rdGlog:function(best,bestN,drop){ return "השבוע החזק ביותר בטווח היה <b>"+best+"</b> עם <b>"+bestN+"</b> נרשמים"+(drop?", ומאז הקצב ירד ב-<b>"+drop+"%</b>":"")+". צמיחה שמגיעה בגלים סביב קמפיין ולא בקו עולה יציב מעידה שהערוץ נרכש ולא נצבר - ברגע שהתקציב נעצר, הגל נעצר איתו."; },
       secEventsT:"מה קרה לאחרונה", feedTitle:"יומן אירועים · 14 יום",
       feedSub:"אותם אירועים שמגיעים אליך בטלגרם, בצורה קריאה ומסוננת",
       evAll:"הכל", evDeclined:"נדחו", evDone:"הושלמו", evFailed:"לא יצאו לפועל", evSafety:"בטיחות",
@@ -1128,6 +1141,18 @@
       recRepeat:" <b>Recommendation: go to the people who already asked once and were answered.</b> A second request is the strongest PMF signal there is, and that audience is small and known - easy to reach.",
       recChat:" <b>Recommendation: send the unanswered-opener reminder earlier.</b> Those who reply do so within minutes, so an opener unanswered for hours was probably never seen.",
       recDorm:function(n){ return " <b>Recommendation: reactivation is the cheapest growth you have.</b> "+n+" people already installed, signed up and were paid for - they cost less than any new user."; },
+      glogTitle:"Growth log · week by week",
+      glogSub:"What happened each week, what changed, and what caused it",
+      glWeek:function(d){ return "Week of "+d; },
+      glSignups:function(n){ return n+" signups"; },
+      glChange:function(up,p){ return (up?"▲ ":"▼ ")+p+"% on the week before"; },
+      glFlat:"No meaningful change",
+      glFirst:"First week in range - nothing to compare against",
+      glPeak:"Strongest week in range",
+      glLow:"Weakest week in range",
+      glSplit:function(i,a){ return i+" iOS · "+a+" Android"; },
+      glogEmpty:"Not enough weeks in range to build a log",
+      rdGlog:function(best,bestN,drop){ return "The strongest week in range was <b>"+best+"</b> with <b>"+bestN+"</b> signups"+(drop?", and the pace has fallen <b>"+drop+"%</b> since":"")+". Growth arriving in waves around a campaign rather than as a steady climb says the channel is bought, not accumulated - when the budget stops, so does the wave."; },
       secEventsT:"What just happened", feedTitle:"Event log · 14 days",
       feedSub:"The same events that reach you on Telegram, readable and filterable",
       evAll:"All", evDeclined:"Declined", evDone:"Completed", evFailed:"Fell through", evSafety:"Safety",
@@ -1790,6 +1815,61 @@
     box.appendChild(el("span",null,msg));
     host.appendChild(box);
     return box;
+  }
+
+  // ---- growth log ----------------------------------------------------------
+  // The same "what happened" treatment applied to growth: one row per week,
+  // the change against the week before, the platform split, and any release or
+  // campaign that landed in that week - so a spike is never unexplained.
+  function renderGrowthLog(){
+    var host=$("growthLog"); if(!host) return;
+    host.innerHTML="";
+    var rows=byWeek(rangeRows(DATA.signups_by_day),["total","ios","android"]);
+    if(rows.length<2){ emptyState(host,S.glogEmpty,"trend"); return; }
+    var vals=rows.map(function(r){ return +r.total||0; });
+    var peak=Math.max.apply(null,vals), low=Math.min.apply(null,vals);
+    var peakI=vals.indexOf(peak);
+    // events are attached to the week that contains them
+    function eventsFor(weekStart){
+      var d0=String(weekStart).slice(0,10);
+      var d1=new Date(d0+"T00:00:00"); d1.setDate(d1.getDate()+7);
+      var d1s=d1.toISOString().slice(0,10);
+      return ANNOT.filter(function(a){ return a.d>=d0 && a.d<d1s; })
+                  .map(function(a){ return LANG==="he"? a.he : a.en; });
+    }
+    rows.slice().reverse().forEach(function(r,ri){
+      var idx=rows.length-1-ri;
+      var n=+r.total||0, prev=idx>0? (+rows[idx-1].total||0) : null;
+      var row=el("div","evrow");
+      var kind = n===peak? "completed" : (n===low? "declined" : "expired");
+      var ic=el("div","evi", n===peak? "\u2605" : (prev!=null && n>prev? "\u2191" : (prev!=null && n<prev? "\u2193" : "\u2022")));
+      ic.style.background="var("+(n===peak?"--s3":(prev!=null&&n<prev?"--s2":"--s1"))+")";
+      row.appendChild(ic);
+      var body=el("div","evb");
+      body.appendChild(el("div","evt", S.glWeek(fmtDay(r.d))+" · "+S.glSignups(fmt(n))));
+      var bits=[];
+      if(prev==null) bits.push(S.glFirst);
+      else if(prev===0) bits.push(S.glFlat);
+      else {
+        var ch=Math.round(100*(n-prev)/prev);
+        bits.push(Math.abs(ch)<5? S.glFlat : S.glChange(ch>0, Math.abs(ch)));
+      }
+      bits.push(S.glSplit(fmt(+r.ios||0), fmt(+r.android||0)));
+      if(n===peak) bits.push(S.glPeak);
+      else if(n===low) bits.push(S.glLow);
+      var ev=eventsFor(r.d);
+      if(ev.length) bits.push("\u2691 "+ev.join(" · "));
+      var sub=el("div","evs",bits.join(" · "));
+      sub.title=bits.join(" · ");
+      body.appendChild(sub);
+      row.appendChild(body);
+      host.appendChild(row);
+    });
+    var lastV=vals[vals.length-1];
+    var dropPct=(peak>0 && lastV<peak && peakI<vals.length-1)
+      ? Math.round(100*(peak-lastV)/peak) : null;
+    panelRead("growthLog", dropPct && dropPct>40 ? "warn":"",
+      S.rdGlog(fmtDay(rows[peakI].d), fmt(peak), dropPct));
   }
 
   // ---- event feed ----------------------------------------------------------
@@ -2648,6 +2728,7 @@
     }
 
     renderResearch();
+    renderGrowthLog();
     renderFeed();
     renderSectionBriefs();
 
