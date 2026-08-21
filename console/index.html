@@ -485,6 +485,57 @@
   .archdetail h4 { font-size:14px; margin-bottom:4px; }
   .archdetail .muted { color:var(--muted); font-size:12.5px; }
   @media (prefers-reduced-motion: reduce){ .archwires .pkt { display:none; } }
+  /* ---- phone ----------------------------------------------------------
+     This console is read from a phone more than from a desktop, so the small
+     screen is a first-class layout, not a fallback. */
+  @media (max-width:720px){
+    main { padding:12px 12px 40px; }
+    header { padding:9px 12px; gap:7px; row-gap:8px; }
+    .brand { font-size:12px; width:100%; }
+    .brand small { margin-inline-start:auto; font-size:11px; }
+    header .seg button { padding:5px 11px; font-size:12.5px; }
+    header .ghost { padding:5px 10px; font-size:12.5px; }
+    /* the range control becomes a horizontal shelf instead of wrapping into
+       four ragged rows */
+    .filters { gap:7px; overflow-x:auto; flex-wrap:nowrap; padding-bottom:4px;
+               -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+    .filters::-webkit-scrollbar { display:none; }
+    .filters .seg { flex-shrink:0; }
+    .filters input[type=date], .filters .cap, #applyRange { flex-shrink:0; }
+    .tiles { grid-template-columns:1fr 1fr; gap:9px; }
+    .tile { padding:11px 12px 9px; }
+    .tile .val { font-size:22px; }
+    .tile svg { width:100%; height:24px; }
+    .panel { padding:14px 13px 13px; border-radius:12px; margin-bottom:12px; }
+    .panel h2, .panel.wide h2 { font-size:15px; }
+    .panel .sub { font-size:11.5px; }
+    .echart, .panel.wide .echart { height:230px; }
+    .secbrief { font-size:13px; margin:-2px 0 12px; padding-inline-start:10px; }
+    .verdict { font-size:12.5px; padding:8px 10px; }
+    /* any table can exceed the width of a phone - let it scroll on its own */
+    table.plain, table.cohort { display:block; overflow-x:auto; white-space:nowrap; }
+    .plain th, .plain td { padding:8px 8px; font-size:12.5px; }
+    .plain tr > td:nth-child(2):last-child { font-size:13.5px; }
+    .hrow { grid-template-columns:96px 1fr 40px; font-size:12px; }
+    /* the architecture map is wide by nature: let it pan, and shrink the cards */
+    .archcols { grid-template-columns:repeat(5,minmax(124px,1fr)); min-width:660px; gap:12px; }
+    .archnode { padding:7px 9px; margin-bottom:7px; }
+    .archnode .nl { font-size:12px; }
+    .archnode .ns, .archnode .nv { font-size:10.5px; }
+    .flowbar button { padding:5px 11px; font-size:12.5px; }
+    .flowcap { font-size:12.5px; }
+    .chatbar { gap:7px; }
+    .chatbar input[type=text] { min-width:0; width:100%; }
+    .convo > button { padding:10px 12px; gap:9px; }
+    .msg { max-width:88%; }
+    /* a hover tooltip is unusable on a touch screen - it opens on tap, so it
+       must never run off the edge */
+    .term::after { max-width:min(78vw,250px); }
+  }
+  @media (max-width:420px){
+    .tiles { grid-template-columns:1fr; }
+    .tile .val { font-size:24px; }
+  }
   .hidden { display:none !important; }
 </style>
 </head>
@@ -578,19 +629,28 @@
 
     <div class="sechead" id="secMarket" style="--sec-c:var(--s2)" data-i18n="secMarketT">מרקטפלייס</div>
     <div class="grid2">
-      <section class="panel"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="postsTitle">פוסטים</span>
-        <span class="seg mini" id="segPosts"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="requests" data-i18n="segRequests">בקשות</button><button data-k="offers" data-i18n="segOffers">הצעות</button></span></h2>
-        <div class="sub" data-i18n="postsSub">בקשות עזרה מול הצעות עזרה</div><div id="chPosts"></div></section>
       <section class="panel wide"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="matchesTitle">התאמות והשלמות</span>
         <span class="seg mini" id="segMatches"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="created" data-i18n="segCreated">התאמות</button><button data-k="completed" data-i18n="segCompleted">השלמות</button></span></h2>
         <div class="sub" data-i18n="matchesSub">התאמות חדשות מול עזרות שסומנו כהושלמו</div><div id="chMatches"></div></section>
+      <section class="panel"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="postsTitle">פוסטים</span>
+        <span class="seg mini" id="segPosts"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="requests" data-i18n="segRequests">בקשות</button><button data-k="offers" data-i18n="segOffers">הצעות</button></span></h2>
+        <div class="sub" data-i18n="postsSub">בקשות עזרה מול הצעות עזרה</div><div id="chPosts"></div></section>
       <section class="panel"><h2 data-i18n-html="liqTitle"></h2><div class="sub" data-i18n="liqSub">כמה מהר בקשה פוגשת עוזר/ת</div><div id="liquidity"></div></section>
+      <section class="panel wide"><h2 data-i18n="densTitle">צפיפות שכנים סביב בקשה</h2><div class="sub" data-i18n="densSub">כמה שכנים היו יכולים באמת לראות את הבקשה, מול הסיכוי שהיא נענתה</div><div id="density"></div></section>
       <section class="panel"><h2 data-i18n="noOfferTitle">בקשות בלי אף הצעה</h2><div class="sub" data-i18n="noOfferSub">פעילות עכשיו בפיד וממתינות - הזדמנות לדחיפה</div><div id="noOffer"></div></section>
       <section class="panel"><h2 data-i18n="catsTitle">קטגוריות מובילות · {win}</h2><div class="sub" data-i18n="catsSub">פוסטים לפי קטגוריה</div><div id="chCats"></div></section>
-      <section class="panel"><h2 data-i18n="citiesTitle">ערים מובילות · {win}</h2><div class="sub" data-i18n="citiesSub">לפי עיר הפוסט</div><div id="chCities"></div></section>
       <section class="panel"><h2 data-i18n="cityLiqTitle">נזילות לפי עיר · {win}</h2><div class="sub" data-i18n="cityLiqSub">הרשת האטומית: ממוצע ארצי מסתיר אם יש עיר אחת שבאמת עובדת</div><div id="cityLiq" style="overflow-x:auto"></div></section>
-      <section class="panel"><h2 data-i18n="supplyTitle">בריאות צד ההיצע</h2><div class="sub" data-i18n="supplySub">הצעה שיושבת בלי פנייה = עוזר/ת שעומדים לאבד</div><div id="supplyHealth"></div></section>
-      <section class="panel wide"><h2 data-i18n="densTitle">צפיפות שכנים סביב בקשה</h2><div class="sub" data-i18n="densSub">כמה שכנים היו יכולים באמת לראות את הבקשה, מול הסיכוי שהיא נענתה</div><div id="density"></div></section>
+      <section class="panel"><h2 data-i18n="citiesTitle">ערים מובילות · {win}</h2><div class="sub" data-i18n="citiesSub">לפי עיר הפוסט</div><div id="chCities"></div></section>
+      <section class="panel wide"><h2 data-i18n="supplyTitle">בריאות צד ההיצע</h2><div class="sub" data-i18n="supplySub">הצעה שיושבת בלי פנייה = עוזר/ת שעומדים לאבד</div><div id="supplyHealth"></div></section>
+      
+      
+      
+      
+      
+      
+      
+      
+      
     </div>
 
     <div class="sechead" id="secChat" style="--sec-c:var(--s3)" data-i18n="secChatT">מעורבות בצ'אט</div>
