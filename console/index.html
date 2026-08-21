@@ -275,7 +275,26 @@
   .tile svg { display:block; margin-top:4px; }
 
   /* ---- panels & charts ---- */
-  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:start; }
+  /* Size IS hierarchy: the north-star chart and the metric that explains it
+     get the full width; everything secondary stays in the two-up rhythm.
+     When every card is the same size, nothing is important. */
+  .grid2 > .panel.wide { grid-column:1 / -1; }
+  .panel.wide h2 { font-size:17px; }
+  .panel.wide .echart { height:330px; }
+  .panel.wide .cmp b { font-size:26px; }
+  @media (max-width:880px){ .grid2 > .panel.wide { grid-column:auto; } }
+
+  /* A healthy reading should not shout as loudly as a broken one: only warn
+     and bad keep the filled callout, the rest become quiet prose. */
+  .verdict.read:not(.warn):not(.bad) { background:none; border-inline-start-color:var(--grid);
+      color:var(--ink2); font-size:13px; padding-inline:11px; }
+  .verdict.read:not(.warn):not(.bad) .vi { color:var(--muted); }
+
+  /* an empty panel should say why it is empty, not just that it is */
+  .empty { display:flex; flex-direction:column; align-items:center; gap:7px;
+           padding:22px 10px; text-align:center; color:var(--muted); font-size:12.5px; }
+  .empty .ico { color:var(--baseline); }
   @media (max-width:880px){ .grid2{grid-template-columns:1fr;} }
   .panel { background:var(--glass); border:1px solid var(--hairline);
            backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
@@ -557,7 +576,7 @@
       <section class="panel"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="postsTitle">פוסטים</span>
         <span class="seg mini" id="segPosts"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="requests" data-i18n="segRequests">בקשות</button><button data-k="offers" data-i18n="segOffers">הצעות</button></span></h2>
         <div class="sub" data-i18n="postsSub">בקשות עזרה מול הצעות עזרה</div><div id="chPosts"></div></section>
-      <section class="panel"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="matchesTitle">התאמות והשלמות</span>
+      <section class="panel wide"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="matchesTitle">התאמות והשלמות</span>
         <span class="seg mini" id="segMatches"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="created" data-i18n="segCreated">התאמות</button><button data-k="completed" data-i18n="segCompleted">השלמות</button></span></h2>
         <div class="sub" data-i18n="matchesSub">התאמות חדשות מול עזרות שסומנו כהושלמו</div><div id="chMatches"></div></section>
       <section class="panel"><h2 data-i18n-html="liqTitle"></h2><div class="sub" data-i18n="liqSub">כמה מהר בקשה פוגשת עוזר/ת</div><div id="liquidity"></div></section>
@@ -566,7 +585,7 @@
       <section class="panel"><h2 data-i18n="citiesTitle">ערים מובילות · {win}</h2><div class="sub" data-i18n="citiesSub">לפי עיר הפוסט</div><div id="chCities"></div></section>
       <section class="panel"><h2 data-i18n="cityLiqTitle">נזילות לפי עיר · {win}</h2><div class="sub" data-i18n="cityLiqSub">הרשת האטומית: ממוצע ארצי מסתיר אם יש עיר אחת שבאמת עובדת</div><div id="cityLiq" style="overflow-x:auto"></div></section>
       <section class="panel"><h2 data-i18n="supplyTitle">בריאות צד ההיצע</h2><div class="sub" data-i18n="supplySub">הצעה שיושבת בלי פנייה = עוזר/ת שעומדים לאבד</div><div id="supplyHealth"></div></section>
-      <section class="panel"><h2 data-i18n="densTitle">צפיפות שכנים סביב בקשה</h2><div class="sub" data-i18n="densSub">כמה שכנים היו יכולים באמת לראות את הבקשה, מול הסיכוי שהיא נענתה</div><div id="density"></div></section>
+      <section class="panel wide"><h2 data-i18n="densTitle">צפיפות שכנים סביב בקשה</h2><div class="sub" data-i18n="densSub">כמה שכנים היו יכולים באמת לראות את הבקשה, מול הסיכוי שהיא נענתה</div><div id="density"></div></section>
     </div>
 
     <div class="sechead" id="secChat" style="--sec-c:var(--s3)" data-i18n="secChatT">מעורבות בצ'אט</div>
@@ -803,6 +822,13 @@
       sbRetention:function(d1,newshare,dorm,dormp){ return "שימור יום ראשון עומד על <b>"+d1+"%</b>, מתחת לבנצ׳מרק של אפליקציות חברתיות, בעוד שהשימור לשבוע ולחודש דווקא מעליו - כלומר מי ששורד את היום הראשון נדבק. כרגע <b>"+newshare+"</b> מהפעילים הם נרשמים חדשים ו-<b>"+dorm+"</b> משתמשים ("+dormp+") רדומים מעל חודש. זהו קהל שכבר שילמת עליו, והוא גדול פי כמה מהקהל הפעיל."; },
       sbUsers:function(name,share,n){ return "<b>"+name+"</b> לבד מייצר/ת <b>"+share+"</b> מהפעילות של "+n+" המשתמשים הבולטים. ריכוז כזה אומר שהגרפים שאתה קורא רגישים לאדם אחד - שווה לדעת מי הם ולשמור עליהם, אבל מסוכן להסיק מהם על כלל המשתמשים."; },
       sbSafety:function(r,b,d){ return "<b>"+r+"</b> דיווחים ו-<b>"+b+"</b> חסימות מול <b>"+d+"</b> מחיקות חשבון. היחס הזה אומר שהמשתמשים אינם עוזבים בגלל חוויה רעה עם שכן אלא בגלל היעדר חוויה בכלל - זו בעיית ערך, לא בעיית בטיחות, ולכן היא לא תיפתר במודרציה."; },
+      emptyBars:"אין עדיין מספיק פוסטים בטווח הזה · נסה טווח רחב יותר",
+      emptyRange:"אין נתונים בטווח שנבחר · הרחבת הטווח תמלא את הגרף",
+      emptyResearch:"מדדי העומק לא נטענו בטעינה הזו · רענון בדרך כלל פותר",
+      emptyUsers:"אף אחד לא היה פעיל מספיק בטווח הזה כדי להיכנס לרשימה",
+      emptyDens:"אין בקשות עם מיקום בטווח הזה, ולכן אי אפשר לחשב צפיפות",
+      emptyCities:"אף בקשה בטווח לא נושאת שם עיר · שם העיר מושלם אוטומטית תוך כשעה",
+      emptyStates:"אף אחד לא נכנס לאפליקציה השבוע",
       densTitle:"צפיפות שכנים סביב בקשה",
       densSub:"כמה שכנים היו יכולים באמת לראות את הבקשה, מול הסיכוי שהיא נענתה",
       densBand:"שכנים בטווח", densReqs:"בקשות", densAny:"קיבלו הצעה", dens24:"תוך 24 שעות",
@@ -974,6 +1000,13 @@
       sbRetention:function(d1,newshare,dorm,dormp){ return "Day-one retention is <b>"+d1+"%</b>, below the social-app benchmark, while week and month retention sit above it - whoever survives day one sticks. Right now <b>"+newshare+"</b> of actives are brand-new signups and <b>"+dorm+"</b> users ("+dormp+") have been dormant over a month. That is an audience you already paid for, several times larger than the active one."; },
       sbUsers:function(name,share,n){ return "<b>"+name+"</b> alone produces <b>"+share+"</b> of the activity of these "+n+" top users. That concentration means the charts you read are sensitive to one person - worth knowing who they are and looking after them, but dangerous to generalise from."; },
       sbSafety:function(r,b,d){ return "<b>"+r+"</b> reports and <b>"+b+"</b> blocks against <b>"+d+"</b> account deletions. That ratio says people are not leaving because of a bad experience with a neighbour but because of no experience at all - a value problem, not a safety one, and moderation will not fix it."; },
+      emptyBars:"Not enough posts in this range yet · try a wider one",
+      emptyRange:"No data in the selected range · widening it will fill the chart",
+      emptyResearch:"The deeper metrics did not load this time · a refresh usually fixes it",
+      emptyUsers:"Nobody was active enough in this range to make the list",
+      emptyDens:"No located requests in this range, so density cannot be computed",
+      emptyCities:"No request in range carries a city name · it is filled in automatically within the hour",
+      emptyStates:"Nobody opened the app this week",
       densTitle:"Neighbour density around a request",
       densSub:"How many neighbours could genuinely have seen it, against the odds it was answered",
       densBand:"Neighbours in range", densReqs:"Requests", densAny:"Got an offer", dens24:"Within 24h",
@@ -1121,7 +1154,7 @@
   }
   function chart(hostId, rows, series){
     var host=$(hostId); host.innerHTML="";
-    if(!rows||!rows.length){ host.appendChild(el("p","note",S.noDataRange)); return; }
+    if(!rows||!rows.length){ emptyState(host,S.emptyRange,"activity"); return; }
     var box=el("div","chartbox");
     // legend (>=2 series)
     if(series.length>1){
@@ -1399,7 +1432,7 @@
   // horizontal bars (categories/cities/funnel) - value labeled at the tip
   function hbars(hostId, items){
     var host=$(hostId); host.innerHTML="";
-    if(!items||!items.length){ host.appendChild(el("p","note",S.noData)); return; }
+    if(!items||!items.length){ emptyState(host,S.emptyBars,"layers"); return; }
     var max=1;
     items.forEach(function(it){ max=Math.max(max,(it.v1||0)+(it.v2||0)); });
     items.forEach(function(it){
@@ -1609,6 +1642,15 @@
     if(m<48*60) return fmt(Math.round(m/60))+" "+S.hours;
     return fmt(Math.round(m/1440))+" "+S.daysUnit;
   }
+  // An empty panel should explain itself, not just report emptiness.
+  function emptyState(host, msg, ic){
+    var box=el("div","empty");
+    box.appendChild(icon(ic||"layers",26));
+    box.appendChild(el("span",null,msg));
+    host.appendChild(box);
+    return box;
+  }
+
   // A section-level brief: what the panels below add up to. Inserted right
   // after the section head so the reader gets the conclusion before the detail.
   function secBrief(secId, html){
@@ -1904,14 +1946,14 @@
     var R=DATA.research;
     // additive by design: without the research payload these panels just say so
     ["cityLiq","supplyHealth","userStates","repeatRate","density"].forEach(function(id){
-      var h=$(id); if(h && !R){ h.innerHTML=""; h.appendChild(el("p","note",S.noData)); }
+      var h=$(id); if(h && !R){ h.innerHTML=""; emptyState(h,S.emptyResearch,"layers"); }
     });
     if(!R) return;
 
     // per-city liquidity: the atomic network, ordered by request volume
     var cl=$("cityLiq"); cl.innerHTML="";
     var CL=R.cities_liq||[];
-    if(!CL.length){ cl.appendChild(el("p","note",S.noData)); }
+    if(!CL.length){ emptyState(cl,S.emptyCities,"map"); }
     else {
       var ct=el("table","plain");
       var ch=el("tr"); [S.clCity,S.clReqs,S.clFill,S.clComp].forEach(function(h){
@@ -1963,7 +2005,7 @@
     var parts=[[S.stNew,ST.new_u,tok("--s1")],[S.stCurrent,ST.current_u,tok("--s3")],
                [S.stReact,ST.reactivated_u,tok("--s2")],[S.stResurr,ST.resurrected_u,tok("--s7")]];
     var totalU=parts.reduce(function(a,p){ return a+(+p[1]||0); },0);
-    if(!totalU){ us.appendChild(el("p","note",S.noData)); }
+    if(!totalU){ emptyState(us,S.emptyStates,"refresh"); }
     else {
       // legend above, one proportional bar below - a share is read by LENGTH
       var lg=el("div","seglegend");
@@ -1998,7 +2040,7 @@
     if(dn){
       dn.innerHTML="";
       var D=R.density;
-      if(!D || !D.requests){ dn.appendChild(el("p","note",S.noData)); }
+      if(!D || !D.requests){ emptyState(dn,S.emptyDens,"radio"); }
       else {
         var dt=el("table","plain");
         var dh=el("tr");
@@ -2312,7 +2354,7 @@
     // most active users
     var tuHost=$("topUsers"); tuHost.innerHTML="";
     var TU=DATA.top_users||[];
-    if(!TU.length){ tuHost.appendChild(el("p","note",S.noData)); }
+    if(!TU.length){ emptyState(tuHost,S.emptyUsers,"award"); }
     else {
       var ut=el("table","plain");
       var uh=el("tr"); [S.tu1,S.tu2,S.tu3,S.tu4,S.tu5,S.tu6].forEach(function(h){
@@ -2389,7 +2431,7 @@
     var total=(DATA.conversations||[]).length;
     $("chatCount").textContent=S.chatShowing(fmt(list.length),fmt(total));
     var host=$("convoList"); host.innerHTML="";
-    if(!list.length){ host.appendChild(el("p","note",S.noConvos)); return; }
+    if(!list.length){ emptyState(host,S.noConvos,"msg"); return; }
     list.forEach(function(c){
       var box=el("div","convo");
       var btn=el("button");
