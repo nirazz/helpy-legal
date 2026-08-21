@@ -130,6 +130,18 @@
   .cmp .delta.up { color:var(--good-text); }
   .cmp .delta.down { color:var(--bad-text); }
   .cmp .vs { font-size:12px; color:var(--muted); }
+  /* one plain-language verdict per chart - the glance layer */
+  .verdict { display:flex; align-items:flex-start; gap:8px; font-size:13px;
+             line-height:1.45; margin:0 0 12px; padding:9px 12px; border-radius:10px;
+             background:var(--wash1); border-inline-start:3px solid var(--s1); }
+  .verdict.good { background:rgba(21,128,61,0.08); border-inline-start-color:var(--good-text); }
+  .verdict.warn { background:rgba(217,119,6,0.10); border-inline-start-color:var(--warning); }
+  .verdict.bad  { background:rgba(220,38,38,0.08); border-inline-start-color:var(--bad-text); }
+  html[data-theme="dark"] .verdict.good { background:rgba(74,222,128,0.10); }
+  html[data-theme="dark"] .verdict.warn { background:rgba(250,178,25,0.12); }
+  html[data-theme="dark"] .verdict.bad  { background:rgba(248,113,113,0.12); }
+  .verdict b { font-variant-numeric:tabular-nums; }
+  .verdict .vi { flex-shrink:0; font-size:14px; line-height:1.3; }
 
   /* ---- stat tiles ---- */
   .tiles { display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
@@ -156,6 +168,33 @@
   .panel.vis { opacity:1; transform:none; }
   @media (prefers-reduced-motion: reduce){ .panel{ opacity:1; transform:none; } }
   .clickable { cursor:pointer; }
+  /* Depth the Apple way: material, light and elevation - NOT 3D chart geometry
+     (3D distorts value reading; NN/g lists it as a dashboard anti-pattern).
+     Panels sit on layered light: a specular top edge, a soft cast shadow, and
+     a hairline that catches the accent on hover. */
+  .panel { position:relative; }
+  .panel::before { content:""; position:absolute; inset:0; border-radius:inherit;
+                   pointer-events:none; opacity:0; transition:opacity .25s ease;
+                   background:radial-gradient(120% 100% at 50% -20%,
+                              rgba(99,102,241,0.10), transparent 60%); }
+  .panel:hover::before { opacity:1; }
+  .panel:hover { border-color:rgba(99,102,241,0.28); }
+  .tiles .tile { will-change:transform; }
+  /* the hero tile floats a step above the rest of the row */
+  .tile.hero { box-shadow:inset 0 1px 0 rgba(255,255,255,0.9),
+                          0 10px 30px rgba(45,45,100,0.13); }
+  html[data-theme="dark"] .tile.hero {
+    box-shadow:inset 0 1px 0 rgba(139,146,255,0.10), 0 12px 34px rgba(0,0,0,0.5); }
+  /* scroll destination announces itself: a ring pulse so a jump is never "somewhere" */
+  @keyframes landing {
+    0%   { box-shadow:0 0 0 0 rgba(99,102,241,0.55), 0 0 26px 4px rgba(99,102,241,0.30); }
+    70%  { box-shadow:0 0 0 10px rgba(99,102,241,0), 0 0 26px 4px rgba(99,102,241,0.16); }
+    100% { box-shadow:0 0 0 0 rgba(99,102,241,0), 0 0 0 0 rgba(99,102,241,0); }
+  }
+  .landed { animation:landing 1.15s ease-out 2; border-color:var(--s1) !important; }
+  @media (prefers-reduced-motion: reduce){
+    .landed { animation:none; outline:2px solid var(--s1); outline-offset:2px; }
+  }
   .drillchip { background:var(--wash1); border:1px solid var(--s1); color:var(--ink);
                border-radius:8px; padding:3px 10px; font-size:12px; display:flex;
                gap:8px; align-items:center; }
@@ -447,9 +486,9 @@
         <div class="sub" data-i18n="matchesSub">התאמות חדשות מול עזרות שסומנו כהושלמו</div><div id="chMatches"></div></section>
       <section class="panel"><h2 data-i18n-html="liqTitle"></h2><div class="sub" data-i18n="liqSub">כמה מהר בקשה פוגשת עוזר/ת</div><div id="liquidity"></div></section>
       <section class="panel"><h2 data-i18n="noOfferTitle">בקשות בלי אף הצעה</h2><div class="sub" data-i18n="noOfferSub">פעילות עכשיו בפיד וממתינות - הזדמנות לדחיפה</div><div id="noOffer"></div></section>
-      <section class="panel"><h2 data-i18n="catsTitle">קטגוריות מובילות · 30 יום</h2><div class="sub" data-i18n="catsSub">פוסטים לפי קטגוריה</div><div id="chCats"></div></section>
-      <section class="panel"><h2 data-i18n="citiesTitle">ערים מובילות · 30 יום</h2><div class="sub" data-i18n="citiesSub">לפי עיר הפוסט</div><div id="chCities"></div></section>
-      <section class="panel"><h2 data-i18n="cityLiqTitle">נזילות לפי עיר · 30 יום</h2><div class="sub" data-i18n="cityLiqSub">הרשת האטומית: ממוצע ארצי מסתיר אם יש עיר אחת שבאמת עובדת</div><div id="cityLiq" style="overflow-x:auto"></div></section>
+      <section class="panel"><h2 data-i18n="catsTitle">קטגוריות מובילות · {win}</h2><div class="sub" data-i18n="catsSub">פוסטים לפי קטגוריה</div><div id="chCats"></div></section>
+      <section class="panel"><h2 data-i18n="citiesTitle">ערים מובילות · {win}</h2><div class="sub" data-i18n="citiesSub">לפי עיר הפוסט</div><div id="chCities"></div></section>
+      <section class="panel"><h2 data-i18n="cityLiqTitle">נזילות לפי עיר · {win}</h2><div class="sub" data-i18n="cityLiqSub">הרשת האטומית: ממוצע ארצי מסתיר אם יש עיר אחת שבאמת עובדת</div><div id="cityLiq" style="overflow-x:auto"></div></section>
       <section class="panel"><h2 data-i18n="supplyTitle">בריאות צד ההיצע</h2><div class="sub" data-i18n="supplySub">הצעה שיושבת בלי פנייה = עוזר/ת שעומדים לאבד</div><div id="supplyHealth"></div></section>
     </div>
 
@@ -458,7 +497,7 @@
       <section class="panel"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="msgsTitle">שיחות צ'אט</span>
         <span class="seg mini" id="segMsgs"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="msgs" data-i18n="segMsgs2">הודעות</button><button data-k="senders" data-i18n="segSenders">שולחים ייחודיים</button></span></h2>
         <div class="sub" data-i18n="msgsSub">הודעות שנשלחו (בטווח ארוך - סכום שבועי)</div><div id="chMsgs"></div></section>
-      <section class="panel"><h2 data-i18n="chatHealthTitle">בריאות הצ'אט · 30 יום</h2><div class="sub" data-i18n="chatHealthSub">האם פניות מקבלות מענה, ובאיזו מהירות</div><div id="chatHealth"></div></section>
+      <section class="panel"><h2 data-i18n="chatHealthTitle">בריאות הצ'אט · {win}</h2><div class="sub" data-i18n="chatHealthSub">האם פניות מקבלות מענה, ובאיזו מהירות</div><div id="chatHealth"></div></section>
     </div>
 
     <div class="sechead" id="secRetention" style="--sec-c:var(--s7)" data-i18n="secRetentionT">שימור ואיכות הפעלה</div>
@@ -474,11 +513,11 @@
       <div id="cohorts" class="hidden" style="overflow-x:auto"></div>
     </section>
 
-    <div class="sechead" id="secUsers" style="--sec-c:var(--s5)" data-i18n="secUsersT">משתמשים בולטים · 30 יום</div>
+    <div class="sechead" id="secUsers" style="--sec-c:var(--s5)" data-i18n="secUsersT">משתמשים בולטים · {win}</div>
     <section class="panel"><div id="topUsers" style="overflow-x:auto"></div></section>
 
     <div class="sechead" id="secSafety" style="--sec-c:var(--s8)" data-i18n="secSafetyT">אמון ובטיחות</div>
-    <section class="panel"><h2 data-i18n="last30Title">30 הימים האחרונים</h2><div id="safety"></div></section>
+    <section class="panel"><h2 data-i18n="last30Title"></h2><div id="safety"></div></section>
   </div>
 
   <div id="chatView" class="hidden">
@@ -526,9 +565,9 @@
       range:"טווח", r7:"שבוע", r14:"שבועיים", r30:"30 יום", r60:"60 יום", r90:"90 יום", r180:"חצי שנה",
       orDates:"או תאריכים:", until:"עד", show:"הצג",
       tipLine:"טיפ: בתוך כל גרף אפשר לגרור את פס הטווח שלמטה, ללחוץ על מקרא כדי להסתיר סדרה, וללחוץ על קטגוריות, משתמשים וכרטיסים כדי לצלול פנימה",
-      insightsTitle:"מה דורש תשומת לב", insightsSub:"תובנות מחושבות מהנתונים של 30 הימים האחרונים",
+      insightsTitle:"מה דורש תשומת לב", insightsSub:"תובנות מחושבות מהנתונים · כל שורה מציינת את חלון הזמן שלה",
       secGrowthT:"צמיחה והפעלה", secMarketT:"מרקטפלייס", secChatT:"מעורבות בצ'אט",
-      secRetentionT:"שימור ואיכות הפעלה", secUsersT:"משתמשים בולטים · 30 יום", secSafetyT:"אמון ובטיחות",
+      secRetentionT:"שימור ואיכות הפעלה", secUsersT:"משתמשים בולטים · {win}", secSafetyT:"אמון ובטיחות",
       signupsTitle:"הרשמות", signupsSub:"משתמשים חדשים לפי פלטפורמה",
       dauTitle:"משתמשים פעילים",
       dauSub:'<span class="term" data-tip="Daily Active Users - כמה משתמשים שונים פתחו את האפליקציה באותו יום">DAU</span> ו-<span class="term" data-tip="Weekly Active Users - כמה משתמשים שונים פתחו את האפליקציה בשבעת הימים האחרונים">WAU</span> מתוך <span class="term" data-tip="חותמת שהשרת מטביע פעם בשעה לכל משתמש שפותח את האפליקציה - מקור האמת למדידת פעילות">דגימת last_seen_at</span> יומית',
@@ -536,16 +575,16 @@
       lifecycleTitle:"מאזן משתמשים", lifecycleSub:"חתך חי של כל המשתמשים הרשומים",
       postsTitle:"פוסטים", postsSub:"בקשות עזרה מול הצעות עזרה",
       matchesTitle:"התאמות והשלמות", matchesSub:"התאמות חדשות מול עזרות שסומנו כהושלמו",
-      liqTitle:'<span class="term" data-tip="מדד הבריאות המרכזי של מרקטפלייס: כמה מהר צד הביקוש (בקשה) פוגש את צד ההיצע (עוזר/ת)">נזילות</span> · 30 יום',
+      liqTitle:'<span class="term" data-tip="מדד הבריאות המרכזי של מרקטפלייס: כמה מהר צד הביקוש (בקשה) פוגש את צד ההיצע (עוזר/ת)">נזילות</span> · {win}',
       liqSub:"כמה מהר בקשה פוגשת עוזר/ת",
       noOfferTitle:"בקשות בלי אף הצעה", noOfferSub:"פעילות עכשיו בפיד וממתינות - הזדמנות לדחיפה",
-      catsTitle:"קטגוריות מובילות · 30 יום", catsSub:"פוסטים לפי קטגוריה",
-      citiesTitle:"ערים מובילות · 30 יום", citiesSub:"לפי עיר הפוסט",
+      catsTitle:"קטגוריות מובילות · {win}", catsSub:"פוסטים לפי קטגוריה",
+      citiesTitle:"ערים מובילות · {win}", citiesSub:"לפי עיר הפוסט",
       msgsTitle:"שיחות צ'אט", msgsSub:"הודעות שנשלחו (בטווח ארוך - סכום שבועי)",
-      chatHealthTitle:"בריאות הצ'אט · 30 יום", chatHealthSub:"האם פניות מקבלות מענה, ובאיזו מהירות",
+      chatHealthTitle:"בריאות הצ'אט · {win}", chatHealthSub:"האם פניות מקבלות מענה, ובאיזו מהירות",
       cohortTitle:"לפי שבוע הרשמה",
       cohortSub:"שימור: אחוז שחזר אחרי יום / שבוע / חודש (לפי last_seen_at; שבועות שטרם הבשילו מסומנים -). איכות: אחוז שנתן מיקום והתראות",
-      last30Title:"30 הימים האחרונים",
+      last30Title:"{win} אחרונים",
       segAll:"הכל", segRequests:"בקשות", segOffers:"הצעות", segCreated:"התאמות",
       segCompleted:"השלמות", segMsgs2:"הודעות", segSenders:"שולחים ייחודיים",
       searchPh:"חיפוש בשם, בפוסט או בתוכן...", hideMockL:"הסתרת חשבונות בדיקה",
@@ -606,7 +645,7 @@
       msgsCount:function(n){ return n+" הודעות"; },
       tagOffer:"הצעה", tagRequest:"בקשה", tagOneway:"ללא מענה", tagMock:"בדיקה",
       noData:"אין נתונים", noDataRange:"אין נתונים בטווח",
-      insFunnel:function(p,a,b){ return "רק <b>"+p+"%</b> מהנרשמים מגיעים לשיחה עם שכן - זה צוואר הבקבוק המרכזי במשפך ("+a+" מתוך "+b+" ב-30 יום)"; },
+      insFunnel:function(p,a,b,w){ return "רק <b>"+p+"%</b> מהנרשמים מגיעים לשיחה עם שכן - זה צוואר הבקבוק המרכזי במשפך ("+a+" מתוך "+b+" ב-"+w+" יום)"; },
       insOfferAns:function(p,a,b,bad){ return "בעלי הצעות ענו ל-<b>"+p+"%</b> מהפניות אליהם ("+a+" מתוך "+b+")"+(bad?" - פנייה שנשארת באוויר מייאשת שכנים":""); },
       insLiq:function(p){ return "<b>"+p+"%</b> מהבקשות קיבלו הצעה תוך 24 שעות (יעד: 50%+)"; },
       insNoOffer:function(n){ return "<b>"+n+"</b> בקשות פעילות עדיין בלי אף הצעה - לחיצה קופצת לרשימה"; },
@@ -619,15 +658,15 @@
       retOurs:"Helpy", retBench:"בנצ'מרק (25/10/5%)",
       showCohorts:"הצגת טבלת הקוהורטות המלאה + איכות הפעלה", hideCohorts:"הסתרת הטבלה",
       liqTarget:"יעד",
-      insSupplyHeavy:function(r,rq,of){ return "צד ההיצע מוביל פי <b>"+r+"</b> ("+rq+" בקשות מול "+of+" הצעות ב-30 יום) - במרקטפלייס כבד-היצע כל מנופי הצמיחה צריכים להצביע על יצירת ביקוש"; },
-      insSupplyUtil:function(p,idle){ return "רק <b>"+p+"%</b> מההצעות החיות קיבלו פנייה ב-30 יום ("+idle+" הצעות יושבות בלי כלום) - מתחת ל-30% מספקים נוטשים, זו אזעקת נטישת עוזרים"; },
+      insSupplyHeavy:function(r,rq,of,w){ return "צד ההיצע מוביל פי <b>"+r+"</b> ("+rq+" בקשות מול "+of+" הצעות ב-"+w+") - במרקטפלייס כבד-היצע כל מנופי הצמיחה צריכים להצביע על יצירת ביקוש"; },
+      insSupplyUtil:function(p,idle,w){ return "רק <b>"+p+"%</b> מההצעות החיות קיבלו פנייה ב-"+w+" ("+idle+" הצעות יושבות בלי כלום) - מתחת ל-30% מספקים נוטשים, זו אזעקת נטישת עוזרים"; },
       insRepeat:function(p,a,b){ return "<b>"+p+"%</b> מהמבקשים חזרו לבקש תוך 90 יום ("+a+" מתוך "+b+"; הרף המצוטט להתרחבות: 35%)"; },
-      cityLiqTitle:"נזילות לפי עיר · 30 יום",
+      cityLiqTitle:"נזילות לפי עיר · {win}",
       cityLiqSub:"הרשת האטומית: ממוצע ארצי מסתיר אם יש עיר אחת שבאמת עובדת",
       clCity:"עיר", clReqs:"בקשות", clFill:"מולאו ב-24 שעות", clComp:"הושלמו",
       supplyTitle:"בריאות צד ההיצע", supplySub:"הצעה שיושבת בלי פנייה = עוזר/ת שעומדים לאבד",
-      supUtil:"ניצולת הצעות (30 יום)",
-      supUtilTip:"אחוז ההצעות החיות שקיבלו לפחות פנייה אחת ב-30 יום. מתחת ל-30% מספקי שירות נוטשים - זו אזעקת נטישת העוזרים",
+      supUtil:"ניצולת הצעות ({win})",
+      supUtilTip:"אחוז ההצעות החיות שקיבלו לפחות פנייה אחת בטווח הנבחר. מתחת ל-30% מספקי שירות נוטשים - זו אזעקת נטישת העוזרים",
       supNewHelpers:"עוזרים חדשים (90 יום)", supMatched:"מתוכם קיבלו פנייה",
       supTtfm:"חציון זמן לפנייה ראשונה",
       supTtfmTip:"כמה זמן עובר מרגע פרסום ההצעה ועד הפנייה הראשונה. ניתוב ביקוש להיצע חדש זול יותר מגיוס עוזרים חדשים",
@@ -639,6 +678,16 @@
       repTip:"אחוז מהמבקשים שפרסמו בקשה שנייה תוך 90 יום מהראשונה. 35% הוא הרף שמצוטט כשער להתרחבות",
       happyTitle:"עזרות מאושרות", happyRated:"מתוכן דורגו", happy45:"דורגו 4-5 כוכבים",
       happyTip:"Happy GMV: לא כל השלמה שווה - זו שדורגה גבוה היא זו שבנתה אמון",
+      uItems:"", uUsers:"משתמשים", uPosts:"פוסטים", uMsgs:"הודעות", uMatches:"התאמות", uSignups:"הרשמות",
+      vChange:function(dir,p,cur,prev,unit){
+        var word = dir==="up" ? "עלה" : dir==="down" ? "ירד" : "נשאר יציב";
+        if(dir==="flat") return "הנתון <b>"+word+"</b> על <b>"+cur+"</b> "+unit+" - כמו בתקופה הקודמת.";
+        return word+" ב-<b>"+p+"%</b> לעומת התקופה הקודמת (<b>"+cur+"</b> מול "+prev+" "+unit+").";
+      },
+      vNoBase:function(cur,unit){ return "<b>"+cur+"</b> "+unit+" בטווח הנבחר · אין תקופה קודמת להשוואה."; },
+      vPeak:function(v,d){ return "השיא: <b>"+v+"</b> ב-"+d+"."; },
+      tileJump:"לחיצה קופצת לגרף המלא ומדגישה אותו",
+      sparkTip:"12 שבועות אחרונים · סכום שבועי",
       themeBtn:{light:"🌙 כהה", dark:"☀️ בהיר"}, langBtn:"English"
     },
     en: {
@@ -648,9 +697,9 @@
       range:"Range", r7:"Week", r14:"2 weeks", r30:"30 days", r60:"60 days", r90:"90 days", r180:"Half year",
       orDates:"or dates:", until:"to", show:"Show",
       tipLine:"Tip: drag the range slider under any chart, click a legend item to hide a series, and click categories, users and tiles to drill in",
-      insightsTitle:"What needs attention", insightsSub:"Insights computed from the last 30 days",
+      insightsTitle:"What needs attention", insightsSub:"Computed insights · each line names its own time window",
       secGrowthT:"Growth & activation", secMarketT:"Marketplace", secChatT:"Chat engagement",
-      secRetentionT:"Retention & activation quality", secUsersT:"Top users · 30 days", secSafetyT:"Trust & safety",
+      secRetentionT:"Retention & activation quality", secUsersT:"Top users · {win}", secSafetyT:"Trust & safety",
       signupsTitle:"Signups", signupsSub:"New users by platform",
       dauTitle:"Active users",
       dauSub:'<span class="term" data-tip="Daily Active Users - distinct users who opened the app that day">DAU</span> and <span class="term" data-tip="Weekly Active Users - distinct users who opened the app in the last 7 days">WAU</span> from the daily <span class="term" data-tip="a server-side stamp written once an hour for every user who opens the app - the source of truth for activity">last_seen_at sample</span>',
@@ -658,16 +707,16 @@
       lifecycleTitle:"User balance", lifecycleSub:"A live cut of all registered users",
       postsTitle:"Posts", postsSub:"Help requests vs. help offers",
       matchesTitle:"Matches & completions", matchesSub:"New matches vs. helps marked completed",
-      liqTitle:'<span class="term" data-tip="The core marketplace health metric: how fast demand (a request) meets supply (a helper)">Liquidity</span> · 30 days',
+      liqTitle:'<span class="term" data-tip="The core marketplace health metric: how fast demand (a request) meets supply (a helper)">Liquidity</span> · {win}',
       liqSub:"How fast a request meets a helper",
       noOfferTitle:"Requests with zero offers", noOfferSub:"Live in the feed and waiting - a push opportunity",
-      catsTitle:"Top categories · 30 days", catsSub:"Posts by category",
-      citiesTitle:"Top cities · 30 days", citiesSub:"By post city",
+      catsTitle:"Top categories · {win}", catsSub:"Posts by category",
+      citiesTitle:"Top cities · {win}", citiesSub:"By post city",
       msgsTitle:"Chat activity", msgsSub:"Messages sent (weekly sums on long ranges)",
-      chatHealthTitle:"Chat health · 30 days", chatHealthSub:"Do openers get answered, and how fast",
+      chatHealthTitle:"Chat health · {win}", chatHealthSub:"Do openers get answered, and how fast",
       cohortTitle:"By signup week",
       cohortSub:"Retention: % who returned after a day / week / month (by last_seen_at; immature weeks show -). Quality: % who granted location and push",
-      last30Title:"Last 30 days",
+      last30Title:"Last {win}",
       segAll:"All", segRequests:"Requests", segOffers:"Offers", segCreated:"Matches",
       segCompleted:"Completions", segMsgs2:"Messages", segSenders:"Unique senders",
       searchPh:"Search names, posts or content...", hideMockL:"Hide test accounts",
@@ -728,7 +777,7 @@
       msgsCount:function(n){ return n+" messages"; },
       tagOffer:"offer", tagRequest:"request", tagOneway:"unanswered", tagMock:"test",
       noData:"No data", noDataRange:"No data in range",
-      insFunnel:function(p,a,b){ return "Only <b>"+p+"%</b> of signups reach a conversation with a neighbor - the funnel's main bottleneck ("+a+" of "+b+" in 30 days)"; },
+      insFunnel:function(p,a,b,w){ return "Only <b>"+p+"%</b> of signups reach a conversation with a neighbor - the funnel's main bottleneck ("+a+" of "+b+" in "+w+" days)"; },
       insOfferAns:function(p,a,b,bad){ return "Offer owners answered <b>"+p+"%</b> of openers ("+a+" of "+b+")"+(bad?" - an unanswered opener discourages neighbors":""); },
       insLiq:function(p){ return "<b>"+p+"%</b> of requests got an offer within 24h (target: 50%+)"; },
       insNoOffer:function(n){ return "<b>"+n+"</b> live requests still have zero offers - click to jump to the list"; },
@@ -741,15 +790,15 @@
       retOurs:"Helpy", retBench:"Benchmark (25/10/5%)",
       showCohorts:"Show the full cohort table + activation quality", hideCohorts:"Hide the table",
       liqTarget:"target",
-      insSupplyHeavy:function(r,rq,of){ return "Supply leads <b>"+r+"x</b> ("+rq+" requests vs "+of+" offers in 30 days) - in a supply-heavy marketplace every growth lever should point at demand creation"; },
-      insSupplyUtil:function(p,idle){ return "Only <b>"+p+"%</b> of live offers got an opener in 30 days ("+idle+" sitting untouched) - providers churn below 30%, this is the helper-churn alarm"; },
+      insSupplyHeavy:function(r,rq,of,w){ return "Supply leads <b>"+r+"x</b> ("+rq+" requests vs "+of+" offers in "+w+") - in a supply-heavy marketplace every growth lever should point at demand creation"; },
+      insSupplyUtil:function(p,idle,w){ return "Only <b>"+p+"%</b> of live offers got an opener in "+w+" ("+idle+" sitting untouched) - providers churn below 30%, this is the helper-churn alarm"; },
       insRepeat:function(p,a,b){ return "<b>"+p+"%</b> of requesters came back within 90 days ("+a+" of "+b+"; cited expansion gate: 35%)"; },
-      cityLiqTitle:"Liquidity by city · 30 days",
+      cityLiqTitle:"Liquidity by city · {win}",
       cityLiqSub:"The atomic network: a national average hides whether any one city actually works",
       clCity:"City", clReqs:"Requests", clFill:"Filled in 24h", clComp:"Completed",
       supplyTitle:"Supply-side health", supplySub:"An offer sitting untouched is a helper you are about to lose",
-      supUtil:"Offer utilization (30d)",
-      supUtilTip:"Share of live offers that got at least one opener in 30 days. Providers churn sharply below 30% - this is the helper-churn alarm",
+      supUtil:"Offer utilization ({win})",
+      supUtilTip:"Share of live offers that got at least one opener in the selected range. Providers churn sharply below 30% - this is the helper-churn alarm",
       supNewHelpers:"New helpers (90d)", supMatched:"of them got an opener",
       supTtfm:"Median time to first opener",
       supTtfmTip:"How long from posting an offer to the first opener. Routing demand to new supply is cheaper than recruiting more helpers",
@@ -761,6 +810,16 @@
       repTip:"Share of requesters who posted a second request within 90 days of their first. 35% is the cited expansion gate",
       happyTitle:"Happy completions", happyRated:"of them rated", happy45:"rated 4-5 stars",
       happyTip:"Happy GMV: not every completion is equal - the highly-rated one is what built trust",
+      uItems:"", uUsers:"users", uPosts:"posts", uMsgs:"messages", uMatches:"matches", uSignups:"signups",
+      vChange:function(dir,p,cur,prev,unit){
+        if(dir==="flat") return "Held <b>flat</b> at <b>"+cur+"</b> "+unit+" - same as the previous period.";
+        var word = dir==="up" ? "Up" : "Down";
+        return word+" <b>"+p+"%</b> vs the previous period (<b>"+cur+"</b> vs "+prev+" "+unit+").";
+      },
+      vNoBase:function(cur,unit){ return "<b>"+cur+"</b> "+unit+" in range · no previous period to compare."; },
+      vPeak:function(v,d){ return "Peak: <b>"+v+"</b> on "+d+"."; },
+      tileJump:"Click to jump to the full chart and highlight it",
+      sparkTip:"Last 12 weeks · weekly totals",
       themeBtn:{light:"🌙 Dark", dark:"☀️ Light"}, langBtn:"עברית"
     }
   };
@@ -769,6 +828,15 @@
   var S = STRINGS[LANG];
   var THEME = localStorage.getItem("helpy_console_theme") || "light";
   function isDark(){ return THEME==="dark"; }
+  // "{win}" in any string is replaced by the window the user actually picked,
+  // so no panel can claim 30 days while the range control says half a year
+  function winLabel(){
+    if(CUSTOM) return CUSTOM.from+" - "+CUSTOM.to;
+    var d=RANGE;
+    if(LANG==="he") return d===7?"שבוע":d===14?"שבועיים":d===180?"חצי שנה":d+" יום";
+    return d===7?"week":d===14?"2 weeks":d===180?"half year":d+" days";
+  }
+  function withWin(v){ return v.indexOf("{win}")>-1 ? v.split("{win}").join(winLabel()) : v; }
   function applyChrome(){
     S = STRINGS[LANG];
     document.documentElement.lang = LANG;
@@ -776,10 +844,10 @@
     if(THEME==="dark") document.documentElement.setAttribute("data-theme","dark");
     else document.documentElement.removeAttribute("data-theme");
     document.querySelectorAll("[data-i18n]").forEach(function(n){
-      var v=S[n.getAttribute("data-i18n")]; if(typeof v==="string") n.textContent=v;
+      var v=S[n.getAttribute("data-i18n")]; if(typeof v==="string") n.textContent=withWin(v);
     });
     document.querySelectorAll("[data-i18n-html]").forEach(function(n){
-      var v=S[n.getAttribute("data-i18n-html")]; if(typeof v==="string") n.innerHTML=v; // trusted: our own dictionary
+      var v=S[n.getAttribute("data-i18n-html")]; if(typeof v==="string") n.innerHTML=withWin(v); // trusted: our own dictionary
     });
     document.querySelectorAll("[data-i18n-ph]").forEach(function(n){
       var v=S[n.getAttribute("data-i18n-ph")]; if(typeof v==="string") n.placeholder=v;
@@ -1009,7 +1077,9 @@
       animationDuration: 700,
       animationDurationUpdate: 450,
       textStyle: { fontFamily: "Heebo, system-ui, sans-serif" },
-      grid: { left: 10, right: 46, top: manySeries ? 36 : 18,
+      // extra headroom when annotation labels sit above the plot
+      grid: { left: 10, right: 46,
+              top: (manySeries ? 36 : 18) + (marks.length ? 26 : 0),
               bottom: opts.zoom ? 56 : 26 },
       legend: manySeries ? {
         top: 0, right: 0, itemWidth: 12, itemHeight: 8,
@@ -1059,9 +1129,14 @@
         return { name: s.name, type: "bar",
           stack: opts.group ? undefined : "t",
           barMaxWidth: 20, barGap: "10%",
-          itemStyle: { color: s.color,
+          itemStyle: {
+            // vertical gradient = light from above; the same material logic as the panels
+            color: new echarts.graphic.LinearGradient(0,0,0,1,[
+              { offset: 0, color: s.color },
+              { offset: 1, color: s.color + "B3" }]),
             borderRadius: (opts.group || s.key === lastBarKey) ? [3,3,0,0] : 0 },
-          emphasis: { focus: "series" },
+          emphasis: { focus: "series",
+            itemStyle: { shadowBlur: 10, shadowColor: s.color + "66" } },
           data: rows.map(function(r){ return +r[s.key] || 0; }) };
       }).concat(prevData ? [{
         name: S.serPrev, type: "line", smooth: true, showSymbol: false, z: 1,
@@ -1075,7 +1150,8 @@
           symbol: "none",
           lineStyle: { type: "dashed", color: base, width: 1 },
           label: { show: true, formatter: function(p){ return p.name; },
-                   fontSize: 9, color: muted, position: "insideEndTop", distance: 3 },
+                   fontSize: 9, color: muted, position: "end",
+                   rotate: 0, align: "center", verticalAlign: "bottom" },
           data: marks
         }
       }] : [])
@@ -1097,24 +1173,50 @@
     requestAnimationFrame(step);
   }
 
+  // Sparklines are WEEKLY, not daily: at this volume a daily count of 0-3 draws
+  // an ECG of pure noise (NN/g: use the shortest window that is somewhat stable).
+  // avg=true averages instead of summing - DAU must never be summed into a week.
+  function sparkSeries(series,key,avg){
+    var daily=(series||[]).slice(-84);
+    var wk=byWeek(daily,[key]);
+    if(avg){
+      var counts={};
+      daily.forEach(function(r){
+        var d=new Date(String(r.d).slice(0,10)+"T00:00:00");
+        var w=new Date(d); w.setDate(d.getDate()-((d.getDay()+6)%7));
+        var k=w.toISOString().slice(0,10);
+        counts[k]=(counts[k]||0)+1;
+      });
+      wk=wk.map(function(r){
+        var c=counts[String(r.d).slice(0,10)]||1;
+        var o={d:r.d}; o[key]=Math.round((+r[key]||0)/c); return o;
+      });
+    }
+    return wk.slice(-12).map(function(r){ return +r[key]||0; });
+  }
   function sparkline(values){
     var W=140,H=30,n=values.length;
-    if(n<2) return null;
+    if(n<3) return null;
+    // an all-zero series would draw a flat line that reads as data - draw nothing
+    if(!values.some(function(v){ return v>0; })) return null;
     var max=Math.max.apply(null,values.concat([1]));
     var svg=sv("svg",{viewBox:"0 0 "+W+" "+H,width:W,height:H});
     var pts=values.map(function(v,i){
       return (i*(W-6)/(n-1)+3)+","+(H-4-(v/max)*(H-8));
     });
+    // faint area under the line gives the shape weight at this size
+    svg.appendChild(sv("polyline",{
+      points:"3,"+(H-3)+" "+pts.join(" ")+" "+(W-3)+","+(H-3),
+      fill:tok("--wash1"),stroke:"none"}));
     svg.appendChild(sv("polyline",{points:pts.join(" "),fill:"none",
-      stroke:tok("--grid"),"stroke-width":2,"stroke-linecap":"round","stroke-linejoin":"round"}));
-    // current period in the accent: last segment + end dot
-    if(n>=2){
-      svg.appendChild(sv("polyline",{points:pts.slice(-2).join(" "),fill:"none",
-        stroke:tok("--s1"),"stroke-width":2,"stroke-linecap":"round"}));
-      var last=pts[n-1].split(",");
-      svg.appendChild(sv("circle",{cx:last[0],cy:last[1],r:3,fill:tok("--s1"),
-        stroke:tok("--surface"),"stroke-width":2}));
-    }
+      stroke:tok("--muted"),"stroke-width":1.5,"stroke-linecap":"round","stroke-linejoin":"round"}));
+    // current week in the accent: last segment + end dot
+    svg.appendChild(sv("polyline",{points:pts.slice(-2).join(" "),fill:"none",
+      stroke:tok("--s1"),"stroke-width":2,"stroke-linecap":"round"}));
+    var last=pts[n-1].split(",");
+    svg.appendChild(sv("circle",{cx:last[0],cy:last[1],r:3,fill:tok("--s1"),
+      stroke:tok("--surface"),"stroke-width":2}));
+    var t=sv("title"); t.textContent=S.sparkTip; svg.appendChild(t);
     return svg;
   }
 
@@ -1204,10 +1306,8 @@
     t.appendChild(lbl);
     if(opts.target){
       t.classList.add("clickable");
-      t.addEventListener("click",function(){
-        var trg=$(opts.target);
-        if(trg) trg.scrollIntoView({behavior:"smooth",block:"start"});
-      });
+      t.title=S.tileJump;
+      t.addEventListener("click",function(){ flashTo(opts.target); });
     }
     var valEl=el("div","val",value);
     if(/^[\d,]+$/.test(value)) animNum(valEl, parseInt(value.replace(/,/g,""),10));
@@ -1285,6 +1385,40 @@
     c.appendChild(el("span","delta "+cls,(d>0?"▲":d<0?"▼":"=")+" "+txt));
     c.appendChild(el("span","vs",(label||S.cmpPrevLabel)+": "+fmt(prev)));
   }
+  // The glance layer: one plain-language sentence per chart, so the reader gets
+  // the verdict without decoding the bars. Built from the same numbers the
+  // chart draws - direction, size of change, and where the peak sits.
+  function verdictLine(chartId, cur, prev, rows, keys, opts){
+    opts=opts||{};
+    var host=$(chartId); if(!host) return;
+    var panel=host.closest("section.panel"); if(!panel) return;
+    var v=panel.querySelector(".verdict");
+    if(!v){ v=el("div","verdict"); panel.insertBefore(v,host); }
+    v.className="verdict";
+    v.innerHTML="";
+    var peak=null;
+    (rows||[]).forEach(function(r){
+      var t=0; keys.forEach(function(k){ t+=(+r[k]||0); });
+      if(!peak || t>peak.v) peak={v:t,d:r.d};
+    });
+    var txt, cls="";
+    if(prev==null || prev===0){
+      txt=S.vNoBase(fmt(cur), opts.unit||S.uItems);
+    } else {
+      var pc=Math.round(100*(cur-prev)/prev);
+      var dir=pc>0?"up":pc<0?"down":"flat";
+      cls = opts.invert ? (pc>0?"bad":pc<0?"good":"")
+                        : (pc>=10?"good":pc<=-10?"bad":"warn");
+      if(dir==="flat") cls="";
+      txt=S.vChange(dir, Math.abs(pc), fmt(cur), fmt(prev), opts.unit||S.uItems);
+    }
+    if(peak && peak.v>0 && (rows||[]).length>2) txt+=" "+S.vPeak(fmt(peak.v), fmtDay(peak.d));
+    if(cls) v.classList.add(cls);
+    v.appendChild(el("span","vi", cls==="good"?"\u25B2":cls==="bad"?"\u25BC":cls==="warn"?"\u2192":"\u2022"));
+    var body=el("span"); body.innerHTML=txt; // trusted: our own dictionary + numbers
+    v.appendChild(body);
+  }
+
   // per-chart segment picker: reads the .on button's data-k ("all" or a series key)
   function segK(id){
     var b=document.querySelector("#"+id+" button.on");
@@ -1324,14 +1458,24 @@
   function annotMarks(rows){
     if(!rows.length) return [];
     var first=String(rows[0].d).slice(0,10), last=String(rows[rows.length-1].d).slice(0,10);
-    var marks=[];
+    // events landing in the SAME bucket merge into one line - at weekly grain two
+    // releases a few days apart would otherwise draw overlapping labels
+    var byIdx={};
     ANNOT.forEach(function(a){
       if(a.d<first || a.d>last) return;
       var idx=0;
       for(var i=0;i<rows.length;i++){ if(String(rows[i].d).slice(0,10)<=a.d) idx=i; else break; }
-      marks.push({ xAxis: idx, name: LANG==="he"? a.he : a.en });
+      (byIdx[idx]=byIdx[idx]||[]).push(LANG==="he"? a.he : a.en);
     });
-    return marks;
+    return Object.keys(byIdx).map(function(idx,i){
+      var nm=byIdx[idx].join(" · ");
+      if(nm.length>22) nm=nm.slice(0,21)+"…";
+      return {
+        xAxis:+idx, name:nm,
+        // horizontal labels at the top, staggered so neighbours never overlap
+        label:{ distance:[0,(i%2)*12] }
+      };
+    });
   }
 
   function insight(cls, html, onClick){ // html is built from trusted labels + numbers only
@@ -1342,9 +1486,23 @@
     if(onClick){ row.classList.add("clickable"); row.addEventListener("click",onClick); }
     return row;
   }
-  function scrollToEl(id){
-    return function(){ var t=$(id); if(t) t.scrollIntoView({behavior:"smooth",block:"center"}); };
+  // scroll to a target AND flash it, so the reader sees where they landed.
+  // The panel is the flash surface, not the inner div - a bare chart div has
+  // no border to pulse.
+  var landTimer=null;
+  function flashTo(id){
+    var t=$(id); if(!t) return;
+    var surface=t.closest("section.panel")||t;
+    surface.scrollIntoView({behavior:"smooth",block:"center"});
+    document.querySelectorAll(".landed").forEach(function(n){ n.classList.remove("landed"); });
+    if(landTimer) clearTimeout(landTimer);
+    // wait out the smooth scroll so the pulse starts when the panel is in view
+    landTimer=setTimeout(function(){
+      surface.classList.add("landed");
+      landTimer=setTimeout(function(){ surface.classList.remove("landed"); },2600);
+    },380);
   }
+  function scrollToEl(id){ return function(){ flashTo(id); }; }
   function renderInsights(){
     var k=DATA.kpis, dl=DATA.deltas||{}, f=DATA.funnel_30d, L=DATA.liquidity,
         C=DATA.chat_stats||{}, NO=DATA.no_offer_requests||{}, lf=DATA.lifecycle||{};
@@ -1352,17 +1510,17 @@
     var rows=[];
     // ordered: serious -> warning -> good/info
     var msgPct=f.signups? Math.round(100*f.messaged/f.signups):0;
-    if(msgPct<10) rows.push(["bad",S.insFunnel(msgPct,fmt(f.messaged),fmt(f.signups)),scrollToEl("funnel")]);
+    if(msgPct<10) rows.push(["bad",S.insFunnel(msgPct,fmt(f.messaged),fmt(f.signups),segVal("funnelSeg")),scrollToEl("funnel")]);
     if(C.offer_convos>0){
       var op=Math.round(100*C.offer_answered/C.offer_convos);
       rows.push([op<60?"bad":"good",S.insOfferAns(op,fmt(C.offer_answered),fmt(C.offer_convos),op<60)]);
     }
     var lq=L.requests_30d? Math.round(100*L.with_offer_24h/L.requests_30d):0;
     rows.push([lq<50?"warn":"good",S.insLiq(lq)]);
-    var p30=(DATA.posts_by_day||[]).slice(-30);
-    var rq30=sumRows(p30,["requests"]), of30=sumRows(p30,["offers"]);
-    if(rq30>0 && of30>=rq30*1.5)
-      rows.push(["warn",S.insSupplyHeavy((of30/rq30).toFixed(1),fmt(rq30),fmt(of30))]);
+    var pw=rangeRows(DATA.posts_by_day);
+    var rqW=sumRows(pw,["requests"]), ofW=sumRows(pw,["offers"]);
+    if(rqW>0 && ofW>=rqW*1.5)
+      rows.push(["warn",S.insSupplyHeavy((ofW/rqW).toFixed(1),fmt(rqW),fmt(ofW),winLabel())]);
     if(NO.count>0) rows.push(["warn",S.insNoOffer(fmt(NO.count)),scrollToEl("noOffer")]);
     var fa=f.signups? Math.round(100*(dl.first_action_24h_30d||0)/f.signups):0;
     rows.push([fa<30?"warn":"info",S.insFirstAction(fa)]);
@@ -1373,7 +1531,7 @@
       var SU=R.supply_util||{};
       if(SU.active_offers>=10){
         var util=Math.round(100*SU.engaged_30d/SU.active_offers);
-        if(util<30) rows.push(["bad",S.insSupplyUtil(util,fmt(SU.active_offers-SU.engaged_30d)),scrollToEl("supplyHealth")]);
+        if(util<30) rows.push(["bad",S.insSupplyUtil(util,fmt(SU.active_offers-SU.engaged_30d),winLabel()),scrollToEl("supplyHealth")]);
       }
       var RP=R.repeat||{};
       if(RP.requesters>=20){
@@ -1547,7 +1705,7 @@
     var k=DATA.kpis, dl=DATA.deltas||{};
     renderInsights();
     var host=$("tiles"); host.innerHTML="";
-    function tail(series,key){ return (series||[]).slice(-14).map(function(r){return +r[key]||0;}); }
+    function tail(series,key,avg){ return sparkSeries(series,key,avg); }
     var S3=tok("--s3"), S7=tok("--s7"), S5=tok("--s5");
     var hero=tile(S.tileHero, fmt(k.completed_7d),
       {delta:k.completed_7d, prev:dl.completed_prev_7d,
@@ -1561,7 +1719,7 @@
     host.appendChild(tile(S.tileActive, fmt(k.seen_1d),
       {note:S.tileActiveNote(fmt(k.seen_7d),fmt(k.seen_30d)),
        tip:S.tileActiveTip,
-       spark:tail(DATA.dau_by_day,"dau"), dot:tok("--s1"), target:"chDau"}));
+       spark:tail(DATA.dau_by_day,"dau",true), dot:tok("--s1"), target:"chDau"}));
     host.appendChild(tile(S.tileStick, pct(k.seen_1d,k.seen_30d),
       {note:S.tileStickNote(fmt(k.live_users)), dot:S7, target:"chRetention",
        tip:S.tileStickTip,
@@ -1598,35 +1756,38 @@
       opts.prev = { rows: opts.avg ? prevRows(source) : prevAgg(source, keys), keys: keys };
       timeChart(chartId, rows, series, opts);
       var cur = rangeRows(source), prv = prevRows(source);
+      var curV, prvV;
       if(opts.avg){
-        cmpLine(chartId,
-          cur.length? Math.round(sumRows(cur,keys)/cur.length):0,
-          prv.length? Math.round(sumRows(prv,keys)/prv.length):null,
-          opts.avgLabel);
+        curV = cur.length? Math.round(sumRows(cur,keys)/cur.length):0;
+        prvV = prv.length? Math.round(sumRows(prv,keys)/prv.length):null;
+        cmpLine(chartId, curV, prvV, opts.avgLabel);
       } else {
-        cmpLine(chartId, sumRows(cur,keys), prv.length? sumRows(prv,keys):null);
+        curV = sumRows(cur,keys);
+        prvV = prv.length? sumRows(prv,keys):null;
+        cmpLine(chartId, curV, prvV);
       }
+      verdictLine(chartId, curV, prvV, rows, keys, {unit:opts.unit});
     }
     segChart("chSignups","segSignups",DATA.signups_by_day,[
       {key:"ios",name:"iOS",color:S1,type:"bar"},
       {key:"android",name:"Android",color:S2,type:"bar"}],
-      ["total"],{zoom:true, annot:true});
+      ["total"],{zoom:true, annot:true, unit:S.uSignups});
     segChart("chDau","segDau",DATA.dau_by_day,[
       {key:"dau",name:S.serDau,color:S1,type:"line",area:true},
       {key:"wau",name:S.serWau,color:S2,type:"line"}],
-      ["dau"],{zoom:false, avg:true, avgLabel:S.cmpDauPrev});
+      ["dau"],{zoom:false, avg:true, avgLabel:S.cmpDauPrev, unit:S.uUsers});
     segChart("chPosts","segPosts",DATA.posts_by_day,[
       {key:"requests",name:S.serRequests,color:S1,type:"bar"},
       {key:"offers",name:S.serOffers,color:S2,type:"bar"}],
-      ["requests","offers"],{zoom:true});
+      ["requests","offers"],{zoom:true, unit:S.uPosts});
     segChart("chMsgs","segMsgs",DATA.messages_by_day,[
       {key:"msgs",name:S.serMsgs,color:S1,type:"bar"},
       {key:"senders",name:S.serSenders,color:S3,type:"line"}],
-      ["msgs"],{zoom:true});
+      ["msgs"],{zoom:true, unit:S.uMsgs});
     segChart("chMatches","segMatches",DATA.matches_by_day,[
       {key:"created",name:S.serCreated,color:S1,type:"bar"},
       {key:"completed",name:S.serCompleted,color:S3,type:"bar"}],
-      ["created"],{zoom:true,group:true, annot:true});
+      ["created"],{zoom:true,group:true, annot:true, unit:S.uMatches});
 
     var lf=DATA.lifecycle||{};
     var lt0=el("table","plain");
@@ -1910,7 +2071,7 @@
     return fetch("https://lwomstzzmyegpbidibfm.supabase.co/functions/v1/admin-dashboard",{
       method:"POST",
       headers:hdrs,
-      body:JSON.stringify({days:fetchDays,chatDays:chatDays})
+      body:JSON.stringify({days:fetchDays,chatDays:chatDays,window:RANGE})
     }).then(function(r){
       if(r.status===401) throw new Error("unauthorized");
       if(r.status===403) throw new Error("forbidden");
@@ -1927,6 +2088,7 @@
         document.querySelector("#tabs button.on").getAttribute("data-v")!=="metrics");
       $("app").classList.remove("loading");
       $("refreshIcon").classList.remove("spinning");
+      applyChrome(); // re-stamp the "{win}" labels for the range just fetched
       renderMetrics(); renderChat(); observePanels();
     }).catch(function(e){
       $("app").classList.remove("loading");
