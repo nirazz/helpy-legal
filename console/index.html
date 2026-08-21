@@ -17,7 +17,7 @@
   :root {
     color-scheme: light;
     --plane:#eef0f9; --surface:#ffffff;
-    --glass:rgba(255,255,255,0.62);
+    --glass:rgba(255,255,255,0.8);
     --ink:#171436; --ink2:#565480; --muted:#8886a8;
     --grid:#e4e6f3; --baseline:#c6c8e0; --hairline:rgba(70,73,196,0.16);
     --s1:#6366f1; --s2:#b45309; --s3:#0d9488; --s7:#8b5cf6; --s5:#4d7c0f; --s8:#e11d48;
@@ -25,7 +25,7 @@
     --seq100:#dfe3fc; --seq250:#aab4f5; --seq400:#6366f1; --seq550:#4649c4; --seq700:#2d2f8f;
     --good-text:#15803d; --bad-text:#dc2626; --warning:#d97706;
     --wash1:rgba(99,102,241,0.10); --wash-hover:rgba(23,20,54,0.045);
-    --num-glow:0 0 16px rgba(99,102,241,0.35);
+    --num-glow:0 0 10px rgba(99,102,241,0.18);
   }
   /* dark mode: the deep-space HUD variant, toggled from the header and persisted */
   html[data-theme="dark"] {
@@ -347,7 +347,7 @@
         line-height:1.5; text-align:start; letter-spacing:normal; text-transform:none;
         text-shadow:none; box-shadow:0 8px 24px rgba(45,45,100,0.18);
         opacity:0; pointer-events:none; transition:opacity .15s; z-index:35; }
-  .term:hover::after { opacity:1; }
+  .term:hover::after, .term.open::after { opacity:1; }
   /* inside overflow containers (cohort table) the tip opens downward so it isn't clipped */
   .term.below::after { bottom:auto; top:calc(100% + 8px); }
 
@@ -369,6 +369,29 @@
           transition:width .6s cubic-bezier(.2,.8,.2,1); }
   .echart { direction:ltr; width:100%; height:280px; }
   .hval { font-weight:600; font-variant-numeric:tabular-nums; text-align:left; direction:ltr; }
+  .hval.sm { font-weight:500; font-size:12px; color:var(--ink2); }
+  .htrack.nbt { position:relative; overflow:visible; }
+  .htrack.nbt .btgt { position:absolute; top:-2px; bottom:-2px; width:2px;
+    background:var(--ink2); border-radius:1px; }
+  /* collapsible sections: header + brief = the summary strip */
+  .sechead.toggle { cursor:pointer; user-select:none; }
+  .sechead.toggle::after { content:"\25BE"; margin-inline-start:auto;
+    color:var(--muted); font-size:12px; transition:transform .18s; }
+  .sechead.toggle.closed::after { transform:rotate(-90deg); }
+  .seccollapsed { display:none !important; }
+  .secdot { width:8px; height:8px; border-radius:50%; display:inline-block;
+    margin-inline-start:8px; flex-shrink:0; }
+  .secdot.good { background:var(--good-text); opacity:.55; }
+  .secdot.warn { background:var(--warning); }
+  .secdot.bad  { background:var(--bad-text); box-shadow:0 0 0 3px rgba(220,38,38,0.15); }
+  #rail a .secdot { margin-inline-start:6px; width:6px; height:6px; vertical-align:middle; }
+  /* the north-star headline: the first sentence of the whole page */
+  .nsline { font-size:15.5px; font-weight:600; line-height:1.55; color:var(--ink);
+    padding:2px 0 10px; }
+  .nsline b { font-variant-numeric:tabular-nums; }
+  /* conclusion-first panels: the verdict is the headline, the topic the eyebrow */
+  .panel.concl > h2 { font-size:11.5px; color:var(--muted); letter-spacing:.03em; }
+  .panel.concl .verdict:not(.read) { font-size:14.5px; font-weight:600; line-height:1.5; }
 
   /* cohort heatmap */
   table.cohort { border-collapse:separate; border-spacing:3px; font-size:12px; width:100%; }
@@ -646,6 +669,7 @@
     <section class="panel" id="overviewTop">
       <h2 data-i18n="insightsTitle">מה דורש תשומת לב</h2>
       <div class="sub" data-i18n="insightsSub">תובנות מחושבות מהנתונים של 30 הימים האחרונים</div>
+      <div id="nsLine"></div>
       <div id="insightsBody"></div>
     </section>
     <div class="tiles" id="tiles"></div>
@@ -663,6 +687,7 @@
         <div class="sub" data-i18n="funnelSub">מה עושה משתמש חדש אחרי ההרשמה</div><div id="funnel"></div></section>
       <section class="panel wide"><h2 data-i18n="glogTitle">יומן צמיחה · שבוע אחר שבוע</h2><div class="sub" data-i18n="glogSub">מה קרה בכל שבוע, מה השתנה, ומה גרם לזה</div><div id="growthLog"></div></section>
       <section class="panel"><h2 data-i18n="lifecycleTitle">מאזן משתמשים</h2><div class="sub" data-i18n="lifecycleSub">חתך חי של כל המשתמשים הרשומים</div><div id="lifecycle"></div></section>
+      <section class="panel wide"><h2 data-i18n="nudgeTitle">מכונת הדחיפות · {win}</h2><div class="sub" data-i18n="nudgeSub">כל שולח פוש נמדד: כמה נשלחו, וכמה מהמקבלים עשו את הפעולה תוך 48 שעות. זה הפאנל שמחליט איזה שולח נשאר</div><div id="nudgeEff"></div></section>
     </div>
 
     <div class="sechead" id="secMarket" style="--sec-c:var(--s2)" data-i18n="secMarketT">מרקטפלייס</div>
@@ -684,15 +709,8 @@
       <section class="panel"><h2 data-i18n="cityLiqTitle">נזילות לפי עיר · {win}</h2><div class="sub" data-i18n="cityLiqSub">הרשת האטומית: ממוצע ארצי מסתיר אם יש עיר אחת שבאמת עובדת</div><div id="cityLiq" style="overflow-x:auto"></div></section>
       <section class="panel"><h2 data-i18n="citiesTitle">ערים מובילות · {win}</h2><div class="sub" data-i18n="citiesSub">לפי עיר הפוסט</div><div id="chCities"></div></section>
       <section class="panel wide"><h2 data-i18n="supplyTitle">בריאות צד ההיצע</h2><div class="sub" data-i18n="supplySub">הצעה שיושבת בלי פנייה = עוזר/ת שעומדים לאבד</div><div id="supplyHealth"></div></section>
-      
-      
-      
-      
-      
-      
-      
-      
-      
+      <section class="panel wide"><h2 data-i18n="dtreeTitle">מה מזיז את מדד הצפון · {win}</h2><div class="sub" data-i18n="dtreeSub">עזרות שהושלמו, מפורקות לגורמים שאפשר להזיז: בקשות × מילוי × קבלה × השלמה</div><div id="driverTree"></div></section>
+      <section class="panel wide"><h2 data-i18n="nbhdTitle">סולם השכונות מול קו ה-60</h2><div class="sub" data-i18n="nbhdSub">מהמדידה שלנו: מתחת ל-10 שכנים פעילים בקשה מתה, מעל 60 - 90% נענות. כמה חסר לכל אזור כדי להידלק</div><div id="nbhd"></div></section>
     </div>
 
     <div class="sechead" id="secChat" style="--sec-c:var(--s3)" data-i18n="secChatT">מעורבות בצ'אט</div>
@@ -718,7 +736,9 @@
     </section>
 
     <div class="sechead" id="secUsers" style="--sec-c:var(--s5)" data-i18n="secUsersT">משתמשים בולטים · {win}</div>
-    <section class="panel"><div id="topUsers" style="overflow-x:auto"></div></section>
+    <section class="panel"><h2 data-i18n="depTitle">מי נושא את השוק · 90 יום</h2><div class="sub" data-i18n="depSub">אחוז ההשלמות שנשען על העוזרים המובילים - ומי מהם כבר לא מגיע. בקנה מידה כזה, לאבד אחד מהם זה אירוע</div><div id="helperDep"></div>
+    <button class="linklike" id="topUsersToggle" type="button"></button>
+    <div id="topUsers" class="hidden" style="overflow-x:auto"></div></section>
 
     <div class="sechead" id="secEvents" style="--sec-c:var(--s3)" data-i18n="secEventsT">מה קרה לאחרונה</div>
     <section class="panel">
@@ -805,6 +825,38 @@
       liqSub:"כמה מהר בקשה פוגשת עוזר/ת",
       noOfferTitle:"בקשות בלי אף הצעה", noOfferSub:"פעילות עכשיו בפיד וממתינות - הזדמנות לדחיפה",
       catsTitle:"קטגוריות מובילות · {win}", catsSub:"פוסטים לפי קטגוריה",
+      dtreeTitle:"מה מזיז את מדד הצפון · {win}",
+      dtreeSub:"עזרות שהושלמו, מפורקות לגורמים שאפשר להזיז: בקשות × מילוי × קבלה × השלמה",
+      dtSteps:{requests:"בקשות שפורסמו", filled:"קיבלו לפחות הצעה אחת", accepted:"הגיעו לשיחה פתוחה", completed:"הושלמו בפועל"},
+      dtOffers:"ועוד {n} השלמות שנולדו מהצעות עזרה",
+      dtPrev:"בתקופה הקודמת: {v}",
+      nsHeadline:function(cur,prev,mover){ var t="<b>"+cur+"</b> עזרות הושלמו ב{win}"+(prev!=null?" (מול <b>"+prev+"</b> בתקופה הקודמת)":"");
+        if(mover) t+=" · הגורם שהשתנה הכי הרבה: <b>"+mover+"</b>"; return t+"."; },
+      rdDtree:function(step,a,b){ return "הצוואר כרגע הוא <b>"+step+"</b>: "+a+" מתוך "+b+" עוברים את השלב. זה הגורם שהזזה שלו תזיז הכי הרבה את מדד הצפון."; },
+      rdDtreeZero:"אפס השלמות בטווח. לפני שמתקנים שלבים באמצע - זה המספר שצריך לדבר עליו.",
+      nbhdTitle:"סולם השכונות מול קו ה-60",
+      nbhdSub:"מהמדידה שלנו: מתחת ל-10 שכנים פעילים בקשה מתה, מעל 60 - 90% נענות. כמה חסר לכל אזור כדי להידלק",
+      nbhdUsers:"{n} פעילים", nbhdGap:"חסרים {n} להצתה", nbhdTipped:"מעל הקו ✓",
+      nbhdReqs:"{r} בקשות · {a} נענו ב-24ש׳", nbhdNoCity:"אזור ללא שם",
+      rdNbhd:function(t,total,best,gap){ return t>0
+        ? "<b>"+t+"</b> מתוך "+total+" אזורים כבר מעל קו ה-60. הקרוב הבא: <b>"+best+"</b> - חסרים לו <b>"+gap+"</b> משתמשים. שם כל שקל פרסום שווה הכי הרבה."
+        : "אף אזור עוד לא חצה את קו ה-60. הקרוב ביותר: <b>"+best+"</b> (חסרים "+gap+"). ריכוז התקציב שם עדיף על פיזור."; },
+      nudgeTitle:"מכונת הדחיפות · {win}",
+      nudgeSub:"כל שולח פוש נמדד: כמה נשלחו, וכמה מהמקבלים עשו את הפעולה תוך 48 שעות. זה הפאנל שמחליט איזה שולח נשאר",
+      nudgeNames:{silent_room:"שיחה שקטה - תגיד/י שלום", unanswered:"הודעה שלא נענתה", completion:"סיום ודירוג",
+        phone_check:"נפגשתם? (אחרי החלפת טלפון)", rating:"תזכורת דירוג", reengagement:"חזרה לאפליקציה (שיווקי)",
+        digest:"סיכום שבועי", activation:"פעולה ראשונה (D+1)", offer_owner:"בעל/ת הצעה - מחכים לך"},
+      nudgeSent:"נשלחו", nudgeActed:"פעלו תוך 48ש׳",
+      nudgeAndroidNote:"הערת מדידה: פוש באנדרואיד היה מת עד 21.8 - חלק מהשליחות בטווח מעולם לא הגיעו למכשיר, כך שהאחוזים כאן הם רצפה, לא תקרה.",
+      rdNudges:function(worstName,worstSent,bestName,bestPct){ return "רוב השולחים לא מזיזים כמעט כלום - <b>"+worstName+"</b> שלח "+worstSent+" פושים כמעט בלי תגובה. הכי אפקטיבי: <b>"+bestName+"</b> ("+bestPct+"). שולח שלא ממיר אחרי חלון מדידה נקי - מכבים."; },
+      depTitle:"מי נושא את השוק · 90 יום",
+      depSub:"אחוז ההשלמות שנשען על העוזרים המובילים - ומי מהם כבר לא מגיע. בקנה מידה כזה, לאבד אחד מהם זה אירוע",
+      depShare:"מההשלמות", depInactive:"לא נראה/תה {n} ימים", depActive:"פעיל/ה",
+      depHead:function(share,total){ return "שלושת העוזרים המובילים מחזיקים <b>"+share+"%</b> מתוך <b>"+total+"</b> ההשלמות ב-90 יום."; },
+      depEmpty:"אין השלמות ב-90 הימים האחרונים - אין עדיין על מי להישען.",
+      rdDep:function(name,share,days){ return "<b>"+name+"</b> מחזיק/ה "+share+"% מההשלמות ולא נראה/תה כבר <b>"+days+" ימים</b>. זו לא שורה בטבלה - זו שיחת טלפון אישית ששווה לעשות השבוע."; },
+      rdDepOk:"אין תלות מסוכנת בעוזר אחד, ואף עוזר מוביל לא נעלם. להמשיך לעקוב.",
+      topUsersShow:"כל המשתמשים הפעילים ›", topUsersHide:"‹ להסתיר את הטבלה",
       citiesTitle:"ערים מובילות · {win}", citiesSub:"לפי עיר הפוסט",
       msgsTitle:"שיחות צ'אט", msgsSub:"הודעות שנשלחו (בטווח ארוך - סכום שבועי)",
       chatHealthTitle:"בריאות הצ'אט · {win}", chatHealthSub:"האם פניות מקבלות מענה, ובאיזו מהירות",
@@ -1050,6 +1102,38 @@
       liqSub:"How fast a request meets a helper",
       noOfferTitle:"Requests with zero offers", noOfferSub:"Live in the feed and waiting - a push opportunity",
       catsTitle:"Top categories · {win}", catsSub:"Posts by category",
+      dtreeTitle:"What moves the north star · {win}",
+      dtreeSub:"Completed helps, decomposed into the factors you can actually move: requests × fill × accept × complete",
+      dtSteps:{requests:"Requests posted", filled:"Got at least one offer", accepted:"Reached an open chat", completed:"Actually completed"},
+      dtOffers:"plus {n} completions born from help offers",
+      dtPrev:"previous period: {v}",
+      nsHeadline:function(cur,prev,mover){ var t="<b>"+cur+"</b> helps completed in the last {win}"+(prev!=null?" (vs <b>"+prev+"</b> the period before)":"");
+        if(mover) t+=" · biggest factor change: <b>"+mover+"</b>"; return t+"."; },
+      rdDtree:function(step,a,b){ return "The bottleneck right now is <b>"+step+"</b>: "+a+" of "+b+" pass that stage. Moving it moves the north star more than anything else."; },
+      rdDtreeZero:"Zero completions in range. Before fixing middle stages - this is the number to talk about.",
+      nbhdTitle:"The neighborhood ladder vs the 60 line",
+      nbhdSub:"From our own measurement: under 10 active neighbors a request dies, above 60 - 90% get answered. How far each area is from tipping",
+      nbhdUsers:"{n} active", nbhdGap:"{n} short of tipping", nbhdTipped:"above the line ✓",
+      nbhdReqs:"{r} requests · {a} answered in 24h", nbhdNoCity:"unnamed area",
+      rdNbhd:function(t,total,best,gap){ return t>0
+        ? "<b>"+t+"</b> of "+total+" areas are already above the 60 line. Next closest: <b>"+best+"</b> - <b>"+gap+"</b> users short. That is where every ad shekel buys the most."
+        : "No area has crossed the 60 line yet. Closest: <b>"+best+"</b> ("+gap+" short). Concentrating the budget there beats spreading it."; },
+      nudgeTitle:"The nudge machine · {win}",
+      nudgeSub:"Every push sender measured: how many sent, and how many recipients did the nudged action within 48 hours. This panel decides which senders live",
+      nudgeNames:{silent_room:"Silent room - say hello", unanswered:"Unanswered message", completion:"Mark done and rate",
+        phone_check:"Did you meet? (after phone exchange)", rating:"Rating reminder", reengagement:"Come back (marketing)",
+        digest:"Weekly digest", activation:"First action (D+1)", offer_owner:"Offer owner - someone is waiting"},
+      nudgeSent:"sent", nudgeActed:"acted within 48h",
+      nudgeAndroidNote:"Measurement note: Android push was dead until Aug 21 - some sends in range never reached a device, so these rates are a floor, not a ceiling.",
+      rdNudges:function(worstName,worstSent,bestName,bestPct){ return "Most senders barely move anything - <b>"+worstName+"</b> sent "+worstSent+" pushes to almost no response. Most effective: <b>"+bestName+"</b> ("+bestPct+"). A sender that still does not convert after a clean measurement window gets turned off."; },
+      depTitle:"Who carries the marketplace · 90 days",
+      depSub:"The share of completions resting on the top helpers - and which of them has stopped showing up. At this scale, losing one is an event",
+      depShare:"of completions", depInactive:"not seen for {n} days", depActive:"active",
+      depHead:function(share,total){ return "The top three helpers carry <b>"+share+"%</b> of <b>"+total+"</b> completions in 90 days."; },
+      depEmpty:"No completions in the last 90 days - nobody to lean on yet.",
+      rdDep:function(name,share,days){ return "<b>"+name+"</b> carries "+share+"% of completions and has not been seen for <b>"+days+" days</b>. That is not a table row - it is a personal phone call worth making this week."; },
+      rdDepOk:"No dangerous dependence on a single helper, and no top helper has gone quiet. Keep watching.",
+      topUsersShow:"All active users ›", topUsersHide:"‹ Hide the table",
       citiesTitle:"Top cities · {win}", citiesSub:"By post city",
       msgsTitle:"Chat activity", msgsSub:"Messages sent (weekly sums on long ranges)",
       chatHealthTitle:"Chat health · {win}", chatHealthSub:"Do openers get answered, and how fast",
@@ -1896,6 +1980,7 @@
     var panel=host.closest("section.panel"); if(!panel) return;
     var v=panel.querySelector(".verdict");
     if(!v){ v=el("div","verdict"); panel.insertBefore(v,host); }
+    panel.classList.add("concl");
     v.className="verdict";
     v.innerHTML="";
     var peak=null;
@@ -2602,6 +2687,172 @@
     t.textContent = cohortsShown? S.hideCohorts : S.showCohorts;
   }
 
+  // ---- decision layer: driver tree, neighborhoods, nudges, dependence ------
+  function renderDecisions(){
+    var D=DATA.decisions;
+    var ns=$("nsLine"); if(ns) ns.innerHTML="";
+    ["driverTree","nbhd","nudgeEff","helperDep"].forEach(function(id){
+      var h=$(id); if(h) h.innerHTML="";
+    });
+    if(!D) return;
+
+    // driver tree: the north star decomposed into stages you can move
+    var T=D.driver_tree, dt=$("driverTree");
+    if(T && dt){
+      var c=T.cur||{}, pv=T.prev||{};
+      var steps=[
+        {k:"requests", v:c.requests||0, p:pv.requests||0, base:null,        pbase:null},
+        {k:"filled",   v:c.filled||0,   p:pv.filled||0,   base:c.requests,  pbase:pv.requests},
+        {k:"accepted", v:c.accepted||0, p:pv.accepted||0, base:c.filled,    pbase:pv.filled},
+        {k:"completed",v:c.completed||0,p:pv.completed||0,base:c.accepted,  pbase:pv.accepted}
+      ];
+      var maxV=Math.max(1,c.requests||0,pv.requests||0);
+      var ramp=[tok("--seq250"),tok("--seq400"),tok("--seq550"),tok("--seq700")];
+      steps.forEach(function(st,i){
+        var row=el("div","hrow");
+        row.appendChild(el("span","hl",S.dtSteps[st.k]||st.k));
+        var track=el("div","htrack");
+        var seg=el("div","hseg");
+        seg.style.width=Math.max(1.5,100*st.v/maxV)+"%";
+        seg.style.background=ramp[i];
+        track.appendChild(seg);
+        row.appendChild(track);
+        var suffix=st.base? " · "+pct(st.v,st.base):"";
+        row.appendChild(el("span","hval",fmt(st.v)+suffix));
+        row.title=S.dtPrev.replace("{v}",fmt(st.p));
+        dt.appendChild(row);
+      });
+      if((c.completions_offer||0)>0)
+        dt.appendChild(el("div","note",S.dtOffers.replace("{n}",fmt(c.completions_offer))));
+      // the bottleneck = the stage with the lowest pass-rate (base big enough to mean something)
+      var worst=null;
+      steps.slice(1).forEach(function(st){
+        if((st.base||0)>=3){
+          var r=st.v/st.base;
+          if(!worst||r<worst.r) worst={r:r,st:st};
+        }
+      });
+      if((c.completions||0)===0 && (c.requests||0)>0) panelRead("driverTree","bad",S.rdDtreeZero);
+      else if(worst) panelRead("driverTree", worst.r<0.4?"warn":"",
+        S.rdDtree(S.dtSteps[worst.st.k], fmt(worst.st.v), fmt(worst.st.base)));
+      // the overview headline: how many, vs when, and which factor moved
+      if(ns){
+        var mover=null, mag=0;
+        steps.slice(1).forEach(function(st){
+          if((st.base||0)>=3 && (st.pbase||0)>=3){
+            var cr=st.v/st.base, pr=st.p/st.pbase;
+            if(Math.abs(cr-pr)>mag){ mag=Math.abs(cr-pr);
+              mover=(S.dtSteps[st.k]||st.k)+(cr>pr?" \u25B2":" \u25BC"); }
+          }
+        });
+        var line=el("div","nsline");
+        line.innerHTML=withWin(S.nsHeadline(fmt(c.completions||0), fmt(pv.completions||0),
+          mag>0.15? mover:null)); // trusted: our dictionary + numbers
+        ns.appendChild(line);
+      }
+    }
+
+    // neighborhood ladder vs the 60-user tipping line
+    var NB=D.neighborhoods||[], nb=$("nbhd");
+    if(nb){
+      if(!NB.length){ emptyState(nb,S.emptyBars,"map"); }
+      else{
+        var CAP=80; // the bar tops out past the line so a tipped area reads as full
+        NB.forEach(function(cell){
+          var row=el("div","hrow");
+          var name=cell.city||S.nbhdNoCity+" ("+cell.lat+", "+cell.lng+")";
+          row.appendChild(el("span","hl",name));
+          var track=el("div","htrack nbt");
+          var seg=el("div","hseg");
+          seg.style.width=Math.max(2,100*Math.min(cell.users,CAP)/CAP)+"%";
+          seg.style.background= cell.users>=60? "var(--good-text)"
+            : cell.users>=10? "var(--s1)" : "var(--bad-text)";
+          track.appendChild(seg);
+          var mark=el("i","btgt");
+          mark.style.left="calc("+(100*60/CAP)+"% - 1px)";
+          mark.title="60";
+          track.appendChild(mark);
+          row.appendChild(track);
+          var status=cell.users>=60? S.nbhdTipped : S.nbhdGap.replace("{n}",fmt(cell.gap));
+          var meta=S.nbhdUsers.replace("{n}",fmt(cell.users))+" · "+status;
+          if((cell.requests||0)>0)
+            meta+=" · "+S.nbhdReqs.replace("{r}",fmt(cell.requests)).replace("{a}",fmt(cell.answered_24h||0));
+          row.appendChild(el("span","hval sm",meta));
+          nb.appendChild(row);
+        });
+        var tipped=NB.filter(function(x){ return x.users>=60; }).length;
+        var next=NB.filter(function(x){ return x.users<60; })
+                   .sort(function(a,b){ return a.gap-b.gap; })[0];
+        if(next) panelRead("nbhd", tipped?"":"warn",
+          S.rdNbhd(tipped, NB.length, next.city||S.nbhdNoCity, fmt(next.gap)));
+      }
+    }
+
+    // nudge machine: every sender's sends vs 48h actions
+    var NG=D.nudges||[], ngh=$("nudgeEff");
+    if(ngh){
+      if(!NG.length){ emptyState(ngh,S.emptyBars,"alert"); }
+      else{
+        NG.forEach(function(n){
+          var rate=n.sent? Math.round(100*n.acted/n.sent):0;
+          var row=el("div","hrow");
+          row.appendChild(el("span","hl",S.nudgeNames[n.k]||n.k));
+          var track=el("div","htrack");
+          var seg=el("div","hseg");
+          seg.style.width=Math.max(2,rate)+"%";
+          seg.style.background= n.sent<5? "var(--baseline)"
+            : rate<5? "var(--bad-text)" : rate<15? "var(--warning)" : "var(--good-text)";
+          track.appendChild(seg);
+          row.appendChild(track);
+          row.appendChild(el("span","hval sm",fmt(n.acted)+"/"+fmt(n.sent)+" · "+rate+"%"));
+          row.title=S.nudgeSent+" "+fmt(n.sent)+" · "+S.nudgeActed+" "+fmt(n.acted);
+          ngh.appendChild(row);
+        });
+        // the caveat ages out once the window no longer touches the dead-Android era
+        if(Date.now()-spanDays()*86400000 < Date.parse("2026-08-21"))
+          ngh.appendChild(el("div","note",S.nudgeAndroidNote));
+        var big=NG.filter(function(n){ return n.sent>=5; });
+        if(big.length>=2){
+          var byRate=big.slice().sort(function(a,b){ return (a.acted/a.sent)-(b.acted/b.sent); });
+          var worstN=byRate[0], bestN=byRate[byRate.length-1];
+          if(worstN.acted/worstN.sent<0.05)
+            panelRead("nudgeEff","warn",S.rdNudges(
+              S.nudgeNames[worstN.k]||worstN.k, fmt(worstN.sent),
+              S.nudgeNames[bestN.k]||bestN.k, Math.round(100*bestN.acted/bestN.sent)+"%"));
+        }
+      }
+    }
+
+    // helper dependence: who actually carries the marketplace
+    var HD=D.helper_dependence, hd=$("helperDep");
+    if(hd && HD){
+      if(!HD.total){ hd.appendChild(el("div","note",S.depEmpty)); }
+      else{
+        var head=el("div","note");
+        head.innerHTML=S.depHead(HD.top3_share, fmt(HD.total)); // trusted: dictionary + numbers
+        hd.appendChild(head);
+        (HD.helpers||[]).forEach(function(h){
+          var risk=h.share>30 && h.days_inactive>14;
+          var row=el("div","hrow");
+          row.appendChild(el("span","hl",h.name||"-"));
+          var track=el("div","htrack");
+          var seg=el("div","hseg");
+          seg.style.width=Math.max(2,h.share)+"%";
+          seg.style.background= risk? "var(--bad-text)" : "var(--s5)";
+          track.appendChild(seg);
+          row.appendChild(track);
+          var status=h.days_inactive>14? S.depInactive.replace("{n}",fmt(h.days_inactive)) : S.depActive;
+          row.appendChild(el("span","hval sm",
+            fmt(h.completions)+" · "+h.share+"% "+S.depShare+" · "+status+(risk?" \u26A0":"")));
+          hd.appendChild(row);
+        });
+        var riskH=(HD.helpers||[]).filter(function(h){ return h.share>30 && h.days_inactive>14; })[0];
+        if(riskH) panelRead("helperDep","bad",S.rdDep(riskH.name, riskH.share, fmt(riskH.days_inactive)));
+        else panelRead("helperDep","good",S.rdDepOk);
+      }
+    }
+  }
+
   function renderMetrics(){
     var k=DATA.kpis, dl=DATA.deltas||{};
     renderInsights();
@@ -2979,6 +3230,7 @@
     }
 
     renderResearch();
+    renderDecisions();
     renderGrowthLog();
     renderMarketLog();
     renderChatLog();
@@ -2993,6 +3245,8 @@
       st.appendChild(tr);
     });
     var sf=$("safety"); sf.innerHTML=""; sf.appendChild(st);
+    $("topUsersToggle").textContent = topUsersOpen? S.topUsersHide : S.topUsersShow;
+    updateSecStatus();
     panelRead("safety", SF.deletions_30d > (SF.reports_30d+SF.blocks_30d)*3 ? "warn" : "",
       S.rdSafety(fmt(SF.reports_30d), fmt(SF.blocks_30d), fmt(SF.deletions_30d)));
   }
@@ -3111,7 +3365,8 @@
     noOffer:"alert", chCats:"tag", chCities:"pin", cityLiq:"map",
     supplyHealth:"box", density:"radio", chMsgs:"msg", chatHealth:"msg",
     chRetention:"trend", userStates:"refresh", repeatRate:"repeat",
-    topUsers:"award", safety:"shield"
+    topUsers:"award", safety:"shield",
+    driverTree:"trend", nbhd:"map", nudgeEff:"alert", helperDep:"award"
   };
   var SEC_ICON={ secGrowth:"trend", secMarket:"layers", secChat:"msg",
                  secRetention:"refresh", secUsers:"award", secSafety:"shield" };
@@ -3643,6 +3898,91 @@
     cohortsShown=!cohortsShown; syncCohortToggle();
   });
 
+  // full active-users table sits one click behind the dependence view
+  var topUsersOpen=false;
+  $("topUsersToggle").addEventListener("click",function(){
+    topUsersOpen=!topUsersOpen;
+    $("topUsers").classList.toggle("hidden",!topUsersOpen);
+    this.textContent = topUsersOpen? S.topUsersHide : S.topUsersShow;
+  });
+
+  // ---- collapsible sections: summary-first, phone-first --------------------
+  // A collapsed section keeps its title + one-line brief (the summary strip);
+  // the phone starts collapsed, the desktop open; the user's choice persists.
+  var SEC_IDS=["secGrowth","secMarket","secChat","secRetention","secUsers","secEvents","secSafety"];
+  var secOpen={};
+  try{ secOpen=JSON.parse(localStorage.getItem("helpy_console_secopen")||"{}"); }catch(e){}
+  function secBlocks(id){
+    var out=[], n=$(id); if(!n) return out;
+    n=n.nextElementSibling;
+    while(n && !(n.classList && n.classList.contains("sechead"))){ out.push(n); n=n.nextElementSibling; }
+    return out;
+  }
+  function isSecOpen(id){
+    if(Object.prototype.hasOwnProperty.call(secOpen,id)) return !!secOpen[id];
+    return window.innerWidth>720;
+  }
+  function applySec(id){
+    var open=isSecOpen(id);
+    var h=$(id); if(!h) return;
+    h.classList.toggle("closed",!open);
+    secBlocks(id).forEach(function(b){
+      if(b.classList && b.classList.contains("secbrief")) return; // the summary stays
+      b.classList.toggle("seccollapsed",!open);
+    });
+    if(open) Object.keys(einsts).forEach(function(k){ einsts[k].resize(); });
+  }
+  function openSec(id){
+    if(!isSecOpen(id)){ secOpen[id]=true; persistSec(); applySec(id); }
+  }
+  function persistSec(){
+    try{ localStorage.setItem("helpy_console_secopen",JSON.stringify(secOpen)); }catch(e){}
+  }
+  SEC_IDS.forEach(function(id){
+    var h=$(id); if(!h) return;
+    h.classList.add("toggle");
+    h.addEventListener("click",function(){
+      secOpen[id]=!isSecOpen(id); persistSec(); applySec(id);
+    });
+    applySec(id);
+  });
+
+  // worst verdict inside a section -> a status dot on its header and rail chip
+  function updateSecStatus(){
+    SEC_IDS.forEach(function(id){
+      var worst=0;
+      secBlocks(id).forEach(function(b){
+        if(!b.querySelectorAll) return;
+        b.querySelectorAll(".verdict").forEach(function(v){
+          var c=v.classList.contains("bad")?2:v.classList.contains("warn")?1:0;
+          if(c>worst) worst=c;
+        });
+      });
+      var cls="secdot "+(worst===2?"bad":worst===1?"warn":"good");
+      var h=$(id);
+      if(h){
+        var d=h.querySelector(".secdot");
+        if(!d){ d=el("span","secdot"); h.appendChild(d); }
+        d.className=cls;
+      }
+      var a=document.querySelector('#rail a[data-t="'+id+'"]');
+      if(a){
+        var d2=a.querySelector(".secdot");
+        if(!d2){ d2=el("span","secdot"); a.appendChild(d2); }
+        d2.className=cls;
+      }
+    });
+  }
+
+  // glossary terms open on tap as well as hover - the reader is on a phone
+  document.addEventListener("click",function(e){
+    var t=e.target.closest? e.target.closest(".term"):null;
+    document.querySelectorAll(".term.open").forEach(function(x){
+      if(x!==t) x.classList.remove("open");
+    });
+    if(t) t.classList.toggle("open");
+  });
+
   // theme + language toggles: swap tokens/strings, then re-render everything
   function rerenderAll(){
     Object.keys(einsts).forEach(function(id){ einsts[id].dispose(); });
@@ -3671,7 +4011,9 @@
   var RAIL_IDS=["overviewTop","secGrowth","secMarket","secChat","secRetention","secUsers","secEvents","secSafety"];
   document.querySelectorAll("#rail a").forEach(function(a){
     a.addEventListener("click",function(){
-      var t=$(a.getAttribute("data-t"));
+      var tid=a.getAttribute("data-t");
+      if(typeof openSec==="function" && tid.indexOf("sec")===0) openSec(tid);
+      var t=$(tid);
       if(t) t.scrollIntoView({behavior:"smooth",block:"start"});
     });
   });
