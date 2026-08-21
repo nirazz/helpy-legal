@@ -119,7 +119,17 @@
             cursor:pointer; user-select:none; }
   #rail a:hover { background:var(--wash-hover); }
   #rail a.on { background:var(--wash1); color:var(--ink); font-weight:600; }
-  @media (max-width:1400px){ #rail { display:none; } }
+  @media (max-width:1400px){
+    #rail { position:sticky; top:50px; inset-inline:0; width:auto;
+            max-width:1120px; margin:0 auto 10px; flex-direction:row; gap:6px;
+            overflow-x:auto; padding:8px 24px; background:var(--plane);
+            z-index:16; scrollbar-width:none; }
+    #rail::-webkit-scrollbar { display:none; }
+    #rail a { flex-shrink:0; font-size:12.5px; padding:5px 12px;
+              border:1px solid var(--hairline); border-radius:999px;
+              white-space:nowrap; }
+    #rail a.on { border-color:var(--s1); }
+  }
   .sechead, #overviewTop { scroll-margin-top:64px; }
 
   /* Stripe-pattern: period total + delta + previous-period figure above a chart */
@@ -586,13 +596,14 @@
   <button class="ghost" id="logoutBtn" data-i18n="logout">יציאה</button>
 </header>
 
-<nav id="rail" class="hidden">
+<nav id="rail" class="hidden" aria-label="ניווט בין אזורים">
   <a data-t="overviewTop" class="on" data-i18n="railOverview">סקירה</a>
   <a data-t="secGrowth" data-i18n="railGrowth">צמיחה</a>
-  <a data-t="secMarket" data-i18n="railMarket">מרקטפלייס</a>
-  <a data-t="secChat" data-i18n="railChat">צ'אט</a>
+  <a data-t="secMarket" data-i18n="railMarket">היצע וביקוש</a>
+  <a data-t="secChat" data-i18n="railChat">שיחות</a>
   <a data-t="secRetention" data-i18n="railRetention">שימור</a>
-  <a data-t="secUsers" data-i18n="railUsers">משתמשים</a>
+  <a data-t="secUsers" data-i18n="railUsers">מובילים</a>
+  <a data-t="secEvents" data-i18n="railEvents">יומן</a>
   <a data-t="secSafety" data-i18n="railSafety">בטיחות</a>
 </nav>
 
@@ -650,6 +661,7 @@
         <span class="seg mini" id="segPosts"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="requests" data-i18n="segRequests">בקשות</button><button data-k="offers" data-i18n="segOffers">הצעות</button></span></h2>
         <div class="sub" data-i18n="postsSub">בקשות עזרה מול הצעות עזרה</div><div id="chPosts"></div></section>
       <section class="panel"><h2 data-i18n-html="liqTitle"></h2><div class="sub" data-i18n="liqSub">כמה מהר בקשה פוגשת עוזר/ת</div><div id="liquidity"></div></section>
+      <section class="panel wide"><h2 data-i18n="mlogTitle">יומן מרקטפלייס · שבוע אחר שבוע</h2><div class="sub" data-i18n="mlogSub">ביקוש מול היצע בכל שבוע, וכמה מזה הבשיל</div><div id="marketLog"></div></section>
       <section class="panel wide"><h2 data-i18n="densTitle">צפיפות שכנים סביב בקשה</h2><div class="sub" data-i18n="densSub">כמה שכנים היו יכולים באמת לראות את הבקשה, מול הסיכוי שהיא נענתה</div><div id="density"></div></section>
       <section class="panel"><h2 data-i18n="noOfferTitle">בקשות בלי אף הצעה</h2><div class="sub" data-i18n="noOfferSub">פעילות עכשיו בפיד וממתינות - הזדמנות לדחיפה</div><div id="noOffer"></div></section>
       <section class="panel"><h2 data-i18n="catsTitle">קטגוריות מובילות · {win}</h2><div class="sub" data-i18n="catsSub">פוסטים לפי קטגוריה</div><div id="chCats"></div></section>
@@ -673,6 +685,7 @@
       <section class="panel"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="msgsTitle">שיחות צ'אט</span>
         <span class="seg mini" id="segMsgs"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="msgs" data-i18n="segMsgs2">הודעות</button><button data-k="senders" data-i18n="segSenders">שולחים ייחודיים</button></span></h2>
         <div class="sub" data-i18n="msgsSub">הודעות שנשלחו (בטווח ארוך - סכום שבועי)</div><div id="chMsgs"></div></section>
+      <section class="panel wide"><h2 data-i18n="clogTitle">יומן שיחות · שבוע אחר שבוע</h2><div class="sub" data-i18n="clogSub">כמה נכתב, על ידי כמה אנשים, ובאיזו עצימות</div><div id="chatLog"></div></section>
       <section class="panel"><h2 data-i18n="chatHealthTitle">בריאות הצ'אט · {win}</h2><div class="sub" data-i18n="chatHealthSub">האם פניות מקבלות מענה, ובאיזו מהירות</div><div id="chatHealth"></div></section>
     </div>
 
@@ -758,8 +771,8 @@
   var STRINGS = {
     he: {
       tabMetrics:"מטריקות", tabChat:"צ'אט", live:"חי · כל דקה", refresh:"רענון", logout:"יציאה",
-      railOverview:"סקירה", railGrowth:"צמיחה", railMarket:"מרקטפלייס", railChat:"צ'אט",
-      railRetention:"שימור", railUsers:"משתמשים", railSafety:"בטיחות",
+      railOverview:"סקירה", railEvents:"יומן", railGrowth:"צמיחה", railMarket:"היצע וביקוש", railChat:"שיחות",
+      railRetention:"שימור", railUsers:"מובילים", railSafety:"בטיחות",
       range:"טווח", r7:"שבוע", r14:"שבועיים", r30:"30 יום", r60:"60 יום", r90:"90 יום", r180:"חצי שנה",
       orDates:"או תאריכים:", until:"עד", show:"הצג",
       tipLine:"טיפ: בתוך כל גרף אפשר לגרור את פס הטווח שלמטה, ללחוץ על מקרא כדי להסתיר סדרה, וללחוץ על קטגוריות, משתמשים וכרטיסים כדי לצלול פנימה",
@@ -924,6 +937,19 @@
       recRepeat:" <b>ההמלצה: לפנות למי שכבר ביקש פעם אחת ונענה.</b> בקשה שנייה היא המדד החזק ביותר ל-PMF, והקהל הזה קטן ומוכר - קל להגיע אליו.",
       recChat:" <b>ההמלצה: להקדים את התזכורת לפנייה שלא נענתה.</b> מי שעונה עונה תוך דקות, ולכן פנייה שלא נענתה תוך שעות כנראה לא נראתה בכלל.",
       recDorm:function(n){ return " <b>ההמלצה: רה-אקטיבציה היא הצמיחה הזולה ביותר שיש לך.</b> "+n+" אנשים כבר הורידו, נרשמו ושילמת עליהם - הם עולים פחות מכל משתמש חדש."; },
+      mlogTitle:"יומן מרקטפלייס · שבוע אחר שבוע",
+      mlogSub:"ביקוש מול היצע בכל שבוע, וכמה מזה הבשיל",
+      mlRequests:function(n){ return n+" בקשות"; },
+      mlOffers:function(n){ return n+" הצעות"; },
+      mlRatio:function(r){ return "יחס היצע פי "+r; },
+      mlMatches:function(m,c){ return m+" התאמות · "+c+" הושלמו"; },
+      rdMlog:function(r,o,c,dry,tot){ return "בטווח כולו נפתחו <b>"+r+"</b> בקשות מול <b>"+o+"</b> הצעות, ורק <b>"+c+"</b> עזרות הושלמו. ב-<b>"+dry+"</b> מתוך "+tot+" השבועות נפתחו שתי בקשות או פחות - כלומר ברוב השבועות פשוט אין מספיק ביקוש כדי שהמרקטפלייס יעבוד, וההיצע ממשיך להצטבר לתוך ואקום."; },
+      clogTitle:"יומן שיחות · שבוע אחר שבוע",
+      clogSub:"כמה נכתב, על ידי כמה אנשים, ובאיזו עצימות",
+      clMsgs:function(n){ return n+" הודעות"; },
+      clSenders:function(n){ return n+" כותבים"; },
+      clPerSender:function(r){ return r+" הודעות לכותב"; },
+      rdClog:function(m,s2,r,tw){ return "<b>"+m+"</b> הודעות נכתבו על ידי <b>"+s2+"</b> אנשים - <b>"+r+"</b> הודעות לאדם, ו-<b>"+tw+"</b> מהשיחות היו דו-כיווניות. מספר כותבים קטן שכותב הרבה אומר שהשיחות שכן קורות הן עמוקות; הבעיה איננה איכות השיחה אלא כמה שיחות בכלל נפתחות."; },
       glogTitle:"יומן צמיחה · שבוע אחר שבוע",
       glogSub:"מה קרה בכל שבוע, מה השתנה, ומה גרם לזה",
       glWeek:function(d){ return "שבוע "+d; },
@@ -975,8 +1001,8 @@
     },
     en: {
       tabMetrics:"Metrics", tabChat:"Chat", live:"Live · 1 min", refresh:"Refresh", logout:"Sign out",
-      railOverview:"Overview", railGrowth:"Growth", railMarket:"Marketplace", railChat:"Chat",
-      railRetention:"Retention", railUsers:"Users", railSafety:"Safety",
+      railOverview:"Overview", railEvents:"Log", railGrowth:"Growth", railMarket:"Supply & demand", railChat:"Conversations",
+      railRetention:"Retention", railUsers:"Top users", railSafety:"Safety",
       range:"Range", r7:"Week", r14:"2 weeks", r30:"30 days", r60:"60 days", r90:"90 days", r180:"Half year",
       orDates:"or dates:", until:"to", show:"Show",
       tipLine:"Tip: drag the range slider under any chart, click a legend item to hide a series, and click categories, users and tiles to drill in",
@@ -1141,6 +1167,19 @@
       recRepeat:" <b>Recommendation: go to the people who already asked once and were answered.</b> A second request is the strongest PMF signal there is, and that audience is small and known - easy to reach.",
       recChat:" <b>Recommendation: send the unanswered-opener reminder earlier.</b> Those who reply do so within minutes, so an opener unanswered for hours was probably never seen.",
       recDorm:function(n){ return " <b>Recommendation: reactivation is the cheapest growth you have.</b> "+n+" people already installed, signed up and were paid for - they cost less than any new user."; },
+      mlogTitle:"Marketplace log · week by week",
+      mlogSub:"Demand against supply each week, and how much of it matured",
+      mlRequests:function(n){ return n+" requests"; },
+      mlOffers:function(n){ return n+" offers"; },
+      mlRatio:function(r){ return r+"x supply ratio"; },
+      mlMatches:function(m,c){ return m+" matches · "+c+" completed"; },
+      rdMlog:function(r,o,c,dry,tot){ return "Across the range <b>"+r+"</b> requests were posted against <b>"+o+"</b> offers, and only <b>"+c+"</b> helps were completed. In <b>"+dry+"</b> of "+tot+" weeks two requests or fewer were posted - in most weeks there simply is not enough demand for the marketplace to work, and supply keeps accumulating into a vacuum."; },
+      clogTitle:"Conversation log · week by week",
+      clogSub:"How much was written, by how many people, and how intensely",
+      clMsgs:function(n){ return n+" messages"; },
+      clSenders:function(n){ return n+" writers"; },
+      clPerSender:function(r){ return r+" messages per writer"; },
+      rdClog:function(m,s2,r,tw){ return "<b>"+m+"</b> messages were written by <b>"+s2+"</b> people - <b>"+r+"</b> each - and <b>"+tw+"</b> of conversations were two-way. A small number of writers writing a lot means the conversations that do happen run deep; the problem is not conversation quality but how few conversations start at all."; },
       glogTitle:"Growth log · week by week",
       glogSub:"What happened each week, what changed, and what caused it",
       glWeek:function(d){ return "Week of "+d; },
@@ -1817,19 +1856,19 @@
     return box;
   }
 
-  // ---- growth log ----------------------------------------------------------
-  // The same "what happened" treatment applied to growth: one row per week,
-  // the change against the week before, the platform split, and any release or
-  // campaign that landed in that week - so a spike is never unexplained.
-  function renderGrowthLog(){
-    var host=$("growthLog"); if(!host) return;
+  // ---- weekly logs ---------------------------------------------------------
+  // One engine behind every "what happened week by week" panel: weekly
+  // buckets over the selected range, the change against the week before,
+  // peak/low marking, and any release or campaign that landed inside the week.
+  // Each caller supplies only the sentence its own data deserves.
+  function weekLog(hostId, series, keys, primaryKey, describe, readFn){
+    var host=$(hostId); if(!host) return;
     host.innerHTML="";
-    var rows=byWeek(rangeRows(DATA.signups_by_day),["total","ios","android"]);
+    var rows=byWeek(rangeRows(series), keys);
     if(rows.length<2){ emptyState(host,S.glogEmpty,"trend"); return; }
-    var vals=rows.map(function(r){ return +r.total||0; });
+    var vals=rows.map(function(r){ return +r[primaryKey]||0; });
     var peak=Math.max.apply(null,vals), low=Math.min.apply(null,vals);
     var peakI=vals.indexOf(peak);
-    // events are attached to the week that contains them
     function eventsFor(weekStart){
       var d0=String(weekStart).slice(0,10);
       var d1=new Date(d0+"T00:00:00"); d1.setDate(d1.getDate()+7);
@@ -1839,14 +1878,15 @@
     }
     rows.slice().reverse().forEach(function(r,ri){
       var idx=rows.length-1-ri;
-      var n=+r.total||0, prev=idx>0? (+rows[idx-1].total||0) : null;
+      var n=+r[primaryKey]||0, prev=idx>0? (+rows[idx-1][primaryKey]||0) : null;
       var row=el("div","evrow");
-      var kind = n===peak? "completed" : (n===low? "declined" : "expired");
-      var ic=el("div","evi", n===peak? "\u2605" : (prev!=null && n>prev? "\u2191" : (prev!=null && n<prev? "\u2193" : "\u2022")));
-      ic.style.background="var("+(n===peak?"--s3":(prev!=null&&n<prev?"--s2":"--s1"))+")";
+      var up = prev!=null && n>prev, down = prev!=null && n<prev;
+      var ic=el("div","evi", n===peak? "\u2605" : (up? "\u2191" : (down? "\u2193" : "\u2022")));
+      ic.style.background="var("+(n===peak?"--s3":(down?"--s2":"--s1"))+")";
       row.appendChild(ic);
       var body=el("div","evb");
-      body.appendChild(el("div","evt", S.glWeek(fmtDay(r.d))+" · "+S.glSignups(fmt(n))));
+      var d=describe(r,prev,{peak:n===peak, low:n===low, n:n});
+      body.appendChild(el("div","evt", S.glWeek(fmtDay(r.d))+" · "+d.title));
       var bits=[];
       if(prev==null) bits.push(S.glFirst);
       else if(prev===0) bits.push(S.glFlat);
@@ -1854,7 +1894,7 @@
         var ch=Math.round(100*(n-prev)/prev);
         bits.push(Math.abs(ch)<5? S.glFlat : S.glChange(ch>0, Math.abs(ch)));
       }
-      bits.push(S.glSplit(fmt(+r.ios||0), fmt(+r.android||0)));
+      bits=bits.concat(d.bits||[]);
       if(n===peak) bits.push(S.glPeak);
       else if(n===low) bits.push(S.glLow);
       var ev=eventsFor(r.d);
@@ -1865,11 +1905,67 @@
       row.appendChild(body);
       host.appendChild(row);
     });
-    var lastV=vals[vals.length-1];
-    var dropPct=(peak>0 && lastV<peak && peakI<vals.length-1)
-      ? Math.round(100*(peak-lastV)/peak) : null;
-    panelRead("growthLog", dropPct && dropPct>40 ? "warn":"",
-      S.rdGlog(fmtDay(rows[peakI].d), fmt(peak), dropPct));
+    if(readFn){
+      var lastV=vals[vals.length-1];
+      var dropPct=(peak>0 && lastV<peak && peakI<vals.length-1)
+        ? Math.round(100*(peak-lastV)/peak) : null;
+      var out=readFn({rows:rows, vals:vals, peak:peak, peakI:peakI,
+                      last:lastV, drop:dropPct});
+      if(out) panelRead(hostId, out.cls||"", out.html);
+    }
+  }
+
+  function renderGrowthLog(){
+    weekLog("growthLog", DATA.signups_by_day, ["total","ios","android"], "total",
+      function(r){
+        return { title:S.glSignups(fmt(+r.total||0)),
+                 bits:[S.glSplit(fmt(+r.ios||0), fmt(+r.android||0))] };
+      },
+      function(c){
+        return { cls: c.drop && c.drop>40 ? "warn":"",
+                 html: S.rdGlog(fmtDay(c.rows[c.peakI].d), fmt(c.peak), c.drop) };
+      });
+  }
+
+  function renderMarketLog(){
+    // posts and matches live in two series, so join them week by week
+    var mw=byWeek(rangeRows(DATA.matches_by_day),["created","completed"]);
+    var byD={}; mw.forEach(function(r){ byD[String(r.d).slice(0,10)]=r; });
+    weekLog("marketLog", DATA.posts_by_day, ["requests","offers"], "requests",
+      function(r){
+        var m=byD[String(r.d).slice(0,10)]||{};
+        var rq=+r.requests||0, of=+r.offers||0;
+        var bits=[S.mlOffers(fmt(of))];
+        if(rq>0) bits.push(S.mlRatio((of/rq).toFixed(1)));
+        bits.push(S.mlMatches(fmt(+m.created||0), fmt(+m.completed||0)));
+        return { title:S.mlRequests(fmt(rq)), bits:bits };
+      },
+      function(c){
+        var totR=sumRows(rangeRows(DATA.posts_by_day),["requests"]);
+        var totO=sumRows(rangeRows(DATA.posts_by_day),["offers"]);
+        var totC=sumRows(rangeRows(DATA.matches_by_day),["completed"]);
+        var weeksNoDemand=c.vals.filter(function(v){ return v<=2; }).length;
+        return { cls: weeksNoDemand>=c.vals.length/2 ? "warn":"",
+                 html: S.rdMlog(fmt(totR), fmt(totO), fmt(totC), weeksNoDemand, c.vals.length) };
+      });
+  }
+
+  function renderChatLog(){
+    weekLog("chatLog", DATA.messages_by_day, ["msgs","senders"], "msgs",
+      function(r){
+        var m=+r.msgs||0, sn=+r.senders||0;
+        var bits=[S.clSenders(fmt(sn))];
+        if(sn>0) bits.push(S.clPerSender((m/sn).toFixed(1)));
+        return { title:S.clMsgs(fmt(m)), bits:bits };
+      },
+      function(c){
+        var tot=sumRows(rangeRows(DATA.messages_by_day),["msgs"]);
+        var sn=sumRows(rangeRows(DATA.messages_by_day),["senders"]);
+        var C=DATA.chat_stats||{};
+        return { cls: (C.convos_30d && C.two_way_30d/C.convos_30d<0.6) ? "warn":"",
+                 html: S.rdClog(fmt(tot), fmt(sn), sn? (tot/sn).toFixed(1):"-",
+                                C.convos_30d? pct(C.two_way_30d,C.convos_30d):"-") };
+      });
   }
 
   // ---- event feed ----------------------------------------------------------
@@ -2729,6 +2825,8 @@
 
     renderResearch();
     renderGrowthLog();
+    renderMarketLog();
+    renderChatLog();
     renderFeed();
     renderSectionBriefs();
 
@@ -3406,7 +3504,7 @@
   });
 
   // side rail: click to jump, scrollspy highlights the section in view
-  var RAIL_IDS=["overviewTop","secGrowth","secMarket","secChat","secRetention","secUsers","secSafety"];
+  var RAIL_IDS=["overviewTop","secGrowth","secMarket","secChat","secRetention","secUsers","secEvents","secSafety"];
   document.querySelectorAll("#rail a").forEach(function(a){
     a.addEventListener("click",function(){
       var t=$(a.getAttribute("data-t"));
