@@ -956,6 +956,7 @@
         density:"נמדד מהנתונים שלך, לא ממקור חיצוני: מתוך הבקשות ב-90 הימים האחרונים, אף בקשה עם פחות מ-10 שכנים בטווח לא קיבלה מענה באותו יום, מול 90% מענה בבקשות עם 60+ שכנים.",
         cluster:"הסף נקבע על ידי: אשכול שמחזיק 25% מהביקוש הוא גדול מספיק כדי להצדיק קטגוריה משלו. זו הערכה מוצרית ולא מספר מהספרות."
       },
+      tileNoBase:"אין תקופה קודמת להשוואה",
       insGo:"קפיצה לנתונים ←",
       mlogTitle:"יומן מרקטפלייס · שבוע אחר שבוע",
       mlogSub:"ביקוש מול היצע בכל שבוע, וכמה מזה הבשיל",
@@ -1196,6 +1197,7 @@
         density:"Measured from your own data, not an external source: among requests in the last 90 days, not one with fewer than 10 neighbours in range was answered same-day, against 90% answered where there were 60+.",
         cluster:"The threshold is mine: a cluster holding 25% of demand is large enough to justify its own category. A product judgement, not a figure from the literature."
       },
+      tileNoBase:"no earlier period to compare",
       insGo:"Jump to the data →",
       mlogTitle:"Marketplace log · week by week",
       mlogSub:"Demand against supply each week, and how much of it matured",
@@ -1770,6 +1772,11 @@
       sub.appendChild(span);
       sub.appendChild(el("span","vs",S.prevWeek(fmt(opts.prev))));
     } else if(opts.note){ sub.appendChild(el("span","vs",opts.note)); }
+    else if(opts.delta!=null){
+      // a suppressed comparison should say so, not leave a blank where a
+      // number used to be
+      sub.appendChild(el("span","vs",S.tileNoBase));
+    }
     t.appendChild(sub);
     if(opts.spark){ var s=sparkline(opts.spark); if(s) t.appendChild(s); }
     return t;
