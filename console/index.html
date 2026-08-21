@@ -111,6 +111,8 @@
   main { max-width:1120px; margin:0 auto; padding:20px 24px 48px; }
   .filters { display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
   .filters .cap { color:var(--muted); font-size:12px; }
+  .filters .fsep { width:1px; align-self:stretch; background:var(--grid);
+                   margin:2px 4px; flex-shrink:0; }
 
   /* Stripe-pattern: jobs-based side rail (scrollspy-highlighted) */
   #rail { position:fixed; top:78px; inset-inline-start:20px; width:130px; z-index:15;
@@ -243,6 +245,13 @@
   .ins.bad  .dot { background:var(--bad-text); }
   .ins.info .dot { background:var(--baseline); }
   .ins b { font-variant-numeric:tabular-nums; }
+  /* a full-width row of right-aligned text leaves most of the panel empty;
+     cap the measure and give a clickable insight a visible affordance */
+  .ins > span:nth-child(2) { flex:1; max-width:88ch; }
+  .ins .go { flex-shrink:0; color:var(--s1); font-size:12.5px; font-weight:600;
+             opacity:0; transition:opacity .18s ease; white-space:nowrap; }
+  .ins.clickable:hover .go, .ins.clickable:focus-within .go { opacity:1; }
+  @media (hover:none){ .ins .go { opacity:.75; } }
   .ins.lead { font-size:14.5px; font-weight:500; padding:10px 0; }
   .ins.lead .dot { width:11px; height:11px; }
   .ins.rest { font-size:13px; color:var(--ink2); }
@@ -622,6 +631,7 @@
       <span class="cap" data-i18n="orDates">או תאריכים:</span>
       <input type="date" id="fromDate"> <span class="cap" data-i18n="until">עד</span> <input type="date" id="toDate">
       <button class="ghost" id="applyRange" data-i18n="show">הצג</button>
+      <span class="fsep" aria-hidden="true"></span>
       <span class="cap" data-i18n="grain">רזולוציה</span>
       <div class="seg" id="grainSeg">
         <button data-g="auto" class="on" data-i18n="gAuto">אוטו</button>
@@ -629,7 +639,7 @@
         <button data-g="weekly" data-i18n="gWeekly">שבועי</button>
       </div>
     </div>
-    <p class="note" style="margin-bottom:14px" data-i18n="tipLine">טיפ: בתוך כל גרף אפשר לגרור את פס הטווח שלמטה, ללחוץ על מקרא כדי להסתיר סדרה, וללחוץ על קטגוריות, משתמשים וכרטיסים כדי לצלול פנימה</p>
+    <p class="note" id="tipLine" style="margin-bottom:14px;cursor:pointer" title="לחיצה מסתירה" data-i18n="tipLine">טיפ: בתוך כל גרף אפשר לגרור את פס הטווח שלמטה, ללחוץ על מקרא כדי להסתיר סדרה, וללחוץ על קטגוריות, משתמשים וכרטיסים כדי לצלול פנימה</p>
     <section class="panel" id="overviewTop">
       <h2 data-i18n="insightsTitle">מה דורש תשומת לב</h2>
       <div class="sub" data-i18n="insightsSub">תובנות מחושבות מהנתונים של 30 הימים האחרונים</div>
@@ -808,7 +818,7 @@
       errNoAuth:"שירות ההתחברות לא נטען, רעננו את הדף",
       errExpired:"ההתחברות פגה - התחברו שוב",
       errTimeout:"השרת לא הגיב תוך 25 שניות - נסו שוב",
-      updatedAgo:function(s){ return s<60? "עודכן לפני "+s+" שנ׳" : "עודכן לפני "+Math.round(s/60)+" דק׳"; },
+      updatedAgo:function(s){ return s<10? "עודכן כרגע" : s<60? "עודכן לפני "+s+" שניות" : "עודכן לפני "+Math.round(s/60)+" דקות"; },
       tileHero:"עזרות שהושלמו · {win} ⭐",
       tileHeroTip:"המדד הצפוני של Helpy: עזרות שמקבל/ת העזרה סימנו שבוצעו בפועל",
       tileSignups:"הרשמות · {win}",
@@ -937,6 +947,7 @@
       recRepeat:" <b>ההמלצה: לפנות למי שכבר ביקש פעם אחת ונענה.</b> בקשה שנייה היא המדד החזק ביותר ל-PMF, והקהל הזה קטן ומוכר - קל להגיע אליו.",
       recChat:" <b>ההמלצה: להקדים את התזכורת לפנייה שלא נענתה.</b> מי שעונה עונה תוך דקות, ולכן פנייה שלא נענתה תוך שעות כנראה לא נראתה בכלל.",
       recDorm:function(n){ return " <b>ההמלצה: רה-אקטיבציה היא הצמיחה הזולה ביותר שיש לך.</b> "+n+" אנשים כבר הורידו, נרשמו ושילמת עליהם - הם עולים פחות מכל משתמש חדש."; },
+      insGo:"קפיצה לנתונים ←",
       mlogTitle:"יומן מרקטפלייס · שבוע אחר שבוע",
       mlogSub:"ביקוש מול היצע בכל שבוע, וכמה מזה הבשיל",
       mlRequests:function(n){ return n==="1"? "בקשה אחת" : n+" בקשות"; },
@@ -1038,7 +1049,7 @@
       errNoAuth:"Sign-in service failed to load - refresh the page",
       errExpired:"Your session expired - sign in again",
       errTimeout:"The server did not answer within 25 seconds - try again",
-      updatedAgo:function(s){ return s<60? "updated "+s+"s ago" : "updated "+Math.round(s/60)+"m ago"; },
+      updatedAgo:function(s){ return s<10? "updated just now" : s<60? "updated "+s+" seconds ago" : "updated "+Math.round(s/60)+" minutes ago"; },
       tileHero:"Helps completed · {win} ⭐",
       tileHeroTip:"Helpy's north star: helps the receiver marked as actually done",
       tileSignups:"Signups · {win}",
@@ -1167,6 +1178,7 @@
       recRepeat:" <b>Recommendation: go to the people who already asked once and were answered.</b> A second request is the strongest PMF signal there is, and that audience is small and known - easy to reach.",
       recChat:" <b>Recommendation: send the unanswered-opener reminder earlier.</b> Those who reply do so within minutes, so an opener unanswered for hours was probably never seen.",
       recDorm:function(n){ return " <b>Recommendation: reactivation is the cheapest growth you have.</b> "+n+" people already installed, signed up and were paid for - they cost less than any new user."; },
+      insGo:"Jump to the data →",
       mlogTitle:"Marketplace log · week by week",
       mlogSub:"Demand against supply each week, and how much of it matured",
       mlRequests:function(n){ return n+" requests"; },
@@ -2132,7 +2144,11 @@
     row.appendChild(el("span","dot"));
     var span=el("span"); span.innerHTML=html;
     row.appendChild(span);
-    if(onClick){ row.classList.add("clickable"); row.addEventListener("click",onClick); }
+    if(onClick){
+      row.classList.add("clickable");
+      row.addEventListener("click",onClick);
+      row.appendChild(el("span","go",S.insGo));
+    }
     return row;
   }
   // scroll to a target AND flash it, so the reader sees where they landed.
@@ -3475,6 +3491,15 @@
   ["segSignups","segDau","segPosts","segMsgs","segMatches","grainSeg"].forEach(function(id){
     segWire(id,function(){ if(DATA) renderMetrics(); });
   });
+  // the usage tip is worth reading once; after that it is chrome
+  (function(){
+    var tip=$("tipLine"); if(!tip) return;
+    if(localStorage.getItem("helpy_console_tip")==="off") tip.classList.add("hidden");
+    tip.addEventListener("click",function(){
+      tip.classList.add("hidden");
+      localStorage.setItem("helpy_console_tip","off");
+    });
+  })();
   $("cohortToggle").addEventListener("click",function(){
     cohortsShown=!cohortsShown; syncCohortToggle();
   });
