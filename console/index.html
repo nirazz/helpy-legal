@@ -1747,6 +1747,10 @@
         ct.appendChild(tr);
       });
       cl.appendChild(ct);
+      var topC=CL[0];
+      var othersC=CL.slice(1).reduce(function(a,c){ return a+c.requests; },0);
+      panelRead("cityLiq", othersC < topC.requests/2 ? "warn":"",
+        S.rdCities(topC.city, fmt(topC.requests), pct(topC.filled_24h,topC.requests), fmt(othersC)));
     }
 
     // supply health: utilization bullet (target 30% - the churn line) + ttfm
@@ -1770,6 +1774,9 @@
     statRow(st,S.happyTitle,fmt(H.completed),S.happyTip);
     statRow(st,S.happy45,H.completed? fmt(H.rated_45)+" / "+fmt(H.completed):"-");
     sh.appendChild(st);
+    panelRead("supplyHealth", util<30?"bad":"warn",
+      S.rdSupply(util, fmt(SU.active_offers-SU.engaged_30d),
+                 TT.median_days==null?"-":TT.median_days+" "+S.daysUnit));
 
     // user states: one stacked bar, direct-labelled (Duolingo decomposition)
     var us=$("userStates"); us.innerHTML="";
@@ -1803,6 +1810,8 @@
       });
       us.appendChild(bar);
       us.appendChild(el("p","note",S.stCaption));
+      panelRead("userStates", (ST.new_u/totalU)>0.5?"warn":"",
+        S.rdStates(pct(ST.new_u,totalU), pct(ST.current_u,totalU)));
     }
 
     // requester repeat rate vs the 35% expansion gate
@@ -1822,6 +1831,8 @@
     statRow(rt2,S.repRequesters,fmt(RP.requesters));
     statRow(rt2,S.repRepeat,fmt(RP.repeated_90d));
     rr.appendChild(rt2);
+    if(RP.requesters) panelRead("repeatRate", rpct<35?"warn":"good",
+      S.rdRepeat(rpct, fmt(RP.repeated_90d), fmt(RP.requesters)));
   }
 
   var cohortsShown=false;
