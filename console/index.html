@@ -160,6 +160,12 @@
              letter-spacing:0.08em; color:var(--ink2);
              display:flex; align-items:center; gap:8px; }
   .sechead .ico { color:var(--sec-c, var(--s1)); }
+  /* section brief: the analyst's one-paragraph read of a whole section.
+     No fill - 14 tinted panel boxes are already enough; this reads as prose. */
+  .secbrief { font-size:14px; line-height:1.6; color:var(--ink2);
+              margin:-6px 2px 16px; padding-inline-start:13px;
+              border-inline-start:2px solid var(--sec-c, var(--s1)); max-width:78ch; }
+  .secbrief b { color:var(--ink); font-variant-numeric:tabular-nums; }
   .sechead::before { content:""; width:9px; height:9px; border-radius:3px;
                      background:var(--sec-c, var(--s1));
                      box-shadow:0 0 8px var(--sec-c, var(--s1)); }
@@ -790,6 +796,13 @@
       rdLifecycle:function(d,t,p){ return "<b>"+d+"</b> מתוך <b>"+t+"</b> המשתמשים (<b>"+p+"</b>) לא נראו מעל 30 יום. זהו הנכס הגדול ביותר שלך וגם החוב הגדול ביותר - קהל שכבר שילמת עליו ואינו פעיל."; },
       insMore:function(n){ return "הצגת "+n+" תובנות נוספות"; },
       insLess:"הצגת המובילות בלבד",
+      rdCitiesTop:function(city,share,n){ return "<b>"+share+"</b> מהפוסטים מגיעים מ<b>"+city+"</b> לבדה, מתוך "+n+" ערים. ריכוז כזה אינו חולשה - הוא בדיוק המקום שבו כדאי להעמיק, כי רשת שכנים נבנית בשכונה ולא בפיזור ארצי."; },
+      sbGrowth:function(n,up,d,act,sign,msg){ return "נרשמו <b>"+n+"</b> שכנים חדשים בשבוע ("+(up?"עלייה":"ירידה")+" של "+d+" מול השבוע שעבר), אבל רק <b>"+act+"%</b> מהם הגיעו לשיחה עם שכן ("+msg+" מתוך "+sign+"). המסקנה: הרכישה עובדת, ההפעלה לא - כל שקל שיושקע בפרסום לפני שהמספר הזה עולה קונה נטישה."; },
+      sbMarket:function(rq,of,ratio,fill,ans,sil,thin){ return "בטווח הנבחר פורסמו <b>"+rq+"</b> בקשות מול <b>"+of+"</b> הצעות (פי "+ratio+" היצע), ורק <b>"+fill+"%</b> מהבקשות נענו תוך יממה. הצפיפות מסבירה את הפער: בקשה שנענתה הייתה מוקפת <b>"+ans+"</b> שכנים בטווח, בקשה ששתקה <b>"+sil+"</b> בלבד. יש כרגע <b>"+thin+"</b> בקשות חיות באזור דליל - אלה אנשים שסטטיסטית לא יקבלו מענה. הצעד הנכון אינו לגייס עוד עוזרים אלא לרכז ביקוש היכן שכבר יש צפיפות."; },
+      sbChat:function(n,tw,med){ return "נפתחו <b>"+n+"</b> שיחות ו-<b>"+tw+"%</b> מהן הפכו לדו-שיח אמיתי, בחציון תגובה של <b>"+med+"</b>. מי שעונה עונה מהר מאוד, ולכן זו אינה בעיית זמינות אלא בעיית תשומת לב - כמעט מחצית מהפניות פשוט לא נקראות בזמן."; },
+      sbRetention:function(d1,newshare,dorm,dormp){ return "שימור יום ראשון עומד על <b>"+d1+"%</b>, מתחת לבנצ׳מרק של אפליקציות חברתיות, בעוד שהשימור לשבוע ולחודש דווקא מעליו - כלומר מי ששורד את היום הראשון נדבק. כרגע <b>"+newshare+"</b> מהפעילים הם נרשמים חדשים ו-<b>"+dorm+"</b> משתמשים ("+dormp+") רדומים מעל חודש. זהו קהל שכבר שילמת עליו, והוא גדול פי כמה מהקהל הפעיל."; },
+      sbUsers:function(name,share,n){ return "<b>"+name+"</b> לבד מייצר/ת <b>"+share+"</b> מהפעילות של "+n+" המשתמשים הבולטים. ריכוז כזה אומר שהגרפים שאתה קורא רגישים לאדם אחד - שווה לדעת מי הם ולשמור עליהם, אבל מסוכן להסיק מהם על כלל המשתמשים."; },
+      sbSafety:function(r,b,d){ return "<b>"+r+"</b> דיווחים ו-<b>"+b+"</b> חסימות מול <b>"+d+"</b> מחיקות חשבון. היחס הזה אומר שהמשתמשים אינם עוזבים בגלל חוויה רעה עם שכן אלא בגלל היעדר חוויה בכלל - זו בעיית ערך, לא בעיית בטיחות, ולכן היא לא תיפתר במודרציה."; },
       densTitle:"צפיפות שכנים סביב בקשה",
       densSub:"כמה שכנים היו יכולים באמת לראות את הבקשה, מול הסיכוי שהיא נענתה",
       densBand:"שכנים בטווח", densReqs:"בקשות", densAny:"קיבלו הצעה", dens24:"תוך 24 שעות",
@@ -954,6 +967,13 @@
       rdLifecycle:function(d,t,p){ return "<b>"+d+"</b> of <b>"+t+"</b> users (<b>"+p+"</b>) have not been seen in over 30 days. That is both your biggest asset and your biggest debt - an audience you already paid for that is not active."; },
       insMore:function(n){ return "Show "+n+" more insights"; },
       insLess:"Show only the top ones",
+      rdCitiesTop:function(city,share,n){ return "<b>"+share+"</b> of posts come from <b>"+city+"</b> alone, out of "+n+" cities. That concentration is not a weakness - it is exactly where to dig in, because a neighbour network is built in a neighbourhood, not spread across a country."; },
+      sbGrowth:function(n,up,d,act,sign,msg){ return "<b>"+n+"</b> new neighbours signed up this week ("+(up?"up":"down")+" "+d+" on last week), but only <b>"+act+"%</b> reached a conversation with a neighbour ("+msg+" of "+sign+"). Acquisition works, activation does not - every shekel spent on ads before that number moves is buying churn."; },
+      sbMarket:function(rq,of,ratio,fill,ans,sil,thin){ return "In the selected range <b>"+rq+"</b> requests were posted against <b>"+of+"</b> offers ("+ratio+"x supply), and only <b>"+fill+"%</b> of requests were answered within a day. Density explains the gap: an answered request sat among <b>"+ans+"</b> neighbours in range, a silent one among just <b>"+sil+"</b>. <b>"+thin+"</b> live requests are in thin areas right now - statistically, those people will get nothing. The move is not recruiting more helpers but concentrating demand where density already exists."; },
+      sbChat:function(n,tw,med){ return "<b>"+n+"</b> conversations opened and <b>"+tw+"%</b> became a real exchange, at a median reply of <b>"+med+"</b>. Those who answer answer very fast, so this is not an availability problem but an attention one - nearly half of openers are simply not read in time."; },
+      sbRetention:function(d1,newshare,dorm,dormp){ return "Day-one retention is <b>"+d1+"%</b>, below the social-app benchmark, while week and month retention sit above it - whoever survives day one sticks. Right now <b>"+newshare+"</b> of actives are brand-new signups and <b>"+dorm+"</b> users ("+dormp+") have been dormant over a month. That is an audience you already paid for, several times larger than the active one."; },
+      sbUsers:function(name,share,n){ return "<b>"+name+"</b> alone produces <b>"+share+"</b> of the activity of these "+n+" top users. That concentration means the charts you read are sensitive to one person - worth knowing who they are and looking after them, but dangerous to generalise from."; },
+      sbSafety:function(r,b,d){ return "<b>"+r+"</b> reports and <b>"+b+"</b> blocks against <b>"+d+"</b> account deletions. That ratio says people are not leaving because of a bad experience with a neighbour but because of no experience at all - a value problem, not a safety one, and moderation will not fix it."; },
       densTitle:"Neighbour density around a request",
       densSub:"How many neighbours could genuinely have seen it, against the odds it was answered",
       densBand:"Neighbours in range", densReqs:"Requests", densAny:"Got an offer", dens24:"Within 24h",
@@ -1589,6 +1609,18 @@
     if(m<48*60) return fmt(Math.round(m/60))+" "+S.hours;
     return fmt(Math.round(m/1440))+" "+S.daysUnit;
   }
+  // A section-level brief: what the panels below add up to. Inserted right
+  // after the section head so the reader gets the conclusion before the detail.
+  function secBrief(secId, html){
+    var head=$(secId); if(!head) return;
+    var b=head.nextElementSibling;
+    if(!b || !b.classList || !b.classList.contains("secbrief")){
+      b=el("div","secbrief");
+      head.parentNode.insertBefore(b, head.nextSibling);
+    }
+    b.innerHTML=html; // trusted: our dictionary + numbers
+  }
+
   // An expert reading for a panel that is not a time chart. Appended at the END
   // of the panel (a table needs its numbers first, then the interpretation).
   function panelRead(hostId, cls, html){
@@ -1697,6 +1729,58 @@
     },380);
   }
   function scrollToEl(id){ return function(){ flashTo(id); }; }
+  // The six section briefs. Each one answers "so what does this section say?"
+  // by combining its panels, not by repeating any single number.
+  function renderSectionBriefs(){
+    var k=DATA.kpis||{}, dl=DATA.deltas||{}, lf=DATA.lifecycle||{},
+        L=DATA.liquidity||{}, C=DATA.chat_stats||{}, R=DATA.research||{},
+        f=segVal("funnelSeg")===30? DATA.funnel_30d : DATA.funnel_14d;
+
+    // GROWTH: are we adding people, and do they do anything
+    var act=f.signups? Math.round(100*f.messaged/f.signups):0;
+    var d7=k.signups_7d-(dl.signups_prev_7d||0);
+    secBrief("secGrowth", S.sbGrowth(fmt(k.signups_7d), d7>=0, fmt(Math.abs(d7)), act,
+      fmt(f.signups), fmt(f.messaged)));
+
+    // MARKETPLACE: supply vs demand, fill, and density
+    var pw=rangeRows(DATA.posts_by_day);
+    var rq=sumRows(pw,["requests"]), of=sumRows(pw,["offers"]);
+    var fill=L.requests_30d? Math.round(100*L.with_offer_24h/L.requests_30d):0;
+    var D=R.density||{};
+    secBrief("secMarket", S.sbMarket(fmt(rq), fmt(of),
+      rq? (of/rq).toFixed(1):"-", fill,
+      D.avg_reach_answered!=null? fmt(D.avg_reach_answered):"-",
+      D.avg_reach_silent!=null? fmt(D.avg_reach_silent):"-",
+      D.thin_live!=null? fmt(D.thin_live):"-"));
+
+    // CHAT: does a conversation actually happen
+    var tw=C.convos_30d? Math.round(100*C.two_way_30d/C.convos_30d):0;
+    secBrief("secChat", S.sbChat(fmt(C.convos_30d), tw,
+      humanMin(C.median_first_reply_minutes)));
+
+    // RETENTION: do they come back, and who is dormant
+    var CO=DATA.cohorts||[];
+    var s1=0,n1=0; CO.forEach(function(c){ if(c.size){ s1+=(+c.d1||0); n1+=c.size; } });
+    var d1=n1? Math.round(100*s1/n1):0;
+    var ST=R.user_states||{};
+    var totU=(ST.new_u||0)+(ST.current_u||0)+(ST.reactivated_u||0)+(ST.resurrected_u||0);
+    secBrief("secRetention", S.sbRetention(d1,
+      totU? pct(ST.new_u,totU):"-", fmt(lf.dormant_30d), pct(lf.dormant_30d,k.live_users)));
+
+    // USERS: how concentrated is the activity
+    var TU=DATA.top_users||[];
+    if(TU.length){
+      var sc=function(u){ return (u.posts||0)*2+(u.matches||0)*3+(u.msgs||0); };
+      var tot=TU.reduce(function(a,u){ return a+sc(u); },0);
+      secBrief("secUsers", S.sbUsers(TU[0].name, tot? pct(sc(TU[0]),tot):"-", fmt(TU.length)));
+    }
+
+    // SAFETY: is anyone getting hurt, or just leaving
+    var SFa=DATA.safety||{};
+    secBrief("secSafety", S.sbSafety(fmt(SFa.reports_30d), fmt(SFa.blocks_30d),
+      fmt(SFa.deletions_30d)));
+  }
+
   var insightsAll=false;
   function renderInsights(){
     var k=DATA.kpis, dl=DATA.deltas||{}, f=DATA.funnel_30d, L=DATA.liquidity,
@@ -2097,6 +2181,12 @@
     }));
     var CT=DATA.categories_30d||[];
     if(CT.length) panelRead("chCats","",S.rdCats(CT[0].category, fmt(CT[0].requests+CT[0].offers)));
+    var CI=DATA.cities_30d||[];
+    if(CI.length){
+      var totCity=CI.reduce(function(a,c){ return a+c.posts; },0);
+      panelRead("chCities", (CI[0].posts/totCity)>0.6?"warn":"",
+        S.rdCitiesTop(CI[0].city, pct(CI[0].posts,totCity), fmt(CI.length)));
+    }
 
     // cohort heatmap on the sequential ramp; ink picked by fill luminance
     var seq=[tok("--seq100"),tok("--seq250"),tok("--seq400"),tok("--seq550"),tok("--seq700")];
@@ -2249,6 +2339,7 @@
     }
 
     renderResearch();
+    renderSectionBriefs();
 
     var SF=DATA.safety;
     var st=el("table","plain");
