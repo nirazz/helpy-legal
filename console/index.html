@@ -677,8 +677,10 @@
       <section class="panel wide"><h2 data-i18n="mlogTitle">יומן מרקטפלייס · שבוע אחר שבוע</h2><div class="sub" data-i18n="mlogSub">ביקוש מול היצע בכל שבוע, וכמה מזה הבשיל</div><div id="marketLog"></div></section>
       <section class="panel wide"><h2 data-i18n="densTitle">צפיפות שכנים סביב בקשה</h2><div class="sub" data-i18n="densSub">כמה שכנים היו יכולים באמת לראות את הבקשה, מול הסיכוי שהיא נענתה</div><div id="density"></div></section>
       <section class="panel"><h2 data-i18n="noOfferTitle">בקשות בלי אף הצעה</h2><div class="sub" data-i18n="noOfferSub">פעילות עכשיו בפיד וממתינות - הזדמנות לדחיפה</div><div id="noOffer"></div></section>
-      <section class="panel"><h2 data-i18n="catsTitle">קטגוריות מובילות · {win}</h2><div class="sub" data-i18n="catsSub">פוסטים לפי קטגוריה</div><div id="chCats"></div></section>
-      <section class="panel wide"><h2 data-i18n="intelTitle">מה הביקוש באמת מבקש</h2><div class="sub" data-i18n="intelSub">אשכולות מתוך הטקסט של הבקשות עצמן, לא לפי הקטגוריה שנבחרה - כך מתגלה קטגוריה שחסרה</div><div id="catIntel"></div></section>
+      <section class="panel"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="catsTitle">קטגוריות מובילות · {win}</span>
+        <span class="seg mini" id="segCats"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="requests" data-i18n="segRequests">בקשות</button><button data-k="offers" data-i18n="segOffers">הצעות</button></span></h2>
+        <div class="sub" data-i18n="catsSub">פוסטים לפי קטגוריה</div><div id="chCats"></div></section>
+      <section class="panel wide"><h2 data-i18n="intelTitle">מה הביקוש באמת מבקש · {win}</h2><div class="sub" data-i18n="intelSub">אשכולות מתוך הטקסט של הבקשות עצמן, לא לפי הקטגוריה שנבחרה - כך מתגלה קטגוריה שחסרה</div><div id="catIntel"></div></section>
       <section class="panel"><h2 data-i18n="cityLiqTitle">נזילות לפי עיר · {win}</h2><div class="sub" data-i18n="cityLiqSub">הרשת האטומית: ממוצע ארצי מסתיר אם יש עיר אחת שבאמת עובדת</div><div id="cityLiq" style="overflow-x:auto"></div></section>
       <section class="panel"><h2 data-i18n="citiesTitle">ערים מובילות · {win}</h2><div class="sub" data-i18n="citiesSub">לפי עיר הפוסט</div><div id="chCities"></div></section>
       <section class="panel wide"><h2 data-i18n="supplyTitle">בריאות צד ההיצע</h2><div class="sub" data-i18n="supplySub">הצעה שיושבת בלי פנייה = עוזר/ת שעומדים לאבד</div><div id="supplyHealth"></div></section>
@@ -720,7 +722,7 @@
 
     <div class="sechead" id="secEvents" style="--sec-c:var(--s3)" data-i18n="secEventsT">מה קרה לאחרונה</div>
     <section class="panel">
-      <h2 data-i18n="feedTitle">יומן אירועים · 14 יום</h2>
+      <h2 data-i18n="feedTitle">יומן אירועים · {win}</h2>
       <div class="sub" data-i18n="feedSub">אותם אירועים שמגיעים אליך בטלגרם, בצורה קריאה ומסוננת</div>
       <div class="flowbar" id="feedFilter"></div>
       <div id="eventFeed"></div>
@@ -990,7 +992,7 @@
       glSplit:function(i,a){ return i+" iOS · "+a+" אנדרואיד"; },
       glogEmpty:"אין מספיק שבועות בטווח כדי לבנות יומן",
       rdGlog:function(best,bestN,drop){ return "השבוע החזק ביותר בטווח היה <b>"+best+"</b> עם <b>"+bestN+"</b> "+(bestN==="1"?"נרשם":"נרשמים")+(drop?", ומאז הקצב ירד ב-<b>"+drop+"%</b>":"")+". צמיחה שמגיעה בגלים סביב קמפיין ולא בקו עולה יציב מעידה שהערוץ נרכש ולא נצבר - ברגע שהתקציב נעצר, הגל נעצר איתו."; },
-      secEventsT:"מה קרה לאחרונה", feedTitle:"יומן אירועים · 14 יום",
+      secEventsT:"מה קרה לאחרונה", feedTitle:"יומן אירועים · {win}",
       feedSub:"אותם אירועים שמגיעים אליך בטלגרם, בצורה קריאה ומסוננת",
       evAll:"הכל", evDeclined:"נדחו", evDone:"הושלמו", evFailed:"לא יצאו לפועל", evSafety:"בטיחות",
       evK:{declined:"הצעה נדחתה", completed:"עזרה הושלמה", not_completed:"לא יצא לפועל",
@@ -999,8 +1001,8 @@
       evAfter:function(d){ return "אחרי "+d; },
       evBetween:function(a,b){ return a+" ↔ "+b; },
       feedEmpty:"לא קרה כלום בטווח הזה",
-      rdFeed:function(d,n,dp){ return "מתוך <b>"+n+"</b> האירועים בשבועיים האחרונים, <b>"+d+"</b> הם הצעות שנדחו או שלא יצאו לפועל (<b>"+dp+"</b>). זה מה שהשכנים חווים בפועל - לא כישלון טכני אלא הבטחה שלא הבשילה, וכל אחת מהן היא מישהו שכנראה לא ינסה שוב."; },
-      intelTitle:"מה הביקוש באמת מבקש",
+      rdFeed:function(d,n,dp){ return "מתוך <b>"+n+"</b> האירועים בטווח, <b>"+d+"</b> הם הצעות שנדחו או שלא יצאו לפועל (<b>"+dp+"</b>). זה מה שהשכנים חווים בפועל - לא כישלון טכני אלא הבטחה שלא הבשילה, וכל אחת מהן היא מישהו שכנראה לא ינסה שוב."; },
+      intelTitle:"מה הביקוש באמת מבקש · {win}",
       intelSub:"אשכולות מתוך הטקסט של הבקשות עצמן, לא לפי הקטגוריה שנבחרה - כך מתגלה קטגוריה שחסרה",
       intelCluster:"סוג הבקשה", intelReqs:"בקשות", intelShare:"מהביקוש", intelMatch:"נענו",
       clMount:"תלייה, קידוח והרכבה", clPlumb:"ברזים ואינסטלציה", clTools:"השאלת כלי עבודה",
@@ -1235,7 +1237,7 @@
       glSplit:function(i,a){ return i+" iOS · "+a+" Android"; },
       glogEmpty:"Not enough weeks in range to build a log",
       rdGlog:function(best,bestN,drop){ return "The strongest week in range was <b>"+best+"</b> with <b>"+bestN+"</b> signups"+(drop?", and the pace has fallen <b>"+drop+"%</b> since":"")+". Growth arriving in waves around a campaign rather than as a steady climb says the channel is bought, not accumulated - when the budget stops, so does the wave."; },
-      secEventsT:"What just happened", feedTitle:"Event log · 14 days",
+      secEventsT:"What just happened", feedTitle:"Event log · {win}",
       feedSub:"The same events that reach you on Telegram, readable and filterable",
       evAll:"All", evDeclined:"Declined", evDone:"Completed", evFailed:"Fell through", evSafety:"Safety",
       evK:{declined:"Offer declined", completed:"Help completed", not_completed:"Fell through",
@@ -1244,8 +1246,8 @@
       evAfter:function(d){ return "after "+d; },
       evBetween:function(a,b){ return a+" ↔ "+b; },
       feedEmpty:"Nothing happened in this range",
-      rdFeed:function(d,n,dp){ return "Of <b>"+n+"</b> events in the last fortnight, <b>"+d+"</b> are offers declined or fallen through (<b>"+dp+"</b>). That is what neighbours actually experience - not a technical failure but a promise that did not mature, and each one is somebody who probably will not try again."; },
-      intelTitle:"What demand is really asking for",
+      rdFeed:function(d,n,dp){ return "Of <b>"+n+"</b> events in range, <b>"+d+"</b> are offers declined or fallen through (<b>"+dp+"</b>). That is what neighbours actually experience - not a technical failure but a promise that did not mature, and each one is somebody who probably will not try again."; },
+      intelTitle:"What demand is really asking for · {win}",
       intelSub:"Clusters read from the text of the requests themselves, not the category chosen - this is how a missing category shows up",
       intelCluster:"Kind of request", intelReqs:"Requests", intelShare:"of demand", intelMatch:"answered",
       clMount:"Mounting, drilling & assembly", clPlumb:"Taps & plumbing", clTools:"Borrowing tools",
@@ -2731,11 +2733,21 @@
     panelRead("funnel", (f.messaged/Math.max(f.signups,1))<0.1?"bad":"warn",
       S.rdFunnel(fmt(f.signups), fmt(f.messaged)));
 
-    hbars("chCats",(DATA.categories_30d||[]).map(function(c){
-      return {label:c.category, v1:c.requests, c1:S1, v2:c.offers, c2:S2,
-              title:"בקשות "+c.requests+" · הצעות "+c.offers,
-              onClick:function(){ drillToChat({category:c.category}); }};
-    }));
+    var catSel=segK("segCats");
+    hbars("chCats",(DATA.categories_30d||[])
+      .filter(function(c){ return catSel==="all" ||
+        (catSel==="requests"? c.requests>0 : c.offers>0); })
+      .slice().sort(function(a,b){
+        return catSel==="requests"? b.requests-a.requests :
+               catSel==="offers"?   b.offers-a.offers   : 0;
+      })
+      .map(function(c){
+        return {label:c.category,
+                v1:catSel==="offers"? 0 : c.requests, c1:S1,
+                v2:catSel==="requests"? 0 : c.offers, c2:S2,
+                title:"בקשות "+c.requests+" · הצעות "+c.offers,
+                onClick:function(){ drillToChat({category:c.category}); }};
+      }));
     hbars("chCities",(DATA.cities_30d||[]).map(function(c,i){
       return {label:c.city, v1:c.posts, c1:pal(i)};
     }));
@@ -3599,7 +3611,7 @@
   segWire("chatRangeSeg",function(){ load().catch(function(){}); });
   segWire("chatTypeSeg",renderChat);
   segWire("funnelSeg",function(){ if(DATA) renderMetrics(); });
-  ["segSignups","segDau","segPosts","segMsgs","segMatches","grainSeg"].forEach(function(id){
+  ["segSignups","segDau","segPosts","segMsgs","segMatches","segCats","grainSeg"].forEach(function(id){
     segWire(id,function(){ if(DATA) renderMetrics(); });
   });
   // the usage tip is worth reading once; after that it is chrome
