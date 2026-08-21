@@ -826,7 +826,7 @@
       tileActiveTip:"משתמשים שפתחו את האפליקציה היום, לפי חותמת last_seen_at שהשרת מטביע פעם בשעה",
       tileActiveNote:function(w,m){ return "שבוע: "+w+" · חודש: "+m; },
       tileStick:"דביקות DAU/MAU · עכשיו",
-      tileStickTip:"Stickiness: איזה חלק מהמשתמשים החודשיים נכנסים ביום נתון - מדד הרגל. באפליקציות חברתיות גדולות 20%+ נחשב מצוין",
+      tileStickTip:"Stickiness: איזה חלק מהמשתמשים החודשיים נכנסים ביום נתון. הרף המקובל של 20% מגיע מאפליקציות לשימוש יומי - Helpy אפיזודית, ולכן הרף הזה כנראה אינו המדד הנכון עבורה",
       tileStickNote:function(n){ return "משתמשים חיים: "+n; },
       tileMsgs:"הודעות צ'אט · {win}", tileMsgsNote:function(n){ return "בין "+n+" חיבורים פעילים"; },
       tileMatches:"התאמות · {win}",
@@ -870,7 +870,7 @@
       noData:"אין נתונים", noDataRange:"אין נתונים בטווח",
       insFunnel:function(p,a,b,w){ return "רק <b>"+p+"%</b> מהנרשמים מגיעים לשיחה עם שכן - זה צוואר הבקבוק המרכזי במשפך ("+a+" מתוך "+b+" ב-"+w+" יום)"; },
       insOfferAns:function(p,a,b,bad){ return "בעלי הצעות ענו ל-<b>"+p+"%</b> מהפניות אליהם ("+a+" מתוך "+b+")"+(bad?" - פנייה שנשארת באוויר מייאשת שכנים":""); },
-      insLiq:function(p){ return "<b>"+p+"%</b> מהבקשות קיבלו הצעה תוך 24 שעות (יעד: 50%+)"; },
+      insLiq:function(p){ return "<b>"+p+"%</b> מהבקשות קיבלו הצעה תוך 24 שעות (יעד: "+bm("50%+","fill24")+")"; },
       insNoOffer:function(n){ return "<b>"+n+"</b> בקשות פעילות עדיין בלי אף הצעה - לחיצה קופצת לרשימה"; },
       insFirstAction:function(p){ return "<b>"+p+"%</b> מהנרשמים החדשים עשו פעולה ראשונה (פוסט או פנייה) תוך 24 שעות"; },
       insSignupPace:function(up,d,a,b){ return "קצב ההרשמות "+(up?"עלה":"ירד")+" ב-<b>"+d+"</b> השבוע ("+a+" מול "+b+")"; },
@@ -882,7 +882,7 @@
       showCohorts:"הצגת טבלת הקוהורטות המלאה + איכות הפעלה", hideCohorts:"הסתרת הטבלה",
       liqTarget:"יעד",
       insSupplyHeavy:function(r,rq,of,w){ return "צד ההיצע מוביל פי <b>"+r+"</b> ("+rq+" בקשות מול "+of+" הצעות ב-"+w+") - במרקטפלייס כבד-היצע כל מנופי הצמיחה צריכים להצביע על יצירת ביקוש"; },
-      insSupplyUtil:function(p,idle,w){ return "רק <b>"+p+"%</b> מההצעות החיות קיבלו פנייה ב-"+w+" ("+idle+" הצעות יושבות בלי כלום) - מתחת ל-30% מספקים נוטשים, זו אזעקת נטישת עוזרים"; },
+      insSupplyUtil:function(p,idle,w){ return "רק <b>"+p+"%</b> מההצעות החיות קיבלו פנייה ב-"+w+" ("+idle+" הצעות יושבות בלי כלום) - מתחת ל-"+bm("30%","util")+" מספקים נוטשים, זו אזעקת נטישת עוזרים"; },
       insRepeat:function(p,a,b){ return "<b>"+p+"%</b> מהמבקשים חזרו לבקש תוך 90 יום ("+a+" מתוך "+b+"; הרף המצוטט להתרחבות: 35%)"; },
       cityLiqTitle:"נזילות לפי עיר · {win}",
       cityLiqSub:"הרשת האטומית: ממוצע ארצי מסתיר אם יש עיר אחת שבאמת עובדת",
@@ -915,11 +915,11 @@
       rdSupply:function(u,idle,ttfm){ return "ניצולת של <b>"+u+"%</b>: <b>"+idle+"</b> הצעות יושבות בלי פנייה אחת, וחציון ההמתנה לפנייה ראשונה הוא <b>"+ttfm+"</b>. עוזר שלא קיבל פנייה בשבועיים הראשונים כמעט תמיד נוטש - ניתוב ביקוש להצעות החדשות זול בהרבה מגיוס עוזרים נוספים."; },
       rdCities:function(city,n,p,others){ return "ב<b>"+city+"</b> נפתחו <b>"+n+"</b> בקשות, ומהן <b>"+p+"</b> נענו תוך יממה. בכל שאר הערים יחד נפתחו "+others+" בקשות בלבד. אפקט רשת נבנה בעיר אחת, ופיזור ארצי רק מדלל אותו."; },
       rdStates:function(np,rp){ return "<b>"+np+"</b> מהפעילים השבוע הם נרשמים חדשים ורק <b>"+rp+"</b> הם ממשיכים מהשבוע שעבר - הצמיחה כרגע היא רכישה, לא הצטברות. אם קצב הרכישה ייעצר, הפעילות תיעלם כמעט כולה."; },
-      rdRepeat:function(p,a,b){ return "רק <b>"+a+"</b> מתוך <b>"+b+"</b> המבקשים חזרו לבקש שוב (<b>"+p+"%</b> מול רף מקובל של 35%). חזרה לבקש היא עדות ה-PMF החזקה ביותר - בלעדיה כל בקשה היא רכישה מחדש."; },
+      rdRepeat:function(p,a,b){ return "רק <b>"+a+"</b> מתוך <b>"+b+"</b> המבקשים חזרו לבקש שוב (<b>"+p+"%</b> מול רף מקובל של "+bm("35%","repeat")+"). חזרה לבקש היא עדות ה-PMF החזקה ביותר - בלעדיה כל בקשה היא רכישה מחדש."; },
       rdChat:function(tw,med){ return "ב-<b>"+tw+"</b> מהשיחות שני הצדדים כתבו, והתשובה הראשונה הגיעה תוך <b>"+med+"</b> בחציון. מי שעונה עושה זאת מהר, ולכן הבעיה איננה מהירות אלא כמה פניות נשארות בלי מענה בכלל."; },
       rdCats:function(cat,n){ return "<b>"+cat+"</b> היא הקטגוריה הגדולה ביותר עם <b>"+n+"</b> פוסטים. כמעט בכל קטגוריה יש יותר הצעות מבקשות, וזה מחזק את המסקנה שהמחסור הוא בביקוש ולא בהיצע."; },
       rdNoOffer:function(n,oldest){ return "<b>"+n+"</b> בקשות פתוחות ללא ולו הצעה אחת, הוותיקה שבהן בת <b>"+oldest+"</b>. בקשה שלא נענתה תוך שבוע כבר לא רלוונטית למבקש - כדאי לסגור או לרענן אותן."; },
-      rdRet:function(d1,d7,d30){ return "אחרי יום אחד חוזרים <b>"+d1+"%</b>, מתחת לבנצ׳מרק של 25%. לעומת זאת אחרי שבוע חוזרים <b>"+d7+"%</b> ואחרי חודש <b>"+d30+"%</b> - שניהם מעל הבנצ׳מרק. כלומר מי שצולח את היום הראשון נשאר, והבעיה כולה ביום הראשון עצמו."; },
+      rdRet:function(d1,d7,d30){ return "אחרי יום אחד חוזרים <b>"+d1+"%</b>, מתחת לבנצ׳מרק של "+bm("25%","d1")+". לעומת זאת אחרי שבוע חוזרים <b>"+d7+"%</b> ואחרי חודש <b>"+d30+"%</b> - שניהם מעל הבנצ׳מרק. כלומר מי שצולח את היום הראשון נשאר, והבעיה כולה ביום הראשון עצמו."; },
       rdFunnel:function(a,b){ return "רק <b>"+b+"</b> מתוך <b>"+a+"</b> הנרשמים שלחו הודעה. השלבים כאן אינם מדורגים זה אחר זה: מיקום והתראות נמדדים במקביל."; },
       rdSafety:function(r,bl,dl){ return "<b>"+dl+"</b> מחיקות חשבון מול <b>"+r+"</b> דיווחים ו-<b>"+bl+"</b> חסימות. נטישה שקטה, לא בעיית בטיחות - אנשים לא נפגעים, הם פשוט לא מוצאים ערך."; },
       rdTopUsers:function(name,share){ return "<b>"+name+"</b> לבד אחראי/ת ל-<b>"+share+"</b> מפעילות המשתמשים הבולטים. ריכוז כזה אומר שהמדדים רגישים מאוד לאדם בודד - אם הוא עוזב, הגרפים ייפלו."; },
@@ -947,6 +947,15 @@
       recRepeat:" <b>ההמלצה: לפנות למי שכבר ביקש פעם אחת ונענה.</b> בקשה שנייה היא המדד החזק ביותר ל-PMF, והקהל הזה קטן ומוכר - קל להגיע אליו.",
       recChat:" <b>ההמלצה: להקדים את התזכורת לפנייה שלא נענתה.</b> מי שעונה עונה תוך דקות, ולכן פנייה שלא נענתה תוך שעות כנראה לא נראתה בכלל.",
       recDorm:function(n){ return " <b>ההמלצה: רה-אקטיבציה היא הצמיחה הזולה ביותר שיש לך.</b> "+n+" אנשים כבר הורידו, נרשמו ושילמת עליהם - הם עולים פחות מכל משתמש חדש."; },
+      bmTips:{
+        d1:"מקור חיצוני: חציון שימור יום-1 באפליקציות חברתיות הוא 25-29% (סקרי בנצ׳מרק של שוק האפליקציות). זהו מדד השוואה סביר אך לא חוק - אפליקציה אפיזודית כמו Helpy נמדדת נכון יותר בשבועות מאשר בימים.",
+        repeat:"מקור חיצוני: 35% חזרה תוך 90 יום מצוטט כשער להתרחבות במרקטפלייסים. הרף גבוה יחסית ומתאים למרקטפלייס בוגר - בשלב שלך הכיוון חשוב יותר מהמספר עצמו.",
+        fill24:"היעד הזה נקבע על ידי, לא מתוך מקור: מחקרי מרקטפלייס שירותים מדברים על 80% מילוי תוך 48 שעות. 50% תוך 24 שעות הוא יעד ביניים ריאלי לשלב הנוכחי, ולא סטנדרט תעשייה.",
+        util:"מקור חיצוני: ספקי שירות נוטשים בחדות כשהניצולת יורדת מתחת ל-30% מהזמינות שלהם. זהו הרף שמצוטט במרקטפלייסים של שירותים.",
+        stick:"זהירות: 20% DAU/MAU מגיע מאפליקציות שנועדו לשימוש יומי. Helpy היא אפליקציה אפיזודית - משתמשים בה כשצריך עזרה - ולכן הרף הזה כנראה אינו המדד הנכון עבורה. WAU/MAU יהיה מדד הוגן יותר.",
+        density:"נמדד מהנתונים שלך, לא ממקור חיצוני: מתוך הבקשות ב-90 הימים האחרונים, אף בקשה עם פחות מ-10 שכנים בטווח לא קיבלה מענה באותו יום, מול 90% מענה בבקשות עם 60+ שכנים.",
+        cluster:"הסף נקבע על ידי: אשכול שמחזיק 25% מהביקוש הוא גדול מספיק כדי להצדיק קטגוריה משלו. זו הערכה מוצרית ולא מספר מהספרות."
+      },
       insGo:"קפיצה לנתונים ←",
       mlogTitle:"יומן מרקטפלייס · שבוע אחר שבוע",
       mlogSub:"ביקוש מול היצע בכל שבוע, וכמה מזה הבשיל",
@@ -1057,7 +1066,7 @@
       tileActiveTip:"Users who opened the app today, by the hourly server-side last_seen_at stamp",
       tileActiveNote:function(w,m){ return "week: "+w+" · month: "+m; },
       tileStick:"DAU/MAU stickiness · now",
-      tileStickTip:"What share of monthly users show up on a given day - the habit metric. 20%+ is excellent for big social apps",
+      tileStickTip:"What share of monthly users show up on a given day. The usual 20% bar comes from daily-use apps - Helpy is episodic, so that bar is probably the wrong measure for it",
       tileStickNote:function(n){ return "live users: "+n; },
       tileMsgs:"Chat messages · {win}", tileMsgsNote:function(n){ return "across "+n+" active matches"; },
       tileMatches:"Matches · {win}",
@@ -1101,7 +1110,7 @@
       noData:"No data", noDataRange:"No data in range",
       insFunnel:function(p,a,b,w){ return "Only <b>"+p+"%</b> of signups reach a conversation with a neighbor - the funnel's main bottleneck ("+a+" of "+b+" in "+w+" days)"; },
       insOfferAns:function(p,a,b,bad){ return "Offer owners answered <b>"+p+"%</b> of openers ("+a+" of "+b+")"+(bad?" - an unanswered opener discourages neighbors":""); },
-      insLiq:function(p){ return "<b>"+p+"%</b> of requests got an offer within 24h (target: 50%+)"; },
+      insLiq:function(p){ return "<b>"+p+"%</b> of requests got an offer within 24h (target: "+bm("50%+","fill24")+")"; },
       insNoOffer:function(n){ return "<b>"+n+"</b> live requests still have zero offers - click to jump to the list"; },
       insFirstAction:function(p){ return "<b>"+p+"%</b> of new signups took a first action (post or opener) within 24h"; },
       insSignupPace:function(up,d,a,b){ return "Signup pace "+(up?"rose":"fell")+" by <b>"+d+"</b> this week ("+a+" vs "+b+")"; },
@@ -1113,7 +1122,7 @@
       showCohorts:"Show the full cohort table + activation quality", hideCohorts:"Hide the table",
       liqTarget:"target",
       insSupplyHeavy:function(r,rq,of,w){ return "Supply leads <b>"+r+"x</b> ("+rq+" requests vs "+of+" offers in "+w+") - in a supply-heavy marketplace every growth lever should point at demand creation"; },
-      insSupplyUtil:function(p,idle,w){ return "Only <b>"+p+"%</b> of live offers got an opener in "+w+" ("+idle+" sitting untouched) - providers churn below 30%, this is the helper-churn alarm"; },
+      insSupplyUtil:function(p,idle,w){ return "Only <b>"+p+"%</b> of live offers got an opener in "+w+" ("+idle+" sitting untouched) - providers churn below "+bm("30%","util")+", this is the helper-churn alarm"; },
       insRepeat:function(p,a,b){ return "<b>"+p+"%</b> of requesters came back within 90 days ("+a+" of "+b+"; cited expansion gate: 35%)"; },
       cityLiqTitle:"Liquidity by city · {win}",
       cityLiqSub:"The atomic network: a national average hides whether any one city actually works",
@@ -1146,11 +1155,11 @@
       rdSupply:function(u,idle,ttfm){ return "<b>"+u+"%</b> utilization: <b>"+idle+"</b> offers sit without a single opener, and the median wait for a first opener is <b>"+ttfm+"</b>. A helper who gets nothing in the first fortnight almost always churns - routing demand to new offers is far cheaper than recruiting more helpers."; },
       rdCities:function(city,n,p,others){ return "<b>"+city+"</b> holds <b>"+n+"</b> requests at <b>"+p+"</b> fill, while every other city combined reaches only "+others+". Network effects build in one city - spreading nationally dilutes them."; },
       rdStates:function(np,rp){ return "<b>"+np+"</b> of this week's actives are brand-new signups and only <b>"+rp+"</b> carried over from last week - growth right now is acquisition, not accumulation. Stop the spend and the activity nearly vanishes."; },
-      rdRepeat:function(p,a,b){ return "Only <b>"+a+"</b> of <b>"+b+"</b> requesters came back to ask again (<b>"+p+"%</b> vs a 35% norm). Asking twice is the strongest PMF evidence there is - without it every request is a fresh acquisition."; },
+      rdRepeat:function(p,a,b){ return "Only <b>"+a+"</b> of <b>"+b+"</b> requesters came back to ask again (<b>"+p+"%</b> vs a "+bm("35%","repeat")+" norm). Asking twice is the strongest PMF evidence there is - without it every request is a fresh acquisition."; },
       rdChat:function(tw,med){ return "<b>"+tw+"</b> of conversations got a two-way reply, at a median of <b>"+med+"</b>. Those who answer, answer fast; the problem is not speed but how many openers get no answer at all."; },
       rdCats:function(cat,n){ return "<b>"+cat+"</b> is the largest category (<b>"+n+"</b> posts). Offers outnumber requests in every category - the mix confirms the shortage is demand, not supply."; },
       rdNoOffer:function(n,oldest){ return "<b>"+n+"</b> open requests have not a single offer, the oldest <b>"+oldest+"</b> old. A request unanswered for a week is no longer relevant to its asker - close or refresh them."; },
-      rdRet:function(d1,d7,d30){ return "Day one is <b>"+d1+"%</b> (below the 25% benchmark), but week <b>"+d7+"%</b> and month <b>"+d30+"%</b> are above it. Whoever stays sticks harder than average - the problem is concentrated in day one, not in long-term retention."; },
+      rdRet:function(d1,d7,d30){ return "Day one is <b>"+d1+"%</b> (below the "+bm("25%","d1")+" benchmark), but week <b>"+d7+"%</b> and month <b>"+d30+"%</b> are above it. Whoever stays sticks harder than average - the problem is concentrated in day one, not in long-term retention."; },
       rdFunnel:function(a,b){ return "Of <b>"+a+"</b> signups only <b>"+b+"</b> sent a message. Note these steps are not a sequence - location and push are measured in parallel, not one after the other."; },
       rdSafety:function(r,bl,dl){ return "<b>"+dl+"</b> account deletions against <b>"+r+"</b> reports and <b>"+bl+"</b> blocks. This is quiet churn, not a safety problem - people are not getting hurt, they are just not finding value."; },
       rdTopUsers:function(name,share){ return "<b>"+name+"</b> alone accounts for <b>"+share+"</b> of top-user activity. That concentration makes the metrics hostage to one person - if they leave, the charts fall."; },
@@ -1178,6 +1187,15 @@
       recRepeat:" <b>Recommendation: go to the people who already asked once and were answered.</b> A second request is the strongest PMF signal there is, and that audience is small and known - easy to reach.",
       recChat:" <b>Recommendation: send the unanswered-opener reminder earlier.</b> Those who reply do so within minutes, so an opener unanswered for hours was probably never seen.",
       recDorm:function(n){ return " <b>Recommendation: reactivation is the cheapest growth you have.</b> "+n+" people already installed, signed up and were paid for - they cost less than any new user."; },
+      bmTips:{
+        d1:"External source: the median day-1 retention for social apps is 25-29% (mobile app benchmark surveys). A reasonable comparison, not a law - an episodic app like Helpy is measured more fairly in weeks than in days.",
+        repeat:"External source: 35% repeat within 90 days is cited as a marketplace expansion gate. It is a high bar suited to a mature marketplace - at your stage the direction matters more than the number.",
+        fill24:"This target is mine, not from a source: services-marketplace research cites 80% filled within 48 hours. 50% within 24 hours is a realistic interim target for this stage, not an industry standard.",
+        util:"External source: service providers churn sharply once utilization falls below 30% of their availability - the figure cited for services marketplaces.",
+        stick:"Caution: 20% DAU/MAU comes from apps designed for daily use. Helpy is episodic - people open it when they need help - so this bar is probably the wrong measure for it. WAU/MAU would be fairer.",
+        density:"Measured from your own data, not an external source: among requests in the last 90 days, not one with fewer than 10 neighbours in range was answered same-day, against 90% answered where there were 60+.",
+        cluster:"The threshold is mine: a cluster holding 25% of demand is large enough to justify its own category. A product judgement, not a figure from the literature."
+      },
       insGo:"Jump to the data →",
       mlogTitle:"Marketplace log · week by week",
       mlogSub:"Demand against supply each week, and how much of it matured",
@@ -2058,6 +2076,15 @@
 
   // An expert reading for a panel that is not a time chart. Appended at the END
   // of the panel (a table needs its numbers first, then the interpretation).
+  // A benchmark asserted without provenance is just an opinion in bold. Every
+  // threshold the console judges against carries its source on hover, and says
+  // plainly when it is my judgement rather than a published figure.
+  function bm(text, key){
+    var t=(S.bmTips||{})[key];
+    if(!t) return text;
+    return '<span class="term" data-tip="'+String(t).replace(/"/g,"&quot;")+'">'+text+'</span>';
+  }
+
   function panelRead(hostId, cls, html){
     var host=$(hostId); if(!host) return;
     var panel=host.closest("section.panel"); if(!panel) return;
