@@ -1337,6 +1337,22 @@
   var nfmt = new Intl.NumberFormat("he-IL");
 
   function fmt(n){ return n==null? "-" : nfmt.format(n); }
+  // category slugs come from the DB in English; readers see the app's own labels
+  var CAT_LABELS={
+    "handyman":["הנדימן","Handyman"], "tech-help":["עזרה במחשב","Tech Help"],
+    "moving":["הובלות","Moving"], "repairs":["תיקונים","Repairs"],
+    "elderly-care":["עזרה לקשישים","Elderly Care"], "shopping":["קניות","Shopping"],
+    "grocery":["קניות","Shopping"], "rides":["טרמפ","Rides"],
+    "transportation":["טרמפ","Rides"], "borrow":["השאלה","Borrow"],
+    "giveaway":["מסירה","Giveaway"], "activity":["פעילות","Activity"],
+    "tutoring":["שיעורי עזר","Tutoring"], "pro-advice":["ייעוץ מקצועי","Pro Advice"],
+    "language-help":["עזרה בשפה","Language Help"], "other":["אחר","Other"],
+    "home-repair":["תיקון בית","Home Repair"]
+  };
+  function catLabel(slug){
+    var m=CAT_LABELS[slug];
+    return m? m[LANG==="he"?0:1] : slug;
+  }
   function fmtDay(d){ var p=String(d).slice(0,10).split("-"); return p[2]+"."+p[1]; }
   function fmtTime(iso){
     var loc = LANG==="he" ? "he-IL" : "en-GB";
@@ -2742,7 +2758,7 @@
                catSel==="offers"?   b.offers-a.offers   : 0;
       })
       .map(function(c){
-        return {label:c.category,
+        return {label:catLabel(c.category),
                 v1:catSel==="offers"? 0 : c.requests, c1:S1,
                 v2:catSel==="requests"? 0 : c.offers, c2:S2,
                 title:"בקשות "+c.requests+" · הצעות "+c.offers,
@@ -2752,7 +2768,7 @@
       return {label:c.city, v1:c.posts, c1:pal(i)};
     }));
     var CT=DATA.categories_30d||[];
-    if(CT.length) panelRead("chCats","",S.rdCats(CT[0].category, fmt(CT[0].requests+CT[0].offers)));
+    if(CT.length) panelRead("chCats","",S.rdCats(catLabel(CT[0].category), fmt(CT[0].requests+CT[0].offers)));
     // Demand clusters read from the request TEXT: this is the panel that can
     // say "a category is missing", which a category breakdown never can.
     var ci=$("catIntel");
@@ -2786,7 +2802,7 @@
           var lines=[];
           if(top.share>=25) lines.push(S.intelSplit(CLN[top.key], top.share,
             pct(top.matched,top.requests), fmt(top.requests)));
-          var dead=(IN.dead||[]).map(function(d){ return d.category; });
+          var dead=(IN.dead||[]).map(function(d){ return catLabel(d.category); });
           if(dead.length) lines.push(S.intelDead(dead.join(", ")));
           if(IN.other_share>=12) lines.push(S.intelOther(IN.other_share, fmt(IN.other_posts)));
           // Emerging demand: recurring words in requests that fit no known
@@ -2995,7 +3011,7 @@
     var dh=$("drillHost"); dh.innerHTML="";
     if(drill.category){
       var chip=el("span","drillchip");
-      chip.appendChild(document.createTextNode(S.drillCat(drill.category)));
+      chip.appendChild(document.createTextNode(S.drillCat(catLabel(drill.category))));
       var x=el("button",null,"✕");
       x.addEventListener("click",function(){ drill.category=null; renderChat(); });
       chip.appendChild(x);
