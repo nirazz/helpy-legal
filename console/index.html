@@ -838,7 +838,14 @@
   }
   function withWin(v){ return v.indexOf("{win}")>-1 ? v.split("{win}").join(winLabel()) : v; }
   function applyChrome(){
-    S = STRINGS[LANG];
+    // substitute "{win}" once, at dictionary level, so EVERY consumer gets the
+    // real window - not just the data-i18n attributes (a JS-read string used to
+    // print the literal "{win}")
+    var base = STRINGS[LANG];
+    S = {};
+    for(var k in base){
+      S[k] = (typeof base[k] === "string") ? withWin(base[k]) : base[k];
+    }
     document.documentElement.lang = LANG;
     document.documentElement.dir = LANG==="he" ? "rtl" : "ltr";
     if(THEME==="dark") document.documentElement.setAttribute("data-theme","dark");
