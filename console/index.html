@@ -921,7 +921,7 @@
       rdNoOffer:function(n,oldest){ return "<b>"+n+"</b> בקשות פתוחות ללא ולו הצעה אחת, הוותיקה שבהן בת <b>"+oldest+"</b>. בקשה שלא נענתה תוך שבוע כבר לא רלוונטית למבקש - כדאי לסגור או לרענן אותן."; },
       rdRet:function(d1,d7,d30){ return "אחרי יום אחד חוזרים <b>"+d1+"%</b>, מתחת לבנצ׳מרק של "+bm("25%","d1")+". לעומת זאת אחרי שבוע חוזרים <b>"+d7+"%</b> ואחרי חודש <b>"+d30+"%</b> - שניהם מעל הבנצ׳מרק. כלומר מי שצולח את היום הראשון נשאר, והבעיה כולה ביום הראשון עצמו."; },
       rdFunnel:function(a,b){ return "רק <b>"+b+"</b> מתוך <b>"+a+"</b> הנרשמים שלחו הודעה. השלבים כאן אינם מדורגים זה אחר זה: מיקום והתראות נמדדים במקביל."; },
-      rdSafety:function(r,bl,dl){ return "<b>"+dl+"</b> מחיקות חשבון מול <b>"+r+"</b> דיווחים ו-<b>"+bl+"</b> חסימות. נטישה שקטה, לא בעיית בטיחות - אנשים לא נפגעים, הם פשוט לא מוצאים ערך."; },
+      rdSafety:function(r,bl,dl){ return "<b>"+dl+"</b> "+(dl==="1"?"מחיקת חשבון":"מחיקות חשבון")+" מול <b>"+r+"</b> "+(r==="1"?"דיווח":"דיווחים")+" ו-<b>"+bl+"</b> "+(bl==="1"?"חסימה":"חסימות")+". נטישה שקטה, לא בעיית בטיחות - אנשים לא נפגעים, הם פשוט לא מוצאים ערך."; },
       rdTopUsers:function(name,share){ return "<b>"+name+"</b> לבד אחראי/ת ל-<b>"+share+"</b> מפעילות המשתמשים הבולטים. ריכוז כזה אומר שהמדדים רגישים מאוד לאדם בודד - אם הוא עוזב, הגרפים ייפלו."; },
       rdLifecycle:function(d,t,p){ return "<b>"+d+"</b> מתוך <b>"+t+"</b> המשתמשים (<b>"+p+"</b>) לא נראו מעל 30 יום. זהו הנכס הגדול ביותר שלך וגם החוב הגדול ביותר - קהל שכבר שילמת עליו ואינו פעיל."; },
       insMore:function(n){ return "הצגת "+n+" תובנות נוספות"; },
@@ -932,7 +932,7 @@
       sbChat:function(n,tw,med){ return "נפתחו <b>"+n+"</b> שיחות, וב-<b>"+tw+"%</b> מהן שני הצדדים באמת כתבו. התשובה הראשונה מגיעה תוך <b>"+med+"</b> בחציון. מי שעונה עונה מהר מאוד, ולכן זו אינה בעיית זמינות אלא בעיית תשומת לב - כמעט מחצית מהפניות פשוט לא נקראות בזמן."; },
       sbRetention:function(d1,newshare,dorm,dormp){ return "אחרי יום אחד חוזרים <b>"+d1+"%</b> בלבד, מתחת לבנצ׳מרק של אפליקציות חברתיות, אבל אחרי שבוע וחודש המספרים דווקא גבוהים ממנו - מי שצולח את היום הראשון נשאר. כרגע <b>"+newshare+"</b> מהפעילים הם נרשמים חדשים ו-<b>"+dorm+"</b> משתמשים ("+dormp+") רדומים מעל חודש. זהו קהל שכבר שילמת עליו, והוא גדול פי כמה מהקהל הפעיל."; },
       sbUsers:function(name,share,n){ return "<b>"+name+"</b> לבד מייצר/ת <b>"+share+"</b> מהפעילות של "+n+" המשתמשים הבולטים. ריכוז כזה אומר שהגרפים שאתה קורא רגישים לאדם אחד - שווה לדעת מי הם ולשמור עליהם, אבל מסוכן להסיק מהם על כלל המשתמשים."; },
-      sbSafety:function(r,b,d){ return "<b>"+r+"</b> דיווחים ו-<b>"+b+"</b> חסימות מול <b>"+d+"</b> מחיקות חשבון. היחס הזה אומר שהמשתמשים אינם עוזבים בגלל חוויה רעה עם שכן אלא בגלל היעדר חוויה בכלל - זו בעיית ערך, לא בעיית בטיחות, ולכן היא לא תיפתר במודרציה."; },
+      sbSafety:function(r,b,d){ return "<b>"+r+"</b> "+(r==="1"?"דיווח":"דיווחים")+" ו-<b>"+b+"</b> "+(b==="1"?"חסימה":"חסימות")+" מול <b>"+d+"</b> "+(d==="1"?"מחיקת חשבון":"מחיקות חשבון")+". היחס הזה אומר שהמשתמשים אינם עוזבים בגלל חוויה רעה עם שכן אלא בגלל היעדר חוויה בכלל - זו בעיית ערך, לא בעיית בטיחות, ולכן היא לא תיפתר במודרציה."; },
       emptyBars:"אין עדיין מספיק פוסטים בטווח הזה · נסה טווח רחב יותר",
       emptyRange:"אין נתונים בטווח שנבחר · הרחבת הטווח תמלא את הגרף",
       emptyResearch:"מדדי העומק לא נטענו בטעינה הזו · רענון בדרך כלל פותר",
@@ -1785,6 +1785,24 @@
       return d>=CUSTOM.from && d<=CUSTOM.to;
     });
   }
+  // True only when the previous window is genuinely comparable - i.e. the data
+  // already existed across it. Without this a window that predates the product
+  // reads as explosive growth ("+2044%") when it is really an empty baseline.
+  function prevComparable(series, keys){
+    var all=series||[];
+    var firstIdx=-1;
+    for(var i=0;i<all.length;i++){
+      var t=0; keys.forEach(function(k){ t+=(+all[i][k]||0); });
+      if(t>0){ firstIdx=i; break; }
+    }
+    if(firstIdx<0) return false;
+    var prev=prevRows(series);
+    if(!prev.length) return false;
+    var firstDay=String(all[firstIdx].d).slice(0,10);
+    // the window must START after data began, not straddle its beginning
+    return String(prev[0].d).slice(0,10) >= firstDay;
+  }
+
   // the same-length window immediately before the current one (Stripe comparison)
   function prevRows(rows){
     rows=rows||[];
@@ -2059,13 +2077,26 @@
     });
     var bad=F.filter(function(e){ return e.kind==="declined"||e.kind==="not_completed"; }).length;
     if(F.length) panelRead("eventFeed", bad/F.length>0.5?"warn":"",
-      S.rdFeed(fmt(bad), fmt(F.length), pct(bad,F.length)));
+      S.rdFeed(fmt(bad), fmt(F.length), pct(bad,F.length)), {top:true});
   }
 
   // A section-level brief: what the panels below add up to. Inserted right
   // after the section head so the reader gets the conclusion before the detail.
   function secBrief(secId, html){
     var head=$(secId); if(!head) return;
+    // A one-panel section would otherwise say the same thing twice: once as the
+    // brief and again as that panel's own reading. The panel keeps it.
+    var block=head.nextElementSibling;
+    while(block && block.classList && block.classList.contains("secbrief")) block=block.nextElementSibling;
+    if(block){
+      var panels=block.classList && block.classList.contains("panel")
+        ? 1 : block.querySelectorAll ? block.querySelectorAll("section.panel").length : 0;
+      if(panels<=1){
+        var existing=head.nextElementSibling;
+        if(existing && existing.classList && existing.classList.contains("secbrief")) existing.remove();
+        return;
+      }
+    }
     var b=head.nextElementSibling;
     if(!b || !b.classList || !b.classList.contains("secbrief")){
       b=el("div","secbrief");
@@ -2085,11 +2116,17 @@
     return '<span class="term" data-tip="'+String(t).replace(/"/g,"&quot;")+'">'+text+'</span>';
   }
 
-  function panelRead(hostId, cls, html){
+  // opts.top puts the reading ABOVE the content - right for a long list, where
+  // burying the conclusion under 47 rows means nobody reads it.
+  function panelRead(hostId, cls, html, opts){
     var host=$(hostId); if(!host) return;
     var panel=host.closest("section.panel"); if(!panel) return;
     var v=panel.querySelector(".verdict.read");
-    if(!v){ v=el("div","verdict read"); panel.appendChild(v); }
+    if(!v){
+      v=el("div","verdict read");
+      if(opts && opts.top) panel.insertBefore(v, host);
+      else panel.appendChild(v);
+    }
     v.className="verdict read"+(cls?" "+cls:"");
     v.innerHTML="";
     v.appendChild(el("span","vi", cls==="good"?"\u25B2":cls==="bad"?"\u25BC":cls==="warn"?"\u2192":"\u25CF"));
@@ -2537,7 +2574,10 @@
     // daily series, not from the fixed 7-day KPIs, so picking 90 days can never
     // leave a tile claiming "7 days".
     function winSum(series,keys){ return sumRows(rangeRows(series),keys); }
-    function prevSum(series,keys){ var pr=prevRows(series); return pr.length? sumRows(pr,keys):null; }
+    function prevSum(series,keys){
+      if(!prevComparable(series,keys)) return null; // no baseline is not growth
+      var pr=prevRows(series); return pr.length? sumRows(pr,keys):null;
+    }
 
     var hero=tile(S.tileHero, fmt(winSum(DATA.matches_by_day,["completed"])),
       {delta:winSum(DATA.matches_by_day,["completed"]),
@@ -2595,14 +2635,15 @@
       opts.prev = { rows: opts.avg ? prevRows(source) : prevAgg(source, keys), keys: keys };
       timeChart(chartId, rows, series, opts);
       var cur = rangeRows(source), prv = prevRows(source);
+      var comparable = prevComparable(source, keys);
       var curV, prvV;
       if(opts.avg){
         curV = cur.length? Math.round(sumRows(cur,keys)/cur.length):0;
-        prvV = prv.length? Math.round(sumRows(prv,keys)/prv.length):null;
+        prvV = (comparable && prv.length)? Math.round(sumRows(prv,keys)/prv.length):null;
         cmpLine(chartId, curV, prvV, opts.avgLabel);
       } else {
         curV = sumRows(cur,keys);
-        prvV = prv.length? sumRows(prv,keys):null;
+        prvV = (comparable && prv.length)? sumRows(prv,keys):null;
         cmpLine(chartId, curV, prvV);
       }
       verdictLine(chartId, curV, prvV, rows, keys, {unit:opts.unit});
