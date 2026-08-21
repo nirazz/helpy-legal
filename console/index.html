@@ -358,6 +358,9 @@
   #tt .tname { color:var(--ink2); }
 
   /* horizontal bars */
+  .grouphead { font-size:11.5px; font-weight:700; letter-spacing:.06em;
+               color:var(--muted); margin:4px 0 7px; }
+  .grouphead + div + .grouphead { margin-top:16px; }
   .hrow { display:grid; grid-template-columns:130px 1fr 46px; gap:10px;
           align-items:center; margin-bottom:7px; font-size:13px; }
   .hrow .hl { color:var(--ink2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
@@ -792,7 +795,7 @@
       signupsTitle:"הרשמות", signupsSub:"משתמשים חדשים לפי פלטפורמה",
       dauTitle:"משתמשים פעילים",
       dauSub:'<span class="term" data-tip="Daily Active Users - כמה משתמשים שונים פתחו את האפליקציה באותו יום">DAU</span> ו-<span class="term" data-tip="Weekly Active Users - כמה משתמשים שונים פתחו את האפליקציה בשבעת הימים האחרונים">WAU</span> מתוך <span class="term" data-tip="חותמת שהשרת מטביע פעם בשעה לכל משתמש שפותח את האפליקציה - מקור האמת למדידת פעילות">דגימת last_seen_at</span> יומית',
-      funnelTitle:"פעולות אחרי הרשמה", d14:"14 יום", d30:"30 יום", funnelSub:"מה עושה משתמש חדש אחרי ההרשמה · השלבים נמדדים במקביל, לא כרצף",
+      funnelTitle:"פעולות אחרי הרשמה", d14:"14 יום", d30:"30 יום", funnelSub:"מה עושה משתמש חדש אחרי ההרשמה · למעלה הרשאות שקורות במקביל, למטה המסע עצמו",
       lifecycleTitle:"מאזן משתמשים", lifecycleSub:"חתך חי של כל המשתמשים הרשומים",
       postsTitle:"פוסטים", postsSub:"בקשות עזרה מול הצעות עזרה",
       matchesTitle:"התאמות והשלמות", matchesSub:"התאמות חדשות מול עזרות שסומנו כהושלמו",
@@ -956,6 +959,10 @@
         density:"נמדד מהנתונים שלך, לא ממקור חיצוני: מתוך הבקשות ב-90 הימים האחרונים, אף בקשה עם פחות מ-10 שכנים בטווח לא קיבלה מענה באותו יום, מול 90% מענה בבקשות עם 60+ שכנים.",
         cluster:"הסף נקבע על ידי: אשכול שמחזיק 25% מהביקוש הוא גדול מספיק כדי להצדיק קטגוריה משלו. זו הערכה מוצרית ולא מספר מהספרות."
       },
+      intelEmerging:function(words,n){ return "<b>"+n+"</b> בקשות אינן נופלות לאף אשכול מוכר, והמילים שחוזרות בהן הן: <b>"+words+"</b>. אלה מועמדות לקטגוריה שעוד לא הגדרת - הרשימה מחושבת מהטקסט עצמו, כך שביקוש מסוג חדש יופיע כאן מעצמו בלי שאגע בקוד."; },
+      fgSetup:"הרשאות והגדרה · קורות במקביל, בכל סדר",
+      fgJourney:"המסע לעזרה · שלב אחרי שלב",
+      fOfPrev:function(p){ return "("+p+" מהשלב הקודם)"; },
       tileNoBase:"אין תקופה קודמת להשוואה",
       insGo:"קפיצה לנתונים ←",
       mlogTitle:"יומן מרקטפלייס · שבוע אחר שבוע",
@@ -1033,7 +1040,7 @@
       signupsTitle:"Signups", signupsSub:"New users by platform",
       dauTitle:"Active users",
       dauSub:'<span class="term" data-tip="Daily Active Users - distinct users who opened the app that day">DAU</span> and <span class="term" data-tip="Weekly Active Users - distinct users who opened the app in the last 7 days">WAU</span> from the daily <span class="term" data-tip="a server-side stamp written once an hour for every user who opens the app - the source of truth for activity">last_seen_at sample</span>',
-      funnelTitle:"Actions after signup", d14:"14 days", d30:"30 days", funnelSub:"What a new user does after signing up · steps are measured in parallel, not as a sequence",
+      funnelTitle:"Actions after signup", d14:"14 days", d30:"30 days", funnelSub:"What a new user does after signing up · permissions above happen in parallel, the journey itself below",
       lifecycleTitle:"User balance", lifecycleSub:"A live cut of all registered users",
       postsTitle:"Posts", postsSub:"Help requests vs. help offers",
       matchesTitle:"Matches & completions", matchesSub:"New matches vs. helps marked completed",
@@ -1197,6 +1204,10 @@
         density:"Measured from your own data, not an external source: among requests in the last 90 days, not one with fewer than 10 neighbours in range was answered same-day, against 90% answered where there were 60+.",
         cluster:"The threshold is mine: a cluster holding 25% of demand is large enough to justify its own category. A product judgement, not a figure from the literature."
       },
+      intelEmerging:function(words,n){ return "<b>"+n+"</b> requests fit no known cluster, and the words recurring in them are: <b>"+words+"</b>. These are candidates for a category you have not defined - the list is computed from the text itself, so a new kind of demand will appear here on its own without me touching the code."; },
+      fgSetup:"Permissions & setup · happen in parallel, in any order",
+      fgJourney:"The journey to help · step after step",
+      fOfPrev:function(p){ return "("+p+" of the step before)"; },
       tileNoBase:"no earlier period to compare",
       insGo:"Jump to the data →",
       mlogTitle:"Marketplace log · week by week",
@@ -1667,8 +1678,10 @@
   }
 
   // horizontal bars (categories/cities/funnel) - value labeled at the tip
-  function hbars(hostId, items){
-    var host=$(hostId); host.innerHTML="";
+  function hbars(hostOrEl, items){
+    var host = (typeof hostOrEl === "string") ? $(hostOrEl) : hostOrEl;
+    if(!host) return;
+    host.innerHTML="";
     if(!items||!items.length){ emptyState(host,S.emptyBars,"layers"); return; }
     var max=1;
     items.forEach(function(it){ max=Math.max(max,(it.v1||0)+(it.v2||0)); });
@@ -2696,11 +2709,24 @@
     var f=segVal("funnelSeg")===30? DATA.funnel_30d : DATA.funnel_14d;
     var ramp=[tok("--seq250"),tok("--seq400"),tok("--seq400"),tok("--seq550"),
               tok("--seq550"),tok("--seq700"),tok("--seq700")];
-    var steps=[[S.f1,f.signups],[S.f2,f.location],[S.f3,f.push],
-      [S.f4,f.verified],[S.f5,f.posted],[S.f6,f.matched],
-      [S.f7,f.messaged]];
-    hbars("funnel",steps.map(function(s,i){
-      return {label:s[0], v1:s[1], c1:ramp[i], suffix:" · "+pct(s[1],f.signups)};
+    // This was never one funnel. Permissions happen in parallel and in any
+    // order; the journey below them is genuinely sequential. Drawing them as
+    // one list produced a "funnel" that went down, up, then down again.
+    var fhost=$("funnel"); fhost.innerHTML="";
+    fhost.appendChild(el("div","grouphead",S.fgSetup));
+    var g1=el("div"); fhost.appendChild(g1);
+    hbars(g1,[[S.f2,f.location],[S.f3,f.push],[S.f4,f.verified]].map(function(x,i){
+      return {label:x[0], v1:x[1], c1:ramp[i], suffix:" · "+pct(x[1],f.signups)};
+    }));
+    fhost.appendChild(el("div","grouphead",S.fgJourney));
+    var g2=el("div"); fhost.appendChild(g2);
+    var journey=[[S.f1,f.signups],[S.f5,f.posted],[S.f6,f.matched],[S.f7,f.messaged]];
+    hbars(g2,journey.map(function(x,i){
+      // a real funnel is read step to step, not only against the top
+      var prev=i>0? journey[i-1][1] : null;
+      var suffix=" · "+pct(x[1],f.signups);
+      if(prev) suffix+=" "+S.fOfPrev(pct(x[1],prev));
+      return {label:x[0], v1:x[1], c1:ramp[i*2], suffix:suffix};
     }));
     panelRead("funnel", (f.messaged/Math.max(f.signups,1))<0.1?"bad":"warn",
       S.rdFunnel(fmt(f.signups), fmt(f.messaged)));
@@ -2751,6 +2777,14 @@
           var dead=(IN.dead||[]).map(function(d){ return d.category; });
           if(dead.length) lines.push(S.intelDead(dead.join(", ")));
           if(IN.other_share>=12) lines.push(S.intelOther(IN.other_share, fmt(IN.other_posts)));
+          // Emerging demand: recurring words in requests that fit no known
+          // cluster. This is the part that finds a category nobody defined.
+          var em=(IN.emerging||[]).slice(0,6);
+          if(em.length && IN.unclustered>=3){
+            lines.push(S.intelEmerging(
+              em.map(function(e){ return e.word+" ("+e.n+")"; }).join(", "),
+              fmt(IN.unclustered)));
+          }
           if(lines.length) panelRead("catIntel", top.share>=25?"warn":"", lines.join(" "));
         }
       }
