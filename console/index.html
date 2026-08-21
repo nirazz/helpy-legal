@@ -639,6 +639,7 @@
       <section class="panel wide"><h2 data-i18n="densTitle">צפיפות שכנים סביב בקשה</h2><div class="sub" data-i18n="densSub">כמה שכנים היו יכולים באמת לראות את הבקשה, מול הסיכוי שהיא נענתה</div><div id="density"></div></section>
       <section class="panel"><h2 data-i18n="noOfferTitle">בקשות בלי אף הצעה</h2><div class="sub" data-i18n="noOfferSub">פעילות עכשיו בפיד וממתינות - הזדמנות לדחיפה</div><div id="noOffer"></div></section>
       <section class="panel"><h2 data-i18n="catsTitle">קטגוריות מובילות · {win}</h2><div class="sub" data-i18n="catsSub">פוסטים לפי קטגוריה</div><div id="chCats"></div></section>
+      <section class="panel wide"><h2 data-i18n="intelTitle">מה הביקוש באמת מבקש</h2><div class="sub" data-i18n="intelSub">אשכולות מתוך הטקסט של הבקשות עצמן, לא לפי הקטגוריה שנבחרה - כך מתגלה קטגוריה שחסרה</div><div id="catIntel"></div></section>
       <section class="panel"><h2 data-i18n="cityLiqTitle">נזילות לפי עיר · {win}</h2><div class="sub" data-i18n="cityLiqSub">הרשת האטומית: ממוצע ארצי מסתיר אם יש עיר אחת שבאמת עובדת</div><div id="cityLiq" style="overflow-x:auto"></div></section>
       <section class="panel"><h2 data-i18n="citiesTitle">ערים מובילות · {win}</h2><div class="sub" data-i18n="citiesSub">לפי עיר הפוסט</div><div id="chCities"></div></section>
       <section class="panel wide"><h2 data-i18n="supplyTitle">בריאות צד ההיצע</h2><div class="sub" data-i18n="supplySub">הצעה שיושבת בלי פנייה = עוזר/ת שעומדים לאבד</div><div id="supplyHealth"></div></section>
@@ -894,6 +895,16 @@
       emptyDens:"אין בקשות עם מיקום בטווח הזה, ולכן אי אפשר לחשב צפיפות",
       emptyCities:"אף בקשה בטווח לא נושאת שם עיר · שם העיר מושלם אוטומטית תוך כשעה",
       emptyStates:"אף אחד לא נכנס לאפליקציה השבוע",
+      intelTitle:"מה הביקוש באמת מבקש",
+      intelSub:"אשכולות מתוך הטקסט של הבקשות עצמן, לא לפי הקטגוריה שנבחרה - כך מתגלה קטגוריה שחסרה",
+      intelCluster:"סוג הבקשה", intelReqs:"בקשות", intelShare:"מהביקוש", intelMatch:"נענו",
+      clMount:"תלייה, קידוח והרכבה", clPlumb:"ברזים ואינסטלציה", clTools:"השאלת כלי עבודה",
+      clKids:"ילדים ושמרטפות", clCompany:"חברה ותמיכה", clMoving:"הובלה והעברת רהיטים",
+      clTransport:"הסעות וטרמפים",
+      intelSplit:function(name,share,m,n){ return "<b>"+share+"%</b> מהביקוש הוא <b>"+name+"</b> (<b>"+n+"</b> בקשות, "+m+" נענו) - הנתח הגדול ביותר, והוא קבור היום בתוך קטגוריה כללית. <b>ההמלצה: לפצל אותו לקטגוריה משלו.</b> כך המבקש ימצא אותה מיד, והעוזרים יוכלו להגדיר את עצמם לפיה - זו גם הקטגוריה המובילה של TaskRabbit."; },
+      intelDead:function(list){ return "<b>"+list+"</b> צוברת פוסטים ומעולם לא הפיקה אפילו התאמה אחת. <b>ההמלצה: להסיר או למזג אותה.</b> קטגוריה שמייצרת היצע שאיש לא צורך היא בדיוק מה שמזין את בעיית הניצולת."; },
+      intelOther:function(p,n){ return "<b>"+p+"%</b> מהפוסטים (<b>"+n+"</b>) נכנסים ל״אחר״. כשקטגוריית ״אחר״ גדולה כל כך, זה סימן שהטקסונומיה לא מכסה את מה שאנשים באמת רוצים לבקש."; },
+      intelThin:"אין עדיין מספיק בקשות כדי לזהות אשכול ביקוש מובהק. המספרים כאן יתחדדו ככל שיצטברו בקשות.",
       densTitle:"צפיפות שכנים סביב בקשה",
       densSub:"כמה שכנים היו יכולים באמת לראות את הבקשה, מול הסיכוי שהיא נענתה",
       densBand:"שכנים בטווח", densReqs:"בקשות", densAny:"קיבלו הצעה", dens24:"תוך 24 שעות",
@@ -1072,6 +1083,16 @@
       emptyDens:"No located requests in this range, so density cannot be computed",
       emptyCities:"No request in range carries a city name · it is filled in automatically within the hour",
       emptyStates:"Nobody opened the app this week",
+      intelTitle:"What demand is really asking for",
+      intelSub:"Clusters read from the text of the requests themselves, not the category chosen - this is how a missing category shows up",
+      intelCluster:"Kind of request", intelReqs:"Requests", intelShare:"of demand", intelMatch:"answered",
+      clMount:"Mounting, drilling & assembly", clPlumb:"Taps & plumbing", clTools:"Borrowing tools",
+      clKids:"Children & babysitting", clCompany:"Company & support", clMoving:"Moving furniture",
+      clTransport:"Lifts & rides",
+      intelSplit:function(name,share,m,n){ return "<b>"+share+"%</b> of demand is <b>"+name+"</b> (<b>"+n+"</b> requests, "+m+" answered) - the largest single share, and it is buried inside a generic category today. <b>Recommendation: give it its own category.</b> Askers would find it instantly and helpers could self-identify with it - it is also TaskRabbit's leading category."; },
+      intelDead:function(list){ return "<b>"+list+"</b> keeps collecting posts and has never produced a single match. <b>Recommendation: retire or merge it.</b> A category generating supply nobody consumes is exactly what feeds the utilization problem."; },
+      intelOther:function(p,n){ return "<b>"+p+"%</b> of posts (<b>"+n+"</b>) land in \"other\". An \"other\" bucket that large is a sign the taxonomy does not cover what people actually want to ask for."; },
+      intelThin:"Not enough requests yet to identify a clear demand cluster. These numbers sharpen as requests accumulate.",
       densTitle:"Neighbour density around a request",
       densSub:"How many neighbours could genuinely have seen it, against the odds it was answered",
       densBand:"Neighbours in range", densReqs:"Requests", densAny:"Got an offer", dens24:"Within 24h",
@@ -2297,6 +2318,47 @@
     }));
     var CT=DATA.categories_30d||[];
     if(CT.length) panelRead("chCats","",S.rdCats(CT[0].category, fmt(CT[0].requests+CT[0].offers)));
+    // Demand clusters read from the request TEXT: this is the panel that can
+    // say "a category is missing", which a category breakdown never can.
+    var ci=$("catIntel");
+    if(ci){
+      ci.innerHTML="";
+      var IN=DATA.cat_intel;
+      if(!IN || !IN.total_requests){ emptyState(ci,S.intelThin,"tag"); }
+      else {
+        var CLN={mount:S.clMount,plumb:S.clPlumb,tools:S.clTools,kids:S.clKids,
+                 company:S.clCompany,moving:S.clMoving,transport:S.clTransport};
+        var cls=(IN.clusters||[]).filter(function(c){ return CLN[c.key]; });
+        if(!cls.length){ emptyState(ci,S.intelThin,"tag"); }
+        else {
+          var it=el("table","plain");
+          var ih=el("tr");
+          [S.intelCluster,S.intelReqs,S.intelShare,S.intelMatch].forEach(function(h){
+            ih.appendChild(el("th",null,h)); });
+          it.appendChild(ih);
+          cls.forEach(function(c){
+            var tr=el("tr");
+            tr.appendChild(el("td",null,CLN[c.key]));
+            tr.appendChild(el("td",null,fmt(c.requests)));
+            tr.appendChild(el("td",null,c.share+"%"));
+            tr.appendChild(el("td",null,pct(c.matched,c.requests)));
+            it.appendChild(tr);
+          });
+          ci.appendChild(it);
+          // the recommendation is COMPUTED: if the leading cluster stops being
+          // dominant, this stops recommending a split
+          var top=cls[0];
+          var lines=[];
+          if(top.share>=25) lines.push(S.intelSplit(CLN[top.key], top.share,
+            pct(top.matched,top.requests), fmt(top.requests)));
+          var dead=(IN.dead||[]).map(function(d){ return d.category; });
+          if(dead.length) lines.push(S.intelDead(dead.join(", ")));
+          if(IN.other_share>=12) lines.push(S.intelOther(IN.other_share, fmt(IN.other_posts)));
+          if(lines.length) panelRead("catIntel", top.share>=25?"warn":"", lines.join(" "));
+        }
+      }
+    }
+
     var CI=DATA.cities_30d||[];
     if(CI.length){
       var totCity=CI.reduce(function(a,c){ return a+c.posts; },0);
