@@ -181,9 +181,6 @@
   .sechead::before { content:""; width:9px; height:9px; border-radius:3px;
                      background:var(--sec-c, var(--s1));
                      box-shadow:0 0 8px var(--sec-c, var(--s1)); }
-  .panel { opacity:0; transform:translateY(14px);
-           transition:opacity .5s ease, transform .5s ease,
-                      box-shadow .2s ease; }
   .panel.vis { opacity:1; transform:none; }
   @media (prefers-reduced-motion: reduce){ .panel{ opacity:1; transform:none; } }
   .clickable { cursor:pointer; }
@@ -848,6 +845,7 @@
       nbhdTitle:"סולם השכונות מול קו ה-60",
       nbhdSub:"מהמדידה שלנו: מתחת ל-10 שכנים פעילים בקשה מתה, מעל 60 - 90% נענות. כמה חסר לכל אזור כדי להידלק",
       nbhdUsers:"{n} פעילים", nbhdGap:"חסרים {n} להצתה", nbhdTipped:"מעל הקו ✓",
+      dirN:"צפון", dirS:"דרום", dirE:"מזרח", dirW:"מערב",
       nbhdReqs:"{r} בקשות · {a} נענו ב-24ש׳", nbhdNoCity:"אזור ללא שם",
       rdNbhd:function(t,total,best,gap){ return t>0
         ? "<b>"+t+"</b> מתוך "+total+" אזורים כבר מעל קו ה-60. הקרוב הבא: <b>"+best+"</b> - חסרים לו <b>"+gap+"</b> משתמשים. שם כל שקל פרסום שווה הכי הרבה."
@@ -903,7 +901,7 @@
       tileMatches:"התאמות · {win}",
       tileMatchesTip:"חיבור בין שני שכנים סביב פוסט: סוויפ על הצעה פותח צ'אט מיד, סוויפ על בקשה ממתין לאישור",
       tilePosts:"פוסטים · {win}",
-      tileFeed:"בפיד · עכשיו", tileFeedNote:"בקשות / הצעות",
+      tileFeed:"בפיד · עכשיו", tileFeedNote:function(r,o){ return r+" בקשות · "+o+" הצעות"; },
       prevWeek:function(n){ return "התקופה הקודמת: "+n; },
       serDau:"DAU", serWau:"WAU", serRequests:"בקשות", serOffers:"הצעות",
       serMsgs:"הודעות", serSenders:"שולחים", serCreated:"התאמות", serCompleted:"השלמות",
@@ -913,7 +911,7 @@
       f1:"נרשמו", f2:"שיתפו מיקום", f3:"אישרו התראות", f4:"אימתו טלפון",
       f5:"פרסמו פוסט", f6:"הגיעו להתאמה", f7:"שלחו הודעה",
       lf1:"חדשים (עד 7 ימים)", lf2:"פעילים בשבוע האחרון", lf3:"רדומים (30+ יום בלי כניסה)", lf4:"סה״כ משתמשים חיים",
-      liq1:"בקשות חדשות", liq2:"קיבלו הצעה תוך 24 שעות", liq3:"קיבלו הצעה בסוף", liq4:"חציון זמן להצעה ראשונה",
+      liq1:"בקשות חדשות", liq2:"קיבלו הצעה תוך יממה", liq3:"קיבלו הצעה בסוף", liq4:"חציון זמן להצעה ראשונה",
       liqMedianTip:"הערך האמצעי: מחצית מהבקשות קיבלו הצעה מהר מזה. עמיד לחריגים, בניגוד לממוצע",
       minutes:"דקות", hours:"שעות",
       ch1:"שיחות שנפתחו", ch2:"נענו (דו-כיווניות)",
@@ -1133,6 +1131,7 @@
       nbhdTitle:"The neighborhood ladder vs the 60 line",
       nbhdSub:"From our own measurement: under 10 active neighbors a request dies, above 60 - 90% get answered. How far each area is from tipping",
       nbhdUsers:"{n} active", nbhdGap:"{n} short of tipping", nbhdTipped:"above the line ✓",
+      dirN:"north", dirS:"south", dirE:"east", dirW:"west",
       nbhdReqs:"{r} requests · {a} answered in 24h", nbhdNoCity:"unnamed area",
       rdNbhd:function(t,total,best,gap){ return t>0
         ? "<b>"+t+"</b> of "+total+" areas are already above the 60 line. Next closest: <b>"+best+"</b> - <b>"+gap+"</b> users short. That is where every ad shekel buys the most."
@@ -1188,7 +1187,7 @@
       tileMatches:"Matches · {win}",
       tileMatchesTip:"A connection between two neighbors around a post: swiping an offer opens chat instantly, swiping a request awaits approval",
       tilePosts:"Posts · {win}",
-      tileFeed:"In the feed · now", tileFeedNote:"requests / offers",
+      tileFeed:"In the feed · now", tileFeedNote:function(r,o){ return r+" requests · "+o+" offers"; },
       prevWeek:function(n){ return "previous period: "+n; },
       serDau:"DAU", serWau:"WAU", serRequests:"Requests", serOffers:"Offers",
       serMsgs:"Messages", serSenders:"Senders", serCreated:"Matches", serCompleted:"Completions",
@@ -2847,9 +2846,21 @@
       if(!NB.length){ emptyState(nb,S.emptyBars,"map"); }
       else{
         var CAP=80; // the bar tops out past the line so a tipped area reads as full
+        // grid cells often share a city label (five rows all saying Tel Aviv
+        // read as a bug) - the biggest cell keeps the bare name, the rest get
+        // a compass suffix relative to it
+        var cityRef={};
+        NB.forEach(function(c){ if(c.city && !(c.city in cityRef)) cityRef[c.city]=c; });
+        var cityCount={};
+        NB.forEach(function(c){ if(c.city) cityCount[c.city]=(cityCount[c.city]||0)+1; });
         NB.forEach(function(cell){
           var row=el("div","hrow");
           var name=cell.city||S.nbhdNoCity+" ("+cell.lat+", "+cell.lng+")";
+          if(cell.city && cityCount[cell.city]>1 && cityRef[cell.city]!==cell){
+            var ref=cityRef[cell.city], dy=cell.lat-ref.lat, dx=cell.lng-ref.lng;
+            var dir=Math.abs(dy)>=Math.abs(dx) ? (dy>0? S.dirN:S.dirS) : (dx>0? S.dirE:S.dirW);
+            name+=" · "+dir;
+          }
           row.appendChild(el("span","hl",name));
           var track=el("div","htrack nbt");
           var seg=el("div","hseg");
@@ -2996,7 +3007,7 @@
        prev:prevSum(DATA.posts_by_day,["requests","offers"]),
        spark:tail(DATA.posts_by_day,"requests"), dot:tok("--s2"), target:"chPosts"}));
     host.appendChild(tile(S.tileFeed, fmt(k.active_requests)+" / "+fmt(k.active_offers),
-      {note:S.tileFeedNote, dot:S5, target:"noOffer"}));
+      {note:S.tileFeedNote(fmt(k.active_requests), fmt(k.active_offers)), dot:S5, target:"noOffer"}));
     // staggered entrance
     Array.prototype.forEach.call(host.children,function(tl,i){
       tl.style.animationDelay=(i*55)+"ms";
@@ -3902,18 +3913,11 @@
     else if(autoTimer){ clearInterval(autoTimer); autoTimer=null; }
   });
 
-  // scroll-reveal: panels fade in the first time they enter the viewport
-  var io = "IntersectionObserver" in window && !REDUCED ?
-    new IntersectionObserver(function(ents){
-      ents.forEach(function(en){
-        if(en.isIntersecting){ en.target.classList.add("vis"); io.unobserve(en.target); }
-      });
-    },{threshold:0.06}) : null;
+  // scroll-reveal REMOVED (2026-08-23 visual pass): panels sat ghost-faded
+  // for minutes and the page read as broken. A monitoring surface shows its
+  // data, full stop.
   function observePanels(){
-    document.querySelectorAll(".panel").forEach(function(p){
-      if(io && !p.classList.contains("vis")) io.observe(p);
-      else p.classList.add("vis");
-    });
+    document.querySelectorAll(".panel").forEach(function(p){ p.classList.add("vis"); });
   }
 
   function bootFail(err){
