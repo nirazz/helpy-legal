@@ -505,6 +505,7 @@
       color:var(--muted); }
 
   .archcanvas { position:relative; overflow-x:auto; padding:4px 0 8px; }
+  .archhost { font-size:11px; color:var(--muted); margin:-4px 0 10px; line-height:1.4; }
   .archwires { position:absolute; inset:0; width:100%; height:100%;
       pointer-events:none; z-index:0; }
   .archcols { position:relative; z-index:1; display:grid;
@@ -1090,7 +1091,7 @@
       archSub:"כל רכיב, מה מחובר למה, ואיפה כל דבר מאוחסן · ריחוף על מונח מקוצר מסביר אותו",
       archPickFlow:"בחר/י זרימה למעלה כדי לראות איך בקשה עוברת במערכת, שלב אחר שלב",
       archPickNode:"לחיצה על רכיב מציגה מה הוא עושה ולמה הוא שם",
-      archStop:"עצירה",
+      archStop:"⏹ עצירת ההדגמה",
       tileJump:"לחיצה קופצת לגרף המלא ומדגישה אותו",
       sparkTip:"12 שבועות אחרונים · סכום שבועי",
       themeBtn:{light:"🌙 כהה", dark:"☀️ בהיר"}, langBtn:"English"
@@ -1376,7 +1377,7 @@
       archSub:"Every component, what talks to what, and where things are stored · hover any abbreviation for an explanation",
       archPickFlow:"Pick a flow above to watch a request travel through the system, step by step",
       archPickNode:"Click a component to see what it does and why it is there",
-      archStop:"Stop",
+      archStop:"⏹ Stop the demo",
       tileJump:"Click to jump to the full chart and highlight it",
       sparkTip:"Last 12 weeks · weekly totals",
       themeBtn:{light:"🌙 Dark", dark:"☀️ Light"}, langBtn:"עברית"
@@ -3484,11 +3485,11 @@
   // Live counts come from the dashboard payload so the map is never a stale
   // drawing; structural facts (edge fn / cron counts) are stated as such.
   var ARCH_COLS=[
-    {id:"client", he:"מכשירי השכנים", en:"Neighbour devices"},
-    {id:"gate",   he:"כניסה ואימות",  en:"Access & identity"},
-    {id:"core",   he:"ליבת Supabase", en:"Supabase core"},
-    {id:"auto",   he:"אוטומציות",     en:"Automation"},
-    {id:"out",    he:"שירותים חיצוניים", en:"External services"}
+    {id:"client", he:"מכשירי השכנים", en:"Neighbour devices", hostH:"הטלפונים של המשתמשים", hostE:"the users' own phones"},
+    {id:"gate",   he:"כניסה ואימות",  en:"Access & identity", hostH:"Supabase · ענן AWS פרנקפורט", hostE:"Supabase · AWS Frankfurt"},
+    {id:"core",   he:"ליבת Supabase", en:"Supabase core", hostH:"ענן AWS פרנקפורט (eu-central-1)", hostE:"AWS Frankfurt (eu-central-1)"},
+    {id:"auto",   he:"אוטומציות",     en:"Automation", hostH:"רצות בתוך Supabase, באותו ענן", hostE:"inside Supabase, same cloud"},
+    {id:"out",    he:"שירותים חיצוניים", en:"External services", hostH:"כל ספק בענן שלו", hostE:"each on its provider's cloud"}
   ];
   var T=function(o){ return LANG==="he"? o.he : o.en; };
   var ARCH_NODES=[
@@ -3589,7 +3590,7 @@
      dE:"Crashes, usage metrics, and instant founder alerts on anything important - a signup, a match, a report or a block."},
     {id:"web", col:"out", c:"--s7",
      he:"אתר help-y.com", en:"help-y.com",
-     shH:"דפי שיתוף · מסמכים · קונסולה", shE:"Share pages · legal · console",
+     shH:"דפי שיתוף · מסמכים · קונסולה · על GitHub Pages", shE:"Share pages · legal · console · on GitHub Pages",
      dH:"אתר סטטי נפרד: מסמכי הפרטיות והתנאים, דפי שיתוף לפוסט ולפרופיל, והקונסולה שאתה מסתכל בה עכשיו.",
      dE:"A separate static site: the privacy and terms documents, share pages for a post and a profile, and the console you are looking at now."}
   ];
@@ -3723,6 +3724,7 @@
     ARCH_COLS.forEach(function(c){
       var box=el("div","archcol");
       box.appendChild(el("h3",null,T(c)));
+      box.appendChild(el("div","archhost", LANG==="he"? c.hostH : c.hostE));
       ARCH_NODES.filter(function(n){ return n.col===c.id; }).forEach(function(n){
         var card=el("div","archnode"); card.setAttribute("data-id",n.id);
         var lbl=el("div","nl");
@@ -3783,6 +3785,7 @@
     });
   }
   function stopFlow(){
+    var sb=document.getElementById("archStopBtn"); if(sb) sb.classList.add("hidden");
     if(flowTimer){ clearTimeout(flowTimer); flowTimer=null; }
     flowIdx=-1;
     document.querySelectorAll(".archnode").forEach(function(c){
@@ -3793,6 +3796,7 @@
     cap.appendChild(el("span",null,S.archPickFlow));
   }
   function playFlow(fid){
+    var sb=document.getElementById("archStopBtn"); if(sb) sb.classList.remove("hidden");
     var f=ARCH_FLOWS.filter(function(x){ return x.id===fid; })[0];
     if(!f) return;
     if(flowTimer){ clearTimeout(flowTimer); flowTimer=null; }
@@ -3828,6 +3832,8 @@
       bar.appendChild(b);
     });
     var stop=el("button",null,S.archStop); stop.type="button";
+    stop.id="archStopBtn";
+    stop.classList.add("hidden"); // meaningful only while a demo is playing
     stop.addEventListener("click",stopFlow);
     bar.appendChild(stop);
     stopFlow();
