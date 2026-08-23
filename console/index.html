@@ -693,13 +693,14 @@
       <section class="panel"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="funnelTitle">משפך הפעלה</span>
         <span class="seg mini" id="funnelSeg"><button data-d="14" class="on" data-i18n="d14">14 יום</button><button data-d="30" data-i18n="d30">30 יום</button></span></h2>
         <div class="sub" data-i18n="funnelSub">מה עושה משתמש חדש אחרי ההרשמה</div><div id="funnel"></div></section>
-      <section class="panel wide"><h2 data-i18n="glogTitle">יומן צמיחה · שבוע אחר שבוע</h2><div class="sub" data-i18n="glogSub">מה קרה בכל שבוע, מה השתנה, ומה גרם לזה</div><div id="growthLog"></div></section>
       <section class="panel"><h2 data-i18n="lifecycleTitle">מאזן משתמשים</h2><div class="sub" data-i18n="lifecycleSub">חתך חי של כל המשתמשים הרשומים</div><div id="lifecycle"></div></section>
       <section class="panel wide"><h2 data-i18n="nudgeTitle">מכונת הדחיפות · {win}</h2><div class="sub" data-i18n="nudgeSub">כל שולח פוש נמדד: כמה נשלחו, וכמה מהמקבלים עשו את הפעולה תוך 48 שעות. זה הפאנל שמחליט איזה שולח נשאר</div><div id="nudgeEff"></div></section>
+      <section class="panel wide"><h2 data-i18n="glogTitle">יומן צמיחה · שבוע אחר שבוע</h2><div class="sub" data-i18n="glogSub">מה קרה בכל שבוע, מה השתנה, ומה גרם לזה</div><div id="growthLog"></div></section>
     </div>
 
     <div class="sechead" id="secMarket" style="--sec-c:var(--s2)" data-i18n="secMarketT">מרקטפלייס</div>
     <div class="grid2">
+      <section class="panel wide"><h2 data-i18n="dtreeTitle">מה מזיז את מדד הצפון · {win}</h2><div class="sub" data-i18n="dtreeSub">עזרות שהושלמו, מפורקות לגורמים שאפשר להזיז: בקשות × מילוי × קבלה × השלמה</div><div id="driverTree"></div></section>
       <section class="panel wide"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="matchesTitle">התאמות והשלמות</span>
         <span class="seg mini" id="segMatches"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="created" data-i18n="segCreated">התאמות</button><button data-k="completed" data-i18n="segCompleted">השלמות</button></span></h2>
         <div class="sub" data-i18n="matchesSub">התאמות חדשות מול עזרות שסומנו כהושלמו</div><div id="chMatches"></div></section>
@@ -707,7 +708,7 @@
         <span class="seg mini" id="segPosts"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="requests" data-i18n="segRequests">בקשות</button><button data-k="offers" data-i18n="segOffers">הצעות</button></span></h2>
         <div class="sub" data-i18n="postsSub">בקשות עזרה מול הצעות עזרה</div><div id="chPosts"></div></section>
       <section class="panel"><h2 data-i18n-html="liqTitle"></h2><div class="sub" data-i18n="liqSub">כמה מהר בקשה פוגשת עוזר/ת</div><div id="liquidity"></div></section>
-      <section class="panel wide"><h2 data-i18n="mlogTitle">יומן מרקטפלייס · שבוע אחר שבוע</h2><div class="sub" data-i18n="mlogSub">ביקוש מול היצע בכל שבוע, וכמה מזה הבשיל</div><div id="marketLog"></div></section>
+      <section class="panel wide"><h2 data-i18n="nbhdTitle">סולם השכונות מול קו ה-60</h2><div class="sub" data-i18n="nbhdSub">מהמדידה שלנו: מתחת ל-10 שכנים פעילים בקשה מתה, מעל 60 - 90% נענות. כמה חסר לכל אזור כדי להידלק</div><div id="nbhd"></div></section>
       <section class="panel wide"><h2 data-i18n="densTitle">צפיפות שכנים סביב בקשה</h2><div class="sub" data-i18n="densSub">כמה שכנים היו יכולים באמת לראות את הבקשה, מול הסיכוי שהיא נענתה</div><div id="density"></div></section>
       <section class="panel"><h2 data-i18n="noOfferTitle">בקשות בלי אף הצעה</h2><div class="sub" data-i18n="noOfferSub">פעילות עכשיו בפיד וממתינות - הזדמנות לדחיפה</div><div id="noOffer"></div></section>
       <section class="panel"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="catsTitle">קטגוריות מובילות · {win}</span>
@@ -717,8 +718,7 @@
       <section class="panel"><h2 data-i18n="cityLiqTitle">נזילות לפי עיר · {win}</h2><div class="sub" data-i18n="cityLiqSub">הרשת האטומית: ממוצע ארצי מסתיר אם יש עיר אחת שבאמת עובדת</div><div id="cityLiq" style="overflow-x:auto"></div></section>
       <section class="panel"><h2 data-i18n="citiesTitle">ערים מובילות · {win}</h2><div class="sub" data-i18n="citiesSub">לפי עיר הפוסט</div><div id="chCities"></div></section>
       <section class="panel wide"><h2 data-i18n="supplyTitle">בריאות צד ההיצע</h2><div class="sub" data-i18n="supplySub">הצעה שיושבת בלי פנייה = עוזר/ת שעומדים לאבד</div><div id="supplyHealth"></div></section>
-      <section class="panel wide"><h2 data-i18n="dtreeTitle">מה מזיז את מדד הצפון · {win}</h2><div class="sub" data-i18n="dtreeSub">עזרות שהושלמו, מפורקות לגורמים שאפשר להזיז: בקשות × מילוי × קבלה × השלמה</div><div id="driverTree"></div></section>
-      <section class="panel wide"><h2 data-i18n="nbhdTitle">סולם השכונות מול קו ה-60</h2><div class="sub" data-i18n="nbhdSub">מהמדידה שלנו: מתחת ל-10 שכנים פעילים בקשה מתה, מעל 60 - 90% נענות. כמה חסר לכל אזור כדי להידלק</div><div id="nbhd"></div></section>
+      <section class="panel wide"><h2 data-i18n="mlogTitle">יומן מרקטפלייס · שבוע אחר שבוע</h2><div class="sub" data-i18n="mlogSub">ביקוש מול היצע בכל שבוע, וכמה מזה הבשיל</div><div id="marketLog"></div></section>
     </div>
 
     <div class="sechead" id="secChat" style="--sec-c:var(--s3)" data-i18n="secChatT">מעורבות בצ'אט</div>
@@ -726,8 +726,8 @@
       <section class="panel"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="msgsTitle">שיחות צ'אט</span>
         <span class="seg mini" id="segMsgs"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="msgs" data-i18n="segMsgs2">הודעות</button><button data-k="senders" data-i18n="segSenders">שולחים ייחודיים</button></span></h2>
         <div class="sub" data-i18n="msgsSub">הודעות שנשלחו (בטווח ארוך - סכום שבועי)</div><div id="chMsgs"></div></section>
-      <section class="panel wide"><h2 data-i18n="clogTitle">יומן שיחות · שבוע אחר שבוע</h2><div class="sub" data-i18n="clogSub">כמה נכתב, על ידי כמה אנשים, ובאיזו עצימות</div><div id="chatLog"></div></section>
       <section class="panel"><h2 data-i18n="chatHealthTitle">בריאות הצ'אט · {win}</h2><div class="sub" data-i18n="chatHealthSub">האם פניות מקבלות מענה, ובאיזו מהירות</div><div id="chatHealth"></div></section>
+      <section class="panel wide"><h2 data-i18n="clogTitle">יומן שיחות · שבוע אחר שבוע</h2><div class="sub" data-i18n="clogSub">כמה נכתב, על ידי כמה אנשים, ובאיזו עצימות</div><div id="chatLog"></div></section>
     </div>
 
     <div class="sechead" id="secRetention" style="--sec-c:var(--s7)" data-i18n="secRetentionT">שימור ואיכות הפעלה</div>
@@ -1068,6 +1068,8 @@
       evAfter:function(d){ return "אחרי "+d; },
       evBetween:function(a,b){ return a+" ↔ "+b; },
       feedEmpty:"לא קרה כלום בטווח הזה",
+      feedMore:function(n){ return "עוד "+n+" אירועים ›"; }, feedLess:"‹ להציג פחות",
+      wlMore:function(n){ return "עוד "+n+" שבועות קודמים ›"; }, wlLess:"‹ רק השבועות האחרונים",
       rdFeed:function(d,n,dp){ return "מתוך <b>"+n+"</b> האירועים בטווח, <b>"+d+"</b> הם הצעות שנדחו או שלא יצאו לפועל (<b>"+dp+"</b>). זה מה שהשכנים חווים בפועל - לא כישלון טכני אלא הבטחה שלא הבשילה, וכל אחת מהן היא מישהו שכנראה לא ינסה שוב."; },
       intelTitle:"מה הביקוש באמת מבקש · {win}",
       intelSub:"אשכולות מתוך הטקסט של הבקשות עצמן, לא לפי הקטגוריה שנבחרה - כך מתגלה קטגוריה שחסרה",
@@ -1351,6 +1353,8 @@
       evAfter:function(d){ return "after "+d; },
       evBetween:function(a,b){ return a+" ↔ "+b; },
       feedEmpty:"Nothing happened in this range",
+      feedMore:function(n){ return n+" more events ›"; }, feedLess:"‹ Show fewer",
+      wlMore:function(n){ return n+" earlier weeks ›"; }, wlLess:"‹ Latest weeks only",
       rdFeed:function(d,n,dp){ return "Of <b>"+n+"</b> events in range, <b>"+d+"</b> are offers declined or fallen through (<b>"+dp+"</b>). That is what neighbours actually experience - not a technical failure but a promise that did not mature, and each one is somebody who probably will not try again."; },
       intelTitle:"What demand is really asking for · {win}",
       intelSub:"Clusters read from the text of the requests themselves, not the category chosen - this is how a missing category shows up",
@@ -2064,11 +2068,15 @@
   // buckets over the selected range, the change against the week before,
   // peak/low marking, and any release or campaign that landed inside the week.
   // Each caller supplies only the sentence its own data deserves.
+  var wlOpen={};
   function weekLog(hostId, series, keys, primaryKey, describe, readFn){
     var host=$(hostId); if(!host) return;
     host.innerHTML="";
     var rows=byWeek(rangeRows(series), keys);
     if(rows.length<2){ emptyState(host,S.glogEmpty,"trend"); return; }
+    // Amazon's WBR reads the LAST week against context - it never scrolls a
+    // quarter of prose. Three latest weeks visible; the rest one tap behind.
+    var WCAP=3, hidden=Math.max(0, rows.length-WCAP);
     var vals=rows.map(function(r){ return +r[primaryKey]||0; });
     var peak=Math.max.apply(null,vals), low=Math.min.apply(null,vals);
     var peakI=vals.indexOf(peak);
@@ -2081,6 +2089,7 @@
     }
     rows.slice().reverse().forEach(function(r,ri){
       var idx=rows.length-1-ri;
+      if(!wlOpen[hostId] && ri>=WCAP) return;
       var n=+r[primaryKey]||0, prev=idx>0? (+rows[idx-1][primaryKey]||0) : null;
       var row=el("div","evrow");
       var up = prev!=null && n>prev, down = prev!=null && n<prev;
@@ -2108,6 +2117,16 @@
       row.appendChild(body);
       host.appendChild(row);
     });
+    if(hidden>0){
+      var more=el("button","linklike", wlOpen[hostId]? S.wlLess : S.wlMore(fmt(hidden)));
+      more.type="button";
+      (function(h){ more.addEventListener("click",function(){ wlOpen[h]=!wlOpen[h];
+        if(h==="growthLog") renderGrowthLog();
+        else if(h==="marketLog") renderMarketLog();
+        else if(h==="chatLog") renderChatLog();
+      }); })(hostId);
+      host.appendChild(more);
+    }
     if(readFn){
       var lastV=vals[vals.length-1];
       var dropPct=(peak>0 && lastV<peak && peakI<vals.length-1)
@@ -2179,6 +2198,7 @@
   var EV_MARK={declined:"\u2715", completed:"\u2713", not_completed:"!", expired:"\u22EF",
                report:"\u2691", block:"\u2298", deleted:"\u2013"};
   var feedFilter="all";
+  var feedAll=false;
   function humanDur(sec){
     if(sec==null) return "";
     var m=Math.round(sec/60);
@@ -2209,7 +2229,11 @@
     });
     host.innerHTML="";
     if(!list.length){ emptyState(host,S.feedEmpty,"activity"); return; }
-    list.forEach(function(e){
+    // 47 always-open rows made this panel 4800px tall and buried everything
+    // after it. The latest dozen carry the story; the rest are one tap away.
+    var CAP=12;
+    var shown = feedAll ? list : list.slice(0, CAP);
+    shown.forEach(function(e){
       var row=el("div","evrow");
       var ic=el("div","evi",EV_MARK[e.kind]||"\u2022");
       ic.style.background="var("+(EV_COLOR[e.kind]||"--baseline")+")";
@@ -2230,6 +2254,12 @@
       row.appendChild(el("span","evw",fmtTime(e.at)));
       host.appendChild(row);
     });
+    if(list.length>CAP){
+      var more=el("button","linklike", feedAll? S.feedLess : S.feedMore(fmt(list.length-CAP)));
+      more.type="button";
+      more.addEventListener("click",function(){ feedAll=!feedAll; renderFeed(); });
+      host.appendChild(more);
+    }
     var bad=F.filter(function(e){ return e.kind==="declined"||e.kind==="not_completed"; }).length;
     if(F.length) panelRead("eventFeed", bad/F.length>0.5?"warn":"",
       S.rdFeed(fmt(bad), fmt(F.length), pct(bad,F.length)), {top:true});
