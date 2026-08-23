@@ -3397,7 +3397,14 @@
       meta.appendChild(el("span",null,c.post_title));
       meta.appendChild(el("span",null,S.msgsCount(fmt(c.msg_count))));
       meta.appendChild(el("span","tag",c.post_type==="offer"?S.tagOffer:S.tagRequest));
-      if(!c.two_way) meta.appendChild(el("span","tag oneway",S.tagOneway));
+      if(!c.two_way){
+        // red only while the silence is still rescuable - an unanswered chat
+        // from three weeks ago is history, not an alarm (8 of 13 rows were
+        // shouting red, so none were heard)
+        var lastAt=new Date(c.messages[c.messages.length-1].at).getTime();
+        var stale=(Date.now()-lastAt) > 7*86400000;
+        meta.appendChild(el("span", stale? "tag" : "tag oneway", S.tagOneway));
+      }
       if(c.mock) meta.appendChild(el("span","tag mock",S.tagMock));
       main.appendChild(meta);
       btn.appendChild(main);
