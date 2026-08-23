@@ -716,7 +716,6 @@
         <div class="sub" data-i18n="catsSub">פוסטים לפי קטגוריה</div><div id="chCats"></div></section>
       <section class="panel wide"><h2 data-i18n="intelTitle">מה הביקוש באמת מבקש · {win}</h2><div class="sub" data-i18n="intelSub">אשכולות מתוך הטקסט של הבקשות עצמן, לא לפי הקטגוריה שנבחרה - כך מתגלה קטגוריה שחסרה</div><div id="catIntel"></div></section>
       <section class="panel"><h2 data-i18n="cityLiqTitle">נזילות לפי עיר · {win}</h2><div class="sub" data-i18n="cityLiqSub">הרשת האטומית: ממוצע ארצי מסתיר אם יש עיר אחת שבאמת עובדת</div><div id="cityLiq" style="overflow-x:auto"></div></section>
-      <section class="panel"><h2 data-i18n="citiesTitle">ערים מובילות · {win}</h2><div class="sub" data-i18n="citiesSub">לפי עיר הפוסט</div><div id="chCities"></div></section>
       <section class="panel wide"><h2 data-i18n="supplyTitle">בריאות צד ההיצע</h2><div class="sub" data-i18n="supplySub">הצעה שיושבת בלי פנייה = עוזר/ת שעומדים לאבד</div><div id="supplyHealth"></div></section>
       <section class="panel wide"><h2 data-i18n="mlogTitle">יומן מרקטפלייס · שבוע אחר שבוע</h2><div class="sub" data-i18n="mlogSub">ביקוש מול היצע בכל שבוע, וכמה מזה הבשיל</div><div id="marketLog"></div></section>
     </div>
@@ -958,7 +957,7 @@
       insRepeat:function(p,a,b){ return "<b>"+p+"%</b> מהמבקשים חזרו לבקש תוך 90 יום ("+a+" מתוך "+b+"; הרף המצוטט להתרחבות: 35%)"; },
       cityLiqTitle:"נזילות לפי עיר · {win}",
       cityLiqSub:"הרשת האטומית: ממוצע ארצי מסתיר אם יש עיר אחת שבאמת עובדת",
-      clCity:"עיר", clReqs:"בקשות", clFill:"מולאו ב-24 שעות", clComp:"הושלמו",
+      clCity:"עיר", clPosts:"פוסטים", clReqs:"בקשות", clFill:"מולאו ב-24 שעות", clComp:"הושלמו",
       supplyTitle:"בריאות צד ההיצע", supplySub:"הצעה שיושבת בלי פנייה = עוזר/ת שעומדים לאבד",
       supUtil:"ניצולת הצעות ({win})",
       supUtilTip:"אחוז ההצעות החיות שקיבלו לפחות פנייה אחת בטווח הנבחר. מתחת ל-40% זו אזעקת נטישת העוזרים",
@@ -1243,7 +1242,7 @@
       insRepeat:function(p,a,b){ return "<b>"+p+"%</b> of requesters came back within 90 days ("+a+" of "+b+"; cited expansion gate: 35%)"; },
       cityLiqTitle:"Liquidity by city · {win}",
       cityLiqSub:"The atomic network: a national average hides whether any one city actually works",
-      clCity:"City", clReqs:"Requests", clFill:"Filled in 24h", clComp:"Completed",
+      clCity:"City", clPosts:"Posts", clReqs:"Requests", clFill:"Filled in 24h", clComp:"Completed",
       supplyTitle:"Supply-side health", supplySub:"An offer sitting untouched is a helper you are about to lose",
       supUtil:"Offer utilization ({win})",
       supUtilTip:"Share of live offers that got at least one opener in the selected range. Below 40% this is the helper-churn alarm",
@@ -2607,24 +2606,45 @@
     // per-city liquidity: the atomic network, ordered by request volume
     var cl=$("cityLiq"); cl.innerHTML="";
     var CL=R.cities_liq||[];
+    // absorbed "ערים מובילות" (2026-08-23, Nir's GO): posts-per-city joins this
+    // table instead of duplicating 8 city rows in a second panel
+    var postsByCity={};
+    (DATA.cities_30d||[]).forEach(function(c){ postsByCity[c.city]=c.posts; });
     if(!CL.length){ emptyState(cl,S.emptyCities,"map"); }
     else {
       var ct=el("table","plain");
-      var ch=el("tr"); [S.clCity,S.clReqs,S.clFill,S.clComp].forEach(function(h){
+      var ch=el("tr"); [S.clCity,S.clPosts,S.clReqs,S.clFill,S.clComp].forEach(function(h){
         ch.appendChild(el("th",null,h)); });
       ct.appendChild(ch);
+      var seenCity={};
       CL.forEach(function(c){
+        seenCity[c.city]=true;
         var tr=el("tr");
         tr.appendChild(el("td",null,c.city));
+        tr.appendChild(el("td",null,fmt(postsByCity[c.city]||c.requests)));
         tr.appendChild(el("td",null,fmt(c.requests)));
         tr.appendChild(el("td",null,pct(c.filled_24h,c.requests)+" ("+fmt(c.filled_24h)+")"));
         tr.appendChild(el("td",null,fmt(c.completed)));
         ct.appendChild(tr);
       });
+      // cities that post (offers) but never asked - supply with no demand
+      (DATA.cities_30d||[]).forEach(function(c){
+        if(seenCity[c.city] || !c.city) return;
+        var tr=el("tr");
+        tr.appendChild(el("td",null,c.city));
+        tr.appendChild(el("td",null,fmt(c.posts)));
+        tr.appendChild(el("td",null,"0"));
+        tr.appendChild(el("td",null,"-"));
+        tr.appendChild(el("td",null,"-"));
+        ct.appendChild(tr);
+      });
       cl.appendChild(ct);
       var topC=CL[0];
       var othersC=CL.slice(1).reduce(function(a,c){ return a+c.requests; },0);
+      var totCity=(DATA.cities_30d||[]).reduce(function(a,c){ return a+c.posts; },0);
+      var topShare=totCity? Math.round(100*(postsByCity[topC.city]||0)/totCity) : 0;
       var cityRead=S.rdCities(topC.city, fmt(topC.requests), pct(topC.filled_24h,topC.requests), fmt(othersC));
+      if(topShare>=60) cityRead+=" "+S.rdCitiesTop(topC.city, topShare+"%", fmt((DATA.cities_30d||[]).length));
       if(othersC < topC.requests/2) cityRead+=S.recCity(topC.city, pct(topC.filled_24h,topC.requests));
       panelRead("cityLiq", othersC < topC.requests/2 ? "warn":"", cityRead);
     }
@@ -3087,9 +3107,6 @@
                 title:"בקשות "+c.requests+" · הצעות "+c.offers,
                 onClick:function(){ drillToChat({category:c.category}); }};
       }));
-    hbars("chCities",(DATA.cities_30d||[]).map(function(c,i){
-      return {label:c.city, v1:c.posts, c1:pal(i)};
-    }));
     var CT=DATA.categories_30d||[];
     if(CT.length) panelRead("chCats","",S.rdCats(catLabel(CT[0].category), fmt(CT[0].requests+CT[0].offers)));
     // Demand clusters read from the request TEXT: this is the panel that can
@@ -3141,12 +3158,6 @@
       }
     }
 
-    var CI=DATA.cities_30d||[];
-    if(CI.length){
-      var totCity=CI.reduce(function(a,c){ return a+c.posts; },0);
-      panelRead("chCities", (CI[0].posts/totCity)>0.6?"warn":"",
-        S.rdCitiesTop(CI[0].city, pct(CI[0].posts,totCity), fmt(CI.length)));
-    }
 
     // cohort heatmap on the sequential ramp; ink picked by fill luminance
     var seq=[tok("--seq100"),tok("--seq250"),tok("--seq400"),tok("--seq550"),tok("--seq700")];
@@ -3434,7 +3445,7 @@
   var PANEL_ICON={
     insightsBody:"alert", chSignups:"userplus", chDau:"activity", funnel:"filter",
     lifecycle:"users", chPosts:"file", chMatches:"link", liquidity:"zap",
-    noOffer:"alert", chCats:"tag", chCities:"pin", cityLiq:"map",
+    noOffer:"alert", chCats:"tag", cityLiq:"map",
     supplyHealth:"box", density:"radio", chMsgs:"msg", chatHealth:"msg",
     chRetention:"trend", userStates:"refresh", repeatRate:"repeat",
     topUsers:"award", safety:"shield",
