@@ -361,6 +361,9 @@
   .hrow { display:grid; grid-template-columns:130px 1fr minmax(46px,auto); gap:10px;
           align-items:center; margin-bottom:7px; font-size:13px; }
   .hrow .hl { color:var(--ink2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  /* long-label variant (nudge machine): wider label column, wraps instead of "..." */
+  .hrow.wrap { grid-template-columns:190px 1fr minmax(46px,auto); }
+  .hrow.wrap .hl { white-space:normal; overflow:visible; text-overflow:clip; line-height:1.35; }
   .htrack { height:16px; display:flex; gap:2px; direction:ltr; }
   .hseg { height:16px; border-radius:0 4px 4px 0;
           transition:width .6s cubic-bezier(.2,.8,.2,1); }
@@ -885,7 +888,7 @@
       nudgeNames:{silent_room:"שיחה שקטה - תגיד/י שלום", unanswered:"הודעה שלא נענתה", completion:"סיום ודירוג",
         phone_check:"נפגשתם? (אחרי החלפת טלפון)", rating:"תזכורת דירוג", reengagement:"חזרה לאפליקציה (שיווקי)",
         digest:"סיכום שבועי", activation:"פעולה ראשונה (D+1)", offer_owner:"בעל/ת הצעה - מחכים לך"},
-      nudgeSent:"נשלחו", nudgeActed:"פעלו תוך 48ש׳",
+      nudgeMeta:function(s,a){ return "נשלחו "+s+" · מתוכם "+a+" עשו את הפעולה תוך 48 שעות"; },
       nudgeAndroidNote:"הערת מדידה: פוש באנדרואיד היה מת עד 21.8 - חלק מהשליחות בטווח מעולם לא הגיעו למכשיר, כך שהאחוזים כאן הם רצפה, לא תקרה.",
       rdNudges:function(worstName,worstSent,bestName,bestPct){ return "רוב השולחים לא מזיזים כמעט כלום - <b>"+worstName+"</b> שלח "+worstSent+" פושים כמעט בלי תגובה. הכי אפקטיבי: <b>"+bestName+"</b> ("+bestPct+"). שולח שלא ממיר אחרי חלון מדידה נקי - מכבים."; },
       depTitle:"מי נושא את השוק · 90 יום",
@@ -1182,7 +1185,7 @@
       nudgeNames:{silent_room:"Silent room - say hello", unanswered:"Unanswered message", completion:"Mark done and rate",
         phone_check:"Did you meet? (after phone exchange)", rating:"Rating reminder", reengagement:"Come back (marketing)",
         digest:"Weekly digest", activation:"First action (D+1)", offer_owner:"Offer owner - someone is waiting"},
-      nudgeSent:"sent", nudgeActed:"acted within 48h",
+      nudgeMeta:function(s,a){ return s+" sent · "+a+" of them acted within 48 hours"; },
       nudgeAndroidNote:"Measurement note: Android push was dead until Aug 21 - some sends in range never reached a device, so these rates are a floor, not a ceiling.",
       rdNudges:function(worstName,worstSent,bestName,bestPct){ return "Most senders barely move anything - <b>"+worstName+"</b> sent "+worstSent+" pushes to almost no response. Most effective: <b>"+bestName+"</b> ("+bestPct+"). A sender that still does not convert after a clean measurement window gets turned off."; },
       depTitle:"Who carries the marketplace · 90 days",
@@ -2985,7 +2988,7 @@
       else{
         NG.forEach(function(n){
           var rate=n.sent? Math.round(100*n.acted/n.sent):0;
-          var row=el("div","hrow");
+          var row=el("div","hrow wrap");
           row.appendChild(el("span","hl",S.nudgeNames[n.k]||n.k));
           var track=el("div","htrack");
           var seg=el("div","hseg");
@@ -2996,8 +2999,7 @@
           row.appendChild(track);
           row.appendChild(el("span","hval",rate+"%"));
           ngh.appendChild(row);
-          ngh.appendChild(el("div","hmeta",
-            S.nudgeSent+" "+fmt(n.sent)+" · "+S.nudgeActed+" "+fmt(n.acted)));
+          ngh.appendChild(el("div","hmeta",S.nudgeMeta(fmt(n.sent),fmt(n.acted))));
         });
         // the caveat ages out once the window no longer touches the dead-Android era
         if(Date.now()-spanDays()*86400000 < Date.parse("2026-08-21"))
