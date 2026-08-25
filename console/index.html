@@ -1006,7 +1006,7 @@
       stNew:"חדשים", stCurrent:"ממשיכים", stReact:"חזרו (1-4 שבועות)", stResurr:"קמו לתחייה (30+ יום)",
       stCaption:"החישוב מבוסס על פעולות שנרשמו במערכת - פוסטים, הודעות והתאמות. מי שרק פתח את האפליקציה בלי לעשות דבר נספר כ״קם לתחייה״.",
       repeatTitle:"חזרה לבקש שוב", repeatSub:"בקשה שנייה תוך 90 יום - עדות ה-PMF החזקה ביותר במרקטפלייס",
-      repRequesters:"מבקשים ייחודיים אי-פעם", repRepeat:"חזרו לבקש תוך 90 יום",
+      repRequesters:"מבקשים ייחודיים אי-פעם", repRepeat:"חזרו לבקש תוך 90 יום", repRate:"שיעור החזרה, מול יעד 35%",
       repTip:"אחוז מהמבקשים שפרסמו בקשה שנייה תוך 90 יום מהראשונה. 35% הוא הרף שמצוטט כשער להתרחבות",
       happyTitle:"עזרות מאושרות", happyRated:"מתוכן דורגו", happy45:"דורגו 4-5 כוכבים",
       happyTip:"Happy GMV: לא כל השלמה שווה - זו שדורגה גבוה היא זו שבנתה אמון",
@@ -1308,7 +1308,7 @@
       stNew:"New", stCurrent:"Current", stReact:"Reactivated (1-4 weeks)", stResurr:"Resurrected (30+ days)",
       stCaption:"Computed from committed evidence (posts, messages, matches) - passive openers count as \"resurrected\"",
       repeatTitle:"Came back to ask again", repeatSub:"A second request within 90 days - the strongest PMF evidence in a marketplace",
-      repRequesters:"Distinct requesters ever", repRepeat:"Asked again within 90 days",
+      repRequesters:"Distinct requesters ever", repRepeat:"Asked again within 90 days", repRate:"Repeat rate, vs the 35% gate",
       repTip:"Share of requesters who posted a second request within 90 days of their first. 35% is the cited expansion gate",
       happyTitle:"Happy completions", happyRated:"of them rated", happy45:"rated 4-5 stars",
       happyTip:"Happy GMV: not every completion is equal - the highly-rated one is what built trust",
@@ -2908,7 +2908,9 @@
     var rpct=RP.requesters? Math.round(100*RP.repeated_90d/RP.requesters):0;
     var rrow=el("div","hrow");
     var rl=el("span","hl");
-    var rterm=el("span","term",S.repRepeat); rterm.setAttribute("data-tip",S.repTip);
+    // the bullet is the RATE; the count row below reuses the "asked again"
+    // label - giving both the same label made 7% and 2 read as the same thing
+    var rterm=el("span","term",S.repRate); rterm.setAttribute("data-tip",S.repTip);
     rl.appendChild(rterm);
     rrow.appendChild(rl);
     var rwrap=el("div"); rwrap.appendChild(bulletEl(rpct,35,100,[20,35,100]));
