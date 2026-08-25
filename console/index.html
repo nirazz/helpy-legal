@@ -1037,7 +1037,7 @@
       rdLifecycle:function(d,t,p){ return "<b>"+d+"</b> מתוך <b>"+t+"</b> המשתמשים (<b>"+p+"</b>) לא נראו מעל 30 יום. זהו הנכס הגדול ביותר שלך וגם החוב הגדול ביותר - קהל שכבר שילמת עליו ואינו פעיל."; },
       insMore:function(n){ return "הצגת "+n+" תובנות נוספות"; },
       insLess:"הצגת המובילות בלבד",
-      rdCitiesTop:function(city,share,n){ return "<b>"+share+"</b> מהפוסטים מגיעים מ<b>"+city+"</b> לבדה, מתוך "+n+" ערים. ריכוז כזה אינו חולשה - הוא בדיוק המקום שבו כדאי להעמיק, כי רשת שכנים נבנית בשכונה ולא בפיזור ארצי."; },
+      rdCitiesTop:function(city,share,n){ return "<b>"+share+"</b> מהפוסטים מגיעים מ<b>"+city+"</b> לבדה (מתוך "+n+" הערים המובילות בפוסטים). ריכוז כזה אינו חולשה - הוא בדיוק המקום שבו כדאי להעמיק, כי רשת שכנים נבנית בשכונה ולא בפיזור ארצי."; },
       sbGrowth:function(n,up,d,act,sign,msg){ return "נרשמו <b>"+n+"</b> שכנים חדשים בשבוע ("+(up?"עלייה":"ירידה")+" של "+d+" מול השבוע שעבר), אבל רק <b>"+act+"%</b> מהנרשמים החדשים מגיעים לשיחה עם שכן ("+msg+" מתוך "+sign+" בשבועיים האחרונים). המסקנה: הרכישה עובדת, ההפעלה לא - כל שקל שיושקע בפרסום לפני שהמספר הזה עולה קונה נטישה."; },
       sbMarket:function(rq,of,ratio,fill,ans,sil,thin){ return "בטווח הנבחר פורסמו <b>"+rq+"</b> בקשות מול <b>"+of+"</b> הצעות (פי "+ratio+" היצע), ורק <b>"+fill+"%</b> מהבקשות נענו תוך יממה. הצפיפות מסבירה את הפער: בקשה שנענתה הייתה מוקפת <b>"+ans+"</b> שכנים בטווח, בקשה ששתקה <b>"+sil+"</b> בלבד. יש כרגע <b>"+thin+"</b> בקשות חיות באזור דליל - אלה אנשים שסטטיסטית לא יקבלו מענה. הצעד הנכון אינו לגייס עוד עוזרים אלא לרכז ביקוש היכן שכבר יש צפיפות."; },
       sbChat:function(n,tw,med){ return "נפתחו <b>"+n+"</b> שיחות, וב-<b>"+tw+"%</b> מהן שני הצדדים באמת כתבו. התשובה הראשונה מגיעה תוך <b>"+med+"</b> בחציון. מי שעונה עונה מהר מאוד, ולכן זו אינה בעיית זמינות אלא בעיית תשומת לב - כמעט מחצית מהפניות פשוט לא נקראות בזמן."; },
@@ -1339,7 +1339,7 @@
       rdLifecycle:function(d,t,p){ return "<b>"+d+"</b> of <b>"+t+"</b> users (<b>"+p+"</b>) have not been seen in over 30 days. That is both your biggest asset and your biggest debt - an audience you already paid for that is not active."; },
       insMore:function(n){ return "Show "+n+" more insights"; },
       insLess:"Show only the top ones",
-      rdCitiesTop:function(city,share,n){ return "<b>"+share+"</b> of posts come from <b>"+city+"</b> alone, out of "+n+" cities. That concentration is not a weakness - it is exactly where to dig in, because a neighbour network is built in a neighbourhood, not spread across a country."; },
+      rdCitiesTop:function(city,share,n){ return "<b>"+share+"</b> of posts come from <b>"+city+"</b> alone (of the top "+n+" cities by posts). That concentration is not a weakness - it is exactly where to dig in, because a neighbour network is built in a neighbourhood, not spread across a country."; },
       sbGrowth:function(n,up,d,act,sign,msg){ return "<b>"+n+"</b> new neighbours signed up this week ("+(up?"up":"down")+" "+d+" on last week), but only <b>"+act+"%</b> of new signups reach a conversation with a neighbour ("+msg+" of "+sign+" in the last two weeks). Acquisition works, activation does not - every shekel spent on ads before that number moves is buying churn."; },
       sbMarket:function(rq,of,ratio,fill,ans,sil,thin){ return "In the selected range <b>"+rq+"</b> requests were posted against <b>"+of+"</b> offers ("+ratio+"x supply), and only <b>"+fill+"%</b> of requests were answered within a day. Density explains the gap: an answered request sat among <b>"+ans+"</b> neighbours in range, a silent one among just <b>"+sil+"</b>. <b>"+thin+"</b> live requests are in thin areas right now - statistically, those people will get nothing. The move is not recruiting more helpers but concentrating demand where density already exists."; },
       sbChat:function(n,tw,med){ return "<b>"+n+"</b> conversations opened and <b>"+tw+"%</b> became a real exchange, at a median reply of <b>"+med+"</b>. Those who answer answer very fast, so this is not an availability problem but an attention one - nearly half of openers are simply not read in time."; },
@@ -3015,7 +3015,9 @@
         NB.forEach(function(c){ if(c.city) cityCount[c.city]=(cityCount[c.city]||0)+1; });
         var usedNames={};
         NB.forEach(function(cell){
-          var row=el("div","hrow");
+          // wrap variant: the 130px label column truncated the 8-way compass
+          // names back into identical "דרום-מע..." rows
+          var row=el("div","hrow wrap");
           var name=cell.city||S.nbhdNoCity+" ("+cell.lat+", "+cell.lng+")";
           if(cell.city && cityCount[cell.city]>1 && cityRef[cell.city]!==cell){
             // 8-way compass vs the city's biggest cell - the 4-way version
