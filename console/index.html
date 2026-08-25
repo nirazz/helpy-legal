@@ -437,6 +437,12 @@
          color:var(--ink2); }
   .tag.mock { border-color:var(--warning); color:var(--ink2); }
   .tag.oneway { color:var(--bad-text); border-color:var(--bad-text); }
+  .tag.new { color:#fff; background:var(--s1); border-color:var(--s1); font-weight:700; }
+  .tabbadge { display:inline-block; margin-inline-start:6px; min-width:18px; padding:0 5px;
+    border-radius:9px; background:var(--s1); color:#fff; font-size:11px; font-weight:700;
+    line-height:18px; text-align:center; }
+  .msg img.chatimg { display:block; max-width:min(240px,100%); max-height:260px;
+    border-radius:10px; margin-top:6px; border:1px solid var(--hairline); }
   .cside { font-size:11px; color:var(--muted); text-align:left; direction:ltr; white-space:nowrap; }
   .thread { border-top:1px solid var(--grid); padding:16px; display:none; background:var(--plane); }
   .convo.open .thread { display:block; }
@@ -807,6 +813,17 @@
   var RANGE = 90;               // current window length (days); the fetch spans 2x of it
                                 // so every chart can show the previous period (Stripe pattern)
   var drill = { category: null }; // click-through filter into the chat tab
+  // unread-chat watermark: everything newer than the previous chat-tab visit
+  // gets a badge. The variable keeps the OLD watermark for the whole session
+  // (so the chips stay visible while browsing); localStorage advances when the
+  // chat tab is opened, so the next reload starts a fresh baseline.
+  var CHAT_SEEN = 0, CHAT_VISITED = false;
+  try { CHAT_SEEN = parseInt(localStorage.getItem("helpy_console_chat_seen") || "0", 10) || 0; } catch (e) {}
+  // first ever visit: baseline to "now" so the whole history isn't badged NEW
+  if (!CHAT_SEEN) {
+    CHAT_SEEN = Date.now();
+    try { localStorage.setItem("helpy_console_chat_seen", String(CHAT_SEEN)); } catch (e) {}
+  }
 
   // ---- i18n + theme --------------------------------------------------------
   var STRINGS = {
@@ -948,7 +965,7 @@
       chatShowing:function(a,b){ return "מציג "+a+" מתוך "+b+" שיחות בטווח"; },
       noConvos:"אין שיחות בטווח או בסינון הנוכחי",
       msgsCount:function(n){ return n+" הודעות"; },
-      tagOffer:"הצעה", tagRequest:"בקשה", tagOneway:"ללא מענה", tagMock:"בדיקה",
+      tagOffer:"הצעה", tagRequest:"בקשה", tagOneway:"ללא מענה", tagMock:"בדיקה", tagNew:"חדש",
       noData:"אין נתונים", noDataRange:"אין נתונים בטווח",
       insFunnel:function(p,a,b,w){ return "רק <b>"+p+"%</b> מהנרשמים מגיעים לשיחה עם שכן - זה צוואר הבקבוק המרכזי במשפך ("+a+" מתוך "+b+" ב-"+w+" יום)"; },
       insOfferAns:function(p,a,b,bad){ return "בעלי הצעות ענו ל-<b>"+p+"%</b> מהפניות אליהם ("+a+" מתוך "+b+")"+(bad?" - פנייה שנשארת באוויר מייאשת שכנים":""); },
@@ -1245,7 +1262,7 @@
       chatShowing:function(a,b){ return "Showing "+a+" of "+b+" conversations in range"; },
       noConvos:"No conversations in this range or filter",
       msgsCount:function(n){ return n+" messages"; },
-      tagOffer:"offer", tagRequest:"request", tagOneway:"unanswered", tagMock:"test",
+      tagOffer:"offer", tagRequest:"request", tagOneway:"unanswered", tagMock:"test", tagNew:"new",
       noData:"No data", noDataRange:"No data in range",
       insFunnel:function(p,a,b,w){ return "Only <b>"+p+"%</b> of signups reach a conversation with a neighbor - the funnel's main bottleneck ("+a+" of "+b+" in "+w+" days)"; },
       insOfferAns:function(p,a,b,bad){ return "Offer owners answered <b>"+p+"%</b> of openers ("+a+" of "+b+")"+(bad?" - an unanswered opener discourages neighbors":""); },
@@ -1876,6 +1893,14 @@
     $("chatView").classList.toggle("hidden",v!=="chat");
     $("archView").classList.toggle("hidden",v!=="arch");
     $("rail").classList.toggle("hidden",v!=="metrics");
+    if(v==="chat"){
+      // visiting the chat tab advances the stored watermark (next reload starts
+      // clean) and clears the tab counter; the in-session chips stay visible
+      CHAT_VISITED=true;
+      try{ localStorage.setItem("helpy_console_chat_seen",String(Date.now())); }catch(e){}
+      var tb=document.querySelector('#tabs button[data-v="chat"] .tabbadge');
+      if(tb) tb.remove();
+    }
     if(v==="arch") renderArch();
     if(v==="metrics") Object.keys(einsts).forEach(function(k){ einsts[k].resize(); });
     window.scrollTo({top:0,behavior:"smooth"});
@@ -3445,6 +3470,22 @@
     });
     var total=(DATA.conversations||[]).length;
     $("chatCount").textContent=S.chatShowing(fmt(list.length),fmt(total));
+    // unread badge on the chat tab: threads whose LAST message is newer than
+    // the previous visit's watermark (mocks excluded - they are hidden anyway)
+    var newCount=(DATA.conversations||[]).filter(function(c){
+      return !c.mock && new Date(c.messages[c.messages.length-1].at).getTime()>CHAT_SEEN;
+    }).length;
+    var tabBtn=document.querySelector('#tabs button[data-v="chat"]');
+    if(tabBtn){
+      var oldBadge=tabBtn.querySelector(".tabbadge"); if(oldBadge) oldBadge.remove();
+      if(newCount>0 && !CHAT_VISITED) tabBtn.appendChild(el("span","tabbadge",String(newCount)));
+    }
+    // chat images arrive as signed URLs beside the payload (the bucket is
+    // private); merge into the thread by match + message timestamp
+    var IMG={};
+    (DATA.chat_images||[]).forEach(function(x){
+      IMG[x.match_id+"|"+new Date(x.at).getTime()]=x.url;
+    });
     var host=$("convoList"); host.innerHTML="";
     if(!list.length){ emptyState(host,S.noConvos,"msg"); return; }
     list.forEach(function(c){
@@ -3461,6 +3502,8 @@
       meta.appendChild(el("span",null,c.post_title));
       meta.appendChild(el("span",null,S.msgsCount(fmt(c.msg_count))));
       meta.appendChild(el("span","tag",c.post_type==="offer"?S.tagOffer:S.tagRequest));
+      var lastMs=new Date(c.messages[c.messages.length-1].at).getTime();
+      if(lastMs>CHAT_SEEN) meta.appendChild(el("span","tag new",S.tagNew));
       if(!c.two_way){
         // red only while the silence is still rescuable - an unanswered chat
         // from three weeks ago is history, not an alarm (8 of 13 rows were
@@ -3478,7 +3521,13 @@
       c.messages.forEach(function(m){
         var b=el("div","msg "+(m.from_helper?"helper":"requester"));
         b.appendChild(el("div","who",m.sender));
-        var body=el("div"); markPhones(body,m.content); b.appendChild(body);
+        if(m.content){ var body=el("div"); markPhones(body,m.content); b.appendChild(body); }
+        var iurl=IMG[c.match_id+"|"+new Date(m.at).getTime()];
+        if(iurl){
+          var im=el("img","chatimg");
+          im.src=iurl; im.loading="lazy"; im.alt="";
+          b.appendChild(im);
+        }
         b.appendChild(el("div","when",fmtTime(m.at)));
         th.appendChild(b);
       });
