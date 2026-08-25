@@ -849,14 +849,15 @@
       funnelTitle:"פעולות אחרי הרשמה", d14:"14 יום", d30:"30 יום", funnelSub:"מה עושה משתמש חדש אחרי ההרשמה · למעלה הרשאות שקורות במקביל, למטה המסע עצמו",
       lifecycleTitle:"מאזן משתמשים", lifecycleSub:"חתך חי של כל המשתמשים הרשומים",
       sfTitle:"מהחנות ועד פעילות", sfSub:"המשפך המלא: כמה הורידו, כמה עדיין מחזיקים באפליקציה, כמה נרשמו וכמה באמת פעילים · נתוני ההורדות וההסרות מגיעים מדוחות החנויות עצמן, לא מהמסד שלנו",
-      sfDownloads:"הורדות מהחנויות", sfRemoved:"הסירו את האפליקציה", sfHolding:"מחזיקים באפליקציה כעת", sfAccounts:"נרשמו - חשבונות חיים", sfAlive30:"פעילים בחודש האחרון", sfAlive7:"פעילים בשבוע האחרון",
+      sfDownloads:"הורדות מהחנויות", sfRemoved:"הסירו את האפליקציה", sfHolding:"מחזיקים באפליקציה כעת", sfEver:"נרשמו אי-פעם", sfAccounts:"חשבונות חיים כעת", sfAlive30:"פעילים בחודש האחרון", sfAlive7:"פעילים בשבוע האחרון",
+      sfMetaEver:function(e,d,gap){ return e+" חשבונות נוצרו מאז ההשקה · הפער של ~"+gap+" מול ההורדות = מי שהוריד ולא עבר את מסך ההתחברות · "+d+" מהם מחקו את החשבון מאז"; },
       sfMetaDl:function(i,a){ return "iOS "+i+" · Android "+a+" · המקור: דוחות ההתקנה של אפל וגוגל. אפל סופרת רק מכשירים שאישרו שיתוף נתונים, אז צד ה-iOS הוא רצפה - המספר האמיתי גבוה יותר"; },
       sfMetaRm:function(i,a,ap){ return "iOS "+i+" · Android "+a+" ("+ap+" מההתקנות) · אנדרואיד נמדד במלואו; ההסרות ב-iOS מדווחות רק ממכשירי opt-in, אז היחס האמיתי שם כנראה גבוה מהנראה"; },
       sfMetaHold:function(i,a){ return "iOS ~"+i+" (הערכה: התקנות פחות הסרות) · Android "+a+" (בסיס מכשירים שנמדד ישירות אצל גוגל)"; },
       sfMetaAcc:function(i,a,u){ return "iOS "+i+" · Android "+a+" · "+u+" ותיקים ללא שיוך פלטפורמה · חשבון נוצר רק אחרי כניסה ראשונה, ונשאר קיים גם אם האפליקציה הוסרה - לכן מונים 'חיים' לפי כניסות בפועל, לא לפי חשבונות"; },
       sfMetaAlive30:function(i,a){ return "iOS "+i+" · Android "+a+" · לפי חותמת last_seen_at שהשרת מטביע בכל פתיחת אפליקציה - מקור האמת לפעילות"; },
       sfMetaAlive7:function(i,a){ return "iOS "+i+" · Android "+a+" · הליבה הפעילה באמת של הרשת"; },
-      rdStore:function(dl,hold,acc,m30,w7,p30){ return "מתוך <b>"+dl+"</b> הורדות, כ-<b>"+hold+"</b> מכשירים עדיין מחזיקים באפליקציה, יש <b>"+acc+"</b> חשבונות חיים, ומהם <b>"+m30+"</b> נכנסו בחודש האחרון ("+p30+" מכלל ההורדות) ו-<b>"+w7+"</b> בשבוע האחרון. הסרת אפליקציה אינה מוחקת חשבון - לכן שכבת ה'חיים' נמדדת לפי כניסות, לא לפי מצבת החשבונות."; },
+      rdStore:function(dl,hold,ever,acc,m30,w7,p30){ return "מתוך <b>"+dl+"</b> הורדות, כ-<b>"+hold+"</b> מכשירים עדיין מחזיקים באפליקציה; <b>"+ever+"</b> אנשים נרשמו אי-פעם, מהם נותרו <b>"+acc+"</b> חשבונות חיים, ומהם <b>"+m30+"</b> נכנסו בחודש האחרון ("+p30+" מכלל ההורדות) ו-<b>"+w7+"</b> בשבוע האחרון. הסרת אפליקציה אינה מוחקת חשבון - לכן שכבת ה'חיים' נמדדת לפי כניסות, לא לפי מצבת החשבונות."; },
       sfFresh:function(iosD,andD){ return "טריות הנתונים: iOS עד "+iosD+" · Android עד "+andD+" · המספרים נמשכים ידנית מדוחות החנויות"; },
       emptyStore:"נתוני החנויות עדיין לא נטענו",
       postsTitle:"פוסטים", postsSub:"בקשות עזרה מול הצעות עזרה",
@@ -1152,14 +1153,15 @@
       funnelTitle:"Actions after signup", d14:"14 days", d30:"30 days", funnelSub:"What a new user does after signing up · permissions above happen in parallel, the journey itself below",
       lifecycleTitle:"User balance", lifecycleSub:"A live cut of all registered users",
       sfTitle:"Store to active", sfSub:"The full funnel: downloads, who still holds the app, who signed up, and who is genuinely active · install and uninstall figures come from the stores' own reports, not from our database",
-      sfDownloads:"Store downloads", sfRemoved:"Uninstalled the app", sfHolding:"Currently holding the app", sfAccounts:"Signed up - live accounts", sfAlive30:"Active in the last month", sfAlive7:"Active in the last week",
+      sfDownloads:"Store downloads", sfRemoved:"Uninstalled the app", sfHolding:"Currently holding the app", sfEver:"Ever signed up", sfAccounts:"Live accounts now", sfAlive30:"Active in the last month", sfAlive7:"Active in the last week",
+      sfMetaEver:function(e,d,gap){ return e+" accounts created since launch · the ~"+gap+" gap vs downloads = people who installed but never got past sign-in · "+d+" of them have since deleted their account"; },
       sfMetaDl:function(i,a){ return "iOS "+i+" · Android "+a+" · source: Apple and Google install reports. Apple only counts devices that opted into data sharing, so the iOS side is a floor - the true number is higher"; },
       sfMetaRm:function(i,a,ap){ return "iOS "+i+" · Android "+a+" ("+ap+" of installs) · Android is fully measured; iOS deletions are reported from opt-in devices only, so the true iOS rate is likely higher than shown"; },
       sfMetaHold:function(i,a){ return "iOS ~"+i+" (estimate: installs minus uninstalls) · Android "+a+" (device base measured directly by Google)"; },
       sfMetaAcc:function(i,a,u){ return "iOS "+i+" · Android "+a+" · "+u+" older accounts without a platform tag · an account is only created after a first sign-in, and survives an uninstall - which is why 'alive' is counted from actual opens, not from the account roster"; },
       sfMetaAlive30:function(i,a){ return "iOS "+i+" · Android "+a+" · from the last_seen_at stamp the server writes on every app open - the source of truth for activity"; },
       sfMetaAlive7:function(i,a){ return "iOS "+i+" · Android "+a+" · the genuinely active core of the network"; },
-      rdStore:function(dl,hold,acc,m30,w7,p30){ return "Of <b>"+dl+"</b> downloads, about <b>"+hold+"</b> devices still hold the app, there are <b>"+acc+"</b> live accounts, and of those <b>"+m30+"</b> opened the app in the last month ("+p30+" of all downloads) and <b>"+w7+"</b> in the last week. Uninstalling does not delete an account - so the 'alive' layers are measured from opens, never from the account roster."; },
+      rdStore:function(dl,hold,ever,acc,m30,w7,p30){ return "Of <b>"+dl+"</b> downloads, about <b>"+hold+"</b> devices still hold the app; <b>"+ever+"</b> people ever signed up, <b>"+acc+"</b> accounts remain live, and of those <b>"+m30+"</b> opened the app in the last month ("+p30+" of all downloads) and <b>"+w7+"</b> in the last week. Uninstalling does not delete an account - so the 'alive' layers are measured from opens, never from the account roster."; },
       sfFresh:function(iosD,andD){ return "Data freshness: iOS through "+iosD+" · Android through "+andD+" · figures are pulled manually from the stores' reports"; },
       emptyStore:"Store data not loaded yet",
       postsTitle:"Posts", postsSub:"Help requests vs. help offers",
@@ -2737,6 +2739,10 @@
        meta:S.sfMetaRm(fmt(ios.uninstalls),fmt(and.uninstalls),pct(and.uninstalls,and.installs))},
       {label:S.sfHolding, v1:hold, c1:ramp[1], suffix:" · "+pct(hold,dl),
        meta:S.sfMetaHold(fmt(iosHold),fmt(andHold))},
+      {label:S.sfEver, v1:(A.live||0)+(A.deleted||0), c1:ramp[2],
+       suffix:" · "+pct((A.live||0)+(A.deleted||0),dl),
+       meta:S.sfMetaEver(fmt((A.live||0)+(A.deleted||0)), fmt(A.deleted||0),
+                         fmt(Math.max(0, dl-((A.live||0)+(A.deleted||0)))))},
       {label:S.sfAccounts, v1:A.live||0, c1:ramp[2], suffix:" · "+pct(A.live,dl),
        meta:S.sfMetaAcc(fmt(A.ios),fmt(A.android),fmt(A.unknown))},
       {label:S.sfAlive30, v1:L.seen_30d||0, c1:ramp[3], suffix:" · "+pct(L.seen_30d,dl),
@@ -2749,7 +2755,8 @@
     Array.prototype.forEach.call(host.querySelectorAll(".hrow"),function(r){ r.classList.add("wrap"); });
     host.appendChild(el("div","note",S.sfFresh(fmtDay(ios.data_through),fmtDay(and.data_through))));
     panelRead("storeFunnel","",
-      S.rdStore(fmt(dl),fmt(hold),fmt(A.live||0),fmt(L.seen_30d||0),fmt(L.seen_7d||0),pct(L.seen_30d,dl)));
+      S.rdStore(fmt(dl),fmt(hold),fmt((A.live||0)+(A.deleted||0)),fmt(A.live||0),
+                fmt(L.seen_30d||0),fmt(L.seen_7d||0),pct(L.seen_30d,dl)));
   }
 
   function renderResearch(){
