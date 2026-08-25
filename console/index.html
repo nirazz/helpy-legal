@@ -1721,10 +1721,14 @@
       grid: { left: 10, right: 46,
               top: (manySeries ? 36 : 18) + (marks.length ? 26 : 0),
               bottom: opts.zoom ? 56 : 26 },
-      legend: manySeries ? {
+      // always a real object with show: - `undefined` in an ECharts MERGE keeps
+      // the PREVIOUS legend alive, so switching to a single segment left a
+      // stale "שולחים" floating over the plot (which also lost its headroom)
+      legend: {
+        show: manySeries,
         top: 0, right: 0, itemWidth: 12, itemHeight: 8,
         textStyle: { color: ink2, fontSize: 12 }
-      } : undefined,
+      },
       tooltip: {
         trigger: "axis",
         axisPointer: { type: hasBar ? "shadow" : "line" },
