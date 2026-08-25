@@ -1011,6 +1011,7 @@
       },
       vNoBase:function(cur,unit){ return "<b>"+cur+"</b> "+unit+" בטווח הנבחר · אין תקופה קודמת להשוואה."; },
       vPeak:function(v,d){ return "השיא: <b>"+v+"</b> ב-"+d+"."; },
+      vPeakW:function(v,d){ return "שבוע השיא: <b>"+v+"</b> בשבוע שמתחיל ב-"+d+"."; },
       vSmallBase:function(cur,prev,unit){ return "<b>"+cur+"</b> "+unit+" לעומת "+prev+" בתקופה הקודמת. הבסיס קטן מדי מכדי לחשב אחוז שינוי משמעותי."; },
       rdLiq:function(p,med,tgt){ return "<b>"+p+"%</b> מהבקשות קיבלו הצעה תוך 24 שעות, וזמן ההמתנה החציוני הוא <b>"+med+"</b>. מי שממתין יותר מיממה כמעט לעולם לא חוזר לבקש שוב, וכאן בדיוק נשברת הנזילות."; },
       rdLiqGood:function(p,med){ return "<b>"+p+"%</b> מהבקשות נענות תוך 24 שעות (חציון <b>"+med+"</b>) - צד הביקוש מקבל שירות סביר."; },
@@ -1308,6 +1309,7 @@
       },
       vNoBase:function(cur,unit){ return "<b>"+cur+"</b> "+unit+" in range · no previous period to compare."; },
       vPeak:function(v,d){ return "Peak: <b>"+v+"</b> on "+d+"."; },
+      vPeakW:function(v,d){ return "Best week: <b>"+v+"</b> in the week starting "+d+"."; },
       vSmallBase:function(cur,prev,unit){ return "<b>"+cur+"</b> "+unit+" vs "+prev+" in the previous period - the base is too small for a percentage to mean anything."; },
       rdLiq:function(p,med,tgt){ return "Of the requests opened, <b>"+p+"%</b> got an offer within 24h and the median wait is <b>"+med+"</b>. Demand that waits longer than a day rarely comes back to ask again - this is where liquidity breaks."; },
       rdLiqGood:function(p,med){ return "<b>"+p+"%</b> of requests are answered within 24h (median <b>"+med+"</b>) - the demand side is getting reasonable service."; },
@@ -2099,7 +2101,10 @@
       if(dir==="flat") cls="";
       txt=S.vChange(dir, Math.abs(pc), fmt(cur), fmt(prev), opts.unit||S.uItems);
     }
-    if(peak && peak.v>0 && (rows||[]).length>2) txt+=" "+S.vPeak(fmt(peak.v), fmtDay(peak.d));
+    // at weekly grain the peak is a WEEK's sum - labeling it with a day date
+    // read as "81 signups in one day" (Nir caught it; the real 02.08 was 15)
+    if(peak && peak.v>0 && (rows||[]).length>2)
+      txt+=" "+(opts.weekly? S.vPeakW(fmt(peak.v), fmtDay(peak.d)) : S.vPeak(fmt(peak.v), fmtDay(peak.d)));
     if(cls) v.classList.add(cls);
     v.appendChild(el("span","vi", cls==="good"?"\u25B2":cls==="bad"?"\u25BC":cls==="warn"?"\u2192":"\u2022"));
     var body=el("span"); body.innerHTML=txt; // trusted: our own dictionary + numbers
@@ -3137,7 +3142,8 @@
         prvV = (comparable && prv.length)? sumRows(prv,keys):null;
         cmpLine(chartId, curV, prvV);
       }
-      verdictLine(chartId, curV, prvV, rows, keys, {unit:opts.unit});
+      verdictLine(chartId, curV, prvV, rows, keys,
+        {unit:opts.unit, weekly: !opts.avg && weeklyOn()});
     }
     segChart("chSignups","segSignups",DATA.signups_by_day,[
       {key:"ios",name:"iOS",color:S1,type:"bar"},
