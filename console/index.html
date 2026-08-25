@@ -877,9 +877,9 @@
       rdDtreeZero:"אפס השלמות בטווח. לפני שמתקנים שלבים באמצע - זה המספר שצריך לדבר עליו.",
       nbhdTitle:"סולם השכונות מול קו ה-60",
       nbhdSub:"מהמדידה שלנו: מתחת ל-10 שכנים פעילים בקשה מתה, מעל 60 - 90% נענות. כמה חסר לכל אזור כדי להידלק",
-      nbhdUsers:"{n} פעילים", nbhdGap:"חסרים {n} להצתה", nbhdTipped:"מעל הקו ✓",
+      nbhdUsers:"{n} פעילים", nbhdGap:"חסרים {n} לקו ה-60", nbhdTipped:"מעל הקו ✓",
       dirN:"צפון", dirS:"דרום", dirE:"מזרח", dirW:"מערב",
-      nbhdReqs:"{r} בקשות · {a} נענו ב-24ש׳", nbhdNoCity:"אזור ללא שם",
+      nbhdReqs:"{r} · {a} נענו ב-24ש׳", nbhdReqOne:"בקשה אחת", nbhdReqN:"{r} בקשות", nbhdNoCity:"אזור ללא שם",
       rdNbhd:function(t,total,best,gap){ return t>0
         ? "<b>"+t+"</b> מתוך "+total+" אזורים כבר מעל קו ה-60. הקרוב הבא: <b>"+best+"</b> - חסרים לו <b>"+gap+"</b> משתמשים. שם כל שקל פרסום שווה הכי הרבה."
         : "אף אזור עוד לא חצה את קו ה-60. הקרוב ביותר: <b>"+best+"</b> (חסרים "+gap+"). ריכוז התקציב שם עדיף על פיזור."; },
@@ -1031,7 +1031,7 @@
       insMore:function(n){ return "הצגת "+n+" תובנות נוספות"; },
       insLess:"הצגת המובילות בלבד",
       rdCitiesTop:function(city,share,n){ return "<b>"+share+"</b> מהפוסטים מגיעים מ<b>"+city+"</b> לבדה, מתוך "+n+" ערים. ריכוז כזה אינו חולשה - הוא בדיוק המקום שבו כדאי להעמיק, כי רשת שכנים נבנית בשכונה ולא בפיזור ארצי."; },
-      sbGrowth:function(n,up,d,act,sign,msg){ return "נרשמו <b>"+n+"</b> שכנים חדשים בשבוע ("+(up?"עלייה":"ירידה")+" של "+d+" מול השבוע שעבר), אבל רק <b>"+act+"%</b> מהם הגיעו לשיחה עם שכן ("+msg+" מתוך "+sign+"). המסקנה: הרכישה עובדת, ההפעלה לא - כל שקל שיושקע בפרסום לפני שהמספר הזה עולה קונה נטישה."; },
+      sbGrowth:function(n,up,d,act,sign,msg){ return "נרשמו <b>"+n+"</b> שכנים חדשים בשבוע ("+(up?"עלייה":"ירידה")+" של "+d+" מול השבוע שעבר), אבל רק <b>"+act+"%</b> מהנרשמים החדשים מגיעים לשיחה עם שכן ("+msg+" מתוך "+sign+" בשבועיים האחרונים). המסקנה: הרכישה עובדת, ההפעלה לא - כל שקל שיושקע בפרסום לפני שהמספר הזה עולה קונה נטישה."; },
       sbMarket:function(rq,of,ratio,fill,ans,sil,thin){ return "בטווח הנבחר פורסמו <b>"+rq+"</b> בקשות מול <b>"+of+"</b> הצעות (פי "+ratio+" היצע), ורק <b>"+fill+"%</b> מהבקשות נענו תוך יממה. הצפיפות מסבירה את הפער: בקשה שנענתה הייתה מוקפת <b>"+ans+"</b> שכנים בטווח, בקשה ששתקה <b>"+sil+"</b> בלבד. יש כרגע <b>"+thin+"</b> בקשות חיות באזור דליל - אלה אנשים שסטטיסטית לא יקבלו מענה. הצעד הנכון אינו לגייס עוד עוזרים אלא לרכז ביקוש היכן שכבר יש צפיפות."; },
       sbChat:function(n,tw,med){ return "נפתחו <b>"+n+"</b> שיחות, וב-<b>"+tw+"%</b> מהן שני הצדדים באמת כתבו. התשובה הראשונה מגיעה תוך <b>"+med+"</b> בחציון. מי שעונה עונה מהר מאוד, ולכן זו אינה בעיית זמינות אלא בעיית תשומת לב - כמעט מחצית מהפניות פשוט לא נקראות בזמן."; },
       sbRetention:function(d1,newshare,dorm,dormp){ return "אחרי יום אחד חוזרים <b>"+d1+"%</b> בלבד, מתחת לבנצ׳מרק של אפליקציות חברתיות, אבל אחרי שבוע וחודש המספרים דווקא גבוהים ממנו - מי שצולח את היום הראשון נשאר. כרגע <b>"+newshare+"</b> מהפעילים הם נרשמים חדשים ו-<b>"+dorm+"</b> משתמשים ("+dormp+") רדומים מעל חודש. זהו קהל שכבר שילמת עליו, והוא גדול פי כמה מהקהל הפעיל."; },
@@ -1083,7 +1083,7 @@
       glWeek:function(d){ return "שבוע "+d; },
       glSignups:function(n){ return n==="1"? "נרשם אחד" : n+" נרשמים"; },
       glChange:function(up,p){ return (up?"▲ ":"▼ ")+p+"% מהשבוע שלפניו"; },
-      glFlat:"ללא שינוי מהותי",
+      glFlat:"ללא שינוי מהותי", glVsSmall:function(p){ return "מול "+p+" בשבוע שלפניו"; }, wlPartial:"שבוע בעיצומו",
       glFirst:"השבוע הראשון בטווח - אין מול מה להשוות",
       glPeak:"השבוע החזק ביותר בטווח",
       glLow:"השבוע החלש ביותר בטווח",
@@ -1177,7 +1177,7 @@
       nbhdSub:"From our own measurement: under 10 active neighbors a request dies, above 60 - 90% get answered. How far each area is from tipping",
       nbhdUsers:"{n} active", nbhdGap:"{n} short of tipping", nbhdTipped:"above the line ✓",
       dirN:"north", dirS:"south", dirE:"east", dirW:"west",
-      nbhdReqs:"{r} requests · {a} answered in 24h", nbhdNoCity:"unnamed area",
+      nbhdReqs:"{r} · {a} answered in 24h", nbhdReqOne:"one request", nbhdReqN:"{r} requests", nbhdNoCity:"unnamed area",
       rdNbhd:function(t,total,best,gap){ return t>0
         ? "<b>"+t+"</b> of "+total+" areas are already above the 60 line. Next closest: <b>"+best+"</b> - <b>"+gap+"</b> users short. That is where every ad shekel buys the most."
         : "No area has crossed the 60 line yet. Closest: <b>"+best+"</b> ("+gap+" short). Concentrating the budget there beats spreading it."; },
@@ -1329,7 +1329,7 @@
       insMore:function(n){ return "Show "+n+" more insights"; },
       insLess:"Show only the top ones",
       rdCitiesTop:function(city,share,n){ return "<b>"+share+"</b> of posts come from <b>"+city+"</b> alone, out of "+n+" cities. That concentration is not a weakness - it is exactly where to dig in, because a neighbour network is built in a neighbourhood, not spread across a country."; },
-      sbGrowth:function(n,up,d,act,sign,msg){ return "<b>"+n+"</b> new neighbours signed up this week ("+(up?"up":"down")+" "+d+" on last week), but only <b>"+act+"%</b> reached a conversation with a neighbour ("+msg+" of "+sign+"). Acquisition works, activation does not - every shekel spent on ads before that number moves is buying churn."; },
+      sbGrowth:function(n,up,d,act,sign,msg){ return "<b>"+n+"</b> new neighbours signed up this week ("+(up?"up":"down")+" "+d+" on last week), but only <b>"+act+"%</b> of new signups reach a conversation with a neighbour ("+msg+" of "+sign+" in the last two weeks). Acquisition works, activation does not - every shekel spent on ads before that number moves is buying churn."; },
       sbMarket:function(rq,of,ratio,fill,ans,sil,thin){ return "In the selected range <b>"+rq+"</b> requests were posted against <b>"+of+"</b> offers ("+ratio+"x supply), and only <b>"+fill+"%</b> of requests were answered within a day. Density explains the gap: an answered request sat among <b>"+ans+"</b> neighbours in range, a silent one among just <b>"+sil+"</b>. <b>"+thin+"</b> live requests are in thin areas right now - statistically, those people will get nothing. The move is not recruiting more helpers but concentrating demand where density already exists."; },
       sbChat:function(n,tw,med){ return "<b>"+n+"</b> conversations opened and <b>"+tw+"%</b> became a real exchange, at a median reply of <b>"+med+"</b>. Those who answer answer very fast, so this is not an availability problem but an attention one - nearly half of openers are simply not read in time."; },
       sbRetention:function(d1,newshare,dorm,dormp){ return "Day-one retention is <b>"+d1+"%</b>, below the social-app benchmark, while week and month retention sit above it - whoever survives day one sticks. Right now <b>"+newshare+"</b> of actives are brand-new signups and <b>"+dorm+"</b> users ("+dormp+") have been dormant over a month. That is an audience you already paid for, several times larger than the active one."; },
@@ -1381,7 +1381,7 @@
       glWeek:function(d){ return "Week of "+d; },
       glSignups:function(n){ return n+" signups"; },
       glChange:function(up,p){ return (up?"▲ ":"▼ ")+p+"% on the week before"; },
-      glFlat:"No meaningful change",
+      glFlat:"No meaningful change", glVsSmall:function(p){ return "vs "+p+" the week before"; }, wlPartial:"week in progress",
       glFirst:"First week in range - nothing to compare against",
       glPeak:"Strongest week in range",
       glLow:"Weakest week in range",
@@ -2143,6 +2143,14 @@
     var vals=rows.map(function(r){ return +r[primaryKey]||0; });
     var peak=Math.max.apply(null,vals), low=Math.min.apply(null,vals);
     var peakI=vals.indexOf(peak);
+    // the newest bucket is usually a PARTIAL week - a 2-day bucket judged
+    // against full weeks overstates any decline ("fell 77%" when the true
+    // week-over-week was -2)
+    function isPartialWeek(weekStart){
+      var d1=new Date(String(weekStart).slice(0,10)+"T00:00:00");
+      d1.setDate(d1.getDate()+7);
+      return d1 > new Date();
+    }
     function eventsFor(weekStart){
       var d0=String(weekStart).slice(0,10);
       var d1=new Date(d0+"T00:00:00"); d1.setDate(d1.getDate()+7);
@@ -2163,9 +2171,13 @@
       var d=describe(r,prev,{peak:n===peak, low:n===low, n:n});
       body.appendChild(el("div","evt", S.glWeek(fmtDay(r.d))+" · "+d.title));
       var bits=[];
+      if(idx===rows.length-1 && isPartialWeek(r.d)) bits.push(S.wlPartial);
       if(prev==null) bits.push(S.glFirst);
       else if(prev===0) bits.push(S.glFlat);
-      else {
+      else if(prev<10){
+        // a % change off a single-digit base reads as drama ("▲900%" from 2)
+        bits.push(S.glVsSmall(fmt(prev)));
+      } else {
         var ch=Math.round(100*(n-prev)/prev);
         bits.push(Math.abs(ch)<5? S.glFlat : S.glChange(ch>0, Math.abs(ch)));
       }
@@ -2191,8 +2203,11 @@
       host.appendChild(more);
     }
     if(readFn){
-      var lastV=vals[vals.length-1];
-      var dropPct=(peak>0 && lastV<peak && peakI<vals.length-1)
+      // judge the pace by the last COMPLETE week, never the running partial one
+      var lastI=vals.length-1;
+      if(lastI>0 && isPartialWeek(rows[lastI].d)) lastI--;
+      var lastV=vals[lastI];
+      var dropPct=(peak>0 && lastV<peak && peakI<lastI)
         ? Math.round(100*(peak-lastV)/peak) : null;
       var out=readFn({rows:rows, vals:vals, peak:peak, peakI:peakI,
                       last:lastV, drop:dropPct});
@@ -2501,10 +2516,13 @@
         f=segVal("funnelSeg")===30? DATA.funnel_30d : DATA.funnel_14d;
 
     // GROWTH: are we adding people, and do they do anything
-    var act=f.signups? Math.round(100*f.messaged/f.signups):0;
+    // pinned to the 14d funnel - the brief's copy says "בשבועיים האחרונים",
+    // so it must not silently follow the funnel panel's 14/30 toggle
+    var fb=DATA.funnel_14d||f;
+    var act=fb.signups? Math.round(100*fb.messaged/fb.signups):0;
     var d7=k.signups_7d-(dl.signups_prev_7d||0);
     secBrief("secGrowth", S.sbGrowth(fmt(k.signups_7d), d7>=0, fmt(Math.abs(d7)), act,
-      fmt(f.signups), fmt(f.messaged)));
+      fmt(fb.signups), fmt(fb.messaged)));
 
     // MARKETPLACE: supply vs demand, fill, and density
     var pw=rangeRows(DATA.posts_by_day);
@@ -2702,6 +2720,9 @@
       {label:S.sfAlive7, v1:L.seen_7d||0, c1:ramp[3], suffix:" · "+pct(L.seen_7d,dl),
        meta:S.sfMetaAlive7(fmt(L.seen_7d_ios),fmt(L.seen_7d_android))}
     ]);
+    // the funnel labels are long Hebrew phrases - the default 130px label
+    // column clipped "מחזיקים באפליקציה כעת" to "..."
+    Array.prototype.forEach.call(host.querySelectorAll(".hrow"),function(r){ r.classList.add("wrap"); });
     host.appendChild(el("div","note",S.sfFresh(fmtDay(ios.data_through),fmtDay(and.data_through))));
     panelRead("storeFunnel","",
       S.rdStore(fmt(dl),fmt(hold),fmt(A.live||0),fmt(L.seen_30d||0),fmt(L.seen_7d||0),pct(L.seen_30d,dl)));
@@ -2966,14 +2987,25 @@
         NB.forEach(function(c){ if(c.city && !(c.city in cityRef)) cityRef[c.city]=c; });
         var cityCount={};
         NB.forEach(function(c){ if(c.city) cityCount[c.city]=(cityCount[c.city]||0)+1; });
+        var usedNames={};
         NB.forEach(function(cell){
           var row=el("div","hrow");
           var name=cell.city||S.nbhdNoCity+" ("+cell.lat+", "+cell.lng+")";
           if(cell.city && cityCount[cell.city]>1 && cityRef[cell.city]!==cell){
+            // 8-way compass vs the city's biggest cell - the 4-way version
+            // labeled three different TLV cells "· דרום" (indistinguishable)
             var ref=cityRef[cell.city], dy=cell.lat-ref.lat, dx=cell.lng-ref.lng;
-            var dir=Math.abs(dy)>=Math.abs(dx) ? (dy>0? S.dirN:S.dirS) : (dx>0? S.dirE:S.dirW);
+            var ay=Math.abs(dy), ax=Math.abs(dx), dir;
+            if(ay>0 && ax>0 && Math.min(ay,ax)>=0.4*Math.max(ay,ax)){
+              dir=(dy>0? S.dirN:S.dirS)+"-"+(dx>0? S.dirE:S.dirW);
+            } else {
+              dir=ay>=ax ? (dy>0? S.dirN:S.dirS) : (dx>0? S.dirE:S.dirW);
+            }
             name+=" · "+dir;
           }
+          // identical names must never repeat in one list - number the extras
+          if(usedNames[name]){ usedNames[name]++; name+=" "+usedNames[name]; }
+          else usedNames[name]=1;
           row.appendChild(el("span","hl",name));
           var track=el("div","htrack nbt");
           var seg=el("div","hseg");
@@ -2991,7 +3023,9 @@
           var status=cell.users>=60? S.nbhdTipped : S.nbhdGap.replace("{n}",fmt(cell.gap));
           var meta=status;
           if((cell.requests||0)>0)
-            meta+=" · "+S.nbhdReqs.replace("{r}",fmt(cell.requests)).replace("{a}",fmt(cell.answered_24h||0));
+            meta+=" · "+S.nbhdReqs
+              .replace("{r}", cell.requests===1? S.nbhdReqOne : S.nbhdReqN.replace("{r}",fmt(cell.requests)))
+              .replace("{a}",fmt(cell.answered_24h||0));
           nb.appendChild(el("div","hmeta",meta));
         });
         var tipped=NB.filter(function(x){ return x.users>=60; }).length;
