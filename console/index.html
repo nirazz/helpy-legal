@@ -1947,7 +1947,9 @@
     var lbl=el("div","lbl");
     if(opts.dot){ var d=el("i"); d.style.background=opts.dot; lbl.appendChild(d); }
     if(opts.tip){
-      var tx=el("span","term",label); tx.setAttribute("data-tip",opts.tip);
+      // "below": the tiles are the first viewport row, so an upward tip opens
+      // off-screen / behind the sticky header - open downward instead
+      var tx=el("span","term below",label); tx.setAttribute("data-tip",opts.tip);
       lbl.appendChild(tx);
     } else {
       lbl.appendChild(document.createTextNode(label));
@@ -1956,7 +1958,13 @@
     if(opts.target){
       t.classList.add("clickable");
       t.title=S.tileJump;
-      t.addEventListener("click",function(){ flashTo(opts.target); });
+      t.addEventListener("click",function(e){
+        // a tap on the glossary term opens the explanation - it must not also
+        // jump the page to the chart (on the phone that is the ONLY way to
+        // read what an abbreviation means)
+        if(e.target && e.target.closest && e.target.closest(".term")) return;
+        flashTo(opts.target);
+      });
     }
     var valEl=el("div","val",value);
     if(/^[\d,]+$/.test(value)) animNum(valEl, parseInt(value.replace(/,/g,""),10));
