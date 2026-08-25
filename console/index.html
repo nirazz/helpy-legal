@@ -1012,6 +1012,7 @@
       vNoBase:function(cur,unit){ return "<b>"+cur+"</b> "+unit+" בטווח הנבחר · אין תקופה קודמת להשוואה."; },
       vPeak:function(v,d){ return "השיא: <b>"+v+"</b> ב-"+d+"."; },
       vPeakW:function(v,d){ return "שבוע השיא: <b>"+v+"</b> בשבוע שמתחיל ב-"+d+"."; },
+      uPerDay:function(u){ return u+" בממוצע ליום"; },
       vSmallBase:function(cur,prev,unit){ return "<b>"+cur+"</b> "+unit+" לעומת "+prev+" בתקופה הקודמת. הבסיס קטן מדי מכדי לחשב אחוז שינוי משמעותי."; },
       rdLiq:function(p,med,tgt){ return "<b>"+p+"%</b> מהבקשות קיבלו הצעה תוך 24 שעות, וזמן ההמתנה החציוני הוא <b>"+med+"</b>. מי שממתין יותר מיממה כמעט לעולם לא חוזר לבקש שוב, וכאן בדיוק נשברת הנזילות."; },
       rdLiqGood:function(p,med){ return "<b>"+p+"%</b> מהבקשות נענות תוך 24 שעות (חציון <b>"+med+"</b>) - צד הביקוש מקבל שירות סביר."; },
@@ -1075,8 +1076,7 @@
       clogTitle:"יומן שיחות · שבוע אחר שבוע",
       clogSub:"כמה נכתב, על ידי כמה אנשים, ובאיזו עצימות",
       clMsgs:function(n){ return n==="1"? "הודעה אחת" : n+" הודעות"; },
-      clSenders:function(n){ return n==="1"? "כותב אחד" : n+" כותבים"; },
-      clPerSender:function(r){ return r+" הודעות לכותב"; },
+      clAvgSenders:function(n){ return "בממוצע "+n+" כותבים ביום"; },
       rdClog:function(m,s2,r,tw){ return "<b>"+m+"</b> הודעות נכתבו על ידי <b>"+s2+"</b> אנשים - <b>"+r+"</b> הודעות לאדם, ו-<b>"+tw+"</b> מהשיחות היו דו-כיווניות. מספר כותבים קטן שכותב הרבה אומר שהשיחות שכן קורות הן עמוקות; הבעיה איננה איכות השיחה אלא כמה שיחות בכלל נפתחות."; },
       glogTitle:"יומן צמיחה · שבוע אחר שבוע",
       glogSub:"מה קרה בכל שבוע, מה השתנה, ומה גרם לזה",
@@ -1310,6 +1310,7 @@
       vNoBase:function(cur,unit){ return "<b>"+cur+"</b> "+unit+" in range · no previous period to compare."; },
       vPeak:function(v,d){ return "Peak: <b>"+v+"</b> on "+d+"."; },
       vPeakW:function(v,d){ return "Best week: <b>"+v+"</b> in the week starting "+d+"."; },
+      uPerDay:function(u){ return u+" on an average day"; },
       vSmallBase:function(cur,prev,unit){ return "<b>"+cur+"</b> "+unit+" vs "+prev+" in the previous period - the base is too small for a percentage to mean anything."; },
       rdLiq:function(p,med,tgt){ return "Of the requests opened, <b>"+p+"%</b> got an offer within 24h and the median wait is <b>"+med+"</b>. Demand that waits longer than a day rarely comes back to ask again - this is where liquidity breaks."; },
       rdLiqGood:function(p,med){ return "<b>"+p+"%</b> of requests are answered within 24h (median <b>"+med+"</b>) - the demand side is getting reasonable service."; },
@@ -1373,8 +1374,7 @@
       clogTitle:"Conversation log · week by week",
       clogSub:"How much was written, by how many people, and how intensely",
       clMsgs:function(n){ return n+" messages"; },
-      clSenders:function(n){ return n+" writers"; },
-      clPerSender:function(r){ return r+" messages per writer"; },
+      clAvgSenders:function(n){ return "an average of "+n+" writers a day"; },
       rdClog:function(m,s2,r,tw){ return "<b>"+m+"</b> messages were written by <b>"+s2+"</b> people - <b>"+r+"</b> each - and <b>"+tw+"</b> of conversations were two-way. A small number of writers writing a lot means the conversations that do happen run deep; the problem is not conversation quality but how few conversations start at all."; },
       glogTitle:"Growth log · week by week",
       glogSub:"What happened each week, what changed, and what caused it",
@@ -2239,14 +2239,20 @@
     weekLog("chatLog", DATA.messages_by_day, ["msgs","senders"], "msgs",
       function(r){
         var m=+r.msgs||0, sn=+r.senders||0;
-        var bits=[S.clSenders(fmt(sn))];
-        if(sn>0) bits.push(S.clPerSender((m/sn).toFixed(1)));
+        // the weekly 'senders' value is a sum of DAILY distinct counts, so it
+        // double-counts a writer active on several days - the daily average is
+        // what this series genuinely supports
+        var bits=sn>0? [S.clAvgSenders((sn/7).toFixed(1))] : [];
         return { title:S.clMsgs(fmt(m)), bits:bits };
       },
       function(c){
         var tot=sumRows(rangeRows(DATA.messages_by_day),["msgs"]);
-        var sn=sumRows(rangeRows(DATA.messages_by_day),["senders"]);
         var C=DATA.chat_stats||{};
+        // NEVER sum the per-day distinct-sender series - anyone active on two
+        // days counts twice (it claimed 73 writers when the true count was 28);
+        // the server's senders_window is the real distinct count
+        var sn=(C.senders_window!=null)? +C.senders_window
+             : sumRows(rangeRows(DATA.messages_by_day),["senders"]);
         return { cls: (C.convos_30d && C.two_way_30d/C.convos_30d<0.6) ? "warn":"",
                  html: S.rdClog(fmt(tot), fmt(sn), sn? (tot/sn).toFixed(1):"-",
                                 C.convos_30d? pct(C.two_way_30d,C.convos_30d):"-") };
@@ -2547,7 +2553,9 @@
     var rows=[];
     // ordered: serious -> warning -> good/info
     var msgPct=f.signups? Math.round(100*f.messaged/f.signups):0;
-    if(msgPct<10) rows.push(["bad",S.insFunnel(msgPct,fmt(f.messaged),fmt(f.signups),segVal("funnelSeg")),scrollToEl("funnel")]);
+    // f IS funnel_30d - the label must say 30, not echo the funnel panel's
+    // 14/30 toggle (it printed 30d numbers captioned "ב-14 יום")
+    if(msgPct<10) rows.push(["bad",S.insFunnel(msgPct,fmt(f.messaged),fmt(f.signups),30),scrollToEl("funnel")]);
     if(C.offer_convos>0){
       var op=Math.round(100*C.offer_answered/C.offer_convos);
       rows.push([op<60?"bad":"good",S.insOfferAns(op,fmt(C.offer_answered),fmt(C.offer_convos),op<60)]);
@@ -3142,8 +3150,11 @@
         prvV = (comparable && prv.length)? sumRows(prv,keys):null;
         cmpLine(chartId, curV, prvV);
       }
+      // avg metrics (DAU): "23 משתמשים בטווח" read as a range TOTAL - name the
+      // average explicitly
       verdictLine(chartId, curV, prvV, rows, keys,
-        {unit:opts.unit, weekly: !opts.avg && weeklyOn()});
+        {unit: opts.avg? S.uPerDay(opts.unit) : opts.unit,
+         weekly: !opts.avg && weeklyOn()});
     }
     segChart("chSignups","segSignups",DATA.signups_by_day,[
       {key:"ios",name:"iOS",color:S1,type:"bar"},
@@ -3393,7 +3404,10 @@
         nt.appendChild(tr);
       });
       noHost.appendChild(nt);
-      var oldest=(NO.items||[]).reduce(function(a,it){ return Math.max(a,it.days||0); },0);
+      // items hold only the 6 NEWEST rows - "oldest" must come from the server's
+      // full-set field (the reduce said 48 days while the true oldest was 82)
+      var oldest=(NO.oldest_days!=null)? NO.oldest_days
+        : (NO.items||[]).reduce(function(a,it){ return Math.max(a,it.days||0); },0);
       var noRead=S.rdNoOffer(fmt(NO.count), oldest? fmt(oldest)+" "+S.daysUnit : S.today);
       if(NO.count>5) noRead+=S.recNoOffer(fmt(NO.count));
       panelRead("noOffer", NO.count>5?"warn":"", noRead);
