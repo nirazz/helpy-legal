@@ -894,15 +894,16 @@
       nudgeMeta:function(s,a){ return "נשלחו "+s+" · מתוכם "+a+" עשו את הפעולה תוך 48 שעות"; },
       nudgeAndroidNote:"הערת מדידה: פוש באנדרואיד היה מת עד 21.8 - חלק מהשליחות בטווח מעולם לא הגיעו למכשיר, כך שהאחוזים כאן הם רצפה, לא תקרה.",
       rdNudges:function(worstName,worstSent,bestName,bestPct){ return "רוב השולחים לא מזיזים כמעט כלום - <b>"+worstName+"</b> שלח "+worstSent+" פושים כמעט בלי תגובה. הכי אפקטיבי: <b>"+bestName+"</b> ("+bestPct+"). שולח שלא ממיר אחרי חלון מדידה נקי - מכבים."; },
-      depTitle:"מי נושא את השוק · 90 יום",
-      depSub:"אחוז ההשלמות שנשען על העוזרים המובילים - ומי מהם כבר לא מגיע. בקנה מידה כזה, לאבד אחד מהם זה אירוע",
-      depShare:"מההשלמות", depInactive:"לא נראה/תה {n} ימים", depActive:"פעיל/ה",
+      depTitle:"מי נושא את השוק · {win}",
+      depSub:'אחוז <span class="term" data-tip="שיחת עזרה = צ\'אט שבו גם העוזר/ת וגם המבקש/ת כתבו בפועל. נמדד כך ולא לפי השלמות מסומנות, כי הרבה זוגות עוברים לוואטסאפ ולא מסמנים כלום - והשיחה הדו-כיוונית קרתה אצלנו עוד קודם">שיחות העזרה</span> שנשען על העוזרים המובילים - ומי מהם כבר לא מגיע',
+      depShare:"משיחות העזרה", depInactive:"לא נראה/תה {n} ימים", depActive:"פעיל/ה",
       depHead:function(share,total,n){
-        if(total==="1") return "השלמה <b>אחת</b> בלבד ב-90 יום - וכולה על הכתפיים שמופיעות כאן.";
-        if(n<3) return "כל <b>"+total+"</b> ההשלמות ב-90 יום נשענות על מי שמופיע/ה כאן.";
-        return "שלושת העוזרים המובילים מחזיקים <b>"+share+"%</b> מתוך <b>"+total+"</b> ההשלמות ב-90 יום."; },
-      depEmpty:"אין השלמות ב-90 הימים האחרונים - אין עדיין על מי להישען.",
-      rdDep:function(name,share,days){ return "<b>"+name+"</b> מחזיק/ה "+share+"% מההשלמות ולא נראה/תה כבר <b>"+days+" ימים</b>. זו לא שורה בטבלה - זו שיחת טלפון אישית ששווה לעשות השבוע."; },
+        if(total==="1") return "שיחת עזרה <b>אחת</b> בלבד בטווח - וכולה על הכתפיים שמופיעות כאן.";
+        if(n<3) return "כל <b>"+total+"</b> שיחות העזרה בטווח נשענות על מי שמופיע/ה כאן.";
+        return "שלושת העוזרים המובילים מחזיקים <b>"+share+"%</b> מתוך <b>"+total+"</b> שיחות עזרה בטווח."; },
+      depEmpty:"אין שיחות עזרה דו-כיווניות בטווח - אין עדיין על מי להישען.",
+      depConvs:function(n){ return n==="1"? "שיחת עזרה אחת" : n+" שיחות עזרה"; },
+      rdDep:function(name,share,days){ return "<b>"+name+"</b> מחזיק/ה "+share+"% משיחות העזרה ולא נראה/תה כבר <b>"+days+" ימים</b>. זו לא שורה בטבלה - זו שיחת טלפון אישית ששווה לעשות השבוע."; },
       rdDepOk:"אין תלות מסוכנת בעוזר אחד, ואף עוזר מוביל לא נעלם. להמשיך לעקוב.",
       topUsersShow:"כל המשתמשים הפעילים ›", topUsersHide:"‹ להסתיר את הטבלה",
       citiesTitle:"ערים מובילות · {win}", citiesSub:"לפי עיר הפוסט",
@@ -910,7 +911,10 @@
       chatHealthTitle:"בריאות הצ'אט · {win}", chatHealthSub:"האם פניות מקבלות מענה, ובאיזו מהירות",
       cohortTitle:"לפי שבוע הרשמה",
       cohortSub:"שימור: אחוז שחזר אחרי יום / שבוע / חודש (לפי last_seen_at; שבועות שטרם הבשילו מסומנים -). איכות: אחוז שנתן מיקום והתראות",
-      last30Title:"{win} אחרונים",
+      last30Title:"בטווח שנבחר · {win}",
+      sf1Tip:"דיווחים = משתמשים שדיווחו על תוכן או על משתמש אחר מתוך האפליקציה",
+      sf2Tip:"חסימות = משתמש שחסם משתמש אחר בצ'אט או בפיד",
+      sf3Tip:"מחיקות חשבון = משתמש שמחק את החשבון מתוך הגדרות האפליקציה. לא אותו דבר כמו הסרת האפליקציה מהמכשיר - הסרות נמדדות רק בדוחות של אפל וגוגל ומוצגות בפאנל 'מהחנות ועד פעילות'",
       segAll:"הכל", segRequests:"בקשות", segOffers:"הצעות", segCreated:"התאמות",
       segCompleted:"השלמות", segMsgs2:"הודעות", segSenders:"שולחים ייחודיים",
       searchPh:"חיפוש בשם, בפוסט או בתוכן...", hideMockL:"הסתרת חשבונות בדיקה",
@@ -932,7 +936,7 @@
       tileActiveNote:function(w,m){ return "שבוע: "+w+" · חודש: "+m; },
       tileStick:"דביקות WAU/MAU · עכשיו",
       tileStickTip:"דביקות: איזה חלק מהמשתמשים החודשיים נכנסו במהלך השבוע האחרון. זהו המדד ההוגן לאפליקציה אפיזודית כמו Helpy - פותחים אותה כשצריך עזרה, לא כל יום. יעד סביר: 40-50%",
-      tileStickNote:function(w,m){ return "מתוך "+m+" שנכנסו החודש, "+w+" חזרו גם השבוע"; },
+      tileStickNote:function(w,m){ return m+" נכנסו בחודש (MAU) · מתוכם "+w+" גם בשבוע האחרון (WAU)"; },
       tileMsgs:"הודעות צ'אט · {win}", tileMsgsNote:function(n){ return "בין "+n+" חיבורים פעילים"; },
       tileMatches:"התאמות · {win}",
       tileMatchesTip:"חיבור בין שני שכנים סביב פוסט: סוויפ על הצעה פותח צ'אט מיד, סוויפ על בקשה ממתין לאישור",
@@ -1192,15 +1196,16 @@
       nudgeMeta:function(s,a){ return s+" sent · "+a+" of them acted within 48 hours"; },
       nudgeAndroidNote:"Measurement note: Android push was dead until Aug 21 - some sends in range never reached a device, so these rates are a floor, not a ceiling.",
       rdNudges:function(worstName,worstSent,bestName,bestPct){ return "Most senders barely move anything - <b>"+worstName+"</b> sent "+worstSent+" pushes to almost no response. Most effective: <b>"+bestName+"</b> ("+bestPct+"). A sender that still does not convert after a clean measurement window gets turned off."; },
-      depTitle:"Who carries the marketplace · 90 days",
-      depSub:"The share of completions resting on the top helpers - and which of them has stopped showing up. At this scale, losing one is an event",
-      depShare:"of completions", depInactive:"not seen for {n} days", depActive:"active",
+      depTitle:"Who carries the marketplace · {win}",
+      depSub:'The share of <span class="term" data-tip="helping conversation = a chat where BOTH the helper and the asker actually wrote. Measured this way rather than by marked completions because many pairs move to WhatsApp and never mark anything - the two-way chat happened here first">helping conversations</span> resting on the top helpers - and which of them has stopped showing up',
+      depShare:"of helping conversations", depInactive:"not seen for {n} days", depActive:"active",
       depHead:function(share,total,n){
-        if(total==="1") return "Just <b>one</b> completion in 90 days - and it rests entirely on the shoulders listed here.";
-        if(n<3) return "All <b>"+total+"</b> completions in 90 days rest on the people listed here.";
-        return "The top three helpers carry <b>"+share+"%</b> of <b>"+total+"</b> completions in 90 days."; },
-      depEmpty:"No completions in the last 90 days - nobody to lean on yet.",
-      rdDep:function(name,share,days){ return "<b>"+name+"</b> carries "+share+"% of completions and has not been seen for <b>"+days+" days</b>. That is not a table row - it is a personal phone call worth making this week."; },
+        if(total==="1") return "Just <b>one</b> helping conversation in range - resting entirely on the shoulders listed here.";
+        if(n<3) return "All <b>"+total+"</b> helping conversations in range rest on the people listed here.";
+        return "The top three helpers carry <b>"+share+"%</b> of <b>"+total+"</b> helping conversations in range."; },
+      depEmpty:"No two-way helping conversations in range - nobody to lean on yet.",
+      depConvs:function(n){ return n==="1"? "one helping conversation" : n+" helping conversations"; },
+      rdDep:function(name,share,days){ return "<b>"+name+"</b> carries "+share+"% of helping conversations and has not been seen for <b>"+days+" days</b>. That is not a table row - it is a personal phone call worth making this week."; },
       rdDepOk:"No dangerous dependence on a single helper, and no top helper has gone quiet. Keep watching.",
       topUsersShow:"All active users ›", topUsersHide:"‹ Hide the table",
       citiesTitle:"Top cities · {win}", citiesSub:"By post city",
@@ -1208,7 +1213,10 @@
       chatHealthTitle:"Chat health · {win}", chatHealthSub:"Do openers get answered, and how fast",
       cohortTitle:"By signup week",
       cohortSub:"Retention: % who returned after a day / week / month (by last_seen_at; immature weeks show -). Quality: % who granted location and push",
-      last30Title:"Last {win}",
+      last30Title:"In the selected range · {win}",
+      sf1Tip:"Reports = users who reported content or another user from inside the app",
+      sf2Tip:"Blocks = a user blocking another user",
+      sf3Tip:"Account deletions = a user deleting their account from the app's settings. Not the same as uninstalling the app - uninstalls are measured only in Apple's and Google's reports, shown in the store-to-active panel",
       segAll:"All", segRequests:"Requests", segOffers:"Offers", segCreated:"Matches",
       segCompleted:"Completions", segMsgs2:"Messages", segSenders:"Unique senders",
       searchPh:"Search names, posts or content...", hideMockL:"Hide test accounts",
@@ -1230,7 +1238,7 @@
       tileActiveNote:function(w,m){ return "week: "+w+" · month: "+m; },
       tileStick:"WAU/MAU stickiness · now",
       tileStickTip:"Stickiness: what share of monthly users showed up during the last week. This is the fair measure for an episodic app like Helpy - opened when help is needed, not daily. A sane aspiration: 40-50%",
-      tileStickNote:function(w,m){ return "of "+m+" who opened this month, "+w+" came back this week"; },
+      tileStickNote:function(w,m){ return m+" opened this month (MAU) · "+w+" of them also this week (WAU)"; },
       tileMsgs:"Chat messages · {win}", tileMsgsNote:function(n){ return "across "+n+" active matches"; },
       tileMatches:"Matches · {win}",
       tileMatchesTip:"A connection between two neighbors around a post: swiping an offer opens chat instantly, swiping a request awaits approval",
@@ -3109,7 +3117,7 @@
           hd.appendChild(row);
           var status=h.days_inactive>14? S.depInactive.replace("{n}",fmt(h.days_inactive)) : S.depActive;
           hd.appendChild(el("div","hmeta",
-            fmt(h.completions)+" · "+status+(risk?" \u26A0":"")));
+            S.depConvs(fmt(h.completions))+" · "+status+(risk?" \u26A0":"")));
         });
         var riskH=(HD.helpers||[]).filter(function(h){ return h.share>30 && h.days_inactive>14; })[0];
         if(riskH) panelRead("helperDep","bad",S.rdDep(riskH.name, riskH.share, fmt(riskH.days_inactive)));
@@ -3508,9 +3516,13 @@
 
     var SF=DATA.safety;
     var st=el("table","plain");
-    [[S.sf1,fmt(SF.reports_30d)],[S.sf2,fmt(SF.blocks_30d)],
-     [S.sf3,fmt(SF.deletions_30d)]].forEach(function(r){
-      var tr=el("tr"); tr.appendChild(el("th",null,r[0])); tr.appendChild(el("td",null,r[1]));
+    [[S.sf1,fmt(SF.reports_30d),S.sf1Tip],[S.sf2,fmt(SF.blocks_30d),S.sf2Tip],
+     [S.sf3,fmt(SF.deletions_30d),S.sf3Tip]].forEach(function(r){
+      var tr=el("tr"), th=el("th");
+      // every term carries its explanation right where it appears (Nir's rule)
+      var sp=el("span","term below",r[0]); sp.setAttribute("data-tip",r[2]);
+      th.appendChild(sp);
+      tr.appendChild(th); tr.appendChild(el("td",null,r[1]));
       st.appendChild(tr);
     });
     var sf=$("safety"); sf.innerHTML=""; sf.appendChild(st);
@@ -4180,9 +4192,13 @@
   segWire("chatRangeSeg",function(){ load().catch(function(){}); });
   segWire("chatTypeSeg",renderChat);
   segWire("funnelSeg",function(){ if(DATA) renderMetrics(); });
-  ["segSignups","segDau","segPosts","segMsgs","segMatches","segCats","grainSeg"].forEach(function(id){
+  ["segSignups","segDau","segPosts","segMsgs","segMatches","segCats"].forEach(function(id){
     segWire(id,function(){ if(DATA) renderMetrics(); });
   });
+  // grain sits in the top bar but only the time CHARTS respond to it - the
+  // tiles/insights in the first viewport don't, so a click looked like it did
+  // nothing. Jump to the nearest affected chart so the effect is visible.
+  segWire("grainSeg",function(){ if(DATA){ renderMetrics(); flashTo("chSignups"); } });
   // the usage tip is worth reading once; after that it is chrome
   (function(){
     var tip=$("tipLine"); if(!tip) return;
