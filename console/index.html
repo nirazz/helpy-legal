@@ -346,7 +346,10 @@
         opacity:0; pointer-events:none; transition:opacity .15s; z-index:35; }
   .term:hover::after, .term.open::after { opacity:1; }
   /* inside overflow containers (cohort table) the tip opens downward so it isn't clipped */
-  .term.below::after { bottom:auto; top:calc(100% + 8px); }
+  .term.below::after { bottom:auto; top:calc(100% + 8px);
+    /* anchor to the term's inline-start so the bubble grows INTO the screen -
+       centered bubbles on edge tiles opened half off-viewport on the phone */
+    inset-inline-start:0; transform:none; }
 
   #tt .tdate { color:var(--muted); font-size:11px; margin-bottom:4px; }
   #tt .trow { display:flex; align-items:center; gap:6px; }
@@ -929,7 +932,7 @@
       tileActiveNote:function(w,m){ return "שבוע: "+w+" · חודש: "+m; },
       tileStick:"דביקות WAU/MAU · עכשיו",
       tileStickTip:"דביקות: איזה חלק מהמשתמשים החודשיים נכנסו במהלך השבוע האחרון. זהו המדד ההוגן לאפליקציה אפיזודית כמו Helpy - פותחים אותה כשצריך עזרה, לא כל יום. יעד סביר: 40-50%",
-      tileStickNote:function(w,m){ return w+" בשבוע · "+m+" בחודש"; },
+      tileStickNote:function(w,m){ return "מתוך "+m+" שנכנסו החודש, "+w+" חזרו גם השבוע"; },
       tileMsgs:"הודעות צ'אט · {win}", tileMsgsNote:function(n){ return "בין "+n+" חיבורים פעילים"; },
       tileMatches:"התאמות · {win}",
       tileMatchesTip:"חיבור בין שני שכנים סביב פוסט: סוויפ על הצעה פותח צ'אט מיד, סוויפ על בקשה ממתין לאישור",
@@ -1227,7 +1230,7 @@
       tileActiveNote:function(w,m){ return "week: "+w+" · month: "+m; },
       tileStick:"WAU/MAU stickiness · now",
       tileStickTip:"Stickiness: what share of monthly users showed up during the last week. This is the fair measure for an episodic app like Helpy - opened when help is needed, not daily. A sane aspiration: 40-50%",
-      tileStickNote:function(w,m){ return w+" weekly · "+m+" monthly"; },
+      tileStickNote:function(w,m){ return "of "+m+" who opened this month, "+w+" came back this week"; },
       tileMsgs:"Chat messages · {win}", tileMsgsNote:function(n){ return "across "+n+" active matches"; },
       tileMatches:"Matches · {win}",
       tileMatchesTip:"A connection between two neighbors around a post: swiping an offer opens chat instantly, swiping a request awaits approval",
@@ -1774,7 +1777,11 @@
             borderRadius: (opts.group || s.key === lastBarKey) ? [3,3,0,0] : 0 },
           emphasis: { focus: "series",
             itemStyle: { shadowBlur: 10, shadowColor: s.color + "66" } },
-          data: rows.map(function(r){ return +r[s.key] || 0; }) };
+          data: rows.map(function(r,i){
+            var v = +r[s.key] || 0;
+            return (opts.fadeLast && i === rows.length-1)
+              ? { value: v, itemStyle: { opacity: 0.45 } } : v;
+          }) };
       }).concat(prevData ? [{
         name: S.serPrev, type: "line", smooth: true, showSymbol: false, z: 1,
         lineStyle: { width: 1.5, type: "dashed", color: tok("--muted") },
@@ -2040,6 +2047,11 @@
     if(g==="daily") return false;
     if(g==="weekly") return true;
     return spanDays()>=28;
+  }
+  function isPartialWeekStart(weekStart){
+    var d1=new Date(String(weekStart).slice(0,10)+"T00:00:00");
+    d1.setDate(d1.getDate()+7);
+    return d1 > new Date();
   }
   function prevAgg(rows,keys){
     var p=prevRows(rows);
@@ -3170,10 +3182,15 @@
       // avg-type metrics (DAU) must never be summed into weekly buckets
       var rows = opts.avg ? rangeRows(source)
                           : maybeWeekly(source, defs.map(function(d){return d.key;}).concat(sumKeys));
-      opts.prev = { rows: opts.avg ? prevRows(source) : prevAgg(source, keys), keys: keys };
+      var comparable = prevComparable(source, keys);
+      // the dashed overlay obeys the same comparability rule as the numbers -
+      // the header used to say "אין תקופה קודמת להשוואה" while the chart still
+      // drew a previous-period line
+      opts.prev = comparable ? { rows: opts.avg ? prevRows(source) : prevAgg(source, keys), keys: keys } : null;
+      // the running partial week draws lighter so it doesn't read as a crash
+      opts.fadeLast = !opts.avg && weeklyOn() && rows.length>0 && isPartialWeekStart(rows[rows.length-1].d);
       timeChart(chartId, rows, series, opts);
       var cur = rangeRows(source), prv = prevRows(source);
-      var comparable = prevComparable(source, keys);
       var curV, prvV;
       if(opts.avg){
         curV = cur.length? Math.round(sumRows(cur,keys)/cur.length):0;
