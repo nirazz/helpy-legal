@@ -692,6 +692,7 @@
         <span class="seg mini" id="funnelSeg"><button data-d="14" class="on" data-i18n="d14">14 יום</button><button data-d="30" data-i18n="d30">30 יום</button></span></h2>
         <div class="sub" data-i18n="funnelSub">מה עושה משתמש חדש אחרי ההרשמה</div><div id="funnel"></div></section>
       <section class="panel"><h2 data-i18n="lifecycleTitle">מאזן משתמשים</h2><div class="sub" data-i18n="lifecycleSub">חתך חי של כל המשתמשים הרשומים</div><div id="lifecycle"></div></section>
+      <section class="panel wide"><h2 data-i18n="sfTitle">מהחנות ועד פעילות</h2><div class="sub" data-i18n="sfSub">המשפך המלא: כמה הורידו, כמה עדיין מחזיקים באפליקציה, כמה נרשמו וכמה באמת פעילים · נתוני ההורדות וההסרות מגיעים מדוחות החנויות עצמן, לא מהמסד שלנו</div><div id="storeFunnel"></div></section>
       <section class="panel wide"><h2 data-i18n="nudgeTitle">מכונת הדחיפות · {win}</h2><div class="sub" data-i18n="nudgeSub">כל שולח פוש נמדד: כמה נשלחו, וכמה מהמקבלים עשו את הפעולה תוך 48 שעות. זה הפאנל שמחליט איזה שולח נשאר</div><div id="nudgeEff"></div></section>
       <section class="panel wide"><h2 data-i18n="glogTitle">יומן צמיחה · שבוע אחר שבוע</h2><div class="sub" data-i18n="glogSub">מה קרה בכל שבוע, מה השתנה, ומה גרם לזה</div><div id="growthLog"></div></section>
     </div>
@@ -824,6 +825,17 @@
       dauSub:'<span class="term" data-tip="Daily Active Users - כמה משתמשים שונים פתחו את האפליקציה באותו יום">DAU</span> ו-<span class="term" data-tip="Weekly Active Users - כמה משתמשים שונים פתחו את האפליקציה בשבעת הימים האחרונים">WAU</span> מתוך <span class="term" data-tip="חותמת שהשרת מטביע פעם בשעה לכל משתמש שפותח את האפליקציה - מקור האמת למדידת פעילות">דגימת last_seen_at</span> יומית',
       funnelTitle:"פעולות אחרי הרשמה", d14:"14 יום", d30:"30 יום", funnelSub:"מה עושה משתמש חדש אחרי ההרשמה · למעלה הרשאות שקורות במקביל, למטה המסע עצמו",
       lifecycleTitle:"מאזן משתמשים", lifecycleSub:"חתך חי של כל המשתמשים הרשומים",
+      sfTitle:"מהחנות ועד פעילות", sfSub:"המשפך המלא: כמה הורידו, כמה עדיין מחזיקים באפליקציה, כמה נרשמו וכמה באמת פעילים · נתוני ההורדות וההסרות מגיעים מדוחות החנויות עצמן, לא מהמסד שלנו",
+      sfDownloads:"הורדות מהחנויות", sfRemoved:"הסירו את האפליקציה", sfHolding:"מחזיקים באפליקציה כעת", sfAccounts:"נרשמו - חשבונות חיים", sfAlive30:"פעילים בחודש האחרון", sfAlive7:"פעילים בשבוע האחרון",
+      sfMetaDl:function(i,a){ return "iOS "+i+" · Android "+a+" · המקור: דוחות ההתקנה של אפל וגוגל. אפל סופרת רק מכשירים שאישרו שיתוף נתונים, אז צד ה-iOS הוא רצפה - המספר האמיתי גבוה יותר"; },
+      sfMetaRm:function(i,a,ap){ return "iOS "+i+" · Android "+a+" ("+ap+" מההתקנות) · אנדרואיד נמדד במלואו; ההסרות ב-iOS מדווחות רק ממכשירי opt-in, אז היחס האמיתי שם כנראה גבוה מהנראה"; },
+      sfMetaHold:function(i,a){ return "iOS ~"+i+" (הערכה: התקנות פחות הסרות) · Android "+a+" (בסיס מכשירים שנמדד ישירות אצל גוגל)"; },
+      sfMetaAcc:function(i,a,u){ return "iOS "+i+" · Android "+a+" · "+u+" ותיקים ללא שיוך פלטפורמה · חשבון נוצר רק אחרי כניסה ראשונה, ונשאר קיים גם אם האפליקציה הוסרה - לכן מונים 'חיים' לפי כניסות בפועל, לא לפי חשבונות"; },
+      sfMetaAlive30:function(i,a){ return "iOS "+i+" · Android "+a+" · לפי חותמת last_seen_at שהשרת מטביע בכל פתיחת אפליקציה - מקור האמת לפעילות"; },
+      sfMetaAlive7:function(i,a){ return "iOS "+i+" · Android "+a+" · הליבה הפעילה באמת של הרשת"; },
+      rdStore:function(dl,hold,acc,m30,w7,p30){ return "מתוך <b>"+dl+"</b> הורדות, כ-<b>"+hold+"</b> מכשירים עדיין מחזיקים באפליקציה, יש <b>"+acc+"</b> חשבונות חיים, ומהם <b>"+m30+"</b> נכנסו בחודש האחרון ("+p30+" מכלל ההורדות) ו-<b>"+w7+"</b> בשבוע האחרון. הסרת אפליקציה אינה מוחקת חשבון - לכן שכבת ה'חיים' נמדדת לפי כניסות, לא לפי מצבת החשבונות."; },
+      sfFresh:function(iosD,andD){ return "טריות הנתונים: iOS עד "+iosD+" · Android עד "+andD+" · המספרים נמשכים ידנית מדוחות החנויות"; },
+      emptyStore:"נתוני החנויות עדיין לא נטענו",
       postsTitle:"פוסטים", postsSub:"בקשות עזרה מול הצעות עזרה",
       matchesTitle:"התאמות והשלמות", matchesSub:"התאמות חדשות מול עזרות שסומנו כהושלמו",
       liqTitle:'<span class="term" data-tip="מדד הבריאות המרכזי של מרקטפלייס: כמה מהר צד הביקוש (בקשה) פוגש את צד ההיצע (עוזר/ת)">נזילות</span> · {win}',
@@ -1111,6 +1123,17 @@
       dauSub:'<span class="term" data-tip="Daily Active Users - distinct users who opened the app that day">DAU</span> and <span class="term" data-tip="Weekly Active Users - distinct users who opened the app in the last 7 days">WAU</span> from the daily <span class="term" data-tip="a server-side stamp written once an hour for every user who opens the app - the source of truth for activity">last_seen_at sample</span>',
       funnelTitle:"Actions after signup", d14:"14 days", d30:"30 days", funnelSub:"What a new user does after signing up · permissions above happen in parallel, the journey itself below",
       lifecycleTitle:"User balance", lifecycleSub:"A live cut of all registered users",
+      sfTitle:"Store to active", sfSub:"The full funnel: downloads, who still holds the app, who signed up, and who is genuinely active · install and uninstall figures come from the stores' own reports, not from our database",
+      sfDownloads:"Store downloads", sfRemoved:"Uninstalled the app", sfHolding:"Currently holding the app", sfAccounts:"Signed up - live accounts", sfAlive30:"Active in the last month", sfAlive7:"Active in the last week",
+      sfMetaDl:function(i,a){ return "iOS "+i+" · Android "+a+" · source: Apple and Google install reports. Apple only counts devices that opted into data sharing, so the iOS side is a floor - the true number is higher"; },
+      sfMetaRm:function(i,a,ap){ return "iOS "+i+" · Android "+a+" ("+ap+" of installs) · Android is fully measured; iOS deletions are reported from opt-in devices only, so the true iOS rate is likely higher than shown"; },
+      sfMetaHold:function(i,a){ return "iOS ~"+i+" (estimate: installs minus uninstalls) · Android "+a+" (device base measured directly by Google)"; },
+      sfMetaAcc:function(i,a,u){ return "iOS "+i+" · Android "+a+" · "+u+" older accounts without a platform tag · an account is only created after a first sign-in, and survives an uninstall - which is why 'alive' is counted from actual opens, not from the account roster"; },
+      sfMetaAlive30:function(i,a){ return "iOS "+i+" · Android "+a+" · from the last_seen_at stamp the server writes on every app open - the source of truth for activity"; },
+      sfMetaAlive7:function(i,a){ return "iOS "+i+" · Android "+a+" · the genuinely active core of the network"; },
+      rdStore:function(dl,hold,acc,m30,w7,p30){ return "Of <b>"+dl+"</b> downloads, about <b>"+hold+"</b> devices still hold the app, there are <b>"+acc+"</b> live accounts, and of those <b>"+m30+"</b> opened the app in the last month ("+p30+" of all downloads) and <b>"+w7+"</b> in the last week. Uninstalling does not delete an account - so the 'alive' layers are measured from opens, never from the account roster."; },
+      sfFresh:function(iosD,andD){ return "Data freshness: iOS through "+iosD+" · Android through "+andD+" · figures are pulled manually from the stores' reports"; },
+      emptyStore:"Store data not loaded yet",
       postsTitle:"Posts", postsSub:"Help requests vs. help offers",
       matchesTitle:"Matches & completions", matchesSub:"New matches vs. helps marked completed",
       liqTitle:'<span class="term" data-tip="The core marketplace health metric: how fast demand (a request) meets supply (a helper)">Liquidity</span> · {win}',
@@ -2595,6 +2618,46 @@
     tr.appendChild(th); tr.appendChild(el("td",null,value));
     host.appendChild(tr);
   }
+  // ---- store funnel: downloads -> holding -> accounts -> alive -------------
+  // Install/uninstall truth comes ONLY from the stores' reports (a table the
+  // operator refreshes); the DB contributes accounts + last_seen_at activity.
+  function renderStoreFunnel(){
+    var host=$("storeFunnel"); if(!host) return;
+    host.innerHTML="";
+    var SFU=DATA.store_funnel;
+    if(!SFU || !SFU.stores || !SFU.stores.ios || !SFU.stores.android){
+      emptyState(host,S.emptyStore,"layers"); return;
+    }
+    var ios=SFU.stores.ios, and=SFU.stores.android;
+    var A=SFU.accounts||{}, L=SFU.alive||{};
+    var dl=(ios.installs||0)+(and.installs||0);
+    var rm=(ios.uninstalls||0)+(and.uninstalls||0);
+    var iosHold=Math.max(0,(ios.installs||0)-(ios.uninstalls||0));
+    // Play measures the live device base directly; installs-minus-uninstalls is
+    // the fallback (and the only option on iOS, where Apple reports no base)
+    var andHold=(and.active_devices!=null)? and.active_devices
+                : Math.max(0,(and.installs||0)-(and.uninstalls||0));
+    var hold=iosHold+andHold;
+    var ramp=[tok("--seq250"),tok("--seq400"),tok("--seq550"),tok("--seq700")];
+    hbars(host,[
+      {label:S.sfDownloads, v1:dl, c1:ramp[0], suffix:" · 100%",
+       meta:S.sfMetaDl(fmt(ios.installs),fmt(and.installs))},
+      {label:S.sfRemoved, v1:rm, c1:tok("--s8"), suffix:" · "+pct(rm,dl),
+       meta:S.sfMetaRm(fmt(ios.uninstalls),fmt(and.uninstalls),pct(and.uninstalls,and.installs))},
+      {label:S.sfHolding, v1:hold, c1:ramp[1], suffix:" · "+pct(hold,dl),
+       meta:S.sfMetaHold(fmt(iosHold),fmt(andHold))},
+      {label:S.sfAccounts, v1:A.live||0, c1:ramp[2], suffix:" · "+pct(A.live,dl),
+       meta:S.sfMetaAcc(fmt(A.ios),fmt(A.android),fmt(A.unknown))},
+      {label:S.sfAlive30, v1:L.seen_30d||0, c1:ramp[3], suffix:" · "+pct(L.seen_30d,dl),
+       meta:S.sfMetaAlive30(fmt(L.seen_30d_ios),fmt(L.seen_30d_android))},
+      {label:S.sfAlive7, v1:L.seen_7d||0, c1:ramp[3], suffix:" · "+pct(L.seen_7d,dl),
+       meta:S.sfMetaAlive7(fmt(L.seen_7d_ios),fmt(L.seen_7d_android))}
+    ]);
+    host.appendChild(el("div","note",S.sfFresh(fmtDay(ios.data_through),fmtDay(and.data_through))));
+    panelRead("storeFunnel","",
+      S.rdStore(fmt(dl),fmt(hold),fmt(A.live||0),fmt(L.seen_30d||0),fmt(L.seen_7d||0),pct(L.seen_30d,dl)));
+  }
+
   function renderResearch(){
     var R=DATA.research;
     // additive by design: without the research payload these panels just say so
@@ -3324,6 +3387,7 @@
         S.rdTopUsers(TU[0].name, pct(score(TU[0]),tot)));
     }
 
+    renderStoreFunnel();
     renderResearch();
     renderDecisions();
     renderGrowthLog();
