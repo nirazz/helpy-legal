@@ -230,8 +230,7 @@
     background: #fff;
   }
   .section .section-inner {
-    opacity: 0; transform: translateY(40px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
+    opacity: 0; transform: translateY(24px);    transition: opacity 0.55s ease, transform 0.55s ease;
   }
   .section.visible .section-inner { opacity: 1; transform: translateY(0); }
   .section-inner {
@@ -284,10 +283,14 @@
     z-index: -1;
     filter: blur(40px);
   }
+  /* Real screenshots wear a CSS device bezel so they read as a phone,
+     not as a cropped image */
   .device-image {
     width: 100%;
     display: block;
-    border-radius: 36px;
+    border: 12px solid #10121b;
+    background: #10121b;
+    border-radius: 52px;
     box-shadow:
       0 40px 80px rgba(15, 23, 42, 0.18),
       0 12px 28px rgba(15, 23, 42, 0.10);
@@ -445,7 +448,7 @@
   <p class="sub-tagline">אפליקציה קהילתית חינמית, לרגעים שבהם צריך יד עוזרת, ולרגעים שבהם אפשר לתת אחת.</p>
 
   <div class="hero-pills">
-    <span class="hero-pill"><i data-lucide="gift"></i> תמיד בחינם</span>
+    <span class="hero-pill"><i data-lucide="gift"></i> שימוש חינם</span>
     <span class="hero-pill"><i data-lucide="map-pin"></i> שכנים בקרבת מקום</span>
     <span class="hero-pill"><i data-lucide="globe"></i> עברית ואנגלית</span>
     <span class="hero-pill"><i data-lucide="shield-check"></i> טלפון מאומת</span>
@@ -478,6 +481,8 @@
       </span>
     </a>
   </div>
+
+  <div class="scroll-hint">גלו עוד<span>↓</span></div>
 </div>
 
 <!-- ═══════ HOW IT WORKS ═══════ -->
@@ -690,7 +695,7 @@
 <!-- ═══════ FOOTER ═══════ -->
 <div class="footer">
   <h2>התחילו <span class="gradient">לעזור</span> היום.</h2>
-  <p class="footer-sub">חינם לכולם. תמיד.</p>
+  <p class="footer-sub">חינם להצטרף, חינם לעזור.</p>
 
   <div class="badge-row">
     <a href="https://apps.apple.com/app/helpy-neighborly-help/id6758919822" class="store-badge" aria-label="הורידו את Helpy מ-App Store">
@@ -749,7 +754,7 @@
     entries.forEach(entry => {
       if (entry.isIntersecting) entry.target.classList.add('visible');
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.06 });
   document.querySelectorAll('.section').forEach(el => observer.observe(el));
 
   // The library loads with `defer`, so it is NOT available yet when this inline

@@ -305,8 +305,7 @@
 
   .section .section-inner {
     opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
+    transform: translateY(24px);    transition: opacity 0.55s ease, transform 0.55s ease;
   }
 
   .section.visible .section-inner {
@@ -387,10 +386,14 @@
     z-index: -1;
     filter: blur(40px);
   }
+  /* Real screenshots wear a CSS device bezel so they read as a phone,
+     not as a cropped image */
   .device-image {
     width: 100%;
     display: block;
-    border-radius: 36px;
+    border: 12px solid #10121b;
+    background: #10121b;
+    border-radius: 52px;
     box-shadow:
       0 40px 80px rgba(15, 23, 42, 0.18),
       0 12px 28px rgba(15, 23, 42, 0.10);
@@ -598,7 +601,7 @@
   <p class="sub-tagline">A free community app for the moments you need a hand, and the moments you can give one.</p>
 
   <div class="hero-pills">
-    <span class="hero-pill"><i data-lucide="gift"></i> Always free</span>
+    <span class="hero-pill"><i data-lucide="gift"></i> Free to use</span>
     <span class="hero-pill"><i data-lucide="map-pin"></i> Nearby neighbors</span>
     <span class="hero-pill"><i data-lucide="globe"></i> Hebrew &amp; English</span>
     <span class="hero-pill"><i data-lucide="shield-check"></i> Phone-verified</span>
@@ -853,7 +856,7 @@
 <!-- ═══════ FOOTER / FINAL CTA ═══════ -->
 <div class="footer">
   <h2>Start <span class="gradient">helping</span> today.</h2>
-  <p class="footer-sub">Free for everyone. Always.</p>
+  <p class="footer-sub">Free to join, free to help.</p>
 
   <div class="badge-row">
     <a href="https://apps.apple.com/app/helpy-neighborly-help/id6758919822" class="store-badge" aria-label="Download Helpy on the App Store">
@@ -912,7 +915,7 @@
     entries.forEach(entry => {
       if (entry.isIntersecting) entry.target.classList.add('visible');
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0.06 });
   document.querySelectorAll('.section').forEach(el => observer.observe(el));
 
   // Render Lucide icons - the library loads with `defer`, so it is NOT available
