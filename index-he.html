@@ -11,7 +11,12 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://help-y.com/index-he.html">
 <link rel="icon" href="app-icon-512.png">
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+<link rel="apple-touch-icon" href="app-icon-512.png">
+<link rel="canonical" href="https://help-y.com/index-he.html">
+<link rel="alternate" hreflang="he" href="https://help-y.com/index-he.html">
+<link rel="alternate" hreflang="en" href="https://help-y.com/">
+<link rel="alternate" hreflang="x-default" href="https://help-y.com/">
+<script src="https://unpkg.com/lucide@1.34.0/dist/umd/lucide.min.js" defer></script>
 <style>
   @import url('/fonts/fonts.css');
 
@@ -35,11 +40,13 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /* absolute, not fixed: the bar scrolls away with the hero instead of
+     hovering as a grey band over the white sections */
   .lang-switch-top {
     text-align: center; padding: 12px 24px;
     background: rgba(0,0,0,0.4);
     backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    position: absolute; top: 0; left: 0; right: 0; z-index: 100;
   }
   .lang-switch-top a { font-size: 13px; color: #a5b4fc; text-decoration: none; font-weight: 500; }
   .lang-switch-top a:hover { color: #fff; }
@@ -214,14 +221,19 @@
   .flow-step p { font-size: 13px; color: #64748b; line-height: 1.7; }
   .flow-arrow { color: #c4b5fd; font-size: 22px; align-self: center; flex-shrink: 0; }
 
-  /* ── Feature sections ── */
+  /* ── Feature sections ──
+     The reveal animates the INNER content only: animating the section itself
+     turns its white background transparent (opacity 0), flashing the dark body
+     behind the light sections while scrolling. */
   .section {
     padding: 100px 40px; position: relative;
-    opacity: 0; transform: translateY(40px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
     background: #fff;
   }
-  .section.visible { opacity: 1; transform: translateY(0); }
+  .section .section-inner {
+    opacity: 0; transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .section.visible .section-inner { opacity: 1; transform: translateY(0); }
   .section-inner {
     max-width: 1080px; margin: 0 auto;
     display: flex; align-items: center; gap: 80px;
@@ -364,6 +376,17 @@
     .footer h2 { font-size: 38px; }
     .footer { padding: 80px 24px 48px; }
     .bilingual-phones { gap: 24px; }
+  }
+
+  /* Respect the OS "reduce motion" setting */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .section .section-inner { opacity: 1; transform: none; }
   }
 
   /* Fallback when icons fail (CDN blip / JS disabled) */
@@ -510,7 +533,7 @@
       <ul class="feature-list">
         <li><span class="icon"><i data-lucide="hand-helping"></i></span>הצעת עזרה בלחיצה</li>
         <li><span class="icon"><i data-lucide="zap"></i></span>נטען מהר, מציג רק מה שקרוב</li>
-        <li><span class="icon"><i data-lucide="ban"></i></span>חוסם אוטומטית את מי שדיווחתם עליו</li>
+        <li><span class="icon"><i data-lucide="ban"></i></span>מסתיר את מי שחסמתם או דיווחתם עליו</li>
       </ul>
     </div>
     <div class="device-shot">
@@ -546,6 +569,7 @@
       <h2>בקשו עזרה, <span class="gradient">בשניות</span>.</h2>
       <p class="lede">בוחרים קטגוריה, כותבים משפט, מצלמים תמונה. זהו. הבקשה מופיעה לשכנים מיד.</p>
       <ul class="feature-list">
+        <li><span class="icon"><i data-lucide="hand-heart"></i></span>מפרסמים בקשה, או הצעת עזרה</li>
         <li><span class="icon"><i data-lucide="grid-3x3"></i></span>12 קטגוריות, מקניות עד תיקונים</li>
         <li><span class="icon"><i data-lucide="camera"></i></span>עד 3 תמונות מהמצלמה או מהגלריה</li>
         <li><span class="icon"><i data-lucide="alarm-clock"></i></span>סימון רמת דחיפות</li>
@@ -563,7 +587,7 @@
     <div class="section-text">
       <span class="step-badge">צ'אט</span>
       <h2>תיאום <span class="gradient">בזמן אמת</span>.</h2>
-      <p class="lede">אחרי ההתאמה, צ'אט כדי לסגור את האיפה, המתי והאיך. הודעות מיידיות, בלי ריענון, בלי עיכוב.</p>
+      <p class="lede">אחרי ההתאמה נפתח צ'אט, וסוגרים ביחד איפה, מתי ואיך. הודעות מיידיות, בלי ריענון ובלי עיכוב.</p>
       <ul class="feature-list">
         <li><span class="icon"><i data-lucide="pencil"></i></span>חיווי הקלדה</li>
         <li><span class="icon"><i data-lucide="check"></i></span>אישורי קריאה</li>
@@ -601,11 +625,11 @@
     <div class="section-text">
       <span class="step-badge">פרופיל</span>
       <h2>בונים <span class="gradient">מוניטין קהילתי</span>.</h2>
-      <p class="lede">פרופיל ציבורי אמיתי עם דירוג, ביקורות, וכל העזרה שנתתם. סטריקים ולוח דירוג חודשי הופכים את ההגעה לכיף.</p>
+      <p class="lede">פרופיל ציבורי אמיתי עם דירוג, ביקורות, וכל העזרה שנתתם. רצף עזרה יומי ולוח מובילים שכונתי הופכים את העזרה להרגל.</p>
       <ul class="feature-list">
         <li><span class="icon"><i data-lucide="bar-chart-2"></i></span>עזרתי, קיבלתי, דירוג, פרסמתי</li>
-        <li><span class="icon"><i data-lucide="flame"></i></span>סטריק יומי</li>
-        <li><span class="icon"><i data-lucide="trophy"></i></span>לוח דירוג חודשי בשכונה</li>
+        <li><span class="icon"><i data-lucide="flame"></i></span>רצף עזרה יומי</li>
+        <li><span class="icon"><i data-lucide="trophy"></i></span>לוח העוזרים המובילים בשכונה</li>
       </ul>
     </div>
     <div class="device-shot">
@@ -653,7 +677,7 @@
     <div class="safety-card">
       <div class="icon"><i data-lucide="trash-2"></i></div>
       <h3>מחיקה בכל רגע</h3>
-      <p>מוחקים את החשבון וכל המידע שצוּבר, בלחיצה אחת. בלי שאלות.</p>
+      <p>מוחקים את החשבון והמידע האישי בכל רגע, ישירות מהאפליקציה. בלי תקופת המתנה.</p>
     </div>
   </div>
 </div>
@@ -723,11 +747,19 @@
   }, { threshold: 0.12 });
   document.querySelectorAll('.section').forEach(el => observer.observe(el));
 
-  if (window.lucide) {
-    lucide.createIcons();
-  } else {
-    document.body.classList.add('no-icons');
+  // The library loads with `defer`, so it is NOT available yet when this inline
+  // script runs; wait for window load (fires after deferred scripts, and still
+  // fires if the CDN request failed) before choosing icons vs the fallback.
+  function initIcons() {
+    if (window.lucide) {
+      document.body.classList.remove('no-icons');
+      lucide.createIcons();
+    } else {
+      document.body.classList.add('no-icons');
+    }
   }
+  if (document.readyState === 'complete') initIcons();
+  else window.addEventListener('load', initIcons);
 </script>
 
 </body>

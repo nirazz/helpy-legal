@@ -12,7 +12,12 @@
 <meta property="og:url" content="https://help-y.com/">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="app-icon-512.png">
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+<link rel="apple-touch-icon" href="app-icon-512.png">
+<link rel="canonical" href="https://help-y.com/">
+<link rel="alternate" hreflang="en" href="https://help-y.com/">
+<link rel="alternate" hreflang="he" href="https://help-y.com/index-he.html">
+<link rel="alternate" hreflang="x-default" href="https://help-y.com/">
+<script src="https://unpkg.com/lucide@1.34.0/dist/umd/lucide.min.js" defer></script>
 <style>
   @import url('/fonts/fonts.css');
 
@@ -36,14 +41,15 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ── Top language bar ── */
+  /* ── Top language bar (absolute, scrolls away with the hero -
+       a fixed grey band over the white sections read as a glitch) ── */
   .lang-switch-top {
     text-align: center;
     padding: 12px 24px;
     background: rgba(0,0,0,0.4);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    position: fixed;
+    position: absolute;
     top: 0; left: 0; right: 0;
     z-index: 100;
   }
@@ -287,17 +293,23 @@
     flex-shrink: 0;
   }
 
-  /* ── Feature sections ── */
+  /* ── Feature sections ──
+     The reveal animates the INNER content only: animating the section itself
+     turns its white background transparent (opacity 0), flashing the dark body
+     behind the light sections while scrolling. */
   .section {
     padding: 100px 40px;
     position: relative;
-    opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.7s ease, transform 0.7s ease;
     background: #fff;
   }
 
-  .section.visible {
+  .section .section-inner {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .section.visible .section-inner {
     opacity: 1;
     transform: translateY(0);
   }
@@ -515,6 +527,18 @@
     .bilingual-phones { gap: 24px; }
   }
 
+  /* Respect the OS "reduce motion" setting: no float-in, pulse, bounce,
+     scroll reveal, or smooth scrolling */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .section .section-inner { opacity: 1; transform: none; }
+  }
+
   /* Fallback when icons fail (CDN blip / JS disabled), empty icon slots
      would otherwise leave odd gaps in pill / list / safety-card layouts */
   body.no-icons [data-lucide] { display: none; }
@@ -708,6 +732,7 @@
       <h2>Ask for help in <span class="gradient">seconds</span>.</h2>
       <p class="lede">Pick a category, write a sentence, snap a photo. That's the whole thing. Your post lands in front of nearby neighbors right away.</p>
       <ul class="feature-list">
+        <li><span class="icon"><i data-lucide="hand-heart"></i></span>Post a request, or an offer to help</li>
         <li><span class="icon"><i data-lucide="grid-3x3"></i></span>12 categories, from groceries to repairs</li>
         <li><span class="icon"><i data-lucide="camera"></i></span>Up to 3 photos from camera or gallery</li>
         <li><span class="icon"><i data-lucide="alarm-clock"></i></span>Mark how urgent it is</li>
@@ -763,11 +788,11 @@
     <div class="section-text">
       <span class="step-badge">Profile</span>
       <h2>Build a <span class="gradient">community</span> reputation.</h2>
-      <p class="lede">A real public profile with your rating, reviews, and the help you've given. Streaks and a monthly leaderboard make showing up feel good.</p>
+      <p class="lede">A real public profile with your rating, reviews, and the help you've given. Streaks and a neighborhood leaderboard make showing up feel good.</p>
       <ul class="feature-list">
         <li><span class="icon"><i data-lucide="bar-chart-2"></i></span>Helped, got help, rating, posted</li>
         <li><span class="icon"><i data-lucide="flame"></i></span>Daily streak counter</li>
-        <li><span class="icon"><i data-lucide="trophy"></i></span>Monthly neighborhood leaderboard</li>
+        <li><span class="icon"><i data-lucide="trophy"></i></span>Neighborhood helper leaderboard</li>
       </ul>
     </div>
     <div class="device-shot">
@@ -815,7 +840,7 @@
     <div class="safety-card">
       <div class="icon"><i data-lucide="trash-2"></i></div>
       <h3>Delete anytime</h3>
-      <p>Erase your account and every trace of your data with one tap. No questions, no waiting.</p>
+      <p>Erase your account and your personal data anytime, right from the app. No waiting period.</p>
     </div>
   </div>
 </div>
@@ -885,12 +910,20 @@
   }, { threshold: 0.12 });
   document.querySelectorAll('.section').forEach(el => observer.observe(el));
 
-  // Render Lucide icons - gracefully degrade if the CDN failed to load
-  if (window.lucide) {
-    lucide.createIcons();
-  } else {
-    document.body.classList.add('no-icons');
+  // Render Lucide icons - the library loads with `defer`, so it is NOT available
+  // yet when this inline script runs; wait for window load (which fires after
+  // deferred scripts, and still fires if the CDN request failed) and only then
+  // decide between rendering and the no-icons fallback.
+  function initIcons() {
+    if (window.lucide) {
+      document.body.classList.remove('no-icons');
+      lucide.createIcons();
+    } else {
+      document.body.classList.add('no-icons');
+    }
   }
+  if (document.readyState === 'complete') initIcons();
+  else window.addEventListener('load', initIcons);
 </script>
 
 </body>

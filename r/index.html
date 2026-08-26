@@ -162,7 +162,8 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
     .loading-text { font-size: 14px; color: rgba(255,255,255,0.32); }
-    .error-text { font-size: 14px; color: rgba(255,255,255,0.38); padding: 40px 0; }
+    .error-title { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: -0.4px; margin-bottom: 8px; }
+    .error-sub { font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.6; margin-bottom: 26px; }
   </style>
 </head>
 <body>
@@ -223,8 +224,8 @@
     fetch('https://lwomstzzmyegpbidibfm.supabase.co/functions/v1/post-page'
       + '?apikey=' + ANON_KEY + '&id=' + encodeURIComponent(id) + '&format=json')
       .then(function (r) { return r.json(); })
-      .then(function (d) { d.error ? showError('Post not found.') : render(d); })
-      .catch(function () { showError('Could not load post.'); });
+      .then(function (d) { d.error ? showError('gone') : render(d); })
+      .catch(function () { showError('load'); });
 
     function esc(s) {
       return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -304,8 +305,28 @@
         + '<p class="footer">' + t.footer + '</p>';
     }
 
-    function showError(msg) {
-      document.getElementById('root').innerHTML = '<p class="error-text">' + esc(msg) + '</p>';
+    // A dead link is still a first impression: keep the page branded and hand
+    // the visitor the app instead of a bare error line. We don't know the
+    // visitor's language here, so the message is bilingual (Hebrew first -
+    // most shares travel in Hebrew-speaking groups).
+    function showError(kind) {
+      var title = kind === 'gone' ? 'הפוסט הזה כבר לא זמין' : 'לא הצלחנו לטעון את הפוסט';
+      var sub = kind === 'gone'
+        ? 'This post is no longer available.<br />עוד שכנים מחכים לעזרה ב-Helpy'
+        : 'Could not load this post - please try again.<br />אפשר לנסות שוב עוד רגע';
+      document.getElementById('root').innerHTML =
+        '<p class="wordmark">Helpy</p>'
+        + '<p class="error-title">' + title + '</p>'
+        + '<p class="error-sub">' + sub + '</p>'
+        + '<div class="badges">'
+        + '<a class="badge" href="' + APP_STORE + '">'
+        + '<img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" />'
+        + '</a>'
+        + '<a class="badge badge-play" href="' + PLAY_STORE + '">'
+        + '<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" />'
+        + '</a>'
+        + '</div>'
+        + '<p class="footer">' + T.he.footer + '</p>';
     }
   })();
   </script>
