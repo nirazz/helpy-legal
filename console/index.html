@@ -889,6 +889,7 @@
       maInstallsTip:"התקנות שמטא מצליחה לייחס לקמפיין. באייפון אפל מסתירה חלק (מנגנון SKAN) ובאנדרואיד הייחוס אצלנו שבור - המספר תמיד נמוך מהאמת. את הנפח האמיתי מודדים בעמודת ההרשמות",
       maPartial:"חלקי",
       maFresh:function(at){ var t=new Date(at); return "נמשך מ-Meta ברגע טעינת הדף ("+t.toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Jerusalem"})+") · מתעדכן בכל רענון"; },
+      maTzFallback:"⚠️ ההרשמות מוצגות לפי ימי UTC ולא לפי שעון ישראל, כך שהרשמות מאוחרות בערב עשויות להופיע ביום הקודם",
       rdMeta:function(sp,su,cost,inst){ return "ב-7 הימים המלאים האחרונים: הוצאה של <b>"+sp+"</b>, <b>"+su+"</b> הרשמות אמיתיות = <b>"+cost+"</b> להרשמה. מטא מייחסת לעצמה רק "+inst+" התקנות - תת-ספירה מובנית, שופטים לפי ההרשמות. מתחת ל-₪25 להרשמה אפשר לשקול הגדלת תקציב; מעל ₪35 - לבדוק קריאייטיב וטירגוט."; },
       emptyMeta:"נתוני Meta לא נטענו הפעם - הקמפיינים עצמם לא נעצרו, רק המשיכה לדשבורד נכשלה (אם זה חוזר: לבדוק את תוקף הטוקן)",
       postsTitle:"פוסטים", postsSub:"בקשות עזרה מול הצעות עזרה",
@@ -1210,6 +1211,7 @@
       maInstallsTip:"Installs Meta manages to attribute to the campaign. Apple hides part of them (SKAN) and our Android attribution is broken - always an undercount. Real volume lives in the signups column",
       maPartial:"partial",
       maFresh:function(at){ var t=new Date(at); return "Pulled from Meta at page load ("+t.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Jerusalem"})+") · refreshes with every reload"; },
+      maTzFallback:"⚠️ Signups are bucketed by UTC days rather than Israel time, so late-evening signups may show on the previous day",
       rdMeta:function(sp,su,cost,inst){ return "Over the last 7 full days: <b>"+sp+"</b> spent, <b>"+su+"</b> real signups = <b>"+cost+"</b> per signup. Meta attributes only "+inst+" installs to itself - a built-in undercount, judge by signups. Under ₪25 per signup a budget raise is on the table; over ₪35, review creative and targeting."; },
       emptyMeta:"Meta data didn't load this time - the campaigns themselves are untouched, only the dashboard pull failed (if it repeats, check the token's validity)",
       postsTitle:"Posts", postsSub:"Help requests vs. help offers",
@@ -2828,8 +2830,18 @@
     }
     if(daySec) daySec.classList.remove("hidden");
     function ils(n,dec){ return "₪"+Number(n||0).toFixed(dec==null?0:dec); }
-    var suBy={};
-    (DATA.signups_by_day||[]).forEach(function(r){ suBy[String(r.d).slice(0,10)]=r.total||0; });
+    // Signups MUST come from meta_ads.signups, not the shared signups_by_day:
+    // that series buckets by UTC while Meta reports in the ad account's own
+    // calendar (Asia/Jerusalem), which shifted every late-evening signup onto
+    // the previous day. Fall back to the shared series only if the RPC failed,
+    // and say so rather than quietly showing a mis-joined number.
+    var suBy={}, suTz=true;
+    if(MA.signups && MA.signups.length){
+      MA.signups.forEach(function(r){ suBy[String(r.d).slice(0,10)]=r.signups||0; });
+    } else {
+      suTz=false;
+      (DATA.signups_by_day||[]).forEach(function(r){ suBy[String(r.d).slice(0,10)]=r.total||0; });
+    }
     var byDay={}, byCamp={};
     MA.daily.forEach(function(r){
       var d=byDay[r.d]||(byDay[r.d]={spend:0,installs:0});
@@ -2859,7 +2871,7 @@
         S.maCtrTip);
     });
     host.appendChild(st);
-    host.appendChild(el("div","note",S.maFresh(MA.fetched_at)));
+    host.appendChild(el("div","note",S.maFresh(MA.fetched_at)+(suTz? "" : " · "+S.maTzFallback)));
     var cls=cost7==null? "" : (cost7<25? "good" : (cost7<=35? "warn" : "bad"));
     panelRead("metaAdsSummary", cls,
       S.rdMeta(ils(spend7), fmt(su7), cost7==null? "-" : ils(cost7,1), fmt(inst7)));
