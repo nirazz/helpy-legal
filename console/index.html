@@ -3269,7 +3269,7 @@
     });
     host.appendChild(grid);
     host.appendChild(el("div","note",S.maFresh(MA.fetched_at)+(suTz? "" : " \u00B7 "+S.maTzFallback)
-      +(platKey && !suSplit? " \u00B7 "+S.maNoSplit : "")));
+      +(META_CAMP && (!platKey || !suSplit)? " \u00B7 "+S.maNoSplit : "")));
     if(capHost){
       var onCamp=META_CAMP? byCamp[META_CAMP] : null;
       capHost.textContent = onCamp
