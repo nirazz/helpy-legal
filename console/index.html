@@ -662,6 +662,8 @@
               background:var(--grid); box-shadow:inset 0 0 0 1px var(--baseline);
               flex-shrink:0; transition:background .2s ease, box-shadow .2s ease; }
   .live.on .sw { box-shadow:none; }
+  .live.stale { border-color:var(--bad-text); color:var(--bad-text); background:rgba(220,38,38,.07); }
+  .live.stale .sw { background:var(--bad-text); }
   .live .sw::after { content:""; position:absolute; top:2px; inset-inline-start:2px;
               width:13px; height:13px; border-radius:50%; background:#fff;
               box-shadow:0 1px 2px rgba(0,0,0,.28); transition:transform .2s ease; }
@@ -706,6 +708,13 @@
               inset-inline-start:0; width:3px; background:var(--pc,var(--s1)); }
   .platcard:hover { transform:translateY(-2px); border-color:rgba(99,102,241,.30);
               box-shadow:0 8px 22px rgba(45,45,100,.10); }
+  /* selected / unselected: a filter has to be visible from the card itself,
+     or the table quietly shows less than it says it does */
+  .platcard.on { border-color:var(--s1);
+              box-shadow:0 0 0 1px var(--s1), 0 8px 22px rgba(45,45,100,.12); }
+  .platcard.on::before { width:5px; }
+  .platcard.dim { opacity:.55; }
+  .platcard.dim:hover { opacity:1; }
   html[data-theme="dark"] .platcard:hover { box-shadow:0 8px 22px rgba(0,0,0,.42); }
   .platcard .ph { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
   .platcard .pname { font-family:"Orbitron","Heebo",sans-serif; font-size:11.5px;
@@ -945,7 +954,23 @@
   </div>
 
   <div id="adsView" class="hidden">
+    <div class="filters">
+      <span class="cap" data-i18n="range">טווח</span>
+      <div class="seg" id="metaRangeSeg">
+        <button data-d="7" class="on" data-i18n="r7">שבוע</button>
+        <button data-d="14" data-i18n="r14">שבועיים</button>
+        <button data-d="30" data-i18n="r30">30 יום</button>
+        <button data-d="90" data-i18n="r90">90 יום</button>
+      </div>
+      <span class="fsep" aria-hidden="true"></span>
+      <span class="cap note" id="metaFilterCap"></span>
+    </div>
     <div class="tiles" id="metaAdsTiles"></div>
+    <section class="panel wide" style="opacity:1;transform:none">
+      <h2 data-i18n="maChartTitle">הוצאה מול הרשמות</h2>
+      <div class="sub" data-i18n="maChartSub">עמודות = מה הוצאנו באותו יום · קו = כמה אנשים באמת נרשמו · הקו המקווקו = כמה עלתה כל הרשמה</div>
+      <div id="metaChart"></div>
+    </section>
     <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="maTitle">קמפיינים · Meta</h2>
       <div class="sub" data-i18n="maSub">הוצאה והתקנות מהקמפיינים מול הרשמות אמיתיות במסד · נמשך חי מ-Meta בכל רענון של הדף</div>
@@ -1015,27 +1040,34 @@
       tabAds:"קמפיינים",
       maTitle:"קמפיינים · Meta", maSub:"הוצאה והתקנות מהקמפיינים מול הרשמות אמיתיות במסד · נמשך חי מ-Meta בכל רענון של הדף",
       maDailyTitle:"יום אחר יום", maDailySub:"מה הוצאנו בכל יום, כמה התקנות Meta ייחסה לעצמה, וכמה אנשים באמת נרשמו באותו יום",
+      maChartTitle:"הוצאה מול הרשמות",
+      maChartSub:"עמודות = מה הוצאנו באותו יום · קו = כמה אנשים באמת נרשמו · הקו המקווקו = כמה עלתה כל הרשמה",
+      maSeriesSpend:"הוצאה", maSeriesSignups:"הרשמות אמיתיות", maSeriesCost:"עלות להרשמה",
+      maFilterOn:function(p){ return "מסונן ל-"+p+" · לחיצה חוזרת על הכרטיס מבטלת"; },
+      maFilterHint:"לחיצה על כרטיס פלטפורמה מסננת את הגרף ואת הטבלה",
+      maNoSplit:"⚠️ ההרשמות בתצוגה המסוננת הן של כל החשבון - פילוח לפי פלטפורמה עדיין לא זמין בשרת",
+      maWinDays:function(n){ return n+" ימים"; },
       maToday:"היום עד עכשיו",
       maTodayNote:function(inst,su){ return inst+" התקנות (Meta) · "+su+" הרשמות בפועל"; },
-      maTileSpend:"הוצאה · 7 ימים",
+      maTileSpend:"הוצאה · {maw}",
       maAvgDay:function(x){ return "ממוצע "+x+" ליום"; },
-      maTileSignups:"הרשמות אמיתיות · 7 ימים",
+      maTileSignups:"הרשמות אמיתיות · {maw}",
       maTileSignupsNote:function(inst){ return "מטא ייחסה לעצמה "+inst+" התקנות בלבד"; },
       maCostTarget:"היעד: מתחת ל-₪25 להרשמה",
       maPaceTitle:"קצב הוצאה יומי",
       maPaceVs:function(b){ return "מול תקציב של "+b+" ליום"; },
-      maPlatSpendLbl:"הוצאה · 7 ימים",
+      maPlatSpendLbl:"הוצאה · {maw}",
       maPlatCtr:"CTR", maPlatCpc:"עלות לקליק", maPlatInst:"התקנות (Meta)",
       maCtrStrong:"קריאייטיב חזק", maCtrOk:"סביר", maCtrWeak:"קריאייטיב חלש",
-      maCost:"עלות להרשמה · 7 ימים",
-      maCostTip:"כל ההוצאה בשבעת הימים המלאים האחרונים חלקי כל ההרשמות האמיתיות באותם ימים. כולל הרשמות אורגניות, ולכן זו עלות מעורבת - אבל זה המדד הכן ביותר שיש, כי מטא מפספסת התקנות (פרטיות של אפל + ייחוס שבור באנדרואיד)",
+      maCost:"עלות להרשמה · {maw}",
+      maCostTip:"כל ההוצאה בימים המלאים שבטווח שנבחר חלקי כל ההרשמות האמיתיות באותם ימים. כולל הרשמות אורגניות, ולכן זו עלות מעורבת - אבל זה המדד הכן ביותר שיש, כי מטא מפספסת התקנות (פרטיות של אפל + ייחוס שבור באנדרואיד)",
       maCtrTip:"CTR = כמה מתוך מי שראו את המודעה הקליקו עליה (מתחת ל-1% = קריאייטיב חלש) · קליק = כמה עולה בממוצע כל הקלקה",
       maColDay:"יום", maSpend:"הוצאה", maInstalls:"התקנות (Meta)", maSignups:"הרשמות בפועל",
       maInstallsTip:"התקנות שמטא מצליחה לייחס לקמפיין. באייפון אפל מסתירה חלק (מנגנון SKAN) ובאנדרואיד הייחוס אצלנו שבור - המספר תמיד נמוך מהאמת. את הנפח האמיתי מודדים בעמודת ההרשמות",
       maPartial:"חלקי",
       maFresh:function(at){ var t=new Date(at); return "נמשך מ-Meta ברגע טעינת הדף ("+t.toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Jerusalem"})+") · מתעדכן בכל רענון"; },
       maTzFallback:"⚠️ ההרשמות מוצגות לפי ימי UTC ולא לפי שעון ישראל, כך שהרשמות מאוחרות בערב עשויות להופיע ביום הקודם",
-      rdMeta:function(sp,su,cost,inst){ return "ב-7 הימים המלאים האחרונים: הוצאה של <b>"+sp+"</b>, <b>"+su+"</b> הרשמות אמיתיות = <b>"+cost+"</b> להרשמה. מטא מייחסת לעצמה רק "+inst+" התקנות - תת-ספירה מובנית, שופטים לפי ההרשמות. מתחת ל-₪25 להרשמה אפשר לשקול הגדלת תקציב; מעל ₪35 - לבדוק קריאייטיב וטירגוט."; },
+      rdMeta:function(win,sp,su,cost,inst){ return win+": הוצאה של <b>"+sp+"</b>, <b>"+su+"</b> הרשמות אמיתיות = <b>"+cost+"</b> להרשמה. מטא מייחסת לעצמה רק "+inst+" התקנות - תת-ספירה מובנית, שופטים לפי ההרשמות. מתחת ל-₪25 להרשמה אפשר לשקול הגדלת תקציב; מעל ₪35 - לבדוק קריאייטיב וטירגוט."; },
       emptyMeta:"נתוני Meta לא נטענו הפעם - הקמפיינים עצמם לא נעצרו, רק המשיכה לדשבורד נכשלה (אם זה חוזר: לבדוק את תוקף הטוקן)",
       postsTitle:"פוסטים", postsSub:"בקשות עזרה מול הצעות עזרה",
       matchesTitle:"התאמות והשלמות", matchesSub:"התאמות חדשות מול עזרות שסומנו כהושלמו",
@@ -1312,7 +1344,7 @@
       archStop:"⏹ עצירת ההדגמה",
       tileJump:"לחיצה קופצת לגרף המלא ומדגישה אותו",
       sparkTip:"12 שבועות אחרונים · סכום שבועי",
-      themeBtn:{light:"כהה", dark:"בהיר"}, langBtn:"English"
+      liveStale:"הרענון האוטומטי נכשל", themeBtn:{light:"כהה", dark:"בהיר"}, langBtn:"English"
     },
     en: {
       tabMetrics:"Metrics", tabChat:"Chat", live:"Live · 1 min", refresh:"Refresh", logout:"Sign out",
@@ -1344,27 +1376,34 @@
       tabAds:"Campaigns",
       maTitle:"Meta campaigns", maSub:"Campaign spend and installs against real database signups · pulled live from Meta on every page refresh",
       maDailyTitle:"Day by day", maDailySub:"What we spent each day, how many installs Meta attributed to itself, and how many people actually signed up that day",
+      maChartTitle:"Spend against signups",
+      maChartSub:"Bars = what we spent that day · line = how many people actually signed up · dashed = what each signup cost",
+      maSeriesSpend:"Spend", maSeriesSignups:"Real signups", maSeriesCost:"Cost per signup",
+      maFilterOn:function(p){ return "filtered to "+p+" · click the card again to clear"; },
+      maFilterHint:"click a platform card to filter the chart and the table",
+      maNoSplit:"⚠️ signups in the filtered view are account-wide - the per-platform split is not live on the server yet",
+      maWinDays:function(n){ return n+" days"; },
       maToday:"Today so far",
       maTodayNote:function(inst,su){ return inst+" Meta installs · "+su+" real signups"; },
-      maTileSpend:"Spend · 7d",
+      maTileSpend:"Spend · {maw}",
       maAvgDay:function(x){ return "avg "+x+"/day"; },
-      maTileSignups:"Real signups · 7d",
+      maTileSignups:"Real signups · {maw}",
       maTileSignupsNote:function(inst){ return "Meta claimed only "+inst+" installs"; },
       maCostTarget:"target: under ₪25 per signup",
       maPaceTitle:"Daily spend pace",
       maPaceVs:function(b){ return "against a "+b+"/day budget"; },
-      maPlatSpendLbl:"Spend · 7d",
+      maPlatSpendLbl:"Spend · {maw}",
       maPlatCtr:"CTR", maPlatCpc:"Cost per click", maPlatInst:"Meta installs",
       maCtrStrong:"Strong creative", maCtrOk:"Acceptable", maCtrWeak:"Weak creative",
-      maCost:"Cost per signup · 7d",
-      maCostTip:"All spend over the last 7 full days divided by all real signups in those days. Organic signups included, so it's a blended cost - but it's the honest number, because Meta misses installs (Apple privacy + our broken Android attribution)",
+      maCost:"Cost per signup · {maw}",
+      maCostTip:"All spend over the full days in the selected range divided by all real signups in those days. Organic signups included, so it's a blended cost - but it's the honest number, because Meta misses installs (Apple privacy + our broken Android attribution)",
       maCtrTip:"CTR = share of people who clicked after seeing the ad (under 1% = weak creative) · click = average cost per click",
       maColDay:"Day", maSpend:"Spend", maInstalls:"Meta installs", maSignups:"Real signups",
       maInstallsTip:"Installs Meta manages to attribute to the campaign. Apple hides part of them (SKAN) and our Android attribution is broken - always an undercount. Real volume lives in the signups column",
       maPartial:"partial",
       maFresh:function(at){ var t=new Date(at); return "Pulled from Meta at page load ("+t.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Jerusalem"})+") · refreshes with every reload"; },
       maTzFallback:"⚠️ Signups are bucketed by UTC days rather than Israel time, so late-evening signups may show on the previous day",
-      rdMeta:function(sp,su,cost,inst){ return "Over the last 7 full days: <b>"+sp+"</b> spent, <b>"+su+"</b> real signups = <b>"+cost+"</b> per signup. Meta attributes only "+inst+" installs to itself - a built-in undercount, judge by signups. Under ₪25 per signup a budget raise is on the table; over ₪35, review creative and targeting."; },
+      rdMeta:function(win,sp,su,cost,inst){ return "Over "+win+": <b>"+sp+"</b> spent, <b>"+su+"</b> real signups = <b>"+cost+"</b> per signup. Meta attributes only "+inst+" installs to itself - a built-in undercount, judge by signups. Under ₪25 per signup a budget raise is on the table; over ₪35, review creative and targeting."; },
       emptyMeta:"Meta data didn't load this time - the campaigns themselves are untouched, only the dashboard pull failed (if it repeats, check the token's validity)",
       postsTitle:"Posts", postsSub:"Help requests vs. help offers",
       matchesTitle:"Matches & completions", matchesSub:"New matches vs. helps marked completed",
@@ -1640,7 +1679,7 @@
       archStop:"⏹ Stop the demo",
       tileJump:"Click to jump to the full chart and highlight it",
       sparkTip:"Last 12 weeks · weekly totals",
-      themeBtn:{light:"Dark", dark:"Light"}, langBtn:"עברית"
+      liveStale:"auto refresh failed", themeBtn:{light:"Dark", dark:"Light"}, langBtn:"עברית"
     }
   };
   var LANG = localStorage.getItem("helpy_console_lang") || "he";
@@ -1951,7 +1990,9 @@
       animationDurationUpdate: 450,
       textStyle: { fontFamily: "Heebo, system-ui, sans-serif" },
       // extra headroom when annotation labels sit above the plot
-      grid: { left: 10, right: 46,
+      // a left-hand value axis needs room for its own labels; without it the
+      // second axis rendered as a column of clipped stubs
+      grid: { left: opts.axis2 ? 44 : 10, right: 46,
               top: (manySeries ? 36 : 18) + (marks.length ? 26 : 0),
               bottom: opts.zoom ? 56 : 26 },
       // always a real object with show: - `undefined` in an ECharts MERGE keeps
@@ -1976,7 +2017,15 @@
         axisTick: { show: false },
         axisLabel: { color: muted, fontSize: 10 }
       },
-      yAxis: {
+      // a second axis is OPT-IN (opts.axis2) and only the campaigns chart asks
+      // for one: series carrying a different unit set `axis:1`
+      yAxis: opts.axis2 ? [
+        { type: "value", position: "right", minInterval: 1,
+          splitLine: { lineStyle: { color: grid } },
+          axisLabel: { color: muted, fontSize: 10 } },
+        { type: "value", position: "left", minInterval: 1, splitLine: { show: false },
+          axisLabel: { color: muted, fontSize: 10 } }
+      ] : {
         type: "value", position: "right", minInterval: 1,
         splitLine: { lineStyle: { color: grid } },
         axisLabel: { color: muted, fontSize: 10 }
@@ -1993,17 +2042,25 @@
       series: series.map(function(s){
         if(s.type === "line"){
           return { name: s.name, type: "line", smooth: true,
+            yAxisIndex: opts.axis2 ? (s.axis || 0) : undefined,
+            // a null in the data is a real "no signups that day", not a zero -
+            // connectNulls would draw a cost line straight through it
+            connectNulls: false,
             symbol: "circle", symbolSize: 7, showSymbol: false,
             emphasis: { focus: "series" },
-            lineStyle: { width: 2, color: s.color,
+            lineStyle: { width: 2, color: s.color, type: s.dashed ? "dashed" : "solid",
               shadowColor: s.color + "44", shadowBlur: 8, shadowOffsetY: 3 },
             itemStyle: { color: s.color, borderColor: surface, borderWidth: 2 },
             areaStyle: s.area ? { color: new echarts.graphic.LinearGradient(0,0,0,1,[
               { offset: 0, color: s.color + "44" },
               { offset: 1, color: s.color + "00" }]) } : undefined,
-            data: rows.map(function(r){ return +r[s.key] || 0; }) };
+            data: rows.map(function(r){
+              var v = r[s.key];
+              return (v === null || v === undefined) ? null : (+v || 0);
+            }) };
         }
         return { name: s.name, type: "bar",
+          yAxisIndex: opts.axis2 ? (s.axis || 0) : undefined,
           stack: opts.group ? undefined : "t",
           barMaxWidth: 20, barGap: "10%",
           itemStyle: {
@@ -2988,21 +3045,43 @@
   // Meta-attributed installs UNDERCOUNT by construction (Apple SKAN + our
   // broken Android attribution), so the efficiency verdict is computed on
   // spend / real DB signups - the same rule as the daily report.
+  // the campaigns tab owns its own window, independent of the metrics range
+  var META_DAYS=7, META_CAMP=null;
+  function metaWinLabel(n){
+    if(LANG!=="he") return n===7? "week" : n===14? "2 weeks" : n+" days";
+    return n===7? "שבוע" : n===14? "שבועיים" : n+" ימים";
+  }
+  function metaWinPhrase(n){
+    if(LANG!=="he"){
+      return n===7? "the last full week"
+           : n===14? "the last 2 full weeks"
+           : "the last "+n+" full days";
+    }
+    return n===7? "בשבוע המלא האחרון"
+         : n===14? "בשבועיים המלאים האחרונים"
+         : "ב-"+n+" הימים המלאים האחרונים";
+  }
+
   function renderMetaAds(){
     var tileHost=$("metaAdsTiles"), host=$("metaAdsSummary"), dayHost=$("metaAdsDaily");
+    var chartHost=$("metaChart"), capHost=$("metaFilterCap");
     if(!host || !dayHost) return;
     if(tileHost){ tileHost.innerHTML=""; tileHost.classList.add("hidden"); }
     host.innerHTML=""; dayHost.innerHTML="";
     var daySec=dayHost.closest("section.panel");
+    var chartSec=chartHost? chartHost.closest("section.panel") : null;
     var MA=DATA.meta_ads;
     // with no data the explanation is said ONCE: the day-by-day panel has
     // nothing of its own to say, and repeating the sentence read as a bug
     if(!MA || !MA.daily || !MA.daily.length){
       emptyState(host,S.emptyMeta,"radio");
       if(daySec) daySec.classList.add("hidden");
+      if(chartSec) chartSec.classList.add("hidden");
+      if(capHost) capHost.textContent="";
       return;
     }
     if(daySec) daySec.classList.remove("hidden");
+    if(chartSec) chartSec.classList.remove("hidden");
     function ils(n,dec){ return "\u20AA"+Number(n||0).toFixed(dec==null?0:dec); }
     function grow(node,pct){
       var w=Math.max(0,Math.min(100,pct))+"%";
@@ -3015,16 +3094,37 @@
     // calendar (Asia/Jerusalem), which shifted every late-evening signup onto
     // the previous day. Fall back to the shared series only if the RPC failed,
     // and say so rather than quietly showing a mis-joined number.
-    var suBy={}, suTz=true;
+    var suBy={}, suTz=true, suSplit=false;
     if(MA.signups && MA.signups.length){
-      MA.signups.forEach(function(r){ suBy[String(r.d).slice(0,10)]=r.signups||0; });
+      suSplit = MA.signups[0].ios !== undefined;
+      MA.signups.forEach(function(r){ suBy[String(r.d).slice(0,10)]=r; });
     } else {
       suTz=false;
-      (DATA.signups_by_day||[]).forEach(function(r){ suBy[String(r.d).slice(0,10)]=r.total||0; });
+      (DATA.signups_by_day||[]).forEach(function(r){ suBy[String(r.d).slice(0,10)]={signups:r.total||0}; });
     }
+    // suOf() answers "how many real signups on this day, on the side of the
+    // funnel currently in view" - platform-split when a card is selected, and
+    // it falls back to the whole account (labelled) if the older RPC shape is
+    // still deployed
+    function suOf(d){
+      var r=suBy[d]; if(!r) return 0;
+      if(!platKey || !suSplit) return r.signups||0;
+      return r[platKey]||0;
+    }
+    // a platform filter narrows the DAY series and the tiles; the platform
+    // cards themselves always show every platform, or there would be no way
+    // back to the one you filtered away
+    var campIds={}, campName={};
+    MA.daily.forEach(function(r){ campIds[r.cid]=1; campName[r.cid]=r.name; });
+    if(META_CAMP && !campIds[META_CAMP]) META_CAMP=null; // the window may not contain it
+    var platKey = META_CAMP
+      ? (/ios/i.test(campName[META_CAMP]||"") ? "ios"
+        : /android/i.test(campName[META_CAMP]||"") ? "android" : null)
+      : null;
     var byDay={};
     MA.daily.forEach(function(r){
       var d=byDay[r.d]||(byDay[r.d]={spend:0,installs:0});
+      if(META_CAMP && r.cid!==META_CAMP) return;
       d.spend+=r.spend; d.installs+=r.installs;
     });
     var days=Object.keys(byDay).sort();
@@ -3032,6 +3132,8 @@
     // averages, the per-platform cards and the verdict use FULL days only -
     // today is partial, and a card labelled "7 days" must count seven
     var full=days.slice(0,-1), fullSet={};
+    var winDays=full.length, winLbl=metaWinPhrase(winDays);
+    function maw(v){ return String(v).split("{maw}").join(metaWinLabel(winDays)); }
     full.forEach(function(d){ fullSet[d]=1; });
     var byCamp={};
     MA.daily.forEach(function(r){
@@ -3040,8 +3142,11 @@
       c.spend+=r.spend; c.clicks+=r.clicks; c.imp+=r.imp; c.installs+=r.installs;
     });
     var spend7=0, inst7=0, su7=0;
-    full.forEach(function(d){ spend7+=byDay[d].spend; inst7+=byDay[d].installs; su7+=(suBy[d]||0); });
-    var budget=(MA.campaigns||[]).reduce(function(a,c){ return a+(c.daily_budget||0); },0);
+    full.forEach(function(d){ spend7+=byDay[d].spend; inst7+=byDay[d].installs; su7+=suOf(d); });
+    var budget=(MA.campaigns||[]).reduce(function(a,c){
+      if(META_CAMP && String(c.id)!==String(META_CAMP)) return a;
+      return a+(c.daily_budget||0);
+    },0);
     var cost7=su7? spend7/su7 : null;
     var avgDay=full.length? spend7/full.length : 0;
 
@@ -3051,7 +3156,7 @@
     // by the picture before the sentence underneath is read.
     if(tileHost){
       tileHost.classList.remove("hidden");
-      var costTile=tile(S.maCost, cost7==null? "-" : ils(cost7,1),
+      var costTile=tile(maw(S.maCost), cost7==null? "-" : ils(cost7,1),
                         {tip:S.maCostTip, note:S.maCostTarget});
       costTile.classList.add("hero");
       if(cost7!=null){
@@ -3067,14 +3172,14 @@
         costTile.insertBefore(zw, costTile.querySelector(".sub"));
       }
       tileHost.appendChild(costTile);
-      tileHost.appendChild(tile(S.maTileSpend, ils(spend7),
+      tileHost.appendChild(tile(maw(S.maTileSpend), ils(spend7),
         {note:S.maAvgDay(ils(avgDay)),
          spark:full.map(function(d){ return byDay[d].spend; })}));
-      tileHost.appendChild(tile(S.maTileSignups, fmt(su7),
+      tileHost.appendChild(tile(maw(S.maTileSignups), fmt(su7),
         {note:S.maTileSignupsNote(fmt(inst7)),
-         spark:full.map(function(d){ return suBy[d]||0; })}));
+         spark:full.map(suOf)}));
       tileHost.appendChild(tile(S.maToday, ils(T.spend),
-        {note:S.maTodayNote(fmt(T.installs), fmt(suBy[today]||0))}));
+        {note:S.maTodayNote(fmt(T.installs), fmt(suOf(today)))}));
     }
 
     // ---- pacing: are we spending what we told Meta to spend? --------------
@@ -3105,8 +3210,15 @@
       var isAnd=/android/i.test(c.name);
       var plat=/ios/i.test(c.name)? "iOS" : (isAnd? "Android" : c.name);
       var ctr=c.imp? 100*c.clicks/c.imp : null;
-      var card=el("div","platcard");
+      var card=el("div","platcard clickable");
       card.style.setProperty("--pc", isAnd? "var(--s3)" : "var(--s1)");
+      if(META_CAMP===cid) card.classList.add("on");
+      else if(META_CAMP) card.classList.add("dim");
+      card.title=S.maFilterHint;
+      card.addEventListener("click",function(){
+        META_CAMP = (META_CAMP===cid)? null : cid;
+        renderMetaAds();
+      });
       var head=el("div","ph");
       head.appendChild(el("span","pname",plat));
       if(ctr!=null){
@@ -3117,7 +3229,7 @@
       }
       card.appendChild(head);
       card.appendChild(el("div","pbig",ils(c.spend)));
-      card.appendChild(el("div","pbigl",S.maPlatSpendLbl));
+      card.appendChild(el("div","pbigl",maw(S.maPlatSpendLbl)));
       var pm=el("div","pmetrics");
       function metric(label,value,tip,meterPct){
         var d=el("div","pm"), k=el("span","pmk");
@@ -3141,10 +3253,31 @@
       grid.appendChild(card);
     });
     host.appendChild(grid);
-    host.appendChild(el("div","note",S.maFresh(MA.fetched_at)+(suTz? "" : " \u00B7 "+S.maTzFallback)));
+    host.appendChild(el("div","note",S.maFresh(MA.fetched_at)+(suTz? "" : " \u00B7 "+S.maTzFallback)
+      +(platKey && !suSplit? " \u00B7 "+S.maNoSplit : "")));
+    if(capHost){
+      var onCamp=META_CAMP? byCamp[META_CAMP] : null;
+      capHost.textContent = onCamp
+        ? S.maFilterOn(/ios/i.test(onCamp.name)? "iOS" : (/android/i.test(onCamp.name)? "Android" : onCamp.name))
+        : S.maFilterHint;
+    }
+    // spend bars and real signups share the day axis but not the unit, so the
+    // signups line and the cost line ride a second axis - one axis would flatten
+    // a 12-signup day against a 106-shekel one and say nothing
+    if(chartHost){
+      var crows=days.map(function(d){
+        var sp=byDay[d].spend, su=suOf(d);
+        return { d:d, spend:+sp.toFixed(2), signups:su, cps: su? +(sp/su).toFixed(2) : null };
+      });
+      timeChart("metaChart", crows, [
+        { key:"spend",   name:S.maSeriesSpend,   type:"bar",  color:tok("--s1") },
+        { key:"signups", name:S.maSeriesSignups, type:"line", color:tok("--s3"), axis:1 },
+        { key:"cps",     name:S.maSeriesCost,    type:"line", color:tok("--s2"), axis:1, dashed:true }
+      ], { group:true, axis2:true, zoom:days.length>21, fadeLast:true });
+    }
     var cls=cost7==null? "" : (cost7<25? "good" : (cost7<=35? "warn" : "bad"));
     panelRead("metaAdsSummary", cls,
-      S.rdMeta(ils(spend7), fmt(su7), cost7==null? "-" : ils(cost7,1), fmt(inst7)));
+      S.rdMeta(winLbl, ils(spend7), fmt(su7), cost7==null? "-" : ils(cost7,1), fmt(inst7)));
 
     // ---- day by day: the spend column carries its own bar -----------------
     var maxSpend=days.reduce(function(a,d){ return Math.max(a,byDay[d].spend); },1);
@@ -3158,7 +3291,7 @@
     });
     t.appendChild(hr);
     days.slice().reverse().forEach(function(d){
-      var r=byDay[d], su=suBy[d]||0, isToday=(d===today);
+      var r=byDay[d], su=suOf(d), isToday=(d===today);
       var tr=el("tr");
       if(isToday) tr.className="today";
       var dayTd=el("td",null,fmtDay(d));
@@ -4507,15 +4640,23 @@
     var b=document.querySelector("#"+id+" button.on");
     return b? +b.getAttribute("data-d") : 90;
   }
-  var lastLoadTs=null;
+  var lastLoadTs=null, staleSince=null;
+  function markStale(clear){
+    staleSince = clear? null : (staleSince || Date.now());
+    var tog=$("liveTog");
+    if(tog) tog.classList.toggle("stale", !!staleSince);
+    updateTicker();
+  }
   function updateTicker(){
     if(!lastLoadTs) return;
     var s=Math.round((Date.now()-lastLoadTs)/1000);
-    $("genAt").textContent = S.updatedAgo(s);
+    $("genAt").textContent = S.updatedAgo(s) + (staleSince? " \u00B7 "+S.liveStale : "");
   }
   setInterval(updateTicker,5000);
 
-  function load(){
+  // autoTick = the once-a-minute refresh. A refresh the user ASKED for always
+  // re-pulls Meta; only the unattended ticker is allowed to skip it.
+  function load(autoTick){
     $("app").classList.add("loading");
     $("refreshIcon").classList.add("spinning");
     var fetchDays, chatDays;
@@ -4529,6 +4670,10 @@
       fetchDays=Math.min(365, RANGE*2);
       chatDays=segVal("chatRangeSeg");
     }
+    var onAds=document.querySelector("#tabs button.on");
+    var wantMeta = !autoTick || !DATA || !DATA.meta_ads ||
+                   (onAds && onAds.getAttribute("data-v")==="ads");
+    var carryMeta = wantMeta? null : DATA.meta_ads;
     var hdrs={"content-type":"application/json"};
     if(SESSION && SESSION.access_token) hdrs["authorization"]="Bearer "+SESSION.access_token;
     // a request that never settles used to leave the page in a silent
@@ -4543,7 +4688,11 @@
       method:"POST",
       headers:hdrs,
       signal: ctl ? ctl.signal : undefined,
-      body:JSON.stringify({days:fetchDays,chatDays:chatDays,window:RANGE})
+      // metaDays 0 = "skip the Meta pull". Meta throttles per ad account per 5
+      // minutes, so the once-a-minute ticker must not spend calls on a tab
+      // nobody is looking at; the previous pull is carried forward instead.
+      body:JSON.stringify({days:fetchDays,chatDays:chatDays,window:RANGE,
+                           metaDays: wantMeta? META_DAYS : 0})
     }).then(function(r){
       clearTimeout(killer);
       if(r.status===401) throw new Error("unauthorized");
@@ -4551,8 +4700,9 @@
       if(!r.ok) throw new Error("server");
       return r.json();
     }).then(function(d){
+      if(carryMeta && !d.meta_ads) d.meta_ads=carryMeta;
       DATA=d;
-      lastLoadTs=Date.now(); updateTicker();
+      lastLoadTs=Date.now(); updateTicker(); staleSince=null;
       $("connecting").classList.add("hidden");
       $("login").classList.add("hidden");
       $("hdr").classList.remove("hidden");
@@ -4574,8 +4724,14 @@
   var autoTimer=null;
   $("autoRef").addEventListener("change",function(){
     var tog=$("liveTog"); if(tog) tog.classList.toggle("on", this.checked);
-    if(this.checked){ autoTimer=setInterval(function(){ load().catch(function(){}); },60000); }
-    else if(autoTimer){ clearInterval(autoTimer); autoTimer=null; }
+    if(this.checked){
+      autoTimer=setInterval(function(){
+        // a swallowed rejection left the page showing stale numbers with no
+        // tell at all - the only signal was the "updated N ago" ticker climbing
+        load(true).catch(function(){ markStale(); });
+      },60000);
+    }
+    else if(autoTimer){ clearInterval(autoTimer); autoTimer=null; markStale(true); }
   });
 
   // scroll-reveal REMOVED (2026-08-23 visual pass): panels sat ghost-faded
@@ -4632,6 +4788,12 @@
     load().catch(function(){});
   });
   segWire("chatRangeSeg",function(){ load().catch(function(){}); });
+  // the campaigns window is its own; changing it must go back to Meta, because
+  // the payload only ever holds the days that were asked for
+  segWire("metaRangeSeg",function(){
+    META_DAYS=segVal("metaRangeSeg"); META_CAMP=null;
+    load().catch(function(){});
+  });
   segWire("chatTypeSeg",renderChat);
   segWire("funnelSeg",function(){ if(DATA) renderMetrics(); });
   ["segSignups","segDau","segPosts","segMsgs","segMatches","segCats"].forEach(function(id){
