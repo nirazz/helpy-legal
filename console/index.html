@@ -705,6 +705,7 @@
         <div class="sub" data-i18n="funnelSub">מה עושה משתמש חדש אחרי ההרשמה</div><div id="funnel"></div></section>
       <section class="panel"><h2 data-i18n="lifecycleTitle">מאזן משתמשים</h2><div class="sub" data-i18n="lifecycleSub">חתך חי של כל המשתמשים הרשומים</div><div id="lifecycle"></div></section>
       <section class="panel wide"><h2 data-i18n="sfTitle">מהחנות ועד פעילות</h2><div class="sub" data-i18n="sfSub">המשפך המלא: כמה הורידו, כמה עדיין מחזיקים באפליקציה, כמה נרשמו וכמה באמת פעילים · נתוני ההורדות וההסרות מגיעים מדוחות החנויות עצמן, לא מהמסד שלנו</div><div id="storeFunnel"></div></section>
+      <section class="panel wide"><h2 data-i18n="maTitle">קמפיינים · Meta</h2><div class="sub" data-i18n="maSub">הוצאה והתקנות מהקמפיינים מול הרשמות אמיתיות במסד · נמשך חי מ-Meta בכל רענון של הדף</div><div id="metaAds"></div></section>
       <section class="panel wide"><h2 data-i18n="nudgeTitle">מכונת הדחיפות · {win}</h2><div class="sub" data-i18n="nudgeSub">כל שולח פוש נמדד: כמה נשלחו, וכמה מהמקבלים עשו את הפעולה תוך 48 שעות. זה הפאנל שמחליט איזה שולח נשאר</div><div id="nudgeEff"></div></section>
       <section class="panel wide"><h2 data-i18n="glogTitle">יומן צמיחה · שבוע אחר שבוע</h2><div class="sub" data-i18n="glogSub">מה קרה בכל שבוע, מה השתנה, ומה גרם לזה</div><div id="growthLog"></div></section>
     </div>
@@ -860,6 +861,21 @@
       rdStore:function(dl,hold,ever,acc,m30,w7,p30){ return "מתוך <b>"+dl+"</b> הורדות, כ-<b>"+hold+"</b> מכשירים עדיין מחזיקים באפליקציה; <b>"+ever+"</b> אנשים נרשמו אי-פעם, מהם נותרו <b>"+acc+"</b> חשבונות חיים, ומהם <b>"+m30+"</b> נכנסו בחודש האחרון ("+p30+" מכלל ההורדות) ו-<b>"+w7+"</b> בשבוע האחרון. הסרת אפליקציה אינה מוחקת חשבון - לכן שכבת ה'חיים' נמדדת לפי כניסות, לא לפי מצבת החשבונות."; },
       sfFresh:function(iosD,andD){ return "טריות הנתונים: iOS עד "+iosD+" · Android עד "+andD+" · המספרים נמשכים ידנית מדוחות החנויות"; },
       emptyStore:"נתוני החנויות עדיין לא נטענו",
+      maTitle:"קמפיינים · Meta", maSub:"הוצאה והתקנות מהקמפיינים מול הרשמות אמיתיות במסד · נמשך חי מ-Meta בכל רענון של הדף",
+      maToday:"היום עד עכשיו",
+      maTodayVal:function(sp,inst,su){ return sp+" · "+inst+" התקנות (Meta) · "+su+" הרשמות בפועל"; },
+      ma7d:"7 ימים מלאים אחרונים",
+      ma7dVal:function(tot,avg,budget){ return tot+" סה\"כ · ממוצע "+avg+" ליום מול תקציב של "+budget+" ליום"; },
+      maCost:"עלות להרשמה · 7 ימים",
+      maCostTip:"כל ההוצאה בשבעת הימים המלאים האחרונים חלקי כל ההרשמות האמיתיות באותם ימים. כולל הרשמות אורגניות, ולכן זו עלות מעורבת - אבל זה המדד הכן ביותר שיש, כי מטא מפספסת התקנות (פרטיות של אפל + ייחוס שבור באנדרואיד)",
+      maCampVal:function(sp,ctr,cpc,inst){ return sp+" · CTR "+ctr+"% · קליק "+cpc+" · "+inst+" התקנות"; },
+      maCtrTip:"CTR = כמה מתוך מי שראו את המודעה הקליקו עליה (מתחת ל-1% = קריאייטיב חלש) · קליק = כמה עולה בממוצע כל הקלקה",
+      maColDay:"יום", maSpend:"הוצאה", maInstalls:"התקנות (Meta)", maSignups:"הרשמות בפועל",
+      maInstallsTip:"התקנות שמטא מצליחה לייחס לקמפיין. באייפון אפל מסתירה חלק (מנגנון SKAN) ובאנדרואיד הייחוס אצלנו שבור - המספר תמיד נמוך מהאמת. את הנפח האמיתי מודדים בעמודת ההרשמות",
+      maPartial:"חלקי",
+      maFresh:function(at){ var t=new Date(at); return "נמשך מ-Meta ברגע טעינת הדף ("+t.toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Jerusalem"})+") · מתעדכן בכל רענון"; },
+      rdMeta:function(sp,su,cost,inst){ return "ב-7 הימים המלאים האחרונים: הוצאה של <b>"+sp+"</b>, <b>"+su+"</b> הרשמות אמיתיות = <b>"+cost+"</b> להרשמה. מטא מייחסת לעצמה רק "+inst+" התקנות - תת-ספירה מובנית, שופטים לפי ההרשמות. מתחת ל-₪25 להרשמה אפשר לשקול הגדלת תקציב; מעל ₪35 - לבדוק קריאייטיב וטירגוט."; },
+      emptyMeta:"נתוני Meta לא נטענו הפעם - הקמפיינים עצמם לא נעצרו, רק המשיכה לדשבורד נכשלה (אם זה חוזר: לבדוק את תוקף הטוקן)",
       postsTitle:"פוסטים", postsSub:"בקשות עזרה מול הצעות עזרה",
       matchesTitle:"התאמות והשלמות", matchesSub:"התאמות חדשות מול עזרות שסומנו כהושלמו",
       liqTitle:'<span class="term" data-tip="מדד הבריאות המרכזי של מרקטפלייס: כמה מהר צד הביקוש (בקשה) פוגש את צד ההיצע (עוזר/ת)">נזילות</span> · {win}',
@@ -1164,6 +1180,21 @@
       rdStore:function(dl,hold,ever,acc,m30,w7,p30){ return "Of <b>"+dl+"</b> downloads, about <b>"+hold+"</b> devices still hold the app; <b>"+ever+"</b> people ever signed up, <b>"+acc+"</b> accounts remain live, and of those <b>"+m30+"</b> opened the app in the last month ("+p30+" of all downloads) and <b>"+w7+"</b> in the last week. Uninstalling does not delete an account - so the 'alive' layers are measured from opens, never from the account roster."; },
       sfFresh:function(iosD,andD){ return "Data freshness: iOS through "+iosD+" · Android through "+andD+" · figures are pulled manually from the stores' reports"; },
       emptyStore:"Store data not loaded yet",
+      maTitle:"Meta campaigns", maSub:"Campaign spend and installs against real database signups · pulled live from Meta on every page refresh",
+      maToday:"Today so far",
+      maTodayVal:function(sp,inst,su){ return sp+" · "+inst+" Meta installs · "+su+" real signups"; },
+      ma7d:"Last 7 full days",
+      ma7dVal:function(tot,avg,budget){ return tot+" total · avg "+avg+"/day against a "+budget+"/day budget"; },
+      maCost:"Cost per signup · 7d",
+      maCostTip:"All spend over the last 7 full days divided by all real signups in those days. Organic signups included, so it's a blended cost - but it's the honest number, because Meta misses installs (Apple privacy + our broken Android attribution)",
+      maCampVal:function(sp,ctr,cpc,inst){ return sp+" · CTR "+ctr+"% · "+cpc+" per click · "+inst+" installs"; },
+      maCtrTip:"CTR = share of people who clicked after seeing the ad (under 1% = weak creative) · click = average cost per click",
+      maColDay:"Day", maSpend:"Spend", maInstalls:"Meta installs", maSignups:"Real signups",
+      maInstallsTip:"Installs Meta manages to attribute to the campaign. Apple hides part of them (SKAN) and our Android attribution is broken - always an undercount. Real volume lives in the signups column",
+      maPartial:"partial",
+      maFresh:function(at){ var t=new Date(at); return "Pulled from Meta at page load ("+t.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Jerusalem"})+") · refreshes with every reload"; },
+      rdMeta:function(sp,su,cost,inst){ return "Over the last 7 full days: <b>"+sp+"</b> spent, <b>"+su+"</b> real signups = <b>"+cost+"</b> per signup. Meta attributes only "+inst+" installs to itself - a built-in undercount, judge by signups. Under ₪25 per signup a budget raise is on the table; over ₪35, review creative and targeting."; },
+      emptyMeta:"Meta data didn't load this time - the campaigns themselves are untouched, only the dashboard pull failed (if it repeats, check the token's validity)",
       postsTitle:"Posts", postsSub:"Help requests vs. help offers",
       matchesTitle:"Matches & completions", matchesSub:"New matches vs. helps marked completed",
       liqTitle:'<span class="term" data-tip="The core marketplace health metric: how fast demand (a request) meets supply (a helper)">Liquidity</span> · {win}',
@@ -2759,6 +2790,74 @@
                 fmt(L.seen_30d||0),fmt(L.seen_7d||0),pct(L.seen_30d,dl)));
   }
 
+  // ---- Meta Ads campaigns: live spend/installs vs real signups -------------
+  // payload.meta_ads is pulled fresh from the Graph API on every console load.
+  // Meta-attributed installs UNDERCOUNT by construction (Apple SKAN + our
+  // broken Android attribution), so the efficiency verdict is computed on
+  // spend / real DB signups - the same rule as the daily report.
+  function renderMetaAds(){
+    var host=$("metaAds"); if(!host) return;
+    host.innerHTML="";
+    var MA=DATA.meta_ads;
+    if(!MA || !MA.daily || !MA.daily.length){ emptyState(host,S.emptyMeta,"radio"); return; }
+    function ils(n,dec){ return "₪"+Number(n||0).toFixed(dec==null?0:dec); }
+    var suBy={};
+    (DATA.signups_by_day||[]).forEach(function(r){ suBy[String(r.d).slice(0,10)]=r.total||0; });
+    var byDay={}, byCamp={};
+    MA.daily.forEach(function(r){
+      var d=byDay[r.d]||(byDay[r.d]={spend:0,installs:0});
+      d.spend+=r.spend; d.installs+=r.installs;
+      var c=byCamp[r.cid]||(byCamp[r.cid]={name:r.name,spend:0,clicks:0,imp:0,installs:0});
+      c.spend+=r.spend; c.clicks+=r.clicks; c.imp+=r.imp; c.installs+=r.installs;
+    });
+    var days=Object.keys(byDay).sort();
+    var today=days[days.length-1], T=byDay[today];
+    // averages and the verdict use FULL days only - today is partial
+    var full=days.slice(0,-1);
+    var spend7=0, inst7=0, su7=0;
+    full.forEach(function(d){ spend7+=byDay[d].spend; inst7+=byDay[d].installs; su7+=(suBy[d]||0); });
+    var budget=(MA.campaigns||[]).reduce(function(a,c){ return a+(c.daily_budget||0); },0);
+    var cost7=su7? spend7/su7 : null;
+
+    var st=el("table","plain");
+    statRow(st, S.maToday, S.maTodayVal(ils(T.spend), fmt(T.installs), fmt(suBy[today]||0)));
+    statRow(st, S.ma7d, S.ma7dVal(ils(spend7), ils(full.length? spend7/full.length:0), ils(budget)));
+    statRow(st, S.maCost, cost7==null? "-" : ils(cost7,1), S.maCostTip);
+    Object.keys(byCamp).forEach(function(cid){
+      var c=byCamp[cid];
+      var plat=/ios/i.test(c.name)? "iOS" : (/android/i.test(c.name)? "Android" : c.name);
+      statRow(st, plat,
+        S.maCampVal(ils(c.spend), c.imp? (100*c.clicks/c.imp).toFixed(1):"-",
+                    c.clicks? ils(c.spend/c.clicks,2):"-", fmt(c.installs)),
+        S.maCtrTip);
+    });
+    host.appendChild(st);
+
+    var t=el("table","plain");
+    var hr=el("tr");
+    [S.maColDay,S.maSpend,S.maInstalls,S.maSignups,S.maCost.split(" ·")[0]].forEach(function(h,i){
+      var th=el("th");
+      if(i===2){ var sp=el("span","term",h); sp.setAttribute("data-tip",S.maInstallsTip); th.appendChild(sp); }
+      else th.textContent=h;
+      hr.appendChild(th);
+    });
+    t.appendChild(hr);
+    days.slice().reverse().forEach(function(d){
+      var r=byDay[d], su=suBy[d]||0, isToday=(d===today);
+      var tr=el("tr");
+      tr.appendChild(el("td",null,fmtDay(d)+(isToday? " · "+S.maPartial : "")));
+      tr.appendChild(el("td",null,ils(r.spend)));
+      tr.appendChild(el("td",null,fmt(r.installs)));
+      tr.appendChild(el("td",null,fmt(su)));
+      tr.appendChild(el("td",null,su? ils(r.spend/su,1):"-"));
+      t.appendChild(tr);
+    });
+    host.appendChild(t);
+    host.appendChild(el("div","note",S.maFresh(MA.fetched_at)));
+    var cls=cost7==null? "" : (cost7<25? "good" : (cost7<=35? "warn" : "bad"));
+    panelRead("metaAds", cls, S.rdMeta(ils(spend7), fmt(su7), cost7==null? "-" : ils(cost7,1), fmt(inst7)));
+  }
+
   function renderResearch(){
     var R=DATA.research;
     // additive by design: without the research payload these panels just say so
@@ -3517,6 +3616,7 @@
     }
 
     renderStoreFunnel();
+    renderMetaAds();
     renderResearch();
     renderDecisions();
     renderGrowthLog();
@@ -3688,7 +3788,7 @@
     noOffer:"alert", chCats:"tag", cityLiq:"map",
     supplyHealth:"box", density:"radio", chMsgs:"msg", chatHealth:"msg",
     chRetention:"trend", userStates:"refresh", repeatRate:"repeat",
-    topUsers:"award", safety:"shield",
+    topUsers:"award", safety:"shield", metaAds:"radio",
     driverTree:"trend", nbhd:"map", nudgeEff:"alert", helperDep:"award"
   };
   var SEC_ICON={ secGrowth:"trend", secMarket:"layers", secChat:"msg",
