@@ -2817,10 +2817,16 @@
     var host=$("metaAdsSummary"), dayHost=$("metaAdsDaily");
     if(!host || !dayHost) return;
     host.innerHTML=""; dayHost.innerHTML="";
+    var daySec=dayHost.closest("section.panel");
     var MA=DATA.meta_ads;
+    // with no data the explanation is said ONCE: the day-by-day panel has
+    // nothing of its own to say, and repeating the sentence read as a bug
     if(!MA || !MA.daily || !MA.daily.length){
-      emptyState(host,S.emptyMeta,"radio"); emptyState(dayHost,S.emptyMeta,"radio"); return;
+      emptyState(host,S.emptyMeta,"radio");
+      if(daySec) daySec.classList.add("hidden");
+      return;
     }
+    if(daySec) daySec.classList.remove("hidden");
     function ils(n,dec){ return "₪"+Number(n||0).toFixed(dec==null?0:dec); }
     var suBy={};
     (DATA.signups_by_day||[]).forEach(function(r){ suBy[String(r.d).slice(0,10)]=r.total||0; });
