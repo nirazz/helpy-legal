@@ -639,6 +639,7 @@
     <button data-v="metrics" class="on" data-i18n="tabMetrics">מטריקות</button>
     <button data-v="chat" data-i18n="tabChat">צ'אט</button>
     <button data-v="arch" data-i18n="tabArch">ארכיטקטורה</button>
+    <button data-v="ads" data-i18n="tabAds">קמפיינים</button>
   </div>
   <label class="ghost" style="display:flex;gap:6px;align-items:center;cursor:pointer">
     <input type="checkbox" id="autoRef"> <span data-i18n="live">חי · כל דקה</span>
@@ -705,7 +706,6 @@
         <div class="sub" data-i18n="funnelSub">מה עושה משתמש חדש אחרי ההרשמה</div><div id="funnel"></div></section>
       <section class="panel"><h2 data-i18n="lifecycleTitle">מאזן משתמשים</h2><div class="sub" data-i18n="lifecycleSub">חתך חי של כל המשתמשים הרשומים</div><div id="lifecycle"></div></section>
       <section class="panel wide"><h2 data-i18n="sfTitle">מהחנות ועד פעילות</h2><div class="sub" data-i18n="sfSub">המשפך המלא: כמה הורידו, כמה עדיין מחזיקים באפליקציה, כמה נרשמו וכמה באמת פעילים · נתוני ההורדות וההסרות מגיעים מדוחות החנויות עצמן, לא מהמסד שלנו</div><div id="storeFunnel"></div></section>
-      <section class="panel wide"><h2 data-i18n="maTitle">קמפיינים · Meta</h2><div class="sub" data-i18n="maSub">הוצאה והתקנות מהקמפיינים מול הרשמות אמיתיות במסד · נמשך חי מ-Meta בכל רענון של הדף</div><div id="metaAds"></div></section>
       <section class="panel wide"><h2 data-i18n="nudgeTitle">מכונת הדחיפות · {win}</h2><div class="sub" data-i18n="nudgeSub">כל שולח פוש נמדד: כמה נשלחו, וכמה מהמקבלים עשו את הפעולה תוך 48 שעות. זה הפאנל שמחליט איזה שולח נשאר</div><div id="nudgeEff"></div></section>
       <section class="panel wide"><h2 data-i18n="glogTitle">יומן צמיחה · שבוע אחר שבוע</h2><div class="sub" data-i18n="glogSub">מה קרה בכל שבוע, מה השתנה, ומה גרם לזה</div><div id="growthLog"></div></section>
     </div>
@@ -806,6 +806,19 @@
       <div id="archDetail" class="archdetail"></div>
     </section>
   </div>
+
+  <div id="adsView" class="hidden">
+    <section class="panel wide" style="opacity:1;transform:none">
+      <h2 data-i18n="maTitle">קמפיינים · Meta</h2>
+      <div class="sub" data-i18n="maSub">הוצאה והתקנות מהקמפיינים מול הרשמות אמיתיות במסד · נמשך חי מ-Meta בכל רענון של הדף</div>
+      <div id="metaAdsSummary"></div>
+    </section>
+    <section class="panel wide" style="opacity:1;transform:none">
+      <h2 data-i18n="maDailyTitle">יום אחר יום</h2>
+      <div class="sub" data-i18n="maDailySub">מה הוצאנו בכל יום, כמה התקנות Meta ייחסה לעצמה, וכמה אנשים באמת נרשמו באותו יום</div>
+      <div id="metaAdsDaily"></div>
+    </section>
+  </div>
 </main>
 <div id="tt"></div>
 <footer data-i18n="footerLine">Helpy Console · הגישה מאובטחת ונרשמת ביומני המערכת</footer>
@@ -861,7 +874,9 @@
       rdStore:function(dl,hold,ever,acc,m30,w7,p30){ return "מתוך <b>"+dl+"</b> הורדות, כ-<b>"+hold+"</b> מכשירים עדיין מחזיקים באפליקציה; <b>"+ever+"</b> אנשים נרשמו אי-פעם, מהם נותרו <b>"+acc+"</b> חשבונות חיים, ומהם <b>"+m30+"</b> נכנסו בחודש האחרון ("+p30+" מכלל ההורדות) ו-<b>"+w7+"</b> בשבוע האחרון. הסרת אפליקציה אינה מוחקת חשבון - לכן שכבת ה'חיים' נמדדת לפי כניסות, לא לפי מצבת החשבונות."; },
       sfFresh:function(iosD,andD){ return "טריות הנתונים: iOS עד "+iosD+" · Android עד "+andD+" · המספרים נמשכים ידנית מדוחות החנויות"; },
       emptyStore:"נתוני החנויות עדיין לא נטענו",
+      tabAds:"קמפיינים",
       maTitle:"קמפיינים · Meta", maSub:"הוצאה והתקנות מהקמפיינים מול הרשמות אמיתיות במסד · נמשך חי מ-Meta בכל רענון של הדף",
+      maDailyTitle:"יום אחר יום", maDailySub:"מה הוצאנו בכל יום, כמה התקנות Meta ייחסה לעצמה, וכמה אנשים באמת נרשמו באותו יום",
       maToday:"היום עד עכשיו",
       maTodayVal:function(sp,inst,su){ return sp+" · "+inst+" התקנות (Meta) · "+su+" הרשמות בפועל"; },
       ma7d:"7 ימים מלאים אחרונים",
@@ -1180,7 +1195,9 @@
       rdStore:function(dl,hold,ever,acc,m30,w7,p30){ return "Of <b>"+dl+"</b> downloads, about <b>"+hold+"</b> devices still hold the app; <b>"+ever+"</b> people ever signed up, <b>"+acc+"</b> accounts remain live, and of those <b>"+m30+"</b> opened the app in the last month ("+p30+" of all downloads) and <b>"+w7+"</b> in the last week. Uninstalling does not delete an account - so the 'alive' layers are measured from opens, never from the account roster."; },
       sfFresh:function(iosD,andD){ return "Data freshness: iOS through "+iosD+" · Android through "+andD+" · figures are pulled manually from the stores' reports"; },
       emptyStore:"Store data not loaded yet",
+      tabAds:"Campaigns",
       maTitle:"Meta campaigns", maSub:"Campaign spend and installs against real database signups · pulled live from Meta on every page refresh",
+      maDailyTitle:"Day by day", maDailySub:"What we spent each day, how many installs Meta attributed to itself, and how many people actually signed up that day",
       maToday:"Today so far",
       maTodayVal:function(sp,inst,su){ return sp+" · "+inst+" Meta installs · "+su+" real signups"; },
       ma7d:"Last 7 full days",
@@ -1949,6 +1966,7 @@
     $("metricsView").classList.toggle("hidden",v!=="metrics");
     $("chatView").classList.toggle("hidden",v!=="chat");
     $("archView").classList.toggle("hidden",v!=="arch");
+    $("adsView").classList.toggle("hidden",v!=="ads");
     $("rail").classList.toggle("hidden",v!=="metrics");
     if(v==="chat"){
       // visiting the chat tab advances the stored watermark (next reload starts
@@ -2796,10 +2814,13 @@
   // broken Android attribution), so the efficiency verdict is computed on
   // spend / real DB signups - the same rule as the daily report.
   function renderMetaAds(){
-    var host=$("metaAds"); if(!host) return;
-    host.innerHTML="";
+    var host=$("metaAdsSummary"), dayHost=$("metaAdsDaily");
+    if(!host || !dayHost) return;
+    host.innerHTML=""; dayHost.innerHTML="";
     var MA=DATA.meta_ads;
-    if(!MA || !MA.daily || !MA.daily.length){ emptyState(host,S.emptyMeta,"radio"); return; }
+    if(!MA || !MA.daily || !MA.daily.length){
+      emptyState(host,S.emptyMeta,"radio"); emptyState(dayHost,S.emptyMeta,"radio"); return;
+    }
     function ils(n,dec){ return "₪"+Number(n||0).toFixed(dec==null?0:dec); }
     var suBy={};
     (DATA.signups_by_day||[]).forEach(function(r){ suBy[String(r.d).slice(0,10)]=r.total||0; });
@@ -2832,6 +2853,10 @@
         S.maCtrTip);
     });
     host.appendChild(st);
+    host.appendChild(el("div","note",S.maFresh(MA.fetched_at)));
+    var cls=cost7==null? "" : (cost7<25? "good" : (cost7<=35? "warn" : "bad"));
+    panelRead("metaAdsSummary", cls,
+      S.rdMeta(ils(spend7), fmt(su7), cost7==null? "-" : ils(cost7,1), fmt(inst7)));
 
     var t=el("table","plain");
     var hr=el("tr");
@@ -2852,10 +2877,7 @@
       tr.appendChild(el("td",null,su? ils(r.spend/su,1):"-"));
       t.appendChild(tr);
     });
-    host.appendChild(t);
-    host.appendChild(el("div","note",S.maFresh(MA.fetched_at)));
-    var cls=cost7==null? "" : (cost7<25? "good" : (cost7<=35? "warn" : "bad"));
-    panelRead("metaAds", cls, S.rdMeta(ils(spend7), fmt(su7), cost7==null? "-" : ils(cost7,1), fmt(inst7)));
+    dayHost.appendChild(t);
   }
 
   function renderResearch(){
@@ -3788,7 +3810,7 @@
     noOffer:"alert", chCats:"tag", cityLiq:"map",
     supplyHealth:"box", density:"radio", chMsgs:"msg", chatHealth:"msg",
     chRetention:"trend", userStates:"refresh", repeatRate:"repeat",
-    topUsers:"award", safety:"shield", metaAds:"radio",
+    topUsers:"award", safety:"shield", metaAdsSummary:"radio", metaAdsDaily:"file",
     driverTree:"trend", nbhd:"map", nudgeEff:"alert", helperDep:"award"
   };
   var SEC_ICON={ secGrowth:"trend", secMarket:"layers", secChat:"msg",
