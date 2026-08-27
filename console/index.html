@@ -2191,6 +2191,11 @@
     });
   }
 
+  function resizeCharts(){
+    Object.keys(einsts).forEach(function(k){
+      try{ einsts[k].resize(); }catch(e){}
+    });
+  }
   function switchTab(v){
     document.querySelectorAll("#tabs button").forEach(function(b){
       b.classList.toggle("on", b.getAttribute("data-v")===v);
@@ -2209,7 +2214,17 @@
       if(tb) tb.remove();
     }
     if(v==="arch") renderArch();
-    if(v==="metrics") Object.keys(einsts).forEach(function(k){ einsts[k].resize(); });
+    // EVERY tab with a chart, not just metrics: a chart initialised while its
+    // view was display:none measures zero width and stays a 100px sliver
+    // forever. This guard was written when metrics owned the only charts; the
+    // campaigns chart is built on load, from the hidden ads view.
+    // Synchronously, NOT in requestAnimationFrame: rAF does not fire in a
+    // backgrounded tab, so a console left open on another tab would come back
+    // to a broken chart. resize() reads offsetWidth, which forces the layout
+    // the class toggle above just invalidated - the size is already correct.
+    resizeCharts();
+    // and once more after the reflow, for anything whose height is animated
+    setTimeout(resizeCharts, 60);
     window.scrollTo({top:0,behavior:"smooth"});
   }
   function drillToChat(opts){
