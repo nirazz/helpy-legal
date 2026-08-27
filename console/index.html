@@ -612,6 +612,140 @@
                 overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .evrow .evw { color:var(--muted); font-size:11.5px; white-space:nowrap;
                 flex-shrink:0; font-variant-numeric:tabular-nums; }
+
+  /* ---- header controls: a toolbar, not a row of text links ----------------
+     The tabs and the utility buttons used to share one flat 13px ghost style,
+     so the thing you navigate with looked exactly like the thing you log out
+     with. Tabs now carry an icon and a lifted thumb; utilities get a real
+     34px target, a hairline of their own, and an accent on hover. */
+  header { gap:8px; padding:11px 24px; }
+  #tabs { padding:3px; border-radius:11px; gap:2px; }
+  #tabs button { display:inline-flex; align-items:center; gap:7px; padding:7px 15px;
+                 border-radius:8px; font-weight:500; line-height:1.15; font-size:13px;
+                 transition:background .18s ease, color .18s ease, box-shadow .18s ease; }
+  #tabs button .ico { opacity:.55; transition:opacity .18s ease, color .18s ease; }
+  #tabs button:hover:not(.on) { background:var(--wash-hover); color:var(--ink); }
+  #tabs button:hover:not(.on) .ico { opacity:.85; }
+  #tabs button.on { background:var(--surface); color:var(--ink); font-weight:700;
+                    box-shadow:0 1px 2px rgba(45,45,100,.14), 0 4px 12px rgba(45,45,100,.10); }
+  #tabs button.on .ico { opacity:1; color:var(--s1); }
+  html[data-theme="dark"] #tabs button.on { background:rgba(139,146,255,.15);
+                    box-shadow:0 1px 2px rgba(0,0,0,.35), inset 0 1px 0 rgba(139,146,255,.14); }
+  .hactions { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .hsep { width:1px; height:20px; background:var(--hairline); margin:0 3px; flex-shrink:0; }
+  header .ghost { display:inline-flex; align-items:center; gap:7px; height:34px;
+                  padding:0 13px; border-radius:9px; font-size:13px; font-weight:500;
+                  background:var(--glass); color:var(--ink2);
+                  border:1px solid var(--hairline);
+                  transition:background .18s ease, color .18s ease,
+                             border-color .18s ease, transform .1s ease; }
+  header .ghost .ico { opacity:.7; flex-shrink:0;
+                       transition:opacity .18s ease, color .18s ease; }
+  header .ghost:hover { background:var(--surface); color:var(--ink);
+                        border-color:rgba(99,102,241,.38); }
+  header .ghost:hover .ico { opacity:1; color:var(--s1); }
+  header .ghost:active { transform:translateY(1px); }
+  header .ghost:focus-visible, #tabs button:focus-visible, .live:focus-within {
+                        outline:2px solid var(--s1); outline-offset:2px; }
+  header .ghost.danger:hover { border-color:rgba(220,38,38,.42); color:var(--bad-text); }
+  header .ghost.danger:hover .ico { color:var(--bad-text); }
+  html[dir="rtl"] #logoutBtn .ico { transform:scaleX(-1); }
+  /* live refresh is a STATE, so it gets a switch - a checkbox in a pill read
+     as "off" at a glance whether it was on or not */
+  .live { display:inline-flex; align-items:center; gap:9px; height:34px; padding:0 12px;
+          border:1px solid var(--hairline); border-radius:9px; cursor:pointer;
+          font-size:13px; font-weight:500; color:var(--ink2); background:var(--glass);
+          user-select:none; transition:border-color .18s ease, color .18s ease,
+                                       background .18s ease; }
+  .live input { position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
+  .live .sw { position:relative; width:30px; height:17px; border-radius:999px;
+              background:var(--grid); box-shadow:inset 0 0 0 1px var(--baseline);
+              flex-shrink:0; transition:background .2s ease, box-shadow .2s ease; }
+  .live.on .sw { box-shadow:none; }
+  .live .sw::after { content:""; position:absolute; top:2px; inset-inline-start:2px;
+              width:13px; height:13px; border-radius:50%; background:#fff;
+              box-shadow:0 1px 2px rgba(0,0,0,.28); transition:transform .2s ease; }
+  .live:hover { border-color:rgba(99,102,241,.38); color:var(--ink); }
+  .live.on { border-color:var(--s1); color:var(--ink); background:var(--wash1); }
+  .live.on .sw { background:var(--s1); }
+  .live.on .sw::after { transform:translateX(13px); }
+  html[dir="rtl"] .live.on .sw::after { transform:translateX(-13px); }
+
+  /* ---- campaigns tab ------------------------------------------------------
+     The panel used to be five label/value rows, so the decision number (cost
+     per signup) had exactly the same weight as a CTR footnote. Now: four
+     tiles, a pacing bar against the real budget, one card per platform, and a
+     day table that shows the spend shape instead of only naming it. */
+  #metaAdsTiles { margin-bottom:18px; }
+  /* cost per signup is a "lower is better" number, so the picture is a zone
+     scale with a marker, not a fill bar - a 16%-full bar reads as failure
+     when it actually means we are deep inside the healthy band */
+  .zwrap { position:relative; margin:10px 0 4px; }
+  .zones { display:flex; height:8px; border-radius:4px; overflow:hidden; }
+  .zones i { display:block; height:100%; }
+  .zmark { position:absolute; top:-4px; width:3px; height:16px; border-radius:2px;
+           background:var(--ink); box-shadow:0 0 0 2px var(--surface); }
+  .pace { margin:2px 0 16px; }
+  .pacehead { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;
+              font-size:12.5px; color:var(--ink2); margin-bottom:9px; }
+  .pacehead b { font-size:17px; font-weight:800; color:var(--ink);
+                font-variant-numeric:tabular-nums; letter-spacing:.01em; }
+  .pacetrack { position:relative; height:18px; border-radius:6px;
+               background:var(--grid); }
+  .pacetrack .pfill { position:absolute; top:0; bottom:0; inset-inline-start:0; border-radius:6px;
+               background:linear-gradient(to right,var(--violet),var(--s1));
+               transition:width .7s cubic-bezier(.2,.8,.2,1); }
+  .pacetrack .pmark { position:absolute; top:-4px; bottom:-4px; width:2px;
+               background:var(--ink2); border-radius:1px; }
+  .platgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(238px,1fr));
+              gap:12px; }
+  .platcard { position:relative; border:1px solid var(--hairline); border-radius:12px;
+              padding:13px 16px 12px; background:var(--surface); overflow:hidden;
+              transition:transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+  .platcard::before { content:""; position:absolute; top:0; bottom:0;
+              inset-inline-start:0; width:3px; background:var(--pc,var(--s1)); }
+  .platcard:hover { transform:translateY(-2px); border-color:rgba(99,102,241,.30);
+              box-shadow:0 8px 22px rgba(45,45,100,.10); }
+  html[data-theme="dark"] .platcard:hover { box-shadow:0 8px 22px rgba(0,0,0,.42); }
+  .platcard .ph { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  .platcard .pname { font-family:"Orbitron","Heebo",sans-serif; font-size:11.5px;
+              letter-spacing:.09em; text-transform:uppercase; font-weight:600;
+              color:var(--ink2); }
+  .platcard .chip { margin-inline-start:auto; }
+  .chip { font-size:11px; font-weight:700; padding:2px 9px; border-radius:999px;
+          white-space:nowrap; }
+  .chip.good { color:var(--good-text); background:rgba(21,128,61,.10); }
+  .chip.warn { color:var(--warning);   background:rgba(217,119,6,.12); }
+  .chip.bad  { color:var(--bad-text);  background:rgba(220,38,38,.10); }
+  html[data-theme="dark"] .chip.good { background:rgba(74,222,128,.12); }
+  html[data-theme="dark"] .chip.warn { background:rgba(250,178,25,.14); }
+  html[data-theme="dark"] .chip.bad  { background:rgba(248,113,113,.13); }
+  .platcard .pbig { font-size:25px; font-weight:800; line-height:1.1;
+              letter-spacing:.01em; font-variant-numeric:tabular-nums; }
+  .platcard .pbigl { font-size:11.5px; color:var(--muted); margin-bottom:11px; }
+  .pmetrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px;
+              border-top:1px solid var(--grid); padding-top:10px; }
+  .pm .pmk { display:block; font-size:11px; color:var(--muted); margin-bottom:3px; }
+  .pm b { font-size:14.5px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .meter { height:4px; border-radius:2px; background:var(--grid); margin-top:7px;
+           overflow:hidden; }
+  .meter i { display:block; height:100%; border-radius:2px;
+             background:linear-gradient(to right,var(--violet),var(--s1));
+             transition:width .7s cubic-bezier(.2,.8,.2,1); }
+  /* the spend column carries its own bar: a column of numbers hides the shape */
+  .plain td.barcell { min-width:132px; }
+  .cellbar { display:flex; align-items:center; gap:9px; }
+  .cellbar .cbv { flex-shrink:0; font-weight:600; }
+  .cellbar .cbt { flex:1; min-width:26px; height:6px; border-radius:3px;
+                  background:var(--grid); overflow:hidden; }
+  .cellbar .cbt i { display:block; height:100%; border-radius:3px;
+                  background:linear-gradient(to right,var(--seq250),var(--seq550));
+                  transition:width .6s cubic-bezier(.2,.8,.2,1); }
+  table.plain tr.today td { background:var(--wash1); }
+  table.plain tr.today:hover td { background:var(--wash1); }
+  .tagpill { font-size:10.5px; font-weight:700; padding:1px 7px; border-radius:999px;
+             background:var(--wash1); color:var(--s1); margin-inline-start:7px;
+             vertical-align:1px; }
   .hidden { display:none !important; }
 </style>
 </head>
@@ -636,18 +770,21 @@
   <div class="brand"><i></i>Helpy Console <small id="genAt"></small></div>
   <span class="grow"></span>
   <div class="seg" id="tabs">
-    <button data-v="metrics" class="on" data-i18n="tabMetrics">מטריקות</button>
-    <button data-v="chat" data-i18n="tabChat">צ'אט</button>
-    <button data-v="arch" data-i18n="tabArch">ארכיטקטורה</button>
-    <button data-v="ads" data-i18n="tabAds">קמפיינים</button>
+    <button data-v="metrics" class="on" data-ic="activity"><span data-i18n="tabMetrics">מטריקות</span></button>
+    <button data-v="chat" data-ic="msg"><span data-i18n="tabChat">צ'אט</span></button>
+    <button data-v="arch" data-ic="layers"><span data-i18n="tabArch">ארכיטקטורה</span></button>
+    <button data-v="ads" data-ic="radio"><span data-i18n="tabAds">קמפיינים</span></button>
   </div>
-  <label class="ghost" style="display:flex;gap:6px;align-items:center;cursor:pointer">
-    <input type="checkbox" id="autoRef"> <span data-i18n="live">חי · כל דקה</span>
-  </label>
-  <button class="ghost" id="refreshBtn"><span id="refreshIcon">⟳</span> <span data-i18n="refresh">רענון</span></button>
-  <button class="ghost" id="themeBtn" title=""></button>
-  <button class="ghost" id="langBtn"></button>
-  <button class="ghost" id="logoutBtn" data-i18n="logout">יציאה</button>
+  <div class="hactions">
+    <label class="live" id="liveTog">
+      <input type="checkbox" id="autoRef"><span class="sw" aria-hidden="true"></span><span data-i18n="live">חי · כל דקה</span>
+    </label>
+    <button class="ghost" id="refreshBtn"><span id="refreshIcon"></span><span data-i18n="refresh">רענון</span></button>
+    <span class="hsep" aria-hidden="true"></span>
+    <button class="ghost" id="themeBtn"></button>
+    <button class="ghost" id="langBtn"></button>
+    <button class="ghost danger" id="logoutBtn"></button>
+  </div>
 </header>
 
 <nav id="rail" class="hidden" aria-label="ניווט בין אזורים">
@@ -808,6 +945,7 @@
   </div>
 
   <div id="adsView" class="hidden">
+    <div class="tiles" id="metaAdsTiles"></div>
     <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="maTitle">קמפיינים · Meta</h2>
       <div class="sub" data-i18n="maSub">הוצאה והתקנות מהקמפיינים מול הרשמות אמיתיות במסד · נמשך חי מ-Meta בכל רענון של הדף</div>
@@ -878,12 +1016,19 @@
       maTitle:"קמפיינים · Meta", maSub:"הוצאה והתקנות מהקמפיינים מול הרשמות אמיתיות במסד · נמשך חי מ-Meta בכל רענון של הדף",
       maDailyTitle:"יום אחר יום", maDailySub:"מה הוצאנו בכל יום, כמה התקנות Meta ייחסה לעצמה, וכמה אנשים באמת נרשמו באותו יום",
       maToday:"היום עד עכשיו",
-      maTodayVal:function(sp,inst,su){ return sp+" · "+inst+" התקנות (Meta) · "+su+" הרשמות בפועל"; },
-      ma7d:"7 ימים מלאים אחרונים",
-      ma7dVal:function(tot,avg,budget){ return tot+" סה\"כ · ממוצע "+avg+" ליום מול תקציב של "+budget+" ליום"; },
+      maTodayNote:function(inst,su){ return inst+" התקנות (Meta) · "+su+" הרשמות בפועל"; },
+      maTileSpend:"הוצאה · 7 ימים",
+      maAvgDay:function(x){ return "ממוצע "+x+" ליום"; },
+      maTileSignups:"הרשמות אמיתיות · 7 ימים",
+      maTileSignupsNote:function(inst){ return "מטא ייחסה לעצמה "+inst+" התקנות בלבד"; },
+      maCostTarget:"היעד: מתחת ל-₪25 להרשמה",
+      maPaceTitle:"קצב הוצאה יומי",
+      maPaceVs:function(b){ return "מול תקציב של "+b+" ליום"; },
+      maPlatSpendLbl:"הוצאה · 7 ימים",
+      maPlatCtr:"CTR", maPlatCpc:"עלות לקליק", maPlatInst:"התקנות (Meta)",
+      maCtrStrong:"קריאייטיב חזק", maCtrOk:"סביר", maCtrWeak:"קריאייטיב חלש",
       maCost:"עלות להרשמה · 7 ימים",
       maCostTip:"כל ההוצאה בשבעת הימים המלאים האחרונים חלקי כל ההרשמות האמיתיות באותם ימים. כולל הרשמות אורגניות, ולכן זו עלות מעורבת - אבל זה המדד הכן ביותר שיש, כי מטא מפספסת התקנות (פרטיות של אפל + ייחוס שבור באנדרואיד)",
-      maCampVal:function(sp,ctr,cpc,inst){ return sp+" · CTR "+ctr+"% · קליק "+cpc+" · "+inst+" התקנות"; },
       maCtrTip:"CTR = כמה מתוך מי שראו את המודעה הקליקו עליה (מתחת ל-1% = קריאייטיב חלש) · קליק = כמה עולה בממוצע כל הקלקה",
       maColDay:"יום", maSpend:"הוצאה", maInstalls:"התקנות (Meta)", maSignups:"הרשמות בפועל",
       maInstallsTip:"התקנות שמטא מצליחה לייחס לקמפיין. באייפון אפל מסתירה חלק (מנגנון SKAN) ובאנדרואיד הייחוס אצלנו שבור - המספר תמיד נמוך מהאמת. את הנפח האמיתי מודדים בעמודת ההרשמות",
@@ -1167,7 +1312,7 @@
       archStop:"⏹ עצירת ההדגמה",
       tileJump:"לחיצה קופצת לגרף המלא ומדגישה אותו",
       sparkTip:"12 שבועות אחרונים · סכום שבועי",
-      themeBtn:{light:"🌙 כהה", dark:"☀️ בהיר"}, langBtn:"English"
+      themeBtn:{light:"כהה", dark:"בהיר"}, langBtn:"English"
     },
     en: {
       tabMetrics:"Metrics", tabChat:"Chat", live:"Live · 1 min", refresh:"Refresh", logout:"Sign out",
@@ -1200,12 +1345,19 @@
       maTitle:"Meta campaigns", maSub:"Campaign spend and installs against real database signups · pulled live from Meta on every page refresh",
       maDailyTitle:"Day by day", maDailySub:"What we spent each day, how many installs Meta attributed to itself, and how many people actually signed up that day",
       maToday:"Today so far",
-      maTodayVal:function(sp,inst,su){ return sp+" · "+inst+" Meta installs · "+su+" real signups"; },
-      ma7d:"Last 7 full days",
-      ma7dVal:function(tot,avg,budget){ return tot+" total · avg "+avg+"/day against a "+budget+"/day budget"; },
+      maTodayNote:function(inst,su){ return inst+" Meta installs · "+su+" real signups"; },
+      maTileSpend:"Spend · 7d",
+      maAvgDay:function(x){ return "avg "+x+"/day"; },
+      maTileSignups:"Real signups · 7d",
+      maTileSignupsNote:function(inst){ return "Meta claimed only "+inst+" installs"; },
+      maCostTarget:"target: under ₪25 per signup",
+      maPaceTitle:"Daily spend pace",
+      maPaceVs:function(b){ return "against a "+b+"/day budget"; },
+      maPlatSpendLbl:"Spend · 7d",
+      maPlatCtr:"CTR", maPlatCpc:"Cost per click", maPlatInst:"Meta installs",
+      maCtrStrong:"Strong creative", maCtrOk:"Acceptable", maCtrWeak:"Weak creative",
       maCost:"Cost per signup · 7d",
       maCostTip:"All spend over the last 7 full days divided by all real signups in those days. Organic signups included, so it's a blended cost - but it's the honest number, because Meta misses installs (Apple privacy + our broken Android attribution)",
-      maCampVal:function(sp,ctr,cpc,inst){ return sp+" · CTR "+ctr+"% · "+cpc+" per click · "+inst+" installs"; },
       maCtrTip:"CTR = share of people who clicked after seeing the ad (under 1% = weak creative) · click = average cost per click",
       maColDay:"Day", maSpend:"Spend", maInstalls:"Meta installs", maSignups:"Real signups",
       maInstallsTip:"Installs Meta manages to attribute to the campaign. Apple hides part of them (SKAN) and our Android attribution is broken - always an undercount. Real volume lives in the signups column",
@@ -1488,7 +1640,7 @@
       archStop:"⏹ Stop the demo",
       tileJump:"Click to jump to the full chart and highlight it",
       sparkTip:"Last 12 weeks · weekly totals",
-      themeBtn:{light:"🌙 Dark", dark:"☀️ Light"}, langBtn:"עברית"
+      themeBtn:{light:"Dark", dark:"Light"}, langBtn:"עברית"
     }
   };
   var LANG = localStorage.getItem("helpy_console_lang") || "he";
@@ -1527,9 +1679,30 @@
     document.querySelectorAll("[data-i18n-ph]").forEach(function(n){
       var v=S[n.getAttribute("data-i18n-ph")]; if(typeof v==="string") n.placeholder=v;
     });
-    var tb=document.getElementById("themeBtn"), lb=document.getElementById("langBtn");
-    if(tb) tb.textContent = S.themeBtn[THEME];
-    if(lb) lb.textContent = S.langBtn;
+    paintChrome();
+  }
+  // Header chrome is painted, not written: an emoji moon and a "\u27F3" glyph are
+  // text pretending to be icons (the same rule the app follows), and they broke
+  // alignment against the real Lucide strokes everywhere else on the page.
+  function paintChrome(){
+    // the icon table is a `var` further down the file, so the very first
+    // applyChrome() (during boot) runs before it exists - repaint on the next
+    // tick rather than throwing and killing the whole chrome pass
+    if(typeof ICONS==="undefined" || !ICONS){ setTimeout(paintChrome,0); return; }
+    document.querySelectorAll("#tabs button[data-ic]").forEach(function(b){
+      if(!b.querySelector(".ico")) b.insertBefore(icon(b.getAttribute("data-ic"),15), b.firstChild);
+    });
+    var ri=document.getElementById("refreshIcon");
+    if(ri && !ri.querySelector(".ico")){ ri.textContent=""; ri.appendChild(icon("refresh",15)); }
+    function paint(id, ic, label, title){
+      var b=document.getElementById(id); if(!b) return;
+      b.innerHTML=""; b.appendChild(icon(ic,15));
+      b.appendChild(el("span",null,label));
+      b.title=title||label;
+    }
+    paint("themeBtn", THEME==="dark"?"sun":"moon", S.themeBtn[THEME]);
+    paint("langBtn", "globe", S.langBtn);
+    paint("logoutBtn", "logout", S.logout);
   }
   applyChrome();
   var sb = window.supabase ? window.supabase.createClient(
@@ -2816,8 +2989,9 @@
   // broken Android attribution), so the efficiency verdict is computed on
   // spend / real DB signups - the same rule as the daily report.
   function renderMetaAds(){
-    var host=$("metaAdsSummary"), dayHost=$("metaAdsDaily");
+    var tileHost=$("metaAdsTiles"), host=$("metaAdsSummary"), dayHost=$("metaAdsDaily");
     if(!host || !dayHost) return;
+    if(tileHost){ tileHost.innerHTML=""; tileHost.classList.add("hidden"); }
     host.innerHTML=""; dayHost.innerHTML="";
     var daySec=dayHost.closest("section.panel");
     var MA=DATA.meta_ads;
@@ -2829,7 +3003,13 @@
       return;
     }
     if(daySec) daySec.classList.remove("hidden");
-    function ils(n,dec){ return "₪"+Number(n||0).toFixed(dec==null?0:dec); }
+    function ils(n,dec){ return "\u20AA"+Number(n||0).toFixed(dec==null?0:dec); }
+    function grow(node,pct){
+      var w=Math.max(0,Math.min(100,pct))+"%";
+      if(REDUCED){ node.style.width=w; return; }
+      node.style.width="0%";
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ node.style.width=w; }); });
+    }
     // Signups MUST come from meta_ads.signups, not the shared signups_by_day:
     // that series buckets by UTC while Meta reports in the ad account's own
     // calendar (Asia/Jerusalem), which shifted every late-evening signup onto
@@ -2842,43 +3022,135 @@
       suTz=false;
       (DATA.signups_by_day||[]).forEach(function(r){ suBy[String(r.d).slice(0,10)]=r.total||0; });
     }
-    var byDay={}, byCamp={};
+    var byDay={};
     MA.daily.forEach(function(r){
       var d=byDay[r.d]||(byDay[r.d]={spend:0,installs:0});
       d.spend+=r.spend; d.installs+=r.installs;
-      var c=byCamp[r.cid]||(byCamp[r.cid]={name:r.name,spend:0,clicks:0,imp:0,installs:0});
-      c.spend+=r.spend; c.clicks+=r.clicks; c.imp+=r.imp; c.installs+=r.installs;
     });
     var days=Object.keys(byDay).sort();
     var today=days[days.length-1], T=byDay[today];
-    // averages and the verdict use FULL days only - today is partial
-    var full=days.slice(0,-1);
+    // averages, the per-platform cards and the verdict use FULL days only -
+    // today is partial, and a card labelled "7 days" must count seven
+    var full=days.slice(0,-1), fullSet={};
+    full.forEach(function(d){ fullSet[d]=1; });
+    var byCamp={};
+    MA.daily.forEach(function(r){
+      if(!fullSet[r.d]) return;
+      var c=byCamp[r.cid]||(byCamp[r.cid]={name:r.name,spend:0,clicks:0,imp:0,installs:0});
+      c.spend+=r.spend; c.clicks+=r.clicks; c.imp+=r.imp; c.installs+=r.installs;
+    });
     var spend7=0, inst7=0, su7=0;
     full.forEach(function(d){ spend7+=byDay[d].spend; inst7+=byDay[d].installs; su7+=(suBy[d]||0); });
     var budget=(MA.campaigns||[]).reduce(function(a,c){ return a+(c.daily_budget||0); },0);
     var cost7=su7? spend7/su7 : null;
+    var avgDay=full.length? spend7/full.length : 0;
 
-    var st=el("table","plain");
-    statRow(st, S.maToday, S.maTodayVal(ils(T.spend), fmt(T.installs), fmt(suBy[today]||0)));
-    statRow(st, S.ma7d, S.ma7dVal(ils(spend7), ils(full.length? spend7/full.length:0), ils(budget)));
-    statRow(st, S.maCost, cost7==null? "-" : ils(cost7,1), S.maCostTip);
+    // ---- the four numbers a budget decision is actually made from ----------
+    // Cost per signup is the decision; it gets the hero tile and a bullet
+    // against the \u20AA25 raise-the-budget line, so "is this good?" is answered
+    // by the picture before the sentence underneath is read.
+    if(tileHost){
+      tileHost.classList.remove("hidden");
+      var costTile=tile(S.maCost, cost7==null? "-" : ils(cost7,1),
+                        {tip:S.maCostTip, note:S.maCostTarget});
+      costTile.classList.add("hero");
+      if(cost7!=null){
+        var zmax=Math.max(50, Math.ceil(cost7*1.15));
+        var zw=el("div","zwrap"), zs=el("div","zones");
+        [[25,"rgba(21,128,61,0.35)"],[10,"rgba(217,119,6,0.38)"],[zmax-35,"rgba(220,38,38,0.32)"]]
+          .forEach(function(z){ var i=el("i"); i.style.flex=z[0]+" 0 0"; i.style.background=z[1]; zs.appendChild(i); });
+        zw.appendChild(zs);
+        var zm=el("i","zmark");
+        zm.style.insetInlineStart="calc("+(100*Math.min(cost7,zmax)/zmax)+"% - 1.5px)";
+        zm.title=S.maCost+": "+ils(cost7,1);
+        zw.appendChild(zm);
+        costTile.insertBefore(zw, costTile.querySelector(".sub"));
+      }
+      tileHost.appendChild(costTile);
+      tileHost.appendChild(tile(S.maTileSpend, ils(spend7),
+        {note:S.maAvgDay(ils(avgDay)),
+         spark:full.map(function(d){ return byDay[d].spend; })}));
+      tileHost.appendChild(tile(S.maTileSignups, fmt(su7),
+        {note:S.maTileSignupsNote(fmt(inst7)),
+         spark:full.map(function(d){ return suBy[d]||0; })}));
+      tileHost.appendChild(tile(S.maToday, ils(T.spend),
+        {note:S.maTodayNote(fmt(T.installs), fmt(suBy[today]||0))}));
+    }
+
+    // ---- pacing: are we spending what we told Meta to spend? --------------
+    if(budget>0){
+      var pace=el("div","pace"), ph=el("div","pacehead");
+      ph.appendChild(el("span",null,S.maPaceTitle));
+      ph.appendChild(el("b",null,ils(avgDay)));
+      ph.appendChild(el("span",null,S.maPaceVs(ils(budget))));
+      pace.appendChild(ph);
+      var pmax=Math.max(avgDay,budget)*1.12;
+      var track=el("div","pacetrack"), fill=el("i","pfill"), mark=el("i","pmark");
+      mark.style.insetInlineStart=(100*budget/pmax)+"%";
+      mark.title=S.maPaceVs(ils(budget));
+      track.appendChild(fill); track.appendChild(mark);
+      pace.appendChild(track);
+      host.appendChild(pace);
+      grow(fill, 100*avgDay/pmax);
+    }
+
+    // ---- one card per platform: the CTR gap IS the story -------------------
+    var ctrMax=0;
+    Object.keys(byCamp).forEach(function(cid){
+      var c=byCamp[cid]; if(c.imp) ctrMax=Math.max(ctrMax, 100*c.clicks/c.imp);
+    });
+    var grid=el("div","platgrid");
     Object.keys(byCamp).forEach(function(cid){
       var c=byCamp[cid];
-      var plat=/ios/i.test(c.name)? "iOS" : (/android/i.test(c.name)? "Android" : c.name);
-      statRow(st, plat,
-        S.maCampVal(ils(c.spend), c.imp? (100*c.clicks/c.imp).toFixed(1):"-",
-                    c.clicks? ils(c.spend/c.clicks,2):"-", fmt(c.installs)),
-        S.maCtrTip);
+      var isAnd=/android/i.test(c.name);
+      var plat=/ios/i.test(c.name)? "iOS" : (isAnd? "Android" : c.name);
+      var ctr=c.imp? 100*c.clicks/c.imp : null;
+      var card=el("div","platcard");
+      card.style.setProperty("--pc", isAnd? "var(--s3)" : "var(--s1)");
+      var head=el("div","ph");
+      head.appendChild(el("span","pname",plat));
+      if(ctr!=null){
+        // the tooltip's own line: under 1% is a weak creative
+        var q=ctr>=2? "good" : (ctr>=1? "warn" : "bad");
+        head.appendChild(el("span","chip "+q,
+          q==="good"? S.maCtrStrong : q==="warn"? S.maCtrOk : S.maCtrWeak));
+      }
+      card.appendChild(head);
+      card.appendChild(el("div","pbig",ils(c.spend)));
+      card.appendChild(el("div","pbigl",S.maPlatSpendLbl));
+      var pm=el("div","pmetrics");
+      function metric(label,value,tip,meterPct){
+        var d=el("div","pm"), k=el("span","pmk");
+        if(tip){ var sp=el("span","term below",label); sp.setAttribute("data-tip",tip); k.appendChild(sp); }
+        else k.textContent=label;
+        d.appendChild(k);
+        d.appendChild(el("b",null,value));
+        if(meterPct!=null){
+          var m=el("div","meter"), i=el("i");
+          m.appendChild(i); d.appendChild(m); pm.appendChild(d);
+          grow(i, meterPct);
+          return;
+        }
+        pm.appendChild(d);
+      }
+      metric(S.maPlatCtr, ctr==null? "-" : ctr.toFixed(1)+"%", S.maCtrTip,
+             (ctr==null||!ctrMax)? null : Math.max(3, 100*ctr/ctrMax));
+      metric(S.maPlatCpc, c.clicks? ils(c.spend/c.clicks,2) : "-", S.maCtrTip);
+      metric(S.maPlatInst, fmt(c.installs), S.maInstallsTip);
+      card.appendChild(pm);
+      grid.appendChild(card);
     });
-    host.appendChild(st);
-    host.appendChild(el("div","note",S.maFresh(MA.fetched_at)+(suTz? "" : " · "+S.maTzFallback)));
+    host.appendChild(grid);
+    host.appendChild(el("div","note",S.maFresh(MA.fetched_at)+(suTz? "" : " \u00B7 "+S.maTzFallback)));
     var cls=cost7==null? "" : (cost7<25? "good" : (cost7<=35? "warn" : "bad"));
     panelRead("metaAdsSummary", cls,
       S.rdMeta(ils(spend7), fmt(su7), cost7==null? "-" : ils(cost7,1), fmt(inst7)));
 
+    // ---- day by day: the spend column carries its own bar -----------------
+    var maxSpend=days.reduce(function(a,d){ return Math.max(a,byDay[d].spend); },1);
     var t=el("table","plain");
     var hr=el("tr");
-    [S.maColDay,S.maSpend,S.maInstalls,S.maSignups,S.maCost.split(" ·")[0]].forEach(function(h,i){
+    [S.maColDay,S.maSpend,S.maInstalls,S.maSignups,S.maCost.split(" \u00B7")[0]].forEach(function(h,i){
       var th=el("th");
       if(i===2){ var sp=el("span","term",h); sp.setAttribute("data-tip",S.maInstallsTip); th.appendChild(sp); }
       else th.textContent=h;
@@ -2888,11 +3160,24 @@
     days.slice().reverse().forEach(function(d){
       var r=byDay[d], su=suBy[d]||0, isToday=(d===today);
       var tr=el("tr");
-      tr.appendChild(el("td",null,fmtDay(d)+(isToday? " · "+S.maPartial : "")));
-      tr.appendChild(el("td",null,ils(r.spend)));
+      if(isToday) tr.className="today";
+      var dayTd=el("td",null,fmtDay(d));
+      if(isToday) dayTd.appendChild(el("span","tagpill",S.maPartial));
+      tr.appendChild(dayTd);
+      var sTd=el("td","barcell"), wrap=el("div","cellbar");
+      wrap.appendChild(el("span","cbv",ils(r.spend)));
+      var trk=el("span","cbt"), bar=el("i");
+      trk.appendChild(bar); wrap.appendChild(trk); sTd.appendChild(wrap);
+      tr.appendChild(sTd);
+      grow(bar, 100*r.spend/maxSpend);
       tr.appendChild(el("td",null,fmt(r.installs)));
       tr.appendChild(el("td",null,fmt(su)));
-      tr.appendChild(el("td",null,su? ils(r.spend/su,1):"-"));
+      var cTd=el("td");
+      if(su){
+        var cps=r.spend/su;
+        cTd.appendChild(el("span","chip "+(cps<25?"good":cps<=35?"warn":"bad"), ils(cps,1)));
+      } else { cTd.textContent="-"; }
+      tr.appendChild(cTd);
       t.appendChild(tr);
     });
     dayHost.appendChild(t);
@@ -3808,9 +4093,14 @@
     link:["M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7","M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"],
     refresh:["M3 12a9 9 0 0 1 9-9 9.7 9.7 0 0 1 6.7 2.7L21 8","M21 3v5h-5","M21 12a9 9 0 0 1-9 9 9.7 9.7 0 0 1-6.7-2.7L3 16","M8 16H3v5"],
     filter:["M22 3H2l8 9.5V19l4 2v-8.5z"],
-    layers:["m12 2 9 5-9 5-9-5z","m3 17 9 5 9-5","m3 12 9 5 9-5"]
+    layers:["m12 2 9 5-9 5-9-5z","m3 17 9 5 9-5","m3 12 9 5 9-5"],
+    moon:["M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"],
+    sun:["M12 2v2","M12 20v2","m4.9 4.9 1.4 1.4","m17.7 17.7 1.4 1.4","M2 12h2","M20 12h2","m6.3 17.7-1.4 1.4","m19.1 4.9-1.4 1.4"],
+    globe:["M2 12h20","M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"],
+    logout:["M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4","m16 17 5-5-5-5","M21 12H9"]
   };
-  var CIRCLES={ pin:[[12,10,3]], radio:[[12,12,2]], award:[[12,8,6]] };
+  var CIRCLES={ pin:[[12,10,3]], radio:[[12,12,2]], award:[[12,8,6]],
+                sun:[[12,12,4]], globe:[[12,12,10]] };
   function icon(name,size){
     var sz=size||16;
     var svg=sv("svg",{viewBox:"0 0 24 24",width:sz,height:sz,fill:"none",
@@ -4283,6 +4573,7 @@
 
   var autoTimer=null;
   $("autoRef").addEventListener("change",function(){
+    var tog=$("liveTog"); if(tog) tog.classList.toggle("on", this.checked);
     if(this.checked){ autoTimer=setInterval(function(){ load().catch(function(){}); },60000); }
     else if(autoTimer){ clearInterval(autoTimer); autoTimer=null; }
   });
