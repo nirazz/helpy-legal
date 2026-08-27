@@ -122,7 +122,10 @@
   #rail a:hover { background:var(--wash-hover); }
   #rail a.on { background:var(--wash1); color:var(--ink); font-weight:600; }
   @media (max-width:1400px){
-    #rail { position:sticky; top:50px; inset-inline:0; width:auto;
+    /* --hdr-h is measured from the real header (JS, on resize/lang change):
+       the header wraps to two rows on a phone, so a hard-coded 50px parked the
+       rail UNDERNEATH it and the section chips were invisible while scrolling */
+    #rail { position:sticky; top:var(--hdr-h,50px); inset-inline:0; width:auto;
             max-width:1120px; margin:0 auto 10px; flex-direction:row; gap:6px;
             overflow-x:auto; padding:8px 24px; background:var(--plane);
             z-index:16; scrollbar-width:none; }
@@ -132,7 +135,8 @@
               white-space:nowrap; }
     #rail a.on { border-color:var(--s1); }
   }
-  .sechead, #overviewTop { scroll-margin-top:64px; }
+  /* a jump target has to clear BOTH sticky strips, not a guessed 64px */
+  .sechead, #overviewTop { scroll-margin-top:calc(var(--chrome-h,64px) + 8px); }
 
   /* Stripe-pattern: period total + delta + previous-period figure above a chart */
   .cmp { display:flex; align-items:baseline; gap:10px; margin:2px 0 10px; }
@@ -480,7 +484,10 @@
                      to{ transform:translate(40px,30px) scale(1.15); } }
   .login-card { position:relative; z-index:1; background:var(--surface);
                 border:1px solid var(--hairline); border-radius:20px;
-                padding:40px 36px 28px; width:340px; text-align:center;
+                padding:40px 36px 28px; text-align:center;
+                /* a hard 340px overflowed the small phones the console is
+                   actually read on */
+                width:min(340px, calc(100vw - 32px));
                 box-shadow:0 20px 60px rgba(45,45,100,0.2); }
   .login-card .brand { justify-content:center; font-size:19px; margin-bottom:6px; }
   .login-card p { color:var(--muted); font-size:13px; margin-bottom:22px; }
@@ -549,18 +556,25 @@
      screen is a first-class layout, not a fallback. */
   @media (max-width:720px){
     main { padding:12px 12px 40px; }
-    header { padding:9px 12px; gap:7px; row-gap:8px; }
-    .brand { font-size:12px; width:100%; }
-    .brand small { margin-inline-start:auto; font-size:11px; }
-    header .seg button { padding:5px 11px; font-size:12.5px; }
-    header .ghost { padding:5px 10px; font-size:12.5px; }
     /* the range control becomes a horizontal shelf instead of wrapping into
        four ragged rows */
     .filters { gap:7px; overflow-x:auto; flex-wrap:nowrap; padding-bottom:4px;
                -webkit-overflow-scrolling:touch; scrollbar-width:none; }
     .filters::-webkit-scrollbar { display:none; }
+    /* a shelf that scrolls has to LOOK like it scrolls: without an edge fade
+       the row read as a clipped, broken control */
+    .filters, .archcanvas, #rail {
+      -webkit-mask-image:linear-gradient(to right, transparent 0, #000 14px,
+                          #000 calc(100% - 14px), transparent 100%);
+      mask-image:linear-gradient(to right, transparent 0, #000 14px,
+                  #000 calc(100% - 14px), transparent 100%); }
+    #rail a { min-height:36px; display:flex; align-items:center; }
     .filters .seg { flex-shrink:0; }
     .filters input[type=date], .filters .cap, #applyRange { flex-shrink:0; }
+    /* a range/grain chip is something you tap, so give it a finger's height */
+    .filters .seg button, .chatbar .seg button, #applyRange,
+    .filters input[type=date] { min-height:36px; }
+    .seg.mini button { min-height:32px; }
     .tiles { grid-template-columns:1fr 1fr; gap:9px; }
     .tile { padding:11px 12px 9px; }
     .tile .val { font-size:22px; }
@@ -575,7 +589,15 @@
     table.plain, table.cohort { display:block; overflow-x:auto; white-space:nowrap; }
     .plain th, .plain td { padding:8px 8px; font-size:12.5px; }
     .plain tr > td:nth-child(2):last-child { font-size:13.5px; }
-    .hrow { grid-template-columns:96px 1fr minmax(40px,auto); font-size:12px; }
+    /* a 96px label column with nowrap+ellipsis turned real labels into
+       "קיבלו לפחות הצ..." - at this width the label wraps instead */
+    .hrow, .hrow.wrap { grid-template-columns:minmax(0,38%) 1fr minmax(40px,auto);
+                        font-size:12px; align-items:center; }
+    .hrow .hl { white-space:normal; overflow:visible; text-overflow:clip;
+                line-height:1.35; }
+    /* a clickable row is a tap target, not a text line */
+    .hrow.clickable, .ins.clickable { padding-block:7px; }
+    .linklike { min-height:36px; display:inline-flex; align-items:center; }
     /* one column on a phone - two 1fr tracks cannot fit their min-content and
        the overflow used to pan the whole page sideways */
     .grid2 { grid-template-columns:1fr; }
@@ -584,18 +606,24 @@
     .archcols { grid-template-columns:repeat(5,minmax(124px,1fr)); min-width:660px; gap:12px; }
     .archnode { padding:7px 9px; margin-bottom:7px; }
     .archnode .nl { font-size:12px; }
-    .archnode .ns, .archnode .nv { font-size:10.5px; }
+    .archnode .ns, .archnode .nv { font-size:11px; }
     .flowbar button { padding:5px 11px; font-size:12.5px; }
     .flowcap { font-size:12.5px; }
     .chatbar { gap:7px; }
     .chatbar input[type=text] { min-width:0; width:100%; }
+    /* a 13px checkbox inside a 20px label is not a tap target on glass */
+    .chatbar label { min-height:36px; gap:9px; }
+    .chatbar input[type=checkbox] { width:18px; height:18px; margin:0; }
     .convo > button { padding:10px 12px; gap:9px; }
     .msg { max-width:88%; }
     /* a hover tooltip is unusable on a touch screen - it opens on tap, so it
        must never run off the edge */
     .term::after { max-width:min(78vw,250px); }
   }
-  @media (max-width:420px){
+  /* Sixteen one-per-row tiles is 1,700px of scrolling before the first chart.
+     Two columns stay readable well below 420px, so the single-column fallback
+     is reserved for the genuinely narrow phones. */
+  @media (max-width:359px){
     .tiles { grid-template-columns:1fr; }
     .tile .val { font-size:24px; }
   }
@@ -672,6 +700,60 @@
   .live.on .sw { background:var(--s1); }
   .live.on .sw::after { transform:translateX(13px); }
   html[dir="rtl"] .live.on .sw::after { transform:translateX(-13px); }
+
+  /* ---- header on a phone --------------------------------------------------
+     This block sits AFTER the toolbar rules above on purpose: those re-declare
+     header padding, #tabs button and header .ghost at the same specificity, so
+     the same rules written up in the (max-width:720px) section were silently
+     losing the cascade - which is how the header grew to four stacked rows and
+     176px of a 844px screen. Two rows now: identity + icon-only utilities,
+     then the tab strip on a full-width row of its own. */
+  @media (max-width:720px){
+    header { padding:7px 10px; gap:6px; row-gap:6px; align-items:center; }
+    header .grow { display:none; }
+    /* The pulsing dot IS the identity at this size, so the wordmark goes and
+       the freshness ticker rides up beside the utilities. flex-basis 0, not
+       auto: a wrapping flex row breaks lines on the item's CONTENT width, so
+       the longer English ticker ("Updated just now") pushed the utilities onto
+       a third row while the Hebrew one fit. With a zero basis the brand never
+       forces the wrap - it takes what is left and ellipsises. */
+    .brand { font-size:11.5px; flex:1 1 0; min-width:0; gap:7px;
+             white-space:nowrap; overflow:hidden; }
+    .brand .bn { display:none; }
+    .brand small { font-size:11px; min-width:0; overflow:hidden;
+                   text-overflow:ellipsis; }
+    .hactions { order:2; flex-wrap:nowrap; gap:4px; flex-shrink:0; }
+    .hsep { display:none; }
+    /* the text labels are what made the utilities wrap onto two more rows; the
+       icon plus the button's own title attribute carries the meaning here.
+       #refreshIcon is the refresh button's icon HOST (the spinner target), not
+       a label - hiding it left an empty button. */
+    header .ghost { height:36px; padding:0 10px; gap:0; }
+    header .ghost > span:not(.ico):not(#refreshIcon) { display:none; }
+    #refreshBtn { padding:0 9px; }
+    .live { height:36px; padding:0 9px; gap:7px; font-size:12px; }
+    .live > span[data-i18n] { display:none; }
+    /* the tab strip is the primary navigation and it was CLIPPED: four tabs
+       need ~415px, the row offered 366, and html{overflow-x:clip} silently ate
+       the last one - the campaigns tab could not be opened on a phone at all.
+       It now owns a full-width row, shrinks to fit, and scrolls if it still
+       cannot. */
+    #tabs { order:3; width:100%; flex-wrap:nowrap; overflow-x:auto;
+            scrollbar-width:none; -webkit-overflow-scrolling:touch;
+            justify-content:space-between; }
+    #tabs::-webkit-scrollbar { display:none; }
+    #tabs button { flex:0 1 auto; min-height:36px; justify-content:center;
+                   padding:7px 7px; gap:4px; font-size:12.5px;
+                   white-space:nowrap; }
+    #tabs button .ico { flex-shrink:0; }
+
+    /* Same cascade trap as the header: .evrow is declared further down, so
+       this had to live below it. One ellipsised line hid the half of the row
+       that says what actually happened - two lines, then clamp. */
+    .evrow .evs { white-space:normal; text-overflow:clip;
+                  display:-webkit-box; -webkit-line-clamp:2;
+                  -webkit-box-orient:vertical; overflow:hidden; }
+  }
 
   /* ---- campaigns tab ------------------------------------------------------
      The panel used to be five label/value rows, so the decision number (cost
@@ -776,7 +858,7 @@
 </div>
 
 <header class="hidden" id="hdr">
-  <div class="brand"><i></i>Helpy Console <small id="genAt"></small></div>
+  <div class="brand"><i></i><span class="bn">Helpy Console</span> <small id="genAt"></small></div>
   <span class="grow"></span>
   <div class="seg" id="tabs">
     <button data-v="metrics" class="on" data-ic="activity"><span data-i18n="tabMetrics">מטריקות</span></button>
@@ -1742,6 +1824,10 @@
     paint("themeBtn", THEME==="dark"?"sun":"moon", S.themeBtn[THEME]);
     paint("langBtn", "globe", S.langBtn);
     paint("logoutBtn", "logout", S.logout);
+    // on a phone these controls are icon-only, so the label has to survive
+    // somewhere reachable: the native tooltip / accessible name
+    var rb=document.getElementById("refreshBtn"); if(rb) rb.title=S.refresh;
+    var lt=document.getElementById("liveTog"); if(lt) lt.title=S.live;
   }
   applyChrome();
   var sb = window.supabase ? window.supabase.createClient(
@@ -2196,6 +2282,33 @@
       try{ einsts[k].resize(); }catch(e){}
     });
   }
+
+  // ---- sticky-chrome offsets ----------------------------------------------
+  // The header is a wrapping flex row: one line on a desktop, two on a phone,
+  // and taller again in English. Every offset that has to clear it (where the
+  // rail parks, where a rail jump lands) was a hard-coded guess, so on a phone
+  // the rail sat behind the header and a jump dropped the section title under
+  // it. Measure once and publish both heights as custom properties.
+  function syncChrome(){
+    var h=document.getElementById("hdr"), r=document.getElementById("rail");
+    var hh = (h && !h.classList.contains("hidden")) ? h.getBoundingClientRect().height : 0;
+    var rh = (r && !r.classList.contains("hidden") &&
+              getComputedStyle(r).position==="sticky") ? r.getBoundingClientRect().height : 0;
+    var st=document.documentElement.style;
+    // no header on screen yet (login/connecting) - clear the vars so the CSS
+    // fallbacks apply instead of pinning the rail to 0
+    if(!hh){ st.removeProperty("--hdr-h"); st.removeProperty("--chrome-h"); return; }
+    st.setProperty("--hdr-h", Math.round(hh)+"px");
+    st.setProperty("--chrome-h", Math.round(hh+rh)+"px");
+  }
+  window.addEventListener("resize", syncChrome);
+  if(window.ResizeObserver){
+    var chromeRO=new ResizeObserver(syncChrome);
+    ["hdr","rail"].forEach(function(id){
+      var n=document.getElementById(id); if(n) chromeRO.observe(n);
+    });
+  }
+  syncChrome();
   function switchTab(v){
     document.querySelectorAll("#tabs button").forEach(function(b){
       b.classList.toggle("on", b.getAttribute("data-v")===v);
@@ -2225,6 +2338,9 @@
     resizeCharts();
     // and once more after the reflow, for anything whose height is animated
     setTimeout(resizeCharts, 60);
+    // the rail only exists on the metrics tab, so the chrome height it
+    // contributes to a jump offset changes with the tab
+    syncChrome();
     window.scrollTo({top:0,behavior:"smooth"});
   }
   function drillToChat(opts){
@@ -4728,6 +4844,7 @@
       $("refreshIcon").classList.remove("spinning");
       applyChrome(); // re-stamp the "{win}" labels for the range just fetched
       renderMetrics(); renderChat(); paintIcons(); observePanels();
+      syncChrome();  // the header/rail only get their real height once shown
     }).catch(function(e){
       clearTimeout(killer);
       $("app").classList.remove("loading");
@@ -4922,6 +5039,7 @@
     einsts={};
     applyChrome();
     if(DATA){ renderMetrics(); renderChat(); paintIcons(); }
+    syncChrome();  // English labels wrap the header differently than Hebrew
   }
   $("themeBtn").addEventListener("click",function(){
     THEME = THEME==="dark" ? "light" : "dark";
