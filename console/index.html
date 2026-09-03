@@ -575,6 +575,70 @@
   .nfitem.op { border-inline-start:3px solid var(--s3); }
   .nfitem.mk { border-inline-start:3px solid var(--s2); }
   @media (prefers-reduced-motion: reduce){ .archwires .pkt { display:none; } }
+  /* ---- backlog --------------------------------------------------------
+     The product backlog, kept next to the numbers that justify it. One card
+     per item: what it is, why it matters (with the measurement behind it),
+     and what it costs. Status owns the colour; nothing else is tinted, so a
+     scan down the left edge reads as a priority list. */
+  .blfgrp { display:inline-flex; align-items:center; gap:8px; }
+  .blsum { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px;
+      margin-bottom:16px; }
+  .blsum .blcell { background:var(--glass); border:1px solid var(--hairline);
+      border-radius:12px; padding:11px 13px; }
+  .blsum .blcell b { display:block; font-size:26px; font-weight:800;
+      font-variant-numeric:tabular-nums; line-height:1.1; color:var(--ink);
+      text-shadow:var(--num-glow); }
+  .blsum .blcell span { display:block; font-size:11.5px; color:var(--ink2);
+      margin-top:3px; }
+  .blsum .blcell i { display:block; width:22px; height:3px; border-radius:2px;
+      margin-bottom:8px; }
+  .blgrouphead { display:flex; align-items:center; gap:9px; font-size:13px;
+      font-weight:700; color:var(--ink); margin:20px 0 9px; }
+  .blgrouphead:first-child { margin-top:2px; }
+  .blgrouphead i { width:9px; height:9px; border-radius:3px; flex-shrink:0; }
+  .blgrouphead em { font-style:normal; font-weight:400; font-size:12px;
+      color:var(--muted); }
+  .blitem { display:grid; grid-template-columns:auto minmax(0,1fr) auto;
+      gap:0 13px; align-items:start; border:1px solid var(--hairline);
+      border-inline-start:3px solid var(--baseline); border-radius:11px;
+      background:var(--surface); padding:11px 13px; margin-bottom:8px; }
+  .blitem .blrank { font-size:12px; font-weight:800; color:var(--muted);
+      font-variant-numeric:tabular-nums; min-width:17px; text-align:center;
+      padding-top:2px; }
+  .blitem .bltitle { font-weight:700; font-size:13.5px; color:var(--ink);
+      line-height:1.4; }
+  .blitem .blwhy { font-size:12.5px; color:var(--ink2); line-height:1.55;
+      margin:4px 0 0; }
+  .blchips { display:flex; flex-wrap:wrap; gap:6px; margin-top:7px; }
+  .blchips span { font-size:11px; color:var(--ink2); background:var(--plane);
+      border-radius:5px; padding:2px 7px; }
+  .blchips span.due { color:var(--bad-text); background:rgba(225,29,72,0.09);
+      font-weight:600; }
+  .blmeta { text-align:center; min-width:56px; padding-top:1px; }
+  .blmeta .blscore { font-size:19px; font-weight:800; color:var(--ink);
+      font-variant-numeric:tabular-nums; line-height:1.1;
+      text-shadow:var(--num-glow); }
+  .blmeta .blgate { font-size:12px; font-weight:700; color:var(--ink2);
+      line-height:1.35; padding-top:3px; }
+  .blmeta .blcap { font-size:10px; color:var(--muted); letter-spacing:.04em;
+      margin-top:2px; }
+  .blmeta .bleff { font-size:11px; color:var(--muted); margin-top:5px;
+      padding-top:5px; border-top:1px dashed var(--hairline); }
+  .blmeta .bleff.alone { margin-top:0; padding-top:0; border-top:0; }
+  .blempty { color:var(--muted); font-size:13px; padding:18px 2px; }
+  @media (max-width:720px){
+    .blsum { grid-template-columns:1fr 1fr; gap:8px; }
+    .blsum .blcell b { font-size:22px; }
+    /* the score column moves under the text rather than squeezing the title
+       into a two-word column */
+    .blitem { grid-template-columns:auto minmax(0,1fr); padding:10px 11px; }
+    .blitem .blmeta { grid-column:2; text-align:start; min-width:0;
+        display:flex; align-items:center; gap:9px; margin-top:8px;
+        padding-top:7px; border-top:1px dashed var(--hairline); }
+    .blitem .blmeta .blscore, .blitem .blmeta .blgate { font-size:14px; }
+    .blitem .blmeta .blcap { margin-top:0; }
+    .blitem .blmeta .bleff { margin-top:0; padding-top:0; border-top:0; }
+  }
   /* ---- phone ----------------------------------------------------------
      This console is read from a phone more than from a desktop, so the small
      screen is a first-class layout, not a fallback. */
@@ -889,6 +953,7 @@
     <button data-v="chat" data-ic="msg"><span data-i18n="tabChat">צ'אט</span></button>
     <button data-v="arch" data-ic="layers"><span data-i18n="tabArch">ארכיטקטורה</span></button>
     <button data-v="ads" data-ic="radio"><span data-i18n="tabAds">קמפיינים</span></button>
+    <button data-v="backlog" data-ic="box"><span data-i18n="tabBacklog">בקלוג</span></button>
   </div>
   <div class="hactions">
     <label class="live" id="liveTog">
@@ -1086,6 +1151,22 @@
       <h2 data-i18n="maDailyTitle">יום אחר יום</h2>
       <div class="sub" data-i18n="maDailySub">מה הוצאנו בכל יום, כמה התקנות Meta ייחסה לעצמה, וכמה אנשים באמת נרשמו באותו יום</div>
       <div id="metaAdsDaily"></div>
+    </section>
+  </div>
+
+  <div id="backlogView" class="hidden">
+    <div class="filters">
+      <span class="blfgrp"><span class="cap" data-i18n="blStatusL">מצב</span>
+        <span class="seg" id="blFilters"></span></span>
+      <span class="fsep" aria-hidden="true"></span>
+      <span class="blfgrp"><span class="cap" data-i18n="blSortL">סדר</span>
+        <span class="seg" id="blSorts"></span></span>
+    </div>
+    <div class="blsum" id="blSummary"></div>
+    <section class="panel wide" style="opacity:1;transform:none">
+      <h2 data-i18n="blTitle">מה בונים, ולמה דווקא את זה</h2>
+      <div class="sub" data-i18n="blSub"></div>
+      <div id="blList"></div>
     </section>
   </div>
 </main>
@@ -1442,6 +1523,16 @@
       densAvgAns:"ממוצע שכנים · בקשות שנענו", densAvgSil:"ממוצע שכנים · בקשות ששתקו",
       densThin:"בקשות חיות באזור דליל (מתחת ל-10 שכנים)",
       rdDens:function(ans,sil,thin){ return "בקשה שנענתה הייתה מוקפת <b>"+ans+"</b> שכנים בממוצע; בקשה ששתקה - <b>"+sil+"</b> בלבד. מתחת ל-10 שכנים בטווח, אף בקשה לא קיבלה מענה באותו יום. המסקנה חדה: המוצר עובד היכן שיש צפיפות ונכשל היכן שאין, ולכן <b>"+thin+"</b> הבקשות החיות באזור דליל הן אנשים שיקבלו שתיקה. זו הצדקה ישירה לרכז את כל תקציב הרכישה בעיר אחת במקום לפזר."; },
+      tabBacklog:"בקלוג",
+      blStatusL:"מצב", blSortL:"סדר", blAll:"הכל",
+      blTitle:"מה בונים, ולמה דווקא את זה",
+      blSub:"כל שורה אומרת מה הפריט, למה הוא חשוב – עם המספר שמאחוריו – וכמה הוא עולה · ריחוף על RICE או על שער מסביר את המונח",
+      blSortPri:"לפי עדיפות", blSortRice:"לפי RICE", blSortEff:"לפי מאמץ", blSortCat:"לפי תחום",
+      blSumNow:"לטיפול עכשיו", blSumBuild:"מחכה לבילד", blSumNext:"בתור", blSumDone:"הושלם",
+      blRiceTip:"ציון שמדרג פריטים זה מול זה: בכמה משתמשים זה נוגע, כמה זה מזיז את המטרה, כמה בטוחים שזה יעבוד – חלקי כמה ימי עבודה זה לוקח. מספר גבוה יותר = כדאי לעשות קודם",
+      blGate:"שער",
+      blGateTip:"פריט אבטחה או תשתית. בכוונה בלי ציון – הוא תנאי לשחרור, לא תכונה שמתחרה על אותו מקום ברשימה",
+      blNone:"אין פריטים במצב הזה",
       tabArch:"ארכיטקטורה",
       archTitle:"איך Helpy עובד",
       archSub:"כל רכיב, מה מחובר למה, ואיפה כל דבר מאוחסן · ריחוף על מונח מקוצר מסביר אותו",
@@ -1777,6 +1868,16 @@
       densAvgAns:"Avg neighbours · answered requests", densAvgSil:"Avg neighbours · silent requests",
       densThin:"Live requests in a thin area (under 10 neighbours)",
       rdDens:function(ans,sil,thin){ return "An answered request sat among <b>"+ans+"</b> neighbours on average; a silent one among just <b>"+sil+"</b>. Below 10 neighbours in range, not one request was answered the same day. The conclusion is sharp: the product works where density exists and fails where it does not, so the <b>"+thin+"</b> live requests in thin areas are people about to be met with silence. This is direct justification for concentrating every acquisition shekel in one city instead of spreading."; },
+      tabBacklog:"Backlog",
+      blStatusL:"Status", blSortL:"Order", blAll:"All",
+      blTitle:"What we build next, and why this",
+      blSub:"Every row says what the item is, why it matters \u2013 with the measurement behind it \u2013 and what it costs \u00b7 hover RICE or Gate for the term in plain words",
+      blSortPri:"By priority", blSortRice:"By RICE", blSortEff:"By effort", blSortCat:"By area",
+      blSumNow:"Act now", blSumBuild:"Waiting on a build", blSumNext:"Queued", blSumDone:"Done",
+      blRiceTip:"A score that ranks items against each other: how many users it touches, how much it moves the goal, how confident we are it works \u2013 divided by how many days it takes. Higher means do it sooner",
+      blGate:"Gate",
+      blGateTip:"A security or infrastructure item. Deliberately unscored \u2013 it is a condition for shipping, not a feature competing for the same slot in the list",
+      blNone:"Nothing in this status",
       tabArch:"Architecture",
       archTitle:"How Helpy works",
       archSub:"Every component, what talks to what, and where things are stored · hover any abbreviation for an explanation",
@@ -2341,6 +2442,7 @@
     $("chatView").classList.toggle("hidden",v!=="chat");
     $("archView").classList.toggle("hidden",v!=="arch");
     $("adsView").classList.toggle("hidden",v!=="ads");
+    $("backlogView").classList.toggle("hidden",v!=="backlog");
     $("rail").classList.toggle("hidden",v!=="metrics");
     if(v==="chat"){
       // visiting the chat tab advances the stored watermark (next reload starts
@@ -2351,6 +2453,7 @@
       if(tb) tb.remove();
     }
     if(v==="arch") renderArch();
+    if(v==="backlog") renderBacklog();
     // EVERY tab with a chart, not just metrics: a chart initialised while its
     // view was display:none measures zero width and stays a 100px sliver
     // forever. This guard was written when metrics owned the only charts; the
@@ -4407,6 +4510,7 @@
     supplyHealth:"box", density:"radio", chMsgs:"msg", chatHealth:"msg",
     chRetention:"trend", userStates:"refresh", repeatRate:"repeat",
     topUsers:"award", safety:"shield", metaAdsSummary:"radio", metaAdsDaily:"file",
+    blList:"box",
     driverTree:"trend", nbhd:"map", nudgeEff:"alert", helperDep:"award"
   };
   var SEC_ICON={ secGrowth:"trend", secMarket:"layers", secChat:"msg",
@@ -4422,6 +4526,517 @@
     Object.keys(SEC_ICON).forEach(function(id){
       var sec=$(id); if(!sec || sec.querySelector(".ico")) return;
       sec.insertBefore(icon(SEC_ICON[id],15), sec.firstChild);
+    });
+  }
+
+
+  // ---- backlog -------------------------------------------------------------
+  // The product backlog lives here rather than in a doc, because every row is
+  // an argument made from a number that is on one of the other tabs. Fields:
+  //   st   status bucket (see BL_STATUS) - the primary order
+  //   cat  which part of the product it belongs to
+  //   rice RICE score, or null for a "gate": security and infrastructure work
+  //        is deliberately unscored, since it is a condition for shipping
+  //        rather than a feature competing for the same slot
+  //   eff  rough cost in days (0 = no code at all)
+  //   due  a real external deadline, shown in red
+  var BL_STATUS = [
+    {id:"now",   he:"לטיפול עכשיו",  en:"Act now",
+     dH:"יש להן תאריך או שהן חוסמות משהו אחר",
+     dE:"dated, or blocking something else", c:"var(--s8)"},
+    {id:"build", he:"נכנס לבילד הבא", en:"Rides the next build",
+     dH:"הקוד כבר מוזג. אין עדכון אוויר, אז זה מחכה לאישור החנויות",
+     dE:"already merged. No OTA, so it waits for store review", c:"var(--s2)"},
+    {id:"next",  he:"בתור",           en:"Queued",
+     dH:"מדורג לפי RICE, ופריטי שער לפי סדר החשיבות",
+     dE:"ranked by RICE, gates by importance", c:"var(--s1)"},
+    {id:"done",  he:"הושלם",          en:"Done",
+     dH:"הגלים האחרונים, כדי שיהיה ברור מה כבר לא צריך לחזור אליו",
+     dE:"the recent waves, so it is clear what needs no revisiting", c:"var(--s5)"},
+    {id:"kill",  he:"נבדק ונפסל",     en:"Investigated and dropped",
+     dH:"הרעיון נבדק על נתונים אמיתיים והתברר כשגוי או מיותר. השורה הזו חוסכת הכי הרבה זמן - אל תבנו אותם מחדש",
+     dE:"checked against real data and found wrong or unnecessary. The row that saves the most time - do not rebuild these",
+     c:"var(--muted)"}
+  ];
+  var BL_CAT = {
+    growth:  {he:"צמיחה",          en:"Growth"},
+    product: {he:"מוצר",           en:"Product"},
+    sec:     {he:"אבטחה ופרטיות",  en:"Security & privacy"},
+    infra:   {he:"תשתית",          en:"Infrastructure"},
+    legal:   {he:"משפטי",          en:"Legal"},
+    design:  {he:"עיצוב",          en:"Design"}
+  };
+  var BACKLOG = [
+    // ---- act now -----------------------------------------------------------
+    {st:"now", cat:"legal", rice:null, eff:0.05, due:"2026-09-07",
+     tH:"לענות על שאלון דירוג הגיל של אפל",
+     tE:"Answer Apple's age-rating questionnaire",
+     wH:"באנר ממתין ב-App Store Connect מאז 1.1.18. באפליקציה יש תוכן משתמשים וצ'אט, ולכן התשובות יכולות לשנות את דירוג הגיל. עשר דקות בדפדפן, והפריט הזול ביותר בכל הרשימה.",
+     wE:"An App Store Connect banner has been waiting since 1.1.18. The app has user content and chat, so the answers can shift the age rating. Ten minutes in a browser - the cheapest item on the board."},
+    {st:"now", cat:"product", rice:null, eff:2,
+     tH:"להוציא את בילד 1.1.21",
+     tE:"Ship build 1.1.21",
+     wH:"19 מיזוגים ו-15 קבצי לקוח מחכים מאז 1.1.20, ושניים מהם מתקנים באגים שממשיכים לייצר נתונים שגויים כל יום. ביקורת החנויות היא החלק הארוך, אז השעון מתחיל רק ברגע ההגשה.",
+     wE:"19 merges and 15 client files have piled up since 1.1.20, and two of them fix bugs that are still producing bad data every day. Store review is the long pole, so the clock only starts when you submit."},
+
+    // ---- riding the next build ---------------------------------------------
+    {st:"build", cat:"sec", rice:null, eff:0,
+     tH:"הלקוח מפסיק לכתוב את שם העיר לפוסט",
+     tE:"The client stops writing the post's city",
+     wH:"נמדד על 60 יום של פוסטים חיים: תל אביב נשמרה בשתי צורות שונות, ועוד 3 שורות עם עיר בלטינית שהקרון לא יכול לייצר. כלומר הלקוח באמת עדיין כותב. עד שהבילד יעלה, גרסאות ישנות בחנות ממשיכות לכתוב.",
+     wE:"Measured over 60 days of live posts: Tel Aviv stored in two different spellings, plus 3 rows with a Latin city name the cron cannot produce - so the client provably still writes. Old store builds keep writing until this ships."},
+    {st:"build", cat:"product", rice:null, eff:0,
+     tH:"אי אפשר לפרסם פוסט על מיקום ברירת המחדל",
+     tE:"A post can no longer be published on the placeholder location",
+     wH:"32 פוסטים פעילים, 24% מהפיד, מכריזים על תל אביב בלי שהמפרסם אי פעם היה שם - וזה מה שהוביל לשאלה \"איפה את?\" 40 שעות אחרי הצעת עזרה. עדיין נוצרים כ-0.71 פוסטים כאלה ביום.",
+     wE:"32 live posts - 24% of the feed - announce Tel Aviv without the poster ever having been there. That is what produced a helper asking \"where are you?\" 40 hours in. Still accruing at ~0.71 posts a day."},
+    {st:"build", cat:"product", rice:null, eff:0,
+     tH:"קטגוריה לא מוכרת תציג \"אחר\" במקום קוד",
+     tE:"An unknown category shows \"Other\", not a code",
+     wH:"בגרסאות ישנות פוסט בקטגוריה חדשה הציג את המחרוזת category.cooking ממש על הכרטיס. חוק קבוע: התיקון חייב להיות חי בשתי החנויות לפני שנכתב ערך קטגוריה חדש כלשהו.",
+     wE:"On older clients a post in a new category rendered the literal string category.cooking on the card. Standing rule: this must be live on both stores before any new category value is ever written."},
+    {st:"build", cat:"product", rice:null, eff:0,
+     tH:"בעל הצעת עזרה מקבל ניסוח שמתאים לו",
+     tE:"An offer owner is finally addressed as a giver",
+     wH:"פגם אחד על שישה מסכים: הם פנו אליו כאילו הוא מבקש עזרה, וטופס העריכה נפתח כטופס בקשה - כולל בורר דחיפות שלהצעה אסור שיהיה.",
+     wE:"One defect on six surfaces: they addressed him as if he were asking for help, and the edit form opened as a request form - including an urgency picker an offer must not have."},
+    {st:"build", cat:"design", rice:null, eff:0,
+     tH:"שאר תיקוני הלקוח שנוסעים באותו בילד",
+     tE:"The rest of the client fixes riding along",
+     wH:"כפתור \"דלג\" שהתחרה בכפתור הראשי, כותרות ארוכות שדחפו את שורת המבקש מחוץ לכרטיס, אפשרות כרטיס סטטוס צבעוני, מספרים אמיתיים בפיד, וניתוב נכון של התראת התמיכה.",
+     wE:"A Skip pill that outweighed the primary CTA, long titles pushing the requester row off the card, the colored status-card option, real feed totals, and correct routing for the support-reply push."},
+
+    // ---- queued ------------------------------------------------------------
+    {st:"next", cat:"growth", rice:1050, eff:0,
+     tH:"לרכז את כל תקציב הפרסום בעיר אחת",
+     tE:"Concentrate the entire ad budget on one city",
+     wH:"הפריט החזק ביותר ברשימה, ובלי שורת קוד אחת. נמדד: פחות מ-10 שכנים בטווח = 0% בקשות שנענו באותו יום, 60+ שכנים = 90%. ביום אחד נמדדו 6 משתמשים חדשים בחמש ערים שונות. 60 משתמשים בשכונה אחת שווים יותר מ-300 פזורים בארץ.",
+     wE:"The strongest item on the board, and it needs no code. Measured: fewer than 10 reachable neighbours = 0% of requests answered same-day; 60+ = 90%. One day produced 6 new users across five different cities. 60 users in one neighbourhood beats 300 nationwide."},
+    {st:"next", cat:"growth", rice:350, eff:3,
+     tH:"להפנות את מאמצי ההפעלה לצד המבקש",
+     tE:"Re-aim activation at the request side",
+     wH:"בפיד היו 28 בקשות מול 96 הצעות, ויום שלם של פרסומים הביא 4 פוסטים - כולם הצעות, אפס בקשות. ההיצע רווי. כל מאמץ הפעלה היום מגייס דווקא את הצד שכבר יש ממנו יותר מדי.",
+     wE:"The feed held 28 requests against 96 offers, and one full day of posting produced 4 posts - all offers, zero requests. Supply is saturated; every activation effort currently recruits the side we already have too much of."},
+    {st:"next", cat:"infra", rice:null, eff:1.5,
+     tH:"לזהות כשל במשלוח פוש, לא רק בהרשאה",
+     tE:"Detect a push delivery failure, not just an auth failure",
+     wH:"זה בדיוק החור שהסתיר שהפוש באנדרואיד היה מת חודשיים שלמים: 88 משתמשים לא קיבלו כלום, והמסד עדיין ספר אותם כברי-שליחה. כל השולחים מטפלים בשגיאה אחת בלבד, וכל שאר השגיאות נופלות בשקט - בלי טוקן שמושבת, בלי התראה ובלי תיעוד.",
+     wE:"Exactly the hole that hid dead Android push for two months: 88 users received nothing while the database still counted them as pushable. Every sender handles exactly one error code; everything else falls through silently - no token retired, no alert, no history."},
+    {st:"next", cat:"product", rice:225, eff:1,
+     tH:"לקצר את מסך הפתיחה בהפעלה הראשונה",
+     tE:"Cut the cold-start splash on first launch",
+     wH:"כשאין מטמון פרופיל - התקנה חדשה, התקנה מחדש או ניקוי אחסון - הפתיחה יכולה לתקוע את המשתמש עד 14 שניות מול מסך פתיחה. הפתרון: לצייר את המסך אחרי הפסק הזמן הראשון ולהמשיך למשוך ברקע.",
+     wE:"With no cached profile - a fresh install, a reinstall, cleared storage - the app can hold the user on the splash for up to 14 seconds. Fix: paint the navigator after the first timeout and keep fetching in the background."},
+    {st:"next", cat:"infra", rice:null, eff:1,
+     tH:"לוודא שההודעה מגיעה, לא רק שהדלת נפתחת",
+     tE:"Verify the message arrives, not just that the door opens",
+     wH:"כל שלוש הבדיקות של שומר המערכת בודקות הרשאה בלבד. לכן תקלת האנדרואיד רצתה חודשיים בזמן שהשומר נשאר ירוק - בצדק, כי הבקשה התקבלה ורק המסירה מתה. \"ירוק\" היום אומר שהדלת נפתחת, ואסור לצטט אותו כ\"הפוש עובד\".",
+     wE:"All three watchdog probes test authentication only. That is why the Android outage ran for two months with the watchdog green - correctly, since the request was accepted and only delivery was dead. Green today means \"the door opens\", and must never be quoted as \"push works\"."},
+    {st:"next", cat:"sec", rice:null, eff:1,
+     tH:"לנעול את הקואורדינטות המדויקות של הפוסטים",
+     tE:"Lock down the exact coordinates on posts",
+     wH:"החצי השני של סגירת דליפת הפרטיות שנסגרה בפרופילים. קואורדינטות מדויקות של פוסט מבטלות את הטשטוש של קילומטר שהפיד מסתמך עליו. חסום רק עד שבילד 1.1.21 יהיה חי.",
+     wE:"The second half of the profiles privacy lockdown. Exact post coordinates defeat the ~1km fuzz the feed relies on. Blocked only until build 1.1.21 is live."},
+    {st:"next", cat:"sec", rice:null, eff:1,
+     tH:"בדיקות הרשאה אוטומטיות שמפילות את ה-CI",
+     tE:"RLS assertion tests that fail CI",
+     wH:"לוודא בכל בנייה שחשבון רגיל לא יכול לקרוא טלפון, טוקן פוש או מיקום מדויק של משתמש אחר. היום הבדיקה הזו נעשית ידנית, כלומר רק כשמישהו זוכר.",
+     wE:"Assert on every build that an ordinary account cannot read another user's phone, push token or exact location. Today that check is manual, which means it happens only when someone remembers."},
+    {st:"next", cat:"infra", rice:null, eff:0.2,
+     tH:"בדיקת חוזה לכל סוג של משימה מתוזמנת",
+     tE:"A contract test for every scheduled-job type",
+     wH:"פריסה מחליפה קובץ שלם, וכבר פעמיים נעלם מטפל בשקט - המשימה המשיכה לרוץ, פשוט לא עשתה כלום. שעה עבודה.",
+     wE:"A deploy replaces the whole file, and twice a handler has vanished silently - the job kept running and simply did nothing. One hour of work."},
+    {st:"next", cat:"infra", rice:null, eff:0.5,
+     tH:"לוודא שכל מה שרץ בייצור קיים גם בקוד",
+     tE:"Assert that everything running in production exists in the repo",
+     wH:"שתי פונקציות חיות - אחת מהן שולחת פוש כל שעה - ושלוש פונקציות מסד של הקונסול לא היו בריפו כלל, כלומר לא ניתן היה לסקור, לתקן או לפרוס אותן מהמקור. השחזור בוצע; השמירה מפני חזרה עוד לא.",
+     wE:"Two live functions - one of them sending push every hour - and three console database functions had no source in the repo at all, so they could not be reviewed, patched or redeployed from source. The recovery is done; the guard is not."},
+    {st:"next", cat:"infra", rice:null, eff:3,
+     tH:"לאמץ עדכון אוויר (OTA)",
+     tE:"Adopt over-the-air updates",
+     wH:"היום כל תיקון של שורת קוד אחת ממתין לביקורת של אפל וגוגל. זה בדיוק מה שמחזיק היום שני באגים חיים שהתיקון שלהם כבר כתוב. להחליט אחרי ש-1.1.21 יוצא.",
+     wE:"Today a one-line fix waits for Apple and Google review - which is precisely what is currently holding two live bugs whose fixes are already written. Decide after 1.1.21 ships."},
+    {st:"next", cat:"product", rice:null, eff:1,
+     tH:"החלקה ימינה זולה מדי - אבל קודם למדוד",
+     tE:"The swipe is too cheap - but measure first",
+     wH:"כבר קיים מסך אישור לפני שליחה, ומשתמשת עדיין הגיעה לחדר צ'אט בטעות (\"נלחץ לי בטעות\") - כלומר היא גם אישרה. אסור לעצב מחדש על סמך מקרה אחד: קודם למדוד כמה מסכים נפתחו מול כמה נשלחו, וכמה חדרים מקבלים הודעת התנצלות תוך חמש דקות.",
+     wE:"A pre-send confirmation sheet already exists, and a user still landed in a real chat room by mistake (\"I pressed it by accident\") - meaning she confirmed too. Do not redesign on one occurrence: first measure sheets opened vs sent, and how many rooms get a withdrawal message within five minutes."},
+    {st:"next", cat:"product", rice:null, eff:0.5,
+     tH:"מונים שלא מתעדכנים כשמישהו מושך הצעה",
+     tE:"Counters that do not update when an offer is withdrawn",
+     wH:"התג על הטאב, הפיל בפיד ורשימת ההחלטות ממשיכים לספור הצעה שנמשכה, עד רענון ידני. בפוסטים שהם הצעות שלי, התג והרשימה יכולים אפילו לסתור זה את זה.",
+     wE:"The tab badge, the feed pill and the decision list keep counting a withdrawn offer until a manual refresh. On my own offer posts the badge and the list can even disagree with each other."},
+    {st:"next", cat:"infra", rice:null, eff:0.2,
+     tH:"התראות המייסד לא מסננות חשבונות בדיקה",
+     tE:"Founder alerts do not filter test accounts",
+     wH:"נתוני בדיקה מפעילים התראות טלגרם אמיתיות. מסך התצוגה מסנן נכון; רק נתיב ההתראה לא. שני שולחים כבר מתוקנים ומשמשים כדוגמה.",
+     wE:"Test data fires real Telegram alerts. The display path filters correctly; only the alert path does not. Two senders are already fixed and serve as the pattern."},
+    {st:"next", cat:"infra", rice:null, eff:0.2,
+     tH:"בדיקת התקינות מפילה את עצמה",
+     tE:"The health check fails itself",
+     wH:"בדיקה 21 יורה בכוונה קריאה עם סוד שגוי כדי להוכיח שהאימות דוחה אותה, ובדיקה 27 סופרת את אותה שגיאה ככשל אמיתי. אזעקה שתמיד קוראת 1 היא אזעקה מושתקת - בדיוק הכשל שבגללו נבנתה בדיקה 27.",
+     wE:"Check 21 deliberately fires a bad-secret call to prove auth rejects it, and check 27 then counts that same rejection as a real failure. An alarm that always reads 1 is a muted alarm - exactly the failure mode check 27 was built to prevent."},
+    {st:"next", cat:"product", rice:null, eff:0.1,
+     tH:"טופס הכניסה במייל הוא מבוי סתום שקט",
+     tE:"The email sign-in form is a silent dead end",
+     wH:"משתמש אמיתי ניסה להירשם דרך טופס הכניסה, קיבל \"פרטים שגויים\" ופנה לתמיכה. הוא ניצל רק כי ניסה בעצמו כניסה עם אפל. תיקון: שורת הסבר אחת מתחת לטופס - כניסה לחשבון קיים בלבד, הרשמה דרך גוגל או אפל.",
+     wE:"A real user tried to register through the sign-in form, got \"invalid credentials\" and emailed support. He only survived because he then tried Sign in with Apple himself. Fix: one hint line under the form - existing accounts only, register with Google or Apple."},
+    {st:"next", cat:"sec", rice:null, eff:0.05,
+     tH:"הקרון שולח כתובת מייל אישית לשירות חיצוני",
+     tE:"A cron sends a personal email address to a third party",
+     wH:"שדה הזיהוי בפניות לשירות המפות נושא כתובת מייל אישית, בקריאה שרצה כל חמש דקות. כתובת אתר מספיקה לדרישה של השירות. מחרוזת אחת, פריסה אחת.",
+     wE:"The user-agent on every map-service call carries a personal email address, on a cron that runs every five minutes. A URL satisfies the service's policy. One string, one deploy."},
+    {st:"next", cat:"infra", rice:null, eff:1,
+     tH:"בדיקות יחידה ללוגיקה הקריטית",
+     tE:"Unit tests on the critical pure logic",
+     wH:"מסנן התוכן, המרת מספרי טלפון וזיהוי אזור GDPR. שלושתם לוגיקה טהורה שאפשר לבדוק בלי מכשיר, ושלושתם משפיעים על משהו שאסור שיישבר.",
+     wE:"The content filter, phone-number formatting and GDPR-region detection. All three are pure logic testable without a device, and all three gate something that must not break."},
+    {st:"next", cat:"product", rice:60, eff:1,
+     tH:"להזיז את אימות הטלפון לרגע הפרסום",
+     tE:"Move phone verification to the publish tap",
+     wH:"ביטחון נמוך, ולכן קודם מדידה: \"לא אומת\" לא אומר שהמשתמש נכשל באימות, אלא שמעולם לא ניסה פעולה שדורשת אותו. השער עצמו נשאר בכל מקרה - הוא הגנה מפני שימוש לרעה.",
+     wE:"Low confidence, so instrument first: \"not verified\" does not mean the user bounced off the OTP, it means they never attempted an action that requires it. The gate stays either way - it is anti-abuse."},
+    {st:"next", cat:"infra", rice:null, eff:0,
+     tH:"לפרק את מסך העיון בכל שינוי",
+     tE:"Extract one piece of the Browse screen on every change",
+     wH:"4,226 שורות, וממשיך לגדול מאז שהכלל נכתב. לא ריפקטור גדול - כל שינוי עתידי מוציא רכיב אחד החוצה.",
+     wE:"4,226 lines, and still growing since the rule was written. Not a big-bang refactor - every future change extracts one piece."},
+    {st:"next", cat:"product", rice:null, eff:1,
+     tH:"רמז על פוסט כפול - ממתין למדידה",
+     tE:"Duplicate-post hint - waiting on measurement",
+     wH:"שלושה מקרים נצפו, אבל אחד מהם לא היה טעות אלא מעקף: לפוסט הייתה שיחה פעילה, כפתור העריכה הוסתר, וסגירה ופרסום מחדש היו הדרך היחידה לשנות טקסט. בילד 1.1.21 פותח עריכה במקרה הזה - למדוד שבועיים אחריו אם הכפילויות נמשכות.",
+     wE:"Three cases observed, but one was a workaround rather than a mistake: the post had a live chat, the edit button was hidden, and close-and-repost was the only way to change the text. Build 1.1.21 unlocks editing there - measure for two weeks after it lands."},
+    {st:"next", cat:"sec", rice:null, eff:0.2,
+     tH:"סטטוסים של התאמה ניתנים להחייאה",
+     tE:"Match statuses can be resurrected",
+     wH:"נבדק חי: אפשר להחזיר התאמה שנדחתה, פגה או לא יצאה לפועל חזרה למצב מאושר. לא נגיש למשתמש היום - וכדאי לסגור לפני שאיזו יכולת עתידית תהפוך אותו לנגיש.",
+     wE:"Verified live: a declined, expired or not-completed match can be moved back to accepted. Not user-reachable today - close it before some future capability makes it reachable."},
+    {st:"next", cat:"sec", rice:null, eff:0.1,
+     tH:"דירוג חד-כיווני בממשק, דו-כיווני בהרשאות",
+     tE:"Rating is one-way in the UI, two-way in the permissions",
+     wH:"תנאי אחד בהרשאה. חסום בכוונה עד שקבוצת הגרסאות הישנות תיעלם - אצלן דירוג דו-כיווני עדיין תקין, ותיקון מוקדם מדי יזרוק להן שגיאה.",
+     wE:"One condition in the policy. Deliberately blocked until the old version cohort dies out - on those clients two-way rating is still legitimate, and fixing too early would throw them an error."},
+    {st:"next", cat:"legal", rice:null, eff:0.5,
+     tH:"נציג באיחוד האירופי ובבריטניה",
+     tE:"An EU and UK representative",
+     wH:"הפטור שאנחנו נשענים עליו שביר: \"עיבוד מזדמן\" הוא עיבוד שולי למטרה המרכזית, לא עיבוד בהיקף קטן - והתאמה מתמשכת לפי מיקום היא לא זה. בנוסף, לחובת הנציג לפי חוק השירותים הדיגיטליים אין פטור לפי גודל כלל. ספק אחד מכסה את שניהם, מאות בודדות של אירו לשנה.",
+     wE:"The exemption we lean on is fragile: \"occasional processing\" means incidental to the core purpose, not low-volume - and continuous location matching is not that. The Digital Services Act representative duty has no size carve-out at all. One vendor covers both, low hundreds of euro a year."},
+    {st:"next", cat:"legal", rice:null, eff:2,
+     tH:"מסמכי אבטחת מידע ונוהל אירוע",
+     tE:"Data-security documents and a breach runbook",
+     wH:"חובת הרישום בוטלה, חובות האבטחה לא. נדרשים מסמך הגדרות מאגר, נוהל אבטחה ונוהל כתוב לאירוע - כולל בחשד בלבד. בעיקר כתיבה; עורך דין מאשר את רמת האבטחה.",
+     wE:"Registration was repealed, the security obligations were not. A database definitions document, a security procedure and a written breach runbook are required - including on mere suspicion. Mostly writing; a lawyer confirms the tier."},
+    {st:"next", cat:"legal", rice:null, eff:1,
+     tH:"הסכמי עיבוד נתונים מול כל הספקים",
+     tE:"Processor agreements on file",
+     wH:"רובם מאושרים אוטומטית, שניים דורשים לחיצה, ולאחד - טלגרם, שמעביר את התראות המייסד - אין הסכם כזה בכלל, והוא גם לא מוזכר במדיניות הפרטיות. ניירת, לא הנדסה.",
+     wE:"Most are auto-incorporated, two need a click, and one - Telegram, which carries the founder alerts - has no such agreement at all and is not named in the privacy notice either. Paperwork, not engineering."},
+    {st:"next", cat:"legal", rice:null, eff:1,
+     tH:"מרשם עיבוד והערכת השפעה על מיקום",
+     tE:"A processing register and a location impact assessment",
+     wH:"הפטור ממרשם אבד ברגע שהעיבוד הפך סדיר, ולהערכת ההשפעה אין פטור לאפליקציה קטנה - שילוב של מיקום ופרופיל עומד בשניים מהקריטריונים. עמוד אחד לכל אחד, פנימי, ונוח לעשות אותם יחד.",
+     wE:"The register exemption was lost the moment processing became regular, and the impact assessment has no small-app exemption - combining location with a profile meets two of the criteria. One page each, internal, and they pair naturally."},
+    {st:"next", cat:"legal", rice:null, eff:0,
+     tH:"אישור עורך דין לניסוח האחריות והשיפוט",
+     tE:"A lawyer signs off the liability and jurisdiction wording",
+     wH:"זהות בעל השליטה כבר סגורה. ההגנה החזקה ביותר מול הסיכון האמיתי - פגיעה בפגישה פיזית - היא תפעולית: לטפל בדיווחים ולתעד שטיפלנו.",
+     wE:"Controller identity is already settled. The strongest defence against the real risk - harm at an in-person meeting - is operational: handle reports, and document that you did."},
+    {st:"next", cat:"infra", rice:null, eff:0.2, due:"2026-11-25",
+     tH:"להחליף את אסימון הגישה למסד לפני שיפוג",
+     tE:"Rotate the database access token before it expires",
+     wH:"לא נחמד שיהיה - הוא פג. ביום שהוא ימות, כל כלי הניהול וכל פריסה מהשורה יפסיקו לעבוד באותו רגע. ההחלפה היא אסימון חדש עם אותן הרשאות, ובלי לגעת בשום קובץ תצורה.",
+     wE:"Not a nice-to-have - it expires. The day it dies, every management tool and every command-line deploy stops working at once. Renewal is a new token with the same permission set, and touches no config file."},
+    {st:"next", cat:"infra", rice:null, eff:0.2,
+     tH:"מייל התמיכה לא מגיע למשתמשי iCloud",
+     tE:"The support address cannot reach iCloud users",
+     wH:"אפל דוחה את המסלול הנוכחי, ומשתמשי אייפון הם החצי הגדול של הבסיס - כלומר כל אחד מהם עם כתובת אפל אינו ניתן להשגה במייל. הפתרון עולה כתשעה דולר לחודש. בינתיים: תשובה מחשבון פרטי, או דרך הצ'אט בתוך האפליקציה.",
+     wE:"Apple rejects the current route, and iPhone users are the bigger half of the base - so any of them on an Apple address is unreachable by email. The fix costs about nine dollars a month. Interim: reply from a personal account, or through the in-app thread."},
+    {st:"next", cat:"growth", rice:null, eff:0,
+     tH:"גילוי מודל הכנסה - שתי שיחות, אפס קוד",
+     tE:"Monetization discovery - two conversations, zero code",
+     wH:"שיחת היכרות אחת עם רשות מקומית, ושתיים-שלוש שיחות עם בעלי מקצוע. הכיוון כבר הוכרע: חשבונות מקצועיים ראשונים, רשויות שניות, פרימיום לצרכן נדחה. שום דבר לא נבנה לפני כ-25 עזרות מושלמות בשבוע בעיר אחת.",
+     wE:"One intro call with a municipality, and two or three with tradespeople. The direction is already decided: pro accounts first, municipalities second, consumer premium deferred. Nothing gets built before roughly 25 completed helps a week in one city."},
+    {st:"next", cat:"product", rice:null, eff:0.5,
+     tH:"תמונות מרובות בצ'אט - ממתין לנתונים",
+     tE:"Multi-image chat - waiting on data",
+     wH:"בצ'אט אפשר תמונה אחת להודעה, והשימוש היה כמעט אפסי כשנבדק. אם ייבדק שוב ויתברר שיש ביקוש, הגרסה הקלה - בחירה מרובה שנשלחת כהודעות נפרדות - נותנת כמעט את כל הערך בלי שינוי סכמה.",
+     wE:"Chat allows one image per message, and usage was near zero when checked. If a re-check shows real demand, the light version - multi-select sent as separate messages - delivers almost all the value with no schema change."},
+    {st:"next", cat:"design", rice:null, eff:1,
+     tH:"חוב עיצוב קטן שנוסע עם השינוי הבא",
+     tE:"Small design debt, riding the next relevant change",
+     wH:"גוון כהה לתגי הדחיפות בכרטיסים, רשימת החסומים שנקראת כשני כרטיסים מנותקים, שתי תוויות קטגוריה שנשברות לשתי שורות, ותקרות תיאור שונות בין הדק למפה. אף אחד מהם לא באג - כולם החלטות שממתינות לפעם הבאה שנוגעים במסך.",
+     wE:"A dark treatment for the urgency badges, a blocked-users list that reads as two detached cards, two category labels wrapping to two lines, and description caps that differ between the deck and the map. None are bugs - all are decisions waiting for the next time we touch the screen."},
+    {st:"next", cat:"sec", rice:null, eff:0.1, due:"2026-09-27",
+     tH:"למחוק תצורת כלי נטוש אם עדיין לא בשימוש",
+     tE:"Delete an abandoned tool config if still unused",
+     wH:"התיקייה נקייה היום, אבל עד לאחרונה החזיקה שני סודות חיים לכלי שאיש לא פותח - וזה בדיוק הדפוס שייצר את כל סבב ניקוי הסודות: תצורות נטושות אוגרות הרשאות בשקט.",
+     wE:"The folder is clean today, but until recently it held two live secrets for a tool nobody opens - exactly the pattern that produced the whole secret-hygiene sweep: abandoned configs quietly accumulate credentials."},
+
+    // ---- done --------------------------------------------------------------
+    {st:"done", cat:"sec", rice:null, eff:0,
+     tH:"נסגרה דליפת המידע האישי בפרופילים",
+     tE:"The profiles PII exposure was closed",
+     wH:"טלפון, טוקן פוש ומיקום מדויק כבר לא נקראים על ידי משתמש אחר. בסגירה: 718 מיקומי בית מדויקים, 124 טלפונים ו-404 טוקנים. חוק קבוע: עמודה חדשה בפרופילים סגורה כברירת מחדל.",
+     wE:"Phone, push token and exact location are no longer readable by another user. At closure: 718 exact home coordinates, 124 phone numbers and 404 tokens. Standing rule: a new profiles column is closed by default."},
+    {st:"done", cat:"infra", rice:null, eff:0,
+     tH:"פוש באנדרואיד היה מת ותוקן",
+     tE:"Android push was dead, and is fixed",
+     wH:"מפתח ישן שגוגל השביתה. 88 מחזיקי טוקן לא קיבלו כלום, ו-73 מהם גם הושתקו על ידי מכסה שבועית שנשרפה על הודעות שמעולם לא יצאו. אחרי התיקון: קבלות מסירה ראשונות אי פעם באנדרואיד.",
+     wE:"A legacy key Google had decommissioned. 88 token holders received nothing, and 73 of them were also muted by a weekly cap burned on pushes that never left the building. After the fix: the first Android delivery receipts in the app's history."},
+    {st:"done", cat:"infra", rice:null, eff:0,
+     tH:"4.3% מהקריאות המתוזמנות מתו על קריאת סוד",
+     tE:"4.3% of scheduled calls were dying on a secret read",
+     wH:"נמדד: 10 מתוך 233 קריאות בחלון של שש שעות. גרוע מכך, הכשל התחפש לשגיאת הרשאה - כלומר תקלה זמנית וסוד שגוי באמת נראו אותו דבר, והאזעקה על סוד שגוי הייתה מושתקת בפועל.",
+     wE:"Measured: 10 of 233 calls in a six-hour window. Worse, the failure disguised itself as an authorization error - so a transient outage and a genuine secret drift looked identical, and the drift alarm was effectively muted."},
+    {st:"done", cat:"sec", rice:null, eff:0,
+     tH:"סודות הוצאו משורת הפקודה אל מחזיק המפתחות",
+     tE:"Secrets moved out of the command line into the keychain",
+     wH:"אסימון הגישה למסד ישב חודשים בשורת פקודה שכל תהליך במחשב יכול לקרוא. שני האישורים שדלפו הוחלפו ואומתו כמתים. חוק קבוע: אישור לעולם לא נמצא בשורת הפקודה.",
+     wE:"The database access token sat for months on a command line any process on the machine could read. Both leaked credentials were replaced and verified dead. Standing rule: a credential never goes in argv."},
+    {st:"done", cat:"product", rice:null, eff:0,
+     tH:"מדידת שימור אמיתית במקום ניחוש",
+     tE:"Real retention measurement instead of a guess",
+     wH:"חותמת פעילות שהשרת מטביע, שעובדת בכל גרסה בחנות בלי שינוי לקוח. לפני כן ספירת שורות בטבלה נראתה כמו שימור, והיא פשוט לא - היא לא יודעת מי הסיר את האפליקציה.",
+     wE:"A server-stamped activity mark that works on every store build with no client change. Before it, counting rows in a table looked like retention, and simply was not - it cannot tell who uninstalled."},
+    {st:"done", cat:"product", rice:null, eff:0,
+     tH:"מחיקה של פוסט עם שיחה הפכה לסגירה",
+     tE:"Deleting an engaged post became closing it",
+     wH:"כ-11% מהפוסטים נמחקו יחד עם ההתאמה וההודעות, והשאלה \"האם הם בכלל דיברו?\" הפכה בלתי ניתנת למענה. הכלל: מודעה שייכת לך, חילופי דברים משותפים, וסידור הוא אישי.",
+     wE:"About 11% of posts were deleted along with the match and the messages, and \"did they even talk?\" became unanswerable. The rule: a listing is yours, an exchange is shared, and tidying is personal."},
+    {st:"done", cat:"product", rice:null, eff:0,
+     tH:"צ'אט מיידי על הצעות עזרה",
+     tE:"Instant chat on help offers",
+     wH:"החלקה על הצעה פותחת חדר מיד. לפני כן 20 מתוך 36 התאמות מתו במצב ממתין בלי הודעה אחת. בקשות שומרות על המסלול הישן של אישור.",
+     wE:"A swipe on an offer opens the room immediately. Before that, 20 of 36 matches were dying in pending with zero messages. Requests keep the old accept flow."},
+    {st:"done", cat:"product", rice:null, eff:0,
+     tH:"הזנת מיקום ידנית למי שסירב ל-GPS",
+     tE:"Manual location entry for anyone who declined GPS",
+     wH:"עד אז \"לא\" להרשאת מיקום פירושו היה פיד ברירת מחדל לנצח. הפתרון הוא הקלדה עם הצעות תוך כדי, שנפתרת בצד השרת - כי בחלק מהמכשירים הפתרון המקומי קורס בלי הרשאה.",
+     wE:"Until then a \"no\" to the location permission meant the placeholder feed forever. The fix is type-ahead with suggestions, resolved server-side - because on some devices the local resolver throws without permission."},
+    {st:"done", cat:"growth", rice:null, eff:0,
+     tH:"הקמפיינים והמשפך מהחנות נכנסו לקונסול",
+     tE:"Campaigns and the store funnel moved into the console",
+     wH:"הוצאה נמשכת חי בכל טעינת דף, והמסקנה מחושבת על הרשמות אמיתיות במסד - לא על ספירת ההתקנות של הפרסום, שאצלנו ידועה כשבורה. קריאה ראשונה: 23 התקנות מיוחסות מול 73 הרשמות אמיתיות.",
+     wE:"Spend is pulled live on every page load, and the verdict runs on real signups in the database - not on the ad platform's install count, which is known-broken for us. First read: 23 attributed installs against 73 real signups."},
+    {st:"done", cat:"infra", rice:null, eff:0,
+     tH:"תזכורות מקובצות לפי אדם, לא לפי חדר",
+     tE:"Nudges pooled per person, not per room",
+     wH:"משתמשת שניהלה שתי שיחות עם אותו אדם קיבלה שתי תזכורות זהות באותה שנייה. הכלל שנשאר: כל תזכורת עתידית מקבצת לפי אדם ומסמנת את כל השורות באותה ריצה.",
+     wE:"A user with two rooms with the same person got two identical nudges in the same second. The rule that stands: every future nudge pools per user and stamps every qualifying row in the same run."},
+    {st:"done", cat:"product", rice:null, eff:0,
+     tH:"דחיפות בפיד דועכת עם הזמן",
+     tE:"Urgency in the feed decays over time",
+     wH:"שלוש בקשות \"דחוף\" בנות 28, 29 ו-47 יום ישבו מעל בקשה בת 5 ימים במרחק חצי קילומטר. \"דחוף\" ישן יורד לדרגת בינוני, לא לתחתית.",
+     wE:"Three \"urgent\" requests aged 28, 29 and 47 days sat above a five-day-old one half a kilometre away. A stale \"urgent\" demotes to medium, not to the bottom."},
+    {st:"done", cat:"sec", rice:null, eff:0,
+     tH:"שלוש חורים בכתיבה לפרופיל נסגרו",
+     tE:"Three profile write holes were closed",
+     wH:"כל שורת הפרופיל הייתה ניתנת לכתיבה מהלקוח - כולל סימון אימות טלפון כאמיתי, מה שעוקף גם את קוד האימות וגם חסימה לפי מספר. תוקן בטריגרים, כי שלילת הרשאה על עמודה בודדת פשוט לא עובדת מול הרשאה ברמת הטבלה.",
+     wE:"The entire profile row was client-writable - including marking phone verification as true, which bypasses both the OTP and the phone blocklist. Fixed with triggers, because revoking a single column does nothing against a table-level grant."},
+    {st:"done", cat:"infra", rice:null, eff:0,
+     tH:"התראת מייסד אחת לכל פוסט שנסגר",
+     tE:"One founder alert per closed post",
+     wH:"סגירת פוסט הזיזה כמה חדרים במשפט אחד, וכל אחד מהם ייצר התראה נפרדת שסימנה את עצמה כדחייה חוזרת חשודה. עכשיו: הודעה אחת בעברית שמסבירה מה בעל הפוסט עשה ומה קרה לכל צד.",
+     wE:"Closing a post moved several rooms in one statement, and each produced its own alert flagged as a suspicious repeated decline. Now: one Hebrew message naming what the owner did and what happened to each counterpart."},
+    {st:"done", cat:"legal", rice:null, eff:0,
+     tH:"מחיקת חשבון השאירה את כתובת המייל",
+     tE:"Account deletion left the email address behind",
+     wH:"29 משתמשים שנמחקו עדיין נשאו כתובת גוגל גלויה, מול מדיניות שהבטיחה אנונימיזציה. תוקן ותוקנו למפרע. חוק קבוע: כל עמודה חדשה שמחזיקה מידע אישי מצטרפת לניקוי באותו שינוי שיוצר אותה.",
+     wE:"29 deleted users still carried a plaintext Google address against a notice promising anonymization. Fixed and backfilled. Standing rule: any new column holding personal data joins the scrub block in the same change that adds it."},
+
+    // ---- investigated and dropped -------------------------------------------
+    {st:"kill", cat:"product", rice:null, eff:0,
+     tH:"תווית אזור על כרטיס כשאין שם עיר",
+     tE:"A region label on a card when no city is known",
+     wH:"נבנה ובוטל באותו יום. ההנחה \"תווית גסה עדיפה על כלום\" פשוט לא נכונה כאן - \"מועצה אזורית\" היא לא מקום ששכן מזהה כמקום מגורים, ולכן היא מטעה, בעוד ששורת עיר ריקה פשוט נעלמת. כמה כרטיסים בלי עיר הם הטעות הזולה יותר.",
+     wE:"Built and reverted the same day. The premise \"a coarse label beats nothing\" is false here - a regional council is not a place a neighbour recognises as somewhere someone lives, so it misinforms, while a blank city row simply hides. A few blank cards are the cheaper error."},
+    {st:"kill", cat:"product", rice:null, eff:0,
+     tH:"לשתול פתיחה לשיחה מתוך הפוסט",
+     tE:"Seed the opening chat message from the post",
+     wH:"כל טענה נושאת משקל התבררה כשגויה: המשפט שיוחס לכפתור מוכן מעולם לא היה כפתור והוקלד ידנית, הכפתורים הרלוונטיים - כולל \"איפה נוח לך להיפגש?\" - היו על המסך ולא נגעו בהם, ואימוץ הכפתורים עומד על 48% מהחדרים האמיתיים. הבעיה האמיתית שמאחורי הסיפור כבר תוקנה במקום אחר.",
+     wE:"Every load-bearing claim was wrong: the sentence attributed to a canned chip was never a chip and was typed by hand, the relevant chips - including \"where would suit you to meet?\" - were on screen and untouched, and chip adoption is 48% of real rooms. The actual bug behind the story was already fixed elsewhere."},
+    {st:"kill", cat:"product", rice:null, eff:0,
+     tH:"דו-כיווניות כמסנן להחלקות בטעות",
+     tE:"Two-way conversations as a misfire filter",
+     wH:"נבדק מול המקרה עצמו: כל שלושת החדרים היו דו-כיווניים, כי מי שהחליק בטעות עדיין עונה כדי להתנצל. אחוז ההחלקות בטעות אינו ניתן למדידה ממונים - הוא דרש קריאת טקסט.",
+     wE:"Checked against the very case that motivated it: all three rooms were two-way, because someone who swipes by accident still replies to apologise. Misfire rate is not measurable from counts - it required reading the message text."},
+    {st:"kill", cat:"growth", rice:null, eff:0,
+     tH:"להציע הרחבת רדיוס כמהלך שימור",
+     tE:"Offering a wider radius as a retention move",
+     wH:"נמדד: 472 מתוך 534 המשתמשים החיים כבר נמצאים ברדיוס המקסימלי. אין מה להרחיב.",
+     wE:"Measured: 472 of 534 live users are already at the maximum radius. There is nothing to widen."},
+    {st:"kill", cat:"growth", rice:null, eff:0,
+     tH:"להזיז את בקשת הרשאת הפוש למאוחר יותר",
+     tE:"Moving the push permission ask later",
+     wH:"הופרך בכיוון ההפוך: הזזה מוקדמת יותר העלתה את ההצטרפות ב-iOS מ-45.9% ל-56.7%. בנוסף, 54 מתוך 55 ההצטרפויות קרו בתוך עשר דקות מההרשמה.",
+     wE:"Falsified in the opposite direction: moving it earlier raised iOS opt-in from 45.9% to 56.7%. And 54 of 55 opt-ins happened within ten minutes of signup."},
+    {st:"kill", cat:"product", rice:null, eff:0,
+     tH:"ביטול דחייה של הצעת עזרה",
+     tE:"Undoing a declined offer",
+     wH:"נבדק ונדחה: הדחייה שלנו שולחת הודעת פוש לצד השני. ברגע שהודעה יצאה, ההחלטה סופית - זה הקו שגם שאר האפליקציות בתחום מחזיקות.",
+     wE:"Researched and rejected: our decline sends a push to the other side. Once a notification has gone out the decision is final - the same line the other apps in this space hold."},
+    {st:"kill", cat:"product", rice:null, eff:0,
+     tH:"לקדם הצעות עזרה לדרגת דחיפות בינונית",
+     tE:"Promoting offers into the medium urgency bucket",
+     wH:"נמדד ונדחה: זה דחף את הבקשה האמיתית הראשונה ממקום 4 למקום 23. הצעות מעולם לא נקברו - כשש מתוך 34 כרטיסים.",
+     wE:"Measured and rejected: it pushed the first real request from position 4 to position 23. Offers were never buried - about six of 34 cards."},
+    {st:"kill", cat:"design", rice:null, eff:0,
+     tH:"שלוש דרכים לפנות מקום בשורת השם",
+     tE:"Three ways to free space on the name row",
+     wH:"שלוש גישות נבנו ונדחו על מכשיר אמיתי. מעבר לכך, אף בקשה פעילה לא נושאת היום תגית - כלומר הבעיה עוד לא קיימת. אל תבנו אותן מחדש מאותו נימוק.",
+     wE:"Three approaches were built and rejected on a real device. Beyond that, no live request carries a tag today - the problem does not exist yet. Do not rebuild them from the same argument."},
+    {st:"kill", cat:"infra", rice:null, eff:0,
+     tH:"שם ברירת מחדל בהתראות הרשמה של אפל",
+     tE:"The default name in Apple signup alerts",
+     wH:"נמדד והוצג להחלטה - ונדחה. אפל לא מחזירה שם, אבל השם האמיתי מגיע בהתראה הבאה על אותו משתמש כדקה אחר כך, ומי שנוטש את מסך השם ממילא לא עשה דבר ששווה זיהוי.",
+     wE:"Measured, raised and declined. Apple returns no name, but the real name arrives in the very next alert about that user a minute later, and anyone who abandons the name screen did nothing worth identifying anyway."}
+  ];
+
+  var BL_FILTER = "all", BL_SORT = "pri";
+  function blStatus(id){
+    for(var i=0;i<BL_STATUS.length;i++) if(BL_STATUS[i].id===id) return BL_STATUS[i];
+    return BL_STATUS[0];
+  }
+  // Effort is a rough cost, not an estimate, so it is spoken rather than
+  // printed as a decimal: "0.05 days" is false precision no one can act on.
+  function blEffort(d){
+    if(d===0)    return LANG==="he" ? "בלי קוד"      : "no code";
+    if(d<=0.25)  return LANG==="he" ? "שעות ספורות"  : "a few hours";
+    if(d<=1)     return LANG==="he" ? "יום"          : "1 day";
+    if(d<2)      return LANG==="he" ? "יום-יומיים"   : "1-2 days";
+    return LANG==="he" ? d+" ימים" : d+" days";
+  }
+  function blDue(iso){
+    var p=iso.split("-");
+    var d=parseInt(p[2],10)+"."+parseInt(p[1],10);
+    var days=Math.round((new Date(iso+"T12:00:00")-new Date())/86400000);
+    var soon = days<=14;
+    if(LANG==="he") return (soon && days>=0 ? (days===0?"היום · ":days===1?"מחר · ":"בעוד "+days+" ימים · ") : "עד ")+d;
+    return (soon && days>=0 ? (days===0?"today · ":days===1?"tomorrow · ":"in "+days+" days · ") : "by ")+d;
+  }
+  function renderBacklog(){
+    var host=$("blList"); if(!host) return;
+    host.innerHTML="";
+
+    // summary strip: the four numbers that answer "where does the work stand"
+    var sum=$("blSummary"); sum.innerHTML="";
+    [["now",S.blSumNow],["build",S.blSumBuild],["next",S.blSumNext],["done",S.blSumDone]]
+      .forEach(function(pair){
+        var st=blStatus(pair[0]);
+        var n=BACKLOG.filter(function(it){ return it.st===pair[0]; }).length;
+        var cell=el("div","blcell");
+        var bar=el("i"); bar.style.background=st.c; cell.appendChild(bar);
+        cell.appendChild(el("b",null,String(n)));
+        cell.appendChild(el("span",null,pair[1]));
+        sum.appendChild(cell);
+      });
+
+    // the status filter carries its own counts, so picking one is an informed
+    // choice rather than a guess at what is behind the chip
+    var fh=$("blFilters"); fh.innerHTML="";
+    var opts=[{id:"all",label:S.blAll}].concat(BL_STATUS.map(function(st){
+      return {id:st.id,label:T(st)};
+    }));
+    opts.forEach(function(o){
+      var n = o.id==="all" ? BACKLOG.length
+            : BACKLOG.filter(function(it){ return it.st===o.id; }).length;
+      var b=el("button",BL_FILTER===o.id?"on":null,o.label+" · "+n);
+      b.onclick=function(){ BL_FILTER=o.id; renderBacklog(); };
+      fh.appendChild(b);
+    });
+    var sh=$("blSorts"); sh.innerHTML="";
+    [["pri",S.blSortPri],["rice",S.blSortRice],["eff",S.blSortEff],["cat",S.blSortCat]]
+      .forEach(function(o){
+        var b=el("button",BL_SORT===o[0]?"on":null,o[1]);
+        b.onclick=function(){ BL_SORT=o[0]; renderBacklog(); };
+        sh.appendChild(b);
+      });
+
+    var rows=BACKLOG.filter(function(it){
+      return BL_FILTER==="all" || it.st===BL_FILTER;
+    });
+    var order={}; BL_STATUS.forEach(function(st,i){ order[st.id]=i; });
+    var catOrder={}; Object.keys(BL_CAT).forEach(function(k,i){ catOrder[k]=i; });
+    // an unscored gate must not sort as a zero - it would bury security work
+    // under every feature; it sorts to the end of its own group instead
+    function riceKey(it){ return it.rice==null ? -1 : it.rice; }
+    rows.sort(function(a,b){
+      if(BL_SORT==="rice") return riceKey(b)-riceKey(a) || order[a.st]-order[b.st];
+      if(BL_SORT==="eff")  return a.eff-b.eff || order[a.st]-order[b.st];
+      // areas keep the order BL_CAT declares - growth first, design last -
+      // rather than alphabetical, which would differ per language and put the
+      // smallest concern at the top in one of them
+      if(BL_SORT==="cat")  return catOrder[a.cat]-catOrder[b.cat]
+                                  || order[a.st]-order[b.st] || riceKey(b)-riceKey(a);
+      return order[a.st]-order[b.st] || riceKey(b)-riceKey(a) || a.eff-b.eff;
+    });
+
+    if(!rows.length){ host.appendChild(el("p","blempty",S.blNone)); return; }
+
+    var lastGroup=null, rank=0;
+    rows.forEach(function(it){
+      // headings only where they mean something: by priority the groups are
+      // the status buckets, by area they are the areas. A RICE or effort sort
+      // is one ranked list on purpose - a heading would break the ranking.
+      var gk = BL_SORT==="pri" ? it.st : BL_SORT==="cat" ? it.cat : null;
+      if(gk && gk!==lastGroup){
+        lastGroup=gk; rank=0;
+        var head=el("div","blgrouphead");
+        var dot=el("i");
+        dot.style.background = BL_SORT==="pri" ? blStatus(it.st).c : "var(--s1)";
+        head.appendChild(dot);
+        head.appendChild(document.createTextNode(
+          BL_SORT==="pri" ? T(blStatus(it.st)) : T(BL_CAT[it.cat])));
+        if(BL_SORT==="pri"){
+          var st=blStatus(it.st);
+          head.appendChild(el("em",null,"· "+(LANG==="he"? st.dH : st.dE)));
+        }
+        host.appendChild(head);
+      }
+      rank++;
+
+      var card=el("article","blitem");
+      card.style.borderInlineStartColor=blStatus(it.st).c;
+      card.appendChild(el("span","blrank",String(rank)));
+
+      var main=el("div","blmain");
+      main.appendChild(el("div","bltitle", LANG==="he"? it.tH : it.tE));
+      main.appendChild(el("p","blwhy", LANG==="he"? it.wH : it.wE));
+      var chips=el("div","blchips");
+      // the status chip is redundant under its own heading, so it appears only
+      // where the list is not grouped by status
+      if(BL_SORT!=="pri") chips.appendChild(el("span",null,T(blStatus(it.st))));
+      if(BL_SORT!=="cat") chips.appendChild(el("span",null,T(BL_CAT[it.cat])));
+      if(it.due) chips.appendChild(el("span","due",blDue(it.due)));
+      if(chips.childNodes.length) main.appendChild(chips);
+      card.appendChild(main);
+
+      var meta=el("div","blmeta");
+      if(it.rice!=null){
+        meta.appendChild(el("div","blscore",String(it.rice)));
+        var cap=el("div","blcap term","RICE");
+        cap.setAttribute("data-tip",S.blRiceTip);
+        meta.appendChild(cap);
+      } else if((it.cat==="sec"||it.cat==="infra") && (it.st==="now"||it.st==="next")){
+        // "gate" is a claim about WHY an item has no score - it is security or
+        // infrastructure, which ships as a condition rather than competing for
+        // a slot. A legal or product item without a score is simply unscored,
+        // and labelling it a gate would state something untrue.
+        var g=el("div","blgate term",S.blGate);
+        g.setAttribute("data-tip",S.blGateTip);
+        meta.appendChild(g);
+      }
+      // Effort is only meaningful for work not yet started. On an item whose
+      // code is already merged, "no code" would read as "this was free" when
+      // in fact it is written and waiting on store review - which the group
+      // heading already says.
+      if(it.st==="now" || it.st==="next"){
+        meta.appendChild(el("div", meta.childNodes.length ? "bleff" : "bleff alone",
+                            blEffort(it.eff)));
+      }
+      if(meta.childNodes.length) card.appendChild(meta);
+      host.appendChild(card);
     });
   }
 
@@ -5294,6 +5909,9 @@
     einsts={};
     applyChrome();
     if(DATA){ renderMetrics(); renderChat(); paintIcons(); }
+    // the backlog is static text, so it must repaint on a language flip even
+    // when no dashboard payload has arrived yet
+    renderBacklog();
     syncChrome();  // English labels wrap the header differently than Hebrew
   }
   $("themeBtn").addEventListener("click",function(){
