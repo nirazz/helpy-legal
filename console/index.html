@@ -543,6 +543,30 @@
       border:1px solid var(--hairline); min-height:20px; }
   .archdetail h4 { font-size:14px; margin-bottom:4px; }
   .archdetail .muted { color:var(--muted); font-size:12.5px; }
+  /* ---- notification catalogue -----------------------------------------
+     Every push the app can send a neighbour, quoted verbatim. Rendered to
+     look like the thing it describes: a lock-screen banner with the trigger
+     spelled out underneath, so the copy can be read and judged as copy. */
+  .nfgroup { margin-top:14px; }
+  .nfgroup > h5 { font-size:12.5px; letter-spacing:.02em; margin:0 0 2px;
+      color:var(--ink); font-weight:700; }
+  .nfgroup > .nfnote { color:var(--muted); font-size:12px; margin:0 0 9px; }
+  .nfitem { border:1px solid var(--hairline); border-radius:10px;
+      background:var(--surface); padding:9px 11px; margin-bottom:7px; }
+  .nfitem .nfhead { display:flex; align-items:baseline; gap:8px;
+      flex-wrap:wrap; }
+  .nfitem .nftitle { font-weight:700; font-size:13px; color:var(--ink); }
+  .nfitem .nfkey { font-size:10.5px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      color:var(--muted); background:var(--plane); border-radius:5px;
+      padding:1px 5px; direction:ltr; unicode-bidi:isolate; }
+  .nfitem .nfcad { font-size:11px; color:var(--ink2); background:var(--plane);
+      border-radius:5px; padding:1px 6px; }
+  .nfitem .nfbody { font-size:12.5px; color:var(--ink2); margin-top:2px; }
+  .nfitem .nfwhen { font-size:12px; color:var(--muted); margin-top:6px;
+      padding-top:6px; border-top:1px dashed var(--hairline); }
+  .nfitem .nfwhen b { color:var(--ink2); font-weight:600; }
+  .nfitem.op { border-inline-start:3px solid var(--s3); }
+  .nfitem.mk { border-inline-start:3px solid var(--s2); }
   @media (prefers-reduced-motion: reduce){ .archwires .pkt { display:none; } }
   /* ---- phone ----------------------------------------------------------
      This console is read from a phone more than from a desktop, so the small
@@ -4346,7 +4370,7 @@
      dE:"Avatars and post photos. Chat images sit in a private bucket reachable only through an expiring signed link - never a public URL."},
     {id:"edge", col:"core", c:"--s2",
      he:"פונקציות קצה", en:"Edge functions",
-     shH:"Deno · 21 פונקציות", shE:"Deno · 21 functions",
+     shH:"Deno · 22 פונקציות", shE:"Deno · 22 functions",
      dH:"קוד שרת קטן שרץ קרוב למשתמש. כאן יושבת כל עבודה שאסור לתת ללקוח: שליחת התראות, מודרציה, התראות מייסד, וה-API של הקונסולה הזו.",
      dE:"Small server code running close to the user. Everything the client must not be trusted with lives here: sending notifications, moderation, founder alerts, and this console's own API."},
     {id:"cron", col:"auto", c:"--s2",
@@ -4400,6 +4424,200 @@
      dH:"אתר סטטי נפרד: מסמכי הפרטיות והתנאים, דפי שיתוף לפוסט ולפרופיל, והקונסולה שאתה מסתכל בה עכשיו.",
      dE:"A separate static site: the privacy and terms documents, share pages for a post and a profile, and the console you are looking at now."}
   ];
+  // ---- notification catalogue ---------------------------------------------
+  // Every push a neighbour can receive, quoted verbatim from the sender that
+  // produces it, with the exact condition that fires it. Two classes, and the
+  // difference is a legal one, not a stylistic one: OPERATIONAL messages are
+  // about the user's own in-flight exchange (someone answered you) and are
+  // never capped or consent-gated; MARKETING messages invite you back and obey
+  // consent, the daytime window and one-per-person-per-week.
+  // Braces mark what the server substitutes at send time.
+  var NOTIF_GROUPS={
+    edge:[
+      {he:"מיידיות - נשלחות ברגע שקורה משהו", en:"Instant - sent the moment something happens",
+       noteH:"תפעוליות: הן נוגעות למה שאתה עצמך עשית באפליקציה, ולכן אינן מוגבלות במכסה ואינן דורשות הסכמה שיווקית.",
+       noteE:"Operational: they concern something you did in the app yourself, so they are never capped and need no marketing consent.",
+       items:[
+        {k:"new_offer", kind:"op",
+         tH:"!הצעת עזרה חדשה", bH:"{שם} הציע/ה לעזור עם \"{כותרת הפוסט}\"",
+         tE:"New Help Offer!", bE:"{name} offered to help with \"{post title}\"",
+         wH:"שכן/ה החליק/ה ימינה על בקשת עזרה שפרסמת. נשלחת מיד לבעל/ת הפוסט.",
+         wE:"A neighbour swiped right on a help request you posted. Sent instantly to the post owner."},
+        {k:"new_interest", kind:"op",
+         tH:"!מישהו מעוניין", bH:"{שם} מעוניין/ת ב\"{כותרת הפוסט}\"",
+         tE:"Someone wants it!", bE:"{name} is interested in your \"{post title}\"",
+         wH:"אותו רגע בדיוק, אבל כשהפוסט בקטגוריית מסירה - הפנייה היא על החפץ, לא על עזרה.",
+         wE:"The same moment, but on a giveaway post - the interest is in the item, not in help."},
+        {k:"new_join", kind:"op",
+         tH:"!מישהו רוצה להצטרף", bH:"{שם} רוצה להצטרף ל\"{כותרת הפוסט}\"",
+         tE:"Someone wants to join!", bE:"{name} wants to join \"{post title}\"",
+         wH:"אותו רגע, כשהפוסט בקטגוריית פעילות משותפת.",
+         wE:"The same moment, on a shared-activity post."},
+        {k:"offer_chat_opened", kind:"op",
+         tH:"!יש לך שיחה חדשה", bH:"{שם} מעוניין/ת בהצעה שלך \"{כותרת הפוסט}\". היכנסו להגיד שלום",
+         tE:"New chat started!", bE:"{name} took you up on \"{post title}\". Say hello!",
+         wH:"שכן/ה החליק/ה על פוסט הצעת עזרה שלך. בהצעות אין שלב אישור - השיחה כבר פתוחה, ולכן ההודעה מזמינה ולא מבקשת החלטה.",
+         wE:"A neighbour swiped on a help OFFER you posted. Offers have no approval step - the chat is already open, so the message invites rather than asks."},
+        {k:"offer_interest", kind:"op",
+         tH:"!מישהו רוצה את עזרתך", bH:"{שם} מעוניין/ת בהצעה שלך: \"{כותרת הפוסט}\"",
+         tE:"Someone wants your help!", bE:"{name} is interested in your offer: \"{post title}\"",
+         wH:"אותו מצב, אבל כשעדיין לא אימתת טלפון - אז השיחה ממתינה לאישורך במקום להיפתח מיד.",
+         wE:"The same case when you have not verified a phone yet - the chat waits for your approval instead of opening."},
+        {k:"offer_accepted", kind:"op",
+         tH:"!ההצעה התקבלה", bH:"{שם} קיבל/ה את ההצעה שלך! התחילו לתאם בצ'אט.",
+         tE:"Offer Accepted!", bE:"{name} accepted your offer! Start chatting to coordinate.",
+         wH:"בעל/ת הבקשה אישר/ה את ההצעה שהגשת. נשלחת למציע/ה.",
+         wE:"The request owner accepted the offer you made. Sent to the offering neighbour."},
+        {k:"offer_accepted_requester", kind:"op",
+         tH:"!יש חיבור", bH:"{שם} אישר/ה. התחילו לתאם בצ'אט.",
+         tE:"You're connected!", bE:"{name} accepted. Start chatting to coordinate.",
+         wH:"הצד השני של אותו רגע, בפוסט מסוג הצעה: בעל/ת ההצעה אישר/ה את פנייתך.",
+         wE:"The other side of that moment on an offer post: the offer owner approved your approach."},
+        {k:"offer_declined", kind:"op",
+         tH:"עדכון הצעה", bH:"{שם} דחה/תה את ההצעה שלך. המשך/י לגלוש!",
+         tE:"Offer Update", bE:"{name} declined your offer. Keep browsing!",
+         wH:"הפנייה שלך נדחתה. הדחייה סופית - אין ביטול - ולכן ההודעה מסתיימת בהזמנה להמשיך, לא בהמתנה.",
+         wE:"Your approach was declined. A decline is final - there is no undo - so the message ends by inviting you onward, not by leaving you waiting."},
+        {k:"offer_declined_requester", kind:"op",
+         tH:"עדכון", bH:"{שם} לא זמין/ה כרגע. המשיכו לחפש!",
+         tE:"Update", bE:"{name} isn't available right now. Keep looking!",
+         wH:"אותה דחייה, בפוסט מסוג הצעה. הניסוח נמנע מלהאשים מישהו.",
+         wE:"The same decline on an offer post. The wording deliberately blames nobody."},
+        {k:"request_closed", kind:"op",
+         tH:"הבקשה נסגרה", bH:"\"{כותרת הפוסט}\" כבר לא זמינה. המשך/י לגלוש!",
+         tE:"Request Closed", bE:"\"{post title}\" is no longer available. Keep browsing!",
+         wH:"הפוסט נסגר או נמחק בזמן שהפנייה שלך עדיין המתינה להחלטה. נשלחת כדי שלא תמתין/י לתשובה שלא תגיע.",
+         wE:"The post was closed or deleted while your approach was still waiting. Sent so nobody waits for an answer that will never come."},
+        {k:"match_not_completed", kind:"op",
+         tH:"עדכון", bH:"\"{כותרת הפוסט}\" נסגר בלי שהעזרה יצאה לפועל.",
+         tE:"Update", bE:"\"{post title}\" was closed - the help didn't end up happening.",
+         wH:"הצד השני סימן \"לא יצא לפועל\". נשלחת רק כשאדם עשה זאת - סגירה אוטומטית של המערכת שותקת בכוונה.",
+         wE:"The other party marked it as not completed. Sent only when a person did it - the system's own auto-close stays deliberately silent."},
+        {k:"new_message", kind:"op",
+         tH:"{שם השולח/ת}", bH:"מאה התווים הראשונים של ההודעה · או \"📷 תמונה\" אם נשלחה תמונה בלבד",
+         tE:"{sender name}", bE:"The first 100 characters of the message · or \"📷 Photo\" for an image-only message",
+         wH:"כל הודעה בצ'אט, מיד. זו ההתראה היחידה שמציגה תוכן שכתב משתמש - ולכן היא נעצרת במאה תווים.",
+         wE:"Every chat message, instantly. This is the only notification that shows user-written content - which is why it stops at 100 characters."},
+        {k:"rating_received", kind:"op",
+         tH:"!דירוג חדש", bH:"{שם} דירג אותך {מספר} כוכבים",
+         tE:"New Rating!", bE:"{name} rated you {n} stars",
+         wH:"כשדירוג שקיבלת מתפרסם. דירוג נשאר סמוי עד ששני הצדדים דירגו או עד שעברו שבעה ימים.",
+         wE:"When a rating you received becomes public. A rating stays hidden until both sides rate or seven days pass."},
+        {k:"urgent_nearby", kind:"op",
+         tH:"!דרושה עזרה דחופה בקרבתך", bH:"{כותרת הבקשה}",
+         tE:"Urgent Help Needed Nearby!", bE:"{request title}",
+         wH:"פורסמה בקשה בדחיפות גבוהה בתוך רדיוס החיפוש שלך (עד 25 ק\"מ). רק בקשות - הצעות עזרה לעולם אינן דחופות.",
+         wE:"A high-urgency request was posted inside your own search radius (capped at 25 km). Requests only - a help offer is never urgent."},
+        {k:"helpy_admin_reply", kind:"op",
+         tH:"הודעה חדשה בצ'אט של Helpy", bH:"{שם} כתב/ה לך",
+         tE:"New message in Helpy Chat", bE:"{name} wrote to you",
+         wH:"לצוות בלבד, כשמשתמש כותב לתמיכה. ההתראה נושאת שם ולעולם לא את תוכן ההודעה - טקסט תמיכה הוא התוכן הרגיש ביותר שיש לנו, ומסך נעילה הוא לא המקום לקרוא אותו.",
+         wE:"Staff only, when a user writes to support. It carries a name and never the message text - support free text is the most sensitive content we hold, and a lock screen is not where it should be read."}
+       ]}
+    ],
+    nudge:[
+      {he:"תפעוליות מתוזמנות - על משהו שכבר קורה לך", en:"Scheduled operational - about something already under way",
+       noteH:"נוגעות לשיחה או להתאמה קיימת שלך, ולכן אינן נספרות במכסה השבועית. כולן נשלחות בין 10:00 ל-19:00 שעון ישראל.",
+       noteE:"They concern a conversation or match of your own, so they never consume the weekly quota. All send between 10:00 and 19:00 Israel time.",
+       items:[
+        {k:"pending_offer_reminder", cadH:"שעתי", cadE:"hourly", kind:"op",
+         tH:"מישהו רוצה לעזור לך · יש לך {N} הצעות עזרה ממתינות · מישהו מעוניין בעזרה שלך · יש לך פניות ממתינות",
+         bH:"\"{כותרת הפוסט}\" - קבלו או דחו את ההצעה",
+         tE:"A neighbor offered to help · {N} neighbors offered to help · A neighbor is interested in your help · You have pending responses",
+         bE:"\"{post title}\" - accept or decline the offer",
+         wH:"פנייה שממתינה להחלטה שלך שעתיים לפחות, ותזכורת אחת לכל היותר כל 20 שעות. הכותרת משתנה לפי סוג הפוסט ולפי מספר הממתינים.",
+         wE:"An approach that has waited at least two hours for your decision, reminded at most once every 20 hours. The title adapts to the post type and to how many are waiting."},
+        {k:"silent_room_nudge", cadH:"שעתי", cadE:"hourly", kind:"op",
+         tH:"תגיד/י שלום ל־{שם}", bH:"השיחה על \"{כותרת הפוסט}\" כבר פתוחה - חסרה רק ההודעה הראשונה",
+         tE:"Say hi to {name}", bE:"Your chat about \"{post title}\" is open - only the first message is missing",
+         wH:"24 שעות אחרי ששיחה נפתחה ואף אחד לא כתב בה מילה. פעם אחת לכל שיחה, ורק למי שהחליק - הוא זה שביקש את השיחה.",
+         wE:"24 hours after a chat opened with not one word written in it. Once per chat, and only to the swiper - they are the one who asked for it."},
+        {k:"unanswered_message", cadH:"שעתי", cadE:"hourly", kind:"op",
+         tH:"{שם} מחכה לתשובה ממך · {N} שכנים מחכים לתשובה ממך",
+         bH:"הודעה על \"{כותרת הפוסט}\" מחכה לך בצ'אט · יש לך {N} שיחות עם {שם} שמחכות לתשובה · {שמות} כתבו לך בצ'אט",
+         tE:"{name} is waiting for your reply · {N} neighbors are waiting for your reply",
+         bE:"A message about \"{post title}\" is waiting in your chat · You have {N} chats with {name} waiting for a reply · {names} wrote to you in the chat",
+         wH:"הודעה שלא נקראה בין 24 ל-72 שעות. הודעה שנקראה ולא נענתה לעולם אינה מזכה בתזכורת - זו בחירה, לא תקלה. ההודעות מקובצות לפי אדם: לעולם לא שתי התראות על אותו שכן.",
+         wE:"A message left unread for 24 to 72 hours. A message that was read and not answered never earns a nudge - that is a choice, not a gap. Nudges are pooled per person: never two notifications about the same neighbour."},
+        {k:"completion_nudge", cadH:"18:00 בלבד", cadE:"18:00 only", kind:"op",
+         tH:"נפגשתם?", bH:"אם {שם} עזר/ה – סמנו שהושלם ודרגו · אם מישהו מהשכנים עזר – סמנו שהושלם ודרגו",
+         tE:"Did you meet up?", bE:"If {name} helped out, mark it done and leave a rating",
+         wH:"שיחה מאושרת ששקטה בין יום ל-14 יום. פעם אחת לכל התאמה, ורק למי שקיבל/ה את העזרה - הוא זה שיכול לסמן ולדרג.",
+         wE:"An accepted match that has been quiet for one to fourteen days. Once per match, and only to the receiver - they are the one who can mark it done and rate."},
+        {k:"phone_completion_check", cadH:"שעתי", cadE:"hourly", kind:"op",
+         tH:"איך הלך עם העזרה?", bH:"אם נעזרתם - סמנו שהושלם ודרגו. זה מה שבונה אמון בשכונה",
+         tE:"How did it go?", bE:"If the help happened, mark it complete and leave a rating - that's what builds neighborhood trust",
+         wH:"48 שעות אחרי שמספר טלפון הוחלף בצ'אט. השיחות הטובות עוברות לוואטסאפ ונעלמות מאיתנו - זו הדרך היחידה לשאול אם זה קרה. המספר עצמו לא נשמר, רק הרגע שבו הוחלף.",
+         wE:"48 hours after a phone number changed hands in the chat. Good conversations move to WhatsApp and vanish from us - this is the only way to ask whether it happened. The number itself is never stored, only the moment it was shared."},
+        {k:"rating_nudge", cadH:"שעתי", cadE:"hourly", kind:"op",
+         tH:"איך הלך?", bH:"דרגו את {שם} על העזרה",
+         tE:"How did it go?", bE:"Rate {name} for helping with \"{request title}\"",
+         wH:"התאמה שהושלמה לפני 23 עד 48 שעות ועדיין לא דורגה.",
+         wE:"A match completed 23 to 48 hours ago and still unrated."},
+        {k:"helper_badge", cadH:"פעם אחת אי פעם", cadE:"once ever", kind:"op",
+         tH:"צוות Helpy", bH:"עכשיו כשהקהילה גדלה, רצינו להודות לך שהיית מהראשונים שהציעו עזרה ב-Helpy. יש משהו שמחכה לך בפנים.",
+         tE:"Helpy Team", bE:"Now that the community has grown, we wanted to thank you for being one of the first to offer help on Helpy. There's something waiting inside.",
+         wH:"פעם אחת בחיי החשבון, למי שהציע/ה עזרה עוד לפני שתג העוזר/ת נולד. ההודעה לא מזכירה את התג בשמו - היא אומרת שמשהו מחכה, והאפליקציה מראה מה.",
+         wE:"Once in the life of an account, to whoever offered help before the helper badge existed. The message deliberately never names the badge - it says something is waiting, and the app shows what."}
+       ]},
+      {he:"שיווקיות - הזמנה לחזור", en:"Marketing - an invitation to come back",
+       noteH:"חסם קשיח: הודעה שיווקית אחת לאדם בשבוע, מכל השולחים יחד. רק בהסכמה, רק 10:00-19:00, ורק לחשבון בן שלושה ימים לפחות - שלושת הימים הראשונים שייכים לתזכורת ההפעלה בלבד.",
+       noteE:"Hard cap: one marketing message per person per week, across every sender combined. Consent only, 10:00-19:00 only, and only for an account at least three days old - the first three days belong to the activation nudge alone.",
+       items:[
+        {k:"nearby_request_alert", cadH:"שעתי", cadE:"hourly", kind:"mk",
+         tH:"שכן/ה לידך מחפש/ת עזרה", bH:"\"{כותרת הפוסט}\" · {מרחק}",
+         tE:"A neighbor nearby needs a hand", bE:"\"{post title}\" · {distance}",
+         wH:"בקשה חדשה - עד 24 שעות - נפתחה בתוך רדיוס החיפוש שלך.",
+         wE:"A fresh request - under 24 hours old - opened inside your search radius."},
+        {k:"never_acted", cadH:"תזכורת הפעלה · שעתי", cadE:"activation · hourly", kind:"mk",
+         tH:"השכנים שלך כבר כאן", bH:"שכנים מבקשים ומציעים עזרה ממש לידך - הצצה קטנה?",
+         tE:"Your neighbors are already here", bE:"Neighbors are asking for and offering help right nearby - take a peek?",
+         wH:"נרשמת לפני 24 עד 72 שעות ועדיין לא עשית דבר. בכוונה אינה ממליצה על בקשה מסוימת - מוקדם מדי לדעת מה מתאים לך.",
+         wE:"You signed up 24 to 72 hours ago and have done nothing yet. It deliberately recommends no specific post - too early to know what suits you."},
+        {k:"inactive_users", cadH:"שעתי", cadE:"hourly", kind:"mk",
+         tH:"שכן/ה צריך/ה עזרה בקרבתך · שכן/ה מציע/ה עזרה בקרבתך",
+         bH:"בקשה: \"{כותרת הפוסט}\" · הצעה: \"{כותרת הפוסט}\" · שווה הצצה בבקשות האחרונות",
+         tE:"A neighbor needs your help nearby · A neighbor is offering help nearby",
+         bE:"\"{post title}\" · Check out the latest requests",
+         wH:"14 יום בלי התאמה ובלי פוסט. הכותרת משתנה לפי סוג הפוסט הקרוב ביותר, כדי שהיא לא תבטיח בקשה כשמדובר בהצעה.",
+         wE:"Fourteen days with no match and no post. The title follows the type of the nearest post, so it never promises a request when the post is an offer."},
+        {k:"no_offer_request", cadH:"שעתי", cadE:"hourly", kind:"mk",
+         tH:"שכן/ה עדיין מחכה לעזרה · שכן/ה מציע/ה עזרה בקרבתך",
+         bH:"\"{כותרת הפוסט}\" - אפשר לעזור? · \"{כותרת הפוסט}\" - מעניין אותך?",
+         tE:"Neighbor still waiting for help · A neighbor is offering help nearby",
+         bE:"\"{post title}\" - can you help? · \"{post title}\" - interested?",
+         wH:"בקשה בת 12 שעות עד שבוע שלא קיבלה אף פנייה, נשלחת לשכן זמין בטווח. זו ההתראה שקיימת כדי שפוסט לא ימות בשקט.",
+         wE:"A request between 12 hours and a week old that received no approach at all, sent to an available neighbour in range. This is the notification that exists so a post does not die in silence."},
+        {k:"silent_post", cadH:"שעתי", cadE:"hourly", kind:"mk",
+         tH:"הבקשה שלך עדיין פעילה · ההצעה שלך עדיין פעילה · הבקשה שלך עדיין רלוונטית?",
+         bH:"{N} שכנים חדשים הצטרפו באזורך החודש. שווה הצצה - אולי מחכה לך שם מישהו. · היא פעילה כבר {N} יום. {N} שכנים חדשים הצטרפו באזורך החודש - שווה לרענן או לסגור.",
+         tE:"Your request is still live · Your offer is still live · Is your request still relevant?",
+         bE:"{N} new neighbors joined near you this month. Worth a look - someone may be waiting. · It has been live for {N} days. {N} new neighbors joined near you this month - worth refreshing or closing.",
+         wH:"פוסט פעיל שבוע ומעלה שלא קיבל אף פנייה, ורק אם באמת הצטרפו לפחות עשרה שכנים חדשים באזור - אחרת אין מה לבשר. מעבר ל-30 יום הנוסח הופך לשאלה, כי \"עדיין פעילה!\" על צורך בן חודשיים נשמע אבסורדי.",
+         wE:"A post live for a week or more with no approach, and only if at least ten new neighbours really did join nearby - otherwise there is no news to tell. Past 30 days the wording turns into a question, because \"still live!\" about a two-month-old need reads as absurd."},
+        {k:"unswiped_offer_owner", cadH:"שעתי", cadE:"hourly", kind:"mk",
+         tH:"ההצעה שלך באוויר", bH:"בינתיים {N} שכנים מבקשים עזרה באזורך - שווה הצצה",
+         tE:"Your offer is live", bE:"Meanwhile {N} neighbors nearby are asking for help - worth a look",
+         wH:"פרסמת הצעת עזרה לפני שלושה ימים ומעלה ועדיין לא החלקת על אף בקשה.",
+         wE:"You posted a help offer three or more days ago and have not swiped on a single request."},
+        {k:"weekly_digest", cadH:"ימי ראשון", cadE:"Sundays", kind:"mk",
+         tH:"סיכום שבועי מהשכונה שלך", bH:"📍 השבוע באזורך: {N} בקשות חדשות, {N} הצעות עזרה, {N} שכנים קיבלו עזרה. בוא/י לראות!",
+         tE:"Your weekly neighborhood update", bE:"📍 This week near you: {N} new requests, {N} help offers, {N} neighbors helped. Come see what's new!",
+         wH:"פעם בשבוע, ורק אם באמת קרה משהו באזור שראוי לספר עליו.",
+         wE:"Once a week, and only if something worth telling actually happened nearby."}
+       ]},
+      {he:"ידנית", en:"By hand",
+       noteH:"לא אוטומטית - נכתבת ונשלחת מהקונסולה.",
+       noteE:"Not automatic - written and sent from the console.",
+       items:[
+        {k:"system_broadcast", cadH:"ידני", cadE:"by hand", kind:"mk",
+         tH:"{הטקסט שנכתב בשידור}", bH:"מגיעה גם כהודעה בשיחת Helpy הרשמית, כך שהיא ממתינה גם למי שאין לו התראות.",
+         tE:"{the text written in the broadcast}", bE:"It also lands as a message in the official Helpy thread, so it waits even for someone with no notifications.",
+         wH:"שידור לקהל נבחר. הדחיפה מכבדת הסכמה שיווקית, אבל בכוונה אינה צורכת את המכסה השבועית - שידור הוא נדיר ובכתב יד, ולשרוף עליו את המכסה היה משתיק את כל השכבה האוטומטית לשבוע.",
+         wE:"A broadcast to a chosen audience. The push respects marketing consent but deliberately does not consume the weekly quota - a broadcast is rare and hand-written, and spending the quota on it would silence the whole automated layer for a week."}
+       ]}
+    ]
+  };
   var ARCH_WIRES=[
     ["app","cache"],["app","auth"],["app","phone"],["app","db"],["app","storage"],
     ["app","realtime"],["app","ops"],["auth","idp"],["auth","rls"],["phone","sms"],
@@ -4541,6 +4759,15 @@
         card.appendChild(sub);
         var lv=archLiveValue(n.id);
         if(lv) card.appendChild(el("div","nv",lv));
+        // A node that owns notification copy says so on the card - otherwise
+        // the catalogue is a thing you can only find by clicking at random.
+        var ng=NOTIF_GROUPS[n.id];
+        if(ng){
+          var cnt=0; ng.forEach(function(g){ cnt+=g.items.length; });
+          card.appendChild(el("div","nv", LANG==="he"
+            ? (cnt+" \u05e0\u05d5\u05e1\u05d7\u05d9 \u05d4\u05ea\u05e8\u05d0\u05d4 \u00b7 \u05dc\u05d7\u05e5 \u05dc\u05e7\u05e8\u05d5\u05d0")
+            : (cnt+" notification texts \u00b7 click to read")));
+        }
         card.addEventListener("click",function(){ showArchDetail(n.id); });
         box.appendChild(card);
       });
@@ -4575,6 +4802,33 @@
       }
     });
   }
+  // Renders the verbatim notification catalogue under a node's description.
+  // Text nodes only - every string here is product copy, and one of them is a
+  // user-supplied name placeholder, so nothing goes near innerHTML.
+  function renderNotifs(host, id){
+    var groups = NOTIF_GROUPS[id];
+    if(!groups) return;
+    groups.forEach(function(g){
+      var box = el("div","nfgroup");
+      box.appendChild(el("h5",null,T(g)));
+      box.appendChild(el("p","nfnote", LANG==="he"? g.noteH : g.noteE));
+      g.items.forEach(function(it){
+        var card = el("div","nfitem "+(it.kind||""));
+        var head = el("div","nfhead");
+        head.appendChild(el("span","nftitle", LANG==="he"? it.tH : it.tE));
+        head.appendChild(el("span","nfkey", it.k));
+        if(it.cadH) head.appendChild(el("span","nfcad", LANG==="he"? it.cadH : it.cadE));
+        card.appendChild(head);
+        card.appendChild(el("div","nfbody", LANG==="he"? it.bH : it.bE));
+        var when = el("div","nfwhen");
+        when.appendChild(el("b",null, LANG==="he"? "\u05de\u05ea\u05d9: " : "When: "));
+        when.appendChild(document.createTextNode(LANG==="he"? it.wH : it.wE));
+        card.appendChild(when);
+        box.appendChild(card);
+      });
+      host.appendChild(box);
+    });
+  }
   function showArchDetail(id){
     var n=ARCH_NODES.filter(function(x){ return x.id===id; })[0];
     var host=$("archDetail"); host.innerHTML="";
@@ -4585,6 +4839,7 @@
     var p=el("p",null, LANG==="he"? n.dH : n.dE);
     p.style.marginTop="6px";
     host.appendChild(p);
+    renderNotifs(host, n.id);
     document.querySelectorAll(".archnode").forEach(function(c){
       c.classList.toggle("lit", c.getAttribute("data-id")===id);
       c.classList.remove("dim");
