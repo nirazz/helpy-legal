@@ -564,6 +564,8 @@
   .msg .when { font-size:10px; color:var(--muted); margin-top:3px; direction:ltr; text-align:left; }
   .msg mark { background:var(--warning); color:#0b0b0b; border-radius:3px; padding:0 3px; }
   .note { font-size:12px; color:var(--muted); }
+  /* a caveat that changes how a number should be READ is not a footnote */
+  .note.warn { color:var(--warning); }
   .loading { opacity:0.45; pointer-events:none; transition:opacity .15s; }
 
   footer { text-align:center; color:var(--muted); font-size:11px; padding:20px; }
@@ -1735,6 +1737,7 @@
       densAvgAns:"ממוצע שכנים · בקשות שנענו", densAvgSil:"ממוצע שכנים · בקשות ששתקו",
       densThin:"בקשות חיות באזור דליל (מתחת ל-10 שכנים)",
       rdDens:function(ans,sil,thin){ return "בקשה שנענתה הייתה מוקפת <b>"+ans+"</b> שכנים בממוצע; בקשה ששתקה - <b>"+sil+"</b> בלבד. מתחת ל-10 שכנים בטווח, אף בקשה לא קיבלה מענה באותו יום. המסקנה חדה: המוצר עובד היכן שיש צפיפות ונכשל היכן שאין, ולכן <b>"+thin+"</b> הבקשות החיות באזור דליל הן אנשים שיקבלו שתיקה. זו הצדקה ישירה לרכז את כל תקציב הרכישה בעיר אחת במקום לפזר."; },
+      pnNoClient:"⚠️ \"נפתחו\" ו\"נענו\" נרשמים על ידי האפליקציה, והחצי הזה עולה רק בבילד הבא. עד אז שתי השורות האלה הן אפס מבנית - זה לא אומר שאף אחד לא פותח.",
       pnEffTitle:"האם ההתראות עובדות",
       pnEffSub:"לא כמה נשלחו - כמה גרמו למה שרצינו. נמדד על כל ההיסטוריה מהעמודות שכל שולח כבר מסמן, ולכן זה עובד גם לפני שהיומן קם. לכל שורה כתוב מה בדיוק נחשב הצלחה, כי שיעור בלי מונה מוגדר הוא חסר ערך.",
       pnEffCol:"התראה", pnEffSent:"נשלחו", pnEffActed:"הצליחו", pnEffRate:"שיעור",
@@ -2170,6 +2173,7 @@
       densAvgAns:"Avg neighbours · answered requests", densAvgSil:"Avg neighbours · silent requests",
       densThin:"Live requests in a thin area (under 10 neighbours)",
       rdDens:function(ans,sil,thin){ return "An answered request sat among <b>"+ans+"</b> neighbours on average; a silent one among just <b>"+sil+"</b>. Below 10 neighbours in range, not one request was answered the same day. The conclusion is sharp: the product works where density exists and fails where it does not, so the <b>"+thin+"</b> live requests in thin areas are people about to be met with silence. This is direct justification for concentrating every acquisition shekel in one city instead of spreading."; },
+      pnNoClient:"⚠️ \"Opened\" and \"answered\" are stamped by the APP, and that half ships with the next store build. Until then these two rows are structurally zero - it does not mean nobody opens them.",
       pnEffTitle:"Are the notifications working",
       pnEffSub:"Not how many went out - how many CAUSED what we wanted. Measured over the whole history from the columns every sender already stamps, so it works from before the log existed. Each row names what counts as success, because a rate with an undefined numerator is worthless.",
       pnEffCol:"Notification", pnEffSent:"Sent", pnEffActed:"Worked", pnEffRate:"Rate",
@@ -6583,7 +6587,16 @@
     pending_offer_reminder: {he:"הצעות שממתינות להחלטה",       en:"Offers waiting for a decision"},
     silent_post:            {he:"פוסט ששקט - אין הצעות",       en:"A post with no offers"},
     weekly_digest:          {he:"סיכום שבועי",                 en:"Weekly digest"},
-    rating_nudge:           {he:"בקשת דירוג",                  en:"Rating request"}
+    rating_nudge:           {he:"בקשת דירוג",                  en:"Rating request"},
+    helpy_message:          {he:"הודעה מצוות Helpy",            en:"Message from the Helpy team"},
+    match_completed:        {he:"העזרה שלך הגיעה",              en:"Your help landed"},
+    no_offer_request:       {he:"הבקשה שלך בלי הצעות",          en:"Your request has no offers"},
+    helpy_admin_reply:      {he:"שכן/ה כתב/ה לצוות",            en:"Someone wrote to the team"},
+    // the catalogue calls all three of these "עדכון" - identical rows are worse
+    // than unnamed ones, because they look like a duplicate rather than a gap
+    offer_declined:         {he:"ההצעה שלך נדחתה",              en:"Your offer was declined"},
+    offer_declined_requester:{he:"הפנייה שלך נדחתה",            en:"Your interest was declined"},
+    match_not_completed:    {he:"נסגר בלי שהעזרה יצאה לפועל",   en:"Closed without the help happening"}
   };
   function pushTitleFor(k){
     if(PUSH_LABEL[k]) return PUSH_LABEL[k][LANG==="he"?"he":"en"];
@@ -6692,6 +6705,11 @@
       ]);
       Array.prototype.forEach.call(fh.querySelectorAll(".hrow"),function(r){ r.classList.add("wrap"); });
       if(T.failed) fh.appendChild(el("div","note",S.pnFailed+" · "+fmt(T.failed)));
+      // Opens and answers are stamped by the APP, and that half ships with the
+      // next store build. Until then these two rows are structurally zero, and
+      // a reader who does not know that will read "nobody opens our
+      // notifications" off a screen that simply cannot see opens yet.
+      if(!T.opened && !T.answered) fh.appendChild(el("div","note warn", S.pnNoClient));
     }
     // the shape over time - a single total hides the day a sender broke
     if(ch){
