@@ -1600,6 +1600,7 @@
       psTitle:"כל הכרטיסים שקיימים",
       psSub:"שורה אחת לכל פוסט – כולל הסגורים, שהפיד מסתיר מעצם הגדרתו · פוסטי בדיקה מוסתרים, הצ׳יפ ״מוקים״ מחזיר אותם · ריחוף על מונח מסביר אותו",
       psTypeL:"סוג", psStatusL:"מצב", psRespL:"מענה", psSortL:"סדר", psAll:"הכל",
+      psTypeTip:"הספירה כאן כוללת גם כרטיסים סגורים. בטאב המטריקות ״בפיד · עכשיו״ סופר רק את החיים, ולכן המספרים שם נמוכים יותר · לפילוח החיים בלבד בחר/י גם ״חיים״ במצב",
       psReq:"בקשות", psOff:"הצעות", psLive:"חיים", psClosed:"סגורים", psMock:"מוקים",
       psReq1:"בקשה", psOff1:"הצעה", psMock1:"מוק", psInstant:"מיד", psHours:"אחרי {n} שעות",
       psFirstAfter:"ההצעה הראשונה הגיעה {v}",
@@ -1977,6 +1978,7 @@
       psTitle:"Every card that exists",
       psSub:"One row per post \u2013 closed ones included, which the feed hides by construction \u00b7 test fixtures are hidden; the \u201cMock\u201d chip brings them back \u00b7 hover any term for an explanation",
       psTypeL:"Type", psStatusL:"State", psRespL:"Response", psSortL:"Order", psAll:"All",
+      psTypeTip:"This count includes closed cards. The metrics tab's live-feed tile counts only the live ones, which is why its numbers are lower \u00b7 pick \"Live\" under State for the live-only split",
       psReq:"Requests", psOff:"Offers", psLive:"Live", psClosed:"Closed", psMock:"Mock",
       psReq1:"Request", psOff1:"Offer", psMock1:"Mock", psInstant:"instantly", psHours:"after {n}h",
       psFirstAfter:"First offer arrived {v}",
@@ -4769,6 +4771,16 @@
       {id:"new",label:S.psSortNew,n:null},{id:"old",label:S.psSortOld,n:null},
       {id:"offers",label:S.psSortOffers,n:null},{id:"silent",label:S.psSortSilent,n:null}
     ], function(v){ PS_SORT=v; });
+
+    // The metrics tab's feed tile counts LIVE posts (32 requests / 103 offers)
+    // while these chips count every card ever (42 / 128). Both are right and
+    // they look like they disagree, which is how a console loses trust - so the
+    // caption says which population it is counting.
+    var capType=document.querySelector('#postsView [data-i18n="psTypeL"]');
+    if(capType && !capType.classList.contains("term")){
+      capType.classList.add("term");
+      capType.setAttribute("data-tip",S.psTypeTip);
+    }
 
     var sb=$("psSearch");
     if(sb && !sb.dataset.wired){
