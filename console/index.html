@@ -1071,14 +1071,27 @@
 <header class="hidden" id="hdr">
   <div class="brand"><i></i><span class="bn">Helpy Console</span> <small id="genAt"></small></div>
   <span class="grow"></span>
+  <!-- Tab order is the funnel, then the loop, then the reference - NOT the order
+       the tabs happened to be built in, which is what it was until 2026-09-04
+       (architecture sat in the middle of the operational tabs, and the two
+       message directions were three tabs apart).
+
+         מטריקות · קמפיינים   what the business did, and what we paid for it
+         כרטיסים              what the users produced
+         צ'אט · התראות        messages IN from them, messages OUT to them
+         בקלוג                what we decided to do about all of the above
+         ארכיטקטורה           reference: how it is wired. Consulted rarely, so last.
+
+       A NEW tab goes in its group, not on the end. Nothing depends on the
+       order - both lookups in this file select by data-v, never by index. -->
   <div class="seg" id="tabs">
     <button data-v="metrics" class="on" data-ic="activity"><span data-i18n="tabMetrics">מטריקות</span></button>
+    <button data-v="ads" data-ic="radio"><span data-i18n="tabAds">קמפיינים</span></button>
     <button data-v="posts" data-ic="file"><span data-i18n="tabPosts">כרטיסים</span></button>
     <button data-v="chat" data-ic="msg"><span data-i18n="tabChat">צ'אט</span></button>
-    <button data-v="arch" data-ic="layers"><span data-i18n="tabArch">ארכיטקטורה</span></button>
-    <button data-v="ads" data-ic="radio"><span data-i18n="tabAds">קמפיינים</span></button>
     <button data-v="push" data-ic="bell"><span data-i18n="tabPush">התראות</span></button>
     <button data-v="backlog" data-ic="box"><span data-i18n="tabBacklog">בקלוג</span></button>
+    <button data-v="arch" data-ic="layers"><span data-i18n="tabArch">ארכיטקטורה</span></button>
   </div>
   <div class="hactions">
     <label class="live" id="liveTog">
