@@ -411,6 +411,16 @@
                     font-variant-numeric:tabular-nums; min-width:52px; }
   table.cohort td.meta { background:none; text-align:start; color:var(--ink2); }
 
+  .pssearch { margin:2px 0 14px; }
+  .pssearch input { width:100%; box-sizing:border-box; padding:9px 12px; font:inherit;
+    font-size:13.5px; color:var(--ink); background:var(--wash); border:1px solid var(--line);
+    border-radius:9px; outline:none; }
+  .pssearch input:focus { border-color:var(--s1); background:var(--surface); }
+  #psCount { font-size:12px; color:var(--ink2); margin:-6px 0 10px; }
+  .pstitle { display:flex; flex-direction:column; gap:2px; max-width:320px; white-space:normal; }
+  .pstitle b { font-weight:600; }
+  .pstitle span { font-size:11.5px; color:var(--ink2); font-weight:400; line-height:1.35; }
+  .pstags { display:inline-flex; gap:4px; margin-inline-start:6px; vertical-align:middle; }
   table.plain { border-collapse:collapse; width:100%; font-size:13px; }
   .plain th, .plain td { padding:9px 10px; text-align:start;
                          border-bottom:1px solid var(--grid); }
@@ -960,6 +970,7 @@
   <span class="grow"></span>
   <div class="seg" id="tabs">
     <button data-v="metrics" class="on" data-ic="activity"><span data-i18n="tabMetrics">מטריקות</span></button>
+    <button data-v="posts" data-ic="file"><span data-i18n="tabPosts">כרטיסים</span></button>
     <button data-v="chat" data-ic="msg"><span data-i18n="tabChat">צ'אט</span></button>
     <button data-v="arch" data-ic="layers"><span data-i18n="tabArch">ארכיטקטורה</span></button>
     <button data-v="ads" data-ic="radio"><span data-i18n="tabAds">קמפיינים</span></button>
@@ -1161,6 +1172,30 @@
       <h2 data-i18n="maDailyTitle">יום אחר יום</h2>
       <div class="sub" data-i18n="maDailySub">מה הוצאנו בכל יום, כמה התקנות Meta ייחסה לעצמה, וכמה אנשים באמת נרשמו באותו יום</div>
       <div id="metaAdsDaily"></div>
+    </section>
+  </div>
+
+  <div id="postsView" class="hidden">
+    <div class="filters">
+      <span class="blfgrp"><span class="cap" data-i18n="psTypeL">סוג</span>
+        <span class="seg" id="psTypes"></span></span>
+      <span class="fsep" aria-hidden="true"></span>
+      <span class="blfgrp"><span class="cap" data-i18n="psStatusL">מצב</span>
+        <span class="seg" id="psStatuses"></span></span>
+      <span class="fsep" aria-hidden="true"></span>
+      <span class="blfgrp"><span class="cap" data-i18n="psRespL">מענה</span>
+        <span class="seg" id="psResps"></span></span>
+      <span class="fsep" aria-hidden="true"></span>
+      <span class="blfgrp"><span class="cap" data-i18n="psSortL">סדר</span>
+        <span class="seg" id="psSorts"></span></span>
+    </div>
+    <div class="blsum" id="psSummary"></div>
+    <section class="panel wide" style="opacity:1;transform:none">
+      <h2 data-i18n="psTitle">כל הכרטיסים שקיימים</h2>
+      <div class="sub" data-i18n="psSub"></div>
+      <div class="pssearch"><input id="psSearch" type="search" data-i18n-ph="psSearch"></div>
+      <div id="psCount"></div>
+      <div id="psList"></div>
     </section>
   </div>
 
@@ -1534,6 +1569,30 @@
       densAvgAns:"ממוצע שכנים · בקשות שנענו", densAvgSil:"ממוצע שכנים · בקשות ששתקו",
       densThin:"בקשות חיות באזור דליל (מתחת ל-10 שכנים)",
       rdDens:function(ans,sil,thin){ return "בקשה שנענתה הייתה מוקפת <b>"+ans+"</b> שכנים בממוצע; בקשה ששתקה - <b>"+sil+"</b> בלבד. מתחת ל-10 שכנים בטווח, אף בקשה לא קיבלה מענה באותו יום. המסקנה חדה: המוצר עובד היכן שיש צפיפות ונכשל היכן שאין, ולכן <b>"+thin+"</b> הבקשות החיות באזור דליל הן אנשים שיקבלו שתיקה. זו הצדקה ישירה לרכז את כל תקציב הרכישה בעיר אחת במקום לפזר."; },
+      tabPosts:"כרטיסים",
+      psTitle:"כל הכרטיסים שקיימים",
+      psSub:"שורה אחת לכל פוסט – כולל סגורים ומוקים, שהפיד מסתיר מעצם הגדרתו · ריחוף על מונח מסביר אותו",
+      psTypeL:"סוג", psStatusL:"מצב", psRespL:"מענה", psSortL:"סדר", psAll:"הכל",
+      psReq:"בקשות", psOff:"הצעות", psLive:"חיים", psClosed:"סגורים", psMock:"מוקים",
+      psReq1:"בקשה", psOff1:"הצעה", psMock1:"מוק", psInstant:"מיד", psHours:"{n} ש׳",
+      psRespNone:"בלי אף הצעה", psRespOffers:"עם הצעות", psRespTalk:"עם שיחה", psRespTwo:"דו־כיווני",
+      psSortNew:"חדשים", psSortOld:"ותיקים", psSortOffers:"הכי מוצעים", psSortSilent:"שותקים קודם",
+      psSearch:"חיפוש בכותרת, בתיאור, בשם או בעיר",
+      psColTitle:"כרטיס", psColType:"סוג", psColCat:"קטגוריה", psColOwner:"מפרסם/ת",
+      psColCity:"עיר", psColAge:"גיל", psColOffers:"הצעות", psColChat:"שיחה", psColState:"מצב",
+      psSumTotal:"סה״כ", psSumLive:"חיים", psSumClosed:"סגורים", psSumSilent:"בלי אף הצעה", psSumMock:"מוקים",
+      psNone:"אין כרטיסים שעונים לסינון",
+      psShowing:"מוצגים {n} מתוך {t} כרטיסים",
+      psTwoTip:"שני הצדדים כתבו לפחות הודעה אחת – הסימן הזול היחיד לכך שהתחילה שיחה אמיתית, ולא צד אחד שמדבר לחלל",
+      psMockTip:"פוסט בדיקה. מוצג כאן בכוונה: זה המסך היחיד שאמור להראות הכל, והסתרה כאן הייתה שקר לגבי מה שקיים במסד",
+      psSilentTip:"פוסט חי שאיש לא הציע עליו עזרה. זה הכישלון המרכזי של המוצר – לא באג, אלא היעדר צפיפות שכנים בטווח",
+      psModTip:"עבר בשכבת המודרציה · content_flagged = סומן אוטומטית, admin_content_removed = הוסר ידנית, content_approved = נבדק ואושר",
+      psAgeTip:"כמה זמן עבר מאז הפרסום. פוסט חי בן חודשיים הוא בדרך כלל פוסט שנשכח, לא ביקוש פתוח",
+      psFirstTip:"כמה שעות עברו עד ההצעה הראשונה",
+      psDaysN:"{n} ימים", psDay1:"יום", psToday:"היום",
+      psNoOffers:"אין", psClosedLbl:"נסגר", psLiveLbl:"חי",
+      psByOwner:"נמחק בידי הבעלים", psClosedInstead:"נסגר במקום להימחק",
+      psEmptyData:"רשימת הכרטיסים לא נטענה. רענון יביא אותה",
       tabBacklog:"בקלוג",
       blUpd:"עודכן ידנית", blUpdToday:"היום", blUpdYday:"אתמול",
       blUpdAgo:"לפני {n} ימים", blUpdStale:"ייתכן שאינו מעודכן",
@@ -1882,6 +1941,30 @@
       densAvgAns:"Avg neighbours · answered requests", densAvgSil:"Avg neighbours · silent requests",
       densThin:"Live requests in a thin area (under 10 neighbours)",
       rdDens:function(ans,sil,thin){ return "An answered request sat among <b>"+ans+"</b> neighbours on average; a silent one among just <b>"+sil+"</b>. Below 10 neighbours in range, not one request was answered the same day. The conclusion is sharp: the product works where density exists and fails where it does not, so the <b>"+thin+"</b> live requests in thin areas are people about to be met with silence. This is direct justification for concentrating every acquisition shekel in one city instead of spreading."; },
+      tabPosts:"Cards",
+      psTitle:"Every card that exists",
+      psSub:"One row per post \u2013 closed posts and mock fixtures included, which the feed hides by construction \u00b7 hover any term for an explanation",
+      psTypeL:"Type", psStatusL:"State", psRespL:"Response", psSortL:"Order", psAll:"All",
+      psReq:"Requests", psOff:"Offers", psLive:"Live", psClosed:"Closed", psMock:"Mock",
+      psReq1:"Request", psOff1:"Offer", psMock1:"Mock", psInstant:"instant", psHours:"{n}h",
+      psRespNone:"No offer at all", psRespOffers:"Got offers", psRespTalk:"Has messages", psRespTwo:"Two-way",
+      psSortNew:"Newest", psSortOld:"Oldest", psSortOffers:"Most offers", psSortSilent:"Silent first",
+      psSearch:"Search title, description, name or city",
+      psColTitle:"Card", psColType:"Type", psColCat:"Category", psColOwner:"Posted by",
+      psColCity:"City", psColAge:"Age", psColOffers:"Offers", psColChat:"Chat", psColState:"State",
+      psSumTotal:"Total", psSumLive:"Live", psSumClosed:"Closed", psSumSilent:"No offer", psSumMock:"Mock",
+      psNone:"No card matches this filter",
+      psShowing:"Showing {n} of {t} cards",
+      psTwoTip:"Both sides wrote at least one message \u2013 the only cheap signal that a real exchange started, rather than one side talking into the void",
+      psMockTip:"A test post. Shown here on purpose: this is the one screen meant to show everything, and hiding it here would misstate what exists in the database",
+      psSilentTip:"A live post nobody offered to help with. This is the product's central failure \u2013 not a bug, but the absence of neighbour density in range",
+      psModTip:"Passed through the moderation layer \u00b7 content_flagged = auto-flagged, admin_content_removed = removed by hand, content_approved = reviewed and cleared",
+      psAgeTip:"How long since it was posted. A live post two months old is usually a forgotten post, not open demand",
+      psFirstTip:"Hours until the first offer arrived",
+      psDaysN:"{n} days", psDay1:"1 day", psToday:"today",
+      psNoOffers:"none", psClosedLbl:"closed", psLiveLbl:"live",
+      psByOwner:"deleted by the owner", psClosedInstead:"closed instead of deleted",
+      psEmptyData:"The card list did not load. A refresh will fetch it",
       tabBacklog:"Backlog",
       blUpd:"Updated by hand", blUpdToday:"today", blUpdYday:"yesterday",
       blUpdAgo:"{n} days ago", blUpdStale:"may be out of date",
@@ -2456,6 +2539,7 @@
       b.classList.toggle("on", b.getAttribute("data-v")===v);
     });
     $("metricsView").classList.toggle("hidden",v!=="metrics");
+    $("postsView").classList.toggle("hidden",v!=="posts");
     $("chatView").classList.toggle("hidden",v!=="chat");
     $("archView").classList.toggle("hidden",v!=="arch");
     $("adsView").classList.toggle("hidden",v!=="ads");
@@ -2469,6 +2553,7 @@
       var tb=document.querySelector('#tabs button[data-v="chat"] .tabbadge');
       if(tb) tb.remove();
     }
+    if(v==="posts") renderPosts();
     if(v==="arch") renderArch();
     if(v==="backlog") renderBacklog();
     // EVERY tab with a chart, not just metrics: a chart initialised while its
@@ -4527,7 +4612,7 @@
     supplyHealth:"box", density:"radio", chMsgs:"msg", chatHealth:"msg",
     chRetention:"trend", userStates:"refresh", repeatRate:"repeat",
     topUsers:"award", safety:"shield", metaAdsSummary:"radio", metaAdsDaily:"file",
-    blList:"box",
+    blList:"box", psList:"file",
     driverTree:"trend", nbhd:"map", nudgeEff:"alert", helperDep:"award"
   };
   var SEC_ICON={ secGrowth:"trend", secMarket:"layers", secChat:"msg",
@@ -4546,6 +4631,207 @@
     });
   }
 
+
+  // ---- posts ---------------------------------------------------------------
+  // The card list, and the only surface that shows ALL of them. The founder's
+  // own feed cannot stand in for this by construction: it hides his own posts,
+  // hides mock fixtures, drops every post he has already swiped (permanently),
+  // and never shows a closed one - which is the half worth reviewing. Measured
+  // the day this was built: his deck could reach 133 of the 180 that exist.
+  var PS_TYPE="all", PS_STATUS="all", PS_RESP="all", PS_SORT="new", PS_Q="";
+
+  function psAge(d){
+    if(d==null) return "-";
+    if(d<=0) return S.psToday;
+    if(d===1) return S.psDay1;
+    return S.psDaysN.split("{n}").join(String(d));
+  }
+  function psFiltered(P){
+    var q=PS_Q.trim().toLowerCase();
+    return P.filter(function(p){
+      if(PS_TYPE!=="all" && p.type!==PS_TYPE) return false;
+      if(PS_STATUS==="live"   && !p.is_active) return false;
+      if(PS_STATUS==="closed" &&  p.is_active) return false;
+      if(PS_STATUS==="mock"   && !(p.is_mock||p.owner_mock)) return false;
+      if(PS_RESP==="none"   && p.offers>0) return false;
+      if(PS_RESP==="offers" && !p.offers) return false;
+      if(PS_RESP==="talk"   && !p.messages) return false;
+      if(PS_RESP==="two"    && !p.two_way) return false;
+      if(q){
+        var hay=[p.title,p.description,p.owner,p.city,p.city_en,p.category]
+                .join(" ").toLowerCase();
+        if(hay.indexOf(q)<0) return false;
+      }
+      return true;
+    });
+  }
+  function renderPosts(){
+    var host=$("psList"); if(!host) return;
+    host.innerHTML="";
+    var D = DATA && DATA.posts;
+    var P = (D && D.posts) || [];
+    ["psSummary","psCount"].forEach(function(id){ var h=$(id); if(h) h.innerHTML=""; });
+    if(!D){ emptyState(host,S.psEmptyData,"file"); return; }
+
+    // summary strip: the five numbers that answer "what is out there right now".
+    // "no offer" is deliberately one of them - it is the product's own scoreboard.
+    var sum=$("psSummary");
+    [[S.psSumTotal,D.total,null],[S.psSumLive,D.live,null],[S.psSumClosed,D.closed,null],
+     [S.psSumSilent,D.no_offer,S.psSilentTip],[S.psSumMock,D.mock,S.psMockTip]]
+      .forEach(function(t){
+        var cell=el("div","blcell");
+        cell.appendChild(el("b",null,fmt(t[1])));
+        if(t[2]){ var sp=el("span","term",t[0]); sp.setAttribute("data-tip",t[2]); cell.appendChild(sp); }
+        else cell.appendChild(el("span",null,t[0]));
+        sum.appendChild(cell);
+      });
+
+    // every filter carries its own count, so picking one is an informed choice
+    // rather than a guess at what sits behind the chip
+    function seg(hostId, cur, opts, set){
+      var h=$(hostId); if(!h) return;
+      h.innerHTML="";
+      opts.forEach(function(o){
+        var b=el("button",cur===o.id?"on":null,o.label+(o.n==null?"":" · "+o.n));
+        b.onclick=function(){ set(o.id); renderPosts(); };
+        h.appendChild(b);
+      });
+    }
+    function n(fn2){ return P.filter(fn2).length; }
+    seg("psTypes", PS_TYPE, [
+      {id:"all",label:S.psAll,n:P.length},
+      {id:"request",label:S.psReq,n:n(function(p){return p.type==="request";})},
+      {id:"offer",label:S.psOff,n:n(function(p){return p.type==="offer";})}
+    ], function(v){ PS_TYPE=v; });
+    seg("psStatuses", PS_STATUS, [
+      {id:"all",label:S.psAll,n:null},
+      {id:"live",label:S.psLive,n:n(function(p){return p.is_active;})},
+      {id:"closed",label:S.psClosed,n:n(function(p){return !p.is_active;})},
+      {id:"mock",label:S.psMock,n:n(function(p){return p.is_mock||p.owner_mock;})}
+    ], function(v){ PS_STATUS=v; });
+    seg("psResps", PS_RESP, [
+      {id:"all",label:S.psAll,n:null},
+      {id:"none",label:S.psRespNone,n:n(function(p){return !p.offers;})},
+      {id:"offers",label:S.psRespOffers,n:n(function(p){return p.offers>0;})},
+      {id:"talk",label:S.psRespTalk,n:n(function(p){return p.messages>0;})},
+      {id:"two",label:S.psRespTwo,n:n(function(p){return p.two_way;})}
+    ], function(v){ PS_RESP=v; });
+    seg("psSorts", PS_SORT, [
+      {id:"new",label:S.psSortNew,n:null},{id:"old",label:S.psSortOld,n:null},
+      {id:"offers",label:S.psSortOffers,n:null},{id:"silent",label:S.psSortSilent,n:null}
+    ], function(v){ PS_SORT=v; });
+
+    var sb=$("psSearch");
+    if(sb && !sb.dataset.wired){
+      sb.dataset.wired="1";
+      sb.addEventListener("input",function(){ PS_Q=this.value; renderPosts(); });
+    }
+    if(sb && sb.value!==PS_Q) sb.value=PS_Q;
+
+    var rows=psFiltered(P);
+    rows.sort(function(a,b){
+      if(PS_SORT==="offers") return (b.offers-a.offers) || (a.created_at<b.created_at?1:-1);
+      // silent-first ranks live posts above closed ones: a closed post with no
+      // offer is history, a live one is a person still waiting
+      if(PS_SORT==="silent") return (a.offers-b.offers) || (b.is_active-a.is_active)
+                                 || (a.created_at<b.created_at?1:-1);
+      if(PS_SORT==="old")    return a.created_at<b.created_at? -1:1;
+      return a.created_at<b.created_at? 1:-1;
+    });
+
+    var cnt=$("psCount");
+    if(cnt) cnt.textContent=S.psShowing.split("{n}").join(fmt(rows.length))
+                                       .split("{t}").join(fmt(P.length));
+    if(!rows.length){ emptyState(host,S.psNone,"file"); return; }
+
+    var t=el("table","plain");
+    var hr=el("tr");
+    [[S.psColTitle,null],[S.psColType,null],[S.psColCat,null],[S.psColOwner,null],
+     [S.psColCity,null],[S.psColAge,S.psAgeTip],[S.psColOffers,null],
+     [S.psColChat,S.psTwoTip],[S.psColState,null]].forEach(function(h){
+      var th=el("th");
+      if(h[1]){ var sp=el("span","term",h[0]); sp.setAttribute("data-tip",h[1]); th.appendChild(sp); }
+      else th.textContent=h[0];
+      hr.appendChild(th);
+    });
+    t.appendChild(hr);
+
+    rows.forEach(function(p){
+      var tr=el("tr");
+
+      // title + the first line of the description: the card as the neighbour
+      // reads it. Both are public content already, so nothing new is exposed.
+      var td=el("td");
+      var box=el("div","pstitle");
+      var b=el("b",null,p.title||"-");
+      var tags=el("span","pstags");
+      if(p.images) tags.appendChild(el("span","tagpill",String(p.images)+" 🖼"));
+      if(p.is_mock||p.owner_mock){
+        var mk=el("span","chip warn",S.psMock1);
+        mk.classList.add("term"); mk.setAttribute("data-tip",S.psMockTip);
+        tags.appendChild(mk);
+      }
+      if(p.moderation){
+        var md=el("span","chip bad term",p.moderation);
+        md.setAttribute("data-tip",S.psModTip);
+        tags.appendChild(md);
+      }
+      if(tags.childNodes.length) b.appendChild(tags);
+      box.appendChild(b);
+      if(p.description) box.appendChild(el("span",null,p.description));
+      td.appendChild(box);
+      tr.appendChild(td);
+
+      tr.appendChild(el("td",null,p.type==="offer"? S.psOff1 : S.psReq1));
+      tr.appendChild(el("td",null,catLabel(p.category)));
+      tr.appendChild(el("td",null,p.owner||"-"));
+      tr.appendChild(el("td",null,(LANG==="he"? p.city : (p.city_en||p.city))||"-"));
+      tr.appendChild(el("td",null,psAge(p.age_days)));
+
+      // offers: zero on a LIVE post is the product failing, and says so
+      var oTd=el("td");
+      if(p.offers){
+        oTd.appendChild(el("span","chip good",String(p.offers)));
+        if(p.first_offer_h!=null){
+          var fh=el("span","term below"," "+(p.first_offer_h<1? S.psInstant
+                    : S.psHours.split("{n}").join(String(p.first_offer_h))));
+          fh.setAttribute("data-tip",S.psFirstTip);
+          oTd.appendChild(fh);
+        }
+      } else if(p.is_active){
+        var z=el("span","chip bad term",S.psNoOffers);
+        z.setAttribute("data-tip",S.psSilentTip);
+        oTd.appendChild(z);
+      } else { oTd.textContent="-"; }
+      tr.appendChild(oTd);
+
+      var cTd=el("td");
+      if(p.messages){
+        cTd.appendChild(document.createTextNode(fmt(p.messages)));
+        if(p.two_way){
+          var tw=el("span","chip good term"," "+S.psRespTwo);
+          tw.setAttribute("data-tip",S.psTwoTip);
+          cTd.appendChild(tw);
+        }
+      } else { cTd.textContent="-"; }
+      tr.appendChild(cTd);
+
+      var sTd=el("td");
+      if(p.is_active){ sTd.appendChild(el("span","chip good",S.psLiveLbl)); }
+      else {
+        sTd.appendChild(el("span","chip",S.psClosedLbl));
+        if(p.close_outcome){
+          sTd.appendChild(el("span","term below"," "+
+            (p.close_outcome==="deleted"? S.psByOwner :
+             p.close_outcome==="closed_instead"? S.psClosedInstead : p.close_outcome)));
+        }
+      }
+      tr.appendChild(sTd);
+
+      t.appendChild(tr);
+    });
+    host.appendChild(t);
+  }
 
   // ---- backlog -------------------------------------------------------------
   // The product backlog lives here rather than in a doc, because every row is
@@ -5723,6 +6009,12 @@
     var wantMeta = !autoTick || !DATA || !DATA.meta_ads ||
                    (onAds && onAds.getAttribute("data-v")==="ads");
     var carryMeta = wantMeta? null : DATA.meta_ads;
+    // same contract as metaDays: the unattended ticker does not re-pull ~200
+    // rows of post text for a tab nobody is looking at. A user-initiated
+    // refresh always re-pulls, and the previous list is carried forward.
+    var wantPosts = !autoTick || !DATA || !DATA.posts ||
+                    (onAds && onAds.getAttribute("data-v")==="posts");
+    var carryPosts = wantPosts? null : DATA.posts;
     var hdrs={"content-type":"application/json"};
     if(SESSION && SESSION.access_token) hdrs["authorization"]="Bearer "+SESSION.access_token;
     // a request that never settles used to leave the page in a silent
@@ -5741,7 +6033,8 @@
       // minutes, so the once-a-minute ticker must not spend calls on a tab
       // nobody is looking at; the previous pull is carried forward instead.
       body:JSON.stringify({days:fetchDays,chatDays:chatDays,window:RANGE,
-                           metaDays: wantMeta? META_DAYS : 0})
+                           metaDays: wantMeta? META_DAYS : 0,
+                           postsLimit: wantPosts? 500 : 0})
     }).then(function(r){
       clearTimeout(killer);
       if(r.status===401) throw new Error("unauthorized");
@@ -5750,6 +6043,7 @@
       return r.json();
     }).then(function(d){
       if(carryMeta && !d.meta_ads) d.meta_ads=carryMeta;
+      if(carryPosts && !d.posts) d.posts=carryPosts;
       DATA=d;
       lastLoadTs=Date.now(); updateTicker(); staleSince=null;
       $("connecting").classList.add("hidden");
@@ -5761,7 +6055,11 @@
       $("app").classList.remove("loading");
       $("refreshIcon").classList.remove("spinning");
       applyChrome(); // re-stamp the "{win}" labels for the range just fetched
-      renderMetrics(); renderChat(); paintIcons(); observePanels();
+      renderMetrics(); renderChat();
+      // the cards tab is additive: a throw inside it must never take the whole
+      // console down with it, the way an un-caught render would from here
+      try{ renderPosts(); }catch(e){ console.error("renderPosts failed",e); }
+      paintIcons(); observePanels();
       syncChrome();  // the header/rail only get their real height once shown
     }).catch(function(e){
       clearTimeout(killer);
