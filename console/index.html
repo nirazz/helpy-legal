@@ -1244,6 +1244,11 @@
   </div>
 
   <div id="chatView" class="hidden">
+    <section class="panel" style="opacity:1;transform:none">
+      <h2 data-i18n="clInsTitle">מה דורש תשומת לב בשיחות</h2>
+      <div class="sub" data-i18n="pnInsSub"></div>
+      <div id="clInsights"></div>
+    </section>
     <div class="chatbar">
       <input type="text" id="chatSearch" placeholder="חיפוש בשם, בפוסט או בתוכן..." data-i18n-ph="searchPh">
       <div class="seg" id="chatRangeSeg">
@@ -1280,6 +1285,11 @@
   </div>
 
   <div id="adsView" class="hidden">
+    <section class="panel" style="opacity:1;transform:none">
+      <h2 data-i18n="maInsTitle">מה דורש תשומת לב בקמפיינים</h2>
+      <div class="sub" data-i18n="pnInsSub"></div>
+      <div id="maInsights"></div>
+    </section>
     <div class="filters">
       <span class="cap" data-i18n="range">טווח</span>
       <div class="seg" id="metaRangeSeg">
@@ -1310,6 +1320,11 @@
   </div>
 
   <div id="postsView" class="hidden">
+    <section class="panel" style="opacity:1;transform:none">
+      <h2 data-i18n="psInsTitle">מה דורש תשומת לב בכרטיסים</h2>
+      <div class="sub" data-i18n="pnInsSub"></div>
+      <div id="psInsights"></div>
+    </section>
     <div class="filters">
       <span class="blfgrp"><span class="cap" data-i18n="psTypeL">סוג</span>
         <span class="seg" id="psTypes"></span></span>
@@ -1383,6 +1398,11 @@
   </div>
 
   <div id="backlogView" class="hidden">
+    <section class="panel" style="opacity:1;transform:none">
+      <h2 data-i18n="blInsTitle">מה דורש תשומת לב בבקלוג</h2>
+      <div class="sub" data-i18n="pnInsSub"></div>
+      <div id="blInsights"></div>
+    </section>
     <div class="filters">
       <span class="blfgrp"><span class="cap" data-i18n="blStatusL">מצב</span>
         <span class="seg" id="blFilters"></span></span>
@@ -1753,6 +1773,34 @@
       densThin:"בקשות חיות באזור דליל (מתחת ל-10 שכנים)",
       rdDens:function(ans,sil,thin){ return "בקשה שנענתה הייתה מוקפת <b>"+ans+"</b> שכנים בממוצע; בקשה ששתקה - <b>"+sil+"</b> בלבד. מתחת ל-10 שכנים בטווח, אף בקשה לא קיבלה מענה באותו יום. המסקנה חדה: המוצר עובד היכן שיש צפיפות ונכשל היכן שאין, ולכן <b>"+thin+"</b> הבקשות החיות באזור דליל הן אנשים שיקבלו שתיקה. זו הצדקה ישירה לרכז את כל תקציב הרכישה בעיר אחת במקום לפזר."; },
       pnNoClient:"⚠️ \"נפתחו\" ו\"נענו\" נרשמים על ידי האפליקציה, והחצי הזה עולה רק בבילד הבא. עד אז שתי השורות האלה הן אפס מבנית - זה לא אומר שאף אחד לא פותח.",
+      insNone:"אין כרגע שום דבר שדורש תשומת לב בטאב הזה.",
+      psInsTitle:"מה דורש תשומת לב בכרטיסים",
+      clInsTitle:"מה דורש תשומת לב בשיחות",
+      maInsTitle:"מה דורש תשומת לב בקמפיינים",
+      blInsTitle:"מה דורש תשומת לב בבקלוג",
+      psInsSilent:function(n,live,p,oldest){
+        return "<b>"+n+"</b> מתוך "+live+" הכרטיסים החיים ("+p+") לא קיבלו ולו הצעה אחת. הוותיק שבהם בן <b>"+oldest+" ימים</b>."; },
+      psInsMix:function(x,req,off){
+        return "ההיצע גדול פי <b>"+x+"</b> מהביקוש בכרטיסים החיים ("+off+" הצעות מול "+req+" בקשות). המחסור הוא בבקשות, לא בעוזרים."; },
+      psInsMute:function(n){
+        return "<b>"+n+"</b> כרטיסים קיבלו הצעה ואז אף אחד לא כתב מילה - ההתאמה קרתה והשיחה לא."; },
+      psInsSpeed:function(h,n){
+        return "חציון הזמן עד ההצעה הראשונה: <b>"+h+" שעות</b> (על "+n+" כרטיסים שקיבלו הצעה)."; },
+      psInsCity:function(city,share,cities){
+        return "הכרטיסים החיים פרוסים על <b>"+cities+"</b> ערים; הגדולה שבהן, "+city+", היא "+share+" מהם."; },
+      clInsTwoWay:function(p,tw,all){
+        return "<b>"+p+"</b> מהשיחות דו-כיווניות ("+tw+" מתוך "+all+"). שיחה חד-כיוונית היא התאמה שלא הפכה לכלום."; },
+      clInsOfferAns:function(p,a,all){
+        return "<b>"+p+"</b> מהפניות על הצעות נענו ("+a+" מתוך "+all+")."; },
+      clInsSenders:function(n){ return "<b>"+n+"</b> אנשים שונים כתבו הודעה בחלון הזה."; },
+      maInsCost:function(c,su,spend){
+        return "עלות להרשמה אמיתית: <b>"+c+"</b> ("+su+" הרשמות על "+spend+"). מחושב על הרשמות במסד, לא על ההתקנות שמטא מייחסת."; },
+      maInsAttrib:function(inst,su){
+        return "מטא ייחסה <b>"+inst+"</b> התקנות מול <b>"+su+"</b> הרשמות אמיתיות - הפער הזה הוא הסיבה שהוורדיקט לא נשען על המספרים שלה."; },
+      blInsOverdue:function(n,names){ return "<b>"+n+"</b> פריטים עברו את התאריך שנקבע להם: "+names+"."; },
+      blInsDue:function(n,d){ return "<b>"+n+"</b> פריטים עם תאריך יעד; הקרוב ביותר ב-"+d+"."; },
+      blInsNow:function(n,all){ return "<b>"+n+"</b> מתוך "+all+" הפריטים הפתוחים מסומנים \"לעשות עכשיו\"."; },
+      blInsAge:function(age,d){ return "הרשימה נכתבת ביד ועודכנה לאחרונה לפני <b>"+age+" ימים</b> ("+d+")."; },
       pnInsTitle:"מה דורש תשומת לב בהתראות",
       pnInsSub:"תובנות מחושבות מהנתונים - מסודרות לפי חומרה, שלוש הראשונות מודגשות",
       pnInsConc:function(bigName,bigShare,bigRate,bestName,bestRate){
@@ -2219,6 +2267,34 @@
       densThin:"Live requests in a thin area (under 10 neighbours)",
       rdDens:function(ans,sil,thin){ return "An answered request sat among <b>"+ans+"</b> neighbours on average; a silent one among just <b>"+sil+"</b>. Below 10 neighbours in range, not one request was answered the same day. The conclusion is sharp: the product works where density exists and fails where it does not, so the <b>"+thin+"</b> live requests in thin areas are people about to be met with silence. This is direct justification for concentrating every acquisition shekel in one city instead of spreading."; },
       pnNoClient:"⚠️ \"Opened\" and \"answered\" are stamped by the APP, and that half ships with the next store build. Until then these two rows are structurally zero - it does not mean nobody opens them.",
+      insNone:"Nothing needs attention on this tab right now.",
+      psInsTitle:"What needs attention in the cards",
+      clInsTitle:"What needs attention in the conversations",
+      maInsTitle:"What needs attention in the campaigns",
+      blInsTitle:"What needs attention in the backlog",
+      psInsSilent:function(n,live,p,oldest){
+        return "<b>"+n+"</b> of "+live+" live cards ("+p+") have never had a single offer. The oldest is <b>"+oldest+" days</b> old."; },
+      psInsMix:function(x,req,off){
+        return "Supply outnumbers demand <b>"+x+"x</b> among live cards ("+off+" offers vs "+req+" requests). The shortage is requests, not helpers."; },
+      psInsMute:function(n){
+        return "<b>"+n+"</b> cards got an offer and then nobody wrote a word - the match happened, the conversation did not."; },
+      psInsSpeed:function(h,n){
+        return "Median time to the first offer: <b>"+h+" hours</b> (over "+n+" cards that got one)."; },
+      psInsCity:function(city,share,cities){
+        return "Live cards are spread across <b>"+cities+"</b> cities; the largest, "+city+", is "+share+" of them."; },
+      clInsTwoWay:function(p,tw,all){
+        return "<b>"+p+"</b> of conversations are two-way ("+tw+" of "+all+"). A one-way conversation is a match that became nothing."; },
+      clInsOfferAns:function(p,a,all){
+        return "<b>"+p+"</b> of approaches on offers were answered ("+a+" of "+all+")."; },
+      clInsSenders:function(n){ return "<b>"+n+"</b> distinct people wrote a message in this window."; },
+      maInsCost:function(c,su,spend){
+        return "Cost per REAL signup: <b>"+c+"</b> ("+su+" signups on "+spend+"). Computed on database signups, not on Meta-attributed installs."; },
+      maInsAttrib:function(inst,su){
+        return "Meta attributed <b>"+inst+"</b> installs against <b>"+su+"</b> real signups - that gap is why the verdict does not lean on Meta's numbers."; },
+      blInsOverdue:function(n,names){ return "<b>"+n+"</b> items are past their own date: "+names+"."; },
+      blInsDue:function(n,d){ return "<b>"+n+"</b> items carry a due date; the nearest is "+d+"."; },
+      blInsNow:function(n,all){ return "<b>"+n+"</b> of "+all+" open items are marked \"do now\"."; },
+      blInsAge:function(age,d){ return "This list is hand-written and was last updated <b>"+age+" days</b> ago ("+d+")."; },
       pnInsTitle:"What needs attention in notifications",
       pnInsSub:"Computed from the data - severity ordered, the first three amplified",
       pnInsConc:function(bigName,bigShare,bigRate,bestName,bestRate){
@@ -4019,6 +4095,20 @@
     panelRead("metaAdsSummary", cls,
       S.rdMeta(winLbl, ils(spend7), fmt(su7), cost7==null? "-" : ils(cost7,1), fmt(inst7)));
 
+    // ---- what needs attention, on the same numbers the panel already has ---
+    (function(){
+      var rows=[];
+      if(cost7!=null){
+        rows.push([cost7<25?"good":cost7<=35?"warn":"bad",
+          S.maInsCost(ils(cost7,1), fmt(su7), ils(spend7))]);
+      }
+      // Meta's own install count is broken for us (SKAN + our Android
+      // attribution), so it is quoted only to say how far off it is
+      if(su7>0 && inst7>=0)
+        rows.push(["info", S.maInsAttrib(fmt(inst7), fmt(su7))]);
+      insightsInto("maInsights", rows);
+    })();
+
     // ---- day by day: the spend column carries its own bar -----------------
     var maxSpend=days.reduce(function(a,d){ return Math.max(a,byDay[d].spend); },1);
     var t=el("table","plain");
@@ -4848,6 +4938,20 @@
   }
   var PHONE_RE=/(0\d[\d -]{7,11}\d|\+972[\d -]{8,12}\d)/;
   function renderChat(){
+    (function(){
+      var C=(DATA && DATA.chat_stats)||{}, rows=[];
+      if(C.convos_30d){
+        var tw=Math.round(100*(C.two_way_30d||0)/C.convos_30d);
+        rows.push([tw<50?"bad":tw<70?"warn":"good",
+          S.clInsTwoWay(tw+"%", fmt(C.two_way_30d), fmt(C.convos_30d))]);
+      }
+      if(C.offer_convos){
+        var oa=Math.round(100*(C.offer_answered||0)/C.offer_convos);
+        rows.push([oa<60?"bad":"good", S.clInsOfferAns(oa+"%", fmt(C.offer_answered), fmt(C.offer_convos))]);
+      }
+      if(C.senders_window!=null) rows.push(["info", S.clInsSenders(fmt(C.senders_window))]);
+      insightsInto("clInsights", rows);
+    })();
     var q=($("chatSearch").value||"").trim();
     var hideMock=$("hideMock").checked, onlyOneWay=$("onlyOneWay").checked,
         onlyPhone=$("onlyPhone").checked,
@@ -5064,6 +5168,41 @@
     // from the server totals for exactly that reason; the array is the whole
     // table while it stays under the fetch limit (180 of 500 today).
     var R=P.filter(function(p){ return !(p.is_mock||p.owner_mock); });
+
+    // ---- what needs attention, computed from the real cards ----------------
+    (function(){
+      var rows=[], live=R.filter(function(p){return p.is_active;});
+      if(live.length){
+        var silent=live.filter(function(p){return !p.offers;});
+        var sp=Math.round(100*silent.length/live.length);
+        var oldest=silent.reduce(function(a,p){ return Math.max(a, p.age_days||0); },0);
+        rows.push([sp>=40?"bad":sp>=20?"warn":"good",
+          S.psInsSilent(fmt(silent.length), fmt(live.length), sp+"%", String(oldest))]);
+        var req=live.filter(function(p){return p.type==="request";}).length;
+        var off=live.length-req;
+        if(req>0 && off>=req*1.5)
+          rows.push(["warn", S.psInsMix((off/req).toFixed(1), fmt(req), fmt(off))]);
+      }
+      // an offer that never became a conversation is the quietest failure here:
+      // the marketplace matched and then nobody said anything
+      var mute=R.filter(function(p){ return p.offers>0 && !p.messages; });
+      if(mute.length) rows.push(["warn", S.psInsMute(fmt(mute.length))]);
+      var hrs=R.map(function(p){return p.first_offer_h;}).filter(function(h){return h!=null;})
+               .sort(function(a,b){return a-b;});
+      if(hrs.length>=5){
+        var med=hrs[Math.floor(hrs.length/2)];
+        rows.push([med>24?"warn":"good", S.psInsSpeed(String(Math.round(med)), fmt(hrs.length))]);
+      }
+      var byCity={};
+      live.forEach(function(p){ var c=p.city||"?"; byCity[c]=(byCity[c]||0)+1; });
+      var top=Object.keys(byCity).sort(function(a,b){return byCity[b]-byCity[a];})[0];
+      if(top && live.length>=10){
+        var share=Math.round(100*byCity[top]/live.length);
+        rows.push(["info", S.psInsCity(top, share+"%", String(Object.keys(byCity).length))]);
+      }
+      insightsInto("psInsights", rows);
+    })();
+
     var sum=$("psSummary");
     [[S.psSumTotal,R.length,null],
      [S.psSumLive,R.filter(function(p){return p.is_active;}).length,null],
@@ -5926,6 +6065,24 @@
     var host=$("blList"); if(!host) return;
     host.innerHTML="";
 
+    // ---- what needs attention: dated items that have gone past their date --
+    (function(){
+      var rows=[], today=new Date().toISOString().slice(0,10);
+      var open=BACKLOG.filter(function(b){ return b.st!=="done"; });
+      var overdue=open.filter(function(b){ return b.due && b.due < today; });
+      var soon=open.filter(function(b){ return b.due && b.due >= today; });
+      if(overdue.length) rows.push(["bad", S.blInsOverdue(String(overdue.length),
+        overdue.map(function(b){ return LANG==="he"? b.tH : b.tE; }).join(" · "))]);
+      if(soon.length) rows.push(["warn", S.blInsDue(String(soon.length),
+        soon.sort(function(a,b){return a.due<b.due?-1:1;})[0].due)]);
+      var now=open.filter(function(b){ return b.st==="now"; });
+      if(now.length) rows.push(["warn", S.blInsNow(String(now.length), String(open.length))]);
+      // the list is hand-written, so its own age is a finding
+      var age=Math.round((Date.now()-new Date(BL_UPDATED+"T12:00:00").getTime())/86400000);
+      rows.push([age>30?"bad":age>14?"warn":"info", S.blInsAge(String(age), BL_UPDATED)]);
+      insightsInto("blInsights", rows);
+    })();
+
     // how old the hand-written list is. Grey up to a fortnight, amber past it,
     // red past a month with the doubt spelled out - the reader should not have
     // to do the subtraction to learn the page might be lying.
@@ -6746,9 +6903,27 @@
   // The tab's own "what needs attention", built the same way the metrics tab
   // builds its own: computed rows, severity-ordered, top three amplified.
   // Attention is zero-sum - ten equal rows say nothing.
-  function renderPushInsights(N){
-    var host=$("pnInsights"); if(!host) return;
+  // Every tab's insight panel goes through here, so severity ordering, the
+  // three-row emphasis and the empty state can never drift between tabs.
+  function insightsInto(hostId, rows){
+    var host=$(hostId); if(!host) return;
     host.innerHTML="";
+    if(!rows.length){ host.appendChild(el("div","note",S.insNone)); return; }
+    var rank={bad:0,warn:1,good:2,info:3};
+    // `rank.bad` is 0, and `0 || 9` is 9 - the original `||` sent the MOST
+    // severe rows to the bottom and denied them the .lead treatment.
+    rows.sort(function(a,b){
+      var ra=rank[a[0]], rb=rank[b[0]];
+      return (ra===undefined?9:ra)-(rb===undefined?9:rb);
+    });
+    rows.forEach(function(r,i){
+      var row=insight(r[0],r[1],r[2]);
+      if(i<3) row.classList.add("lead");
+      host.appendChild(row);
+    });
+  }
+
+  function renderPushInsights(N){
     var rows=[], eff=N.effectiveness||[], T=N.total||{}, Q=N.question||{}, L=N.landing||{};
     var rate=function(r){ return r.sent? r.acted/r.sent : 0; };
     var totSent=eff.reduce(function(a,r){return a+r.sent;},0);
@@ -6793,19 +6968,7 @@
     if(dead.length) rows.push(["warn", S.pnInsDead(String(dead.length),
       dead.map(function(r){return pushTitleFor(r.type);}).join(" · "))]);
 
-    var rank={bad:0,warn:1,good:2,info:3};
-    // `rank.bad` is 0, and `0 || 9` is 9 - so `||` sent the MOST severe rows to
-    // the bottom and denied them the .lead treatment. Present since this sort
-    // was written; found 2026-09-04 when the notifications tab reused it.
-    rows.sort(function(a,b){
-      var ra = rank[a[0]]; var rb = rank[b[0]];
-      return (ra===undefined?9:ra) - (rb===undefined?9:rb);
-    });
-    rows.forEach(function(r,i){
-      var row=insight(r[0],r[1]);
-      if(i<3) row.classList.add("lead");
-      host.appendChild(row);
-    });
+    insightsInto("pnInsights", rows);
   }
 
   function renderPush(){
