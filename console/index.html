@@ -626,6 +626,16 @@
       padding-top:5px; border-top:1px dashed var(--hairline); }
   .blmeta .bleff.alone { margin-top:0; padding-top:0; border-top:0; }
   .blempty { color:var(--muted); font-size:13px; padding:18px 2px; }
+  /* The stamp exists so a stale backlog announces itself instead of looking
+     current. It escalates on purpose: a quiet grey dot is not a signal. */
+  .blupd { display:inline-flex; align-items:center; gap:7px; font-size:11.5px;
+      color:var(--muted); margin-top:7px; }
+  .blupd i { width:6px; height:6px; border-radius:50%; flex-shrink:0;
+      background:var(--good-text); }
+  .blupd.warn { color:var(--warning); }
+  .blupd.warn i { background:var(--warning); }
+  .blupd.bad { color:var(--bad-text); font-weight:600; }
+  .blupd.bad i { background:var(--bad-text); }
   @media (max-width:720px){
     .blsum { grid-template-columns:1fr 1fr; gap:8px; }
     .blsum .blcell b { font-size:22px; }
@@ -1166,6 +1176,7 @@
     <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="blTitle">מה בונים, ולמה דווקא את זה</h2>
       <div class="sub" data-i18n="blSub"></div>
+      <div id="blUpdated"></div>
       <div id="blList"></div>
     </section>
   </div>
@@ -1524,6 +1535,9 @@
       densThin:"בקשות חיות באזור דליל (מתחת ל-10 שכנים)",
       rdDens:function(ans,sil,thin){ return "בקשה שנענתה הייתה מוקפת <b>"+ans+"</b> שכנים בממוצע; בקשה ששתקה - <b>"+sil+"</b> בלבד. מתחת ל-10 שכנים בטווח, אף בקשה לא קיבלה מענה באותו יום. המסקנה חדה: המוצר עובד היכן שיש צפיפות ונכשל היכן שאין, ולכן <b>"+thin+"</b> הבקשות החיות באזור דליל הן אנשים שיקבלו שתיקה. זו הצדקה ישירה לרכז את כל תקציב הרכישה בעיר אחת במקום לפזר."; },
       tabBacklog:"בקלוג",
+      blUpd:"עודכן ידנית", blUpdToday:"היום", blUpdYday:"אתמול",
+      blUpdAgo:"לפני {n} ימים", blUpdStale:"ייתכן שאינו מעודכן",
+      blUpdTip:"הבקלוג נכתב ביד ולא נמשך מהמסד – בניגוד למטריקות, לצ׳אט ולקמפיינים. התאריך הזה נועד לכך שרשימה מיושנת תכריז על עצמה במקום להיראות עדכנית",
       blStatusL:"מצב", blSortL:"סדר", blAll:"הכל",
       blTitle:"מה בונים, ולמה דווקא את זה",
       blSub:"כל שורה אומרת מה הפריט, למה הוא חשוב – עם המספר שמאחוריו – וכמה הוא עולה · ריחוף על RICE או על שער מסביר את המונח",
@@ -1869,6 +1883,9 @@
       densThin:"Live requests in a thin area (under 10 neighbours)",
       rdDens:function(ans,sil,thin){ return "An answered request sat among <b>"+ans+"</b> neighbours on average; a silent one among just <b>"+sil+"</b>. Below 10 neighbours in range, not one request was answered the same day. The conclusion is sharp: the product works where density exists and fails where it does not, so the <b>"+thin+"</b> live requests in thin areas are people about to be met with silence. This is direct justification for concentrating every acquisition shekel in one city instead of spreading."; },
       tabBacklog:"Backlog",
+      blUpd:"Updated by hand", blUpdToday:"today", blUpdYday:"yesterday",
+      blUpdAgo:"{n} days ago", blUpdStale:"may be out of date",
+      blUpdTip:"The backlog is written by hand and is not pulled from the database \u2013 unlike metrics, chat and campaigns. This date exists so a stale list announces itself instead of looking current",
       blStatusL:"Status", blSortL:"Order", blAll:"All",
       blTitle:"What we build next, and why this",
       blSub:"Every row says what the item is, why it matters \u2013 with the measurement behind it \u2013 and what it costs \u00b7 hover RICE or Gate for the term in plain words",
@@ -4566,6 +4583,10 @@
     legal:   {he:"משפטי",          en:"Legal"},
     design:  {he:"עיצוב",          en:"Design"}
   };
+  // Bump this whenever BACKLOG below changes. It sits here, touching the array,
+  // because a stamp kept anywhere else is a second thing to forget - and a
+  // stamp that lies is worse than no stamp at all.
+  var BL_UPDATED = "2026-09-04";
   var BACKLOG = [
     // ---- act now -----------------------------------------------------------
     {st:"now", cat:"legal", rice:null, eff:0.05, due:"2026-09-07",
@@ -4918,6 +4939,33 @@
   function renderBacklog(){
     var host=$("blList"); if(!host) return;
     host.innerHTML="";
+
+    // how old the hand-written list is. Grey up to a fortnight, amber past it,
+    // red past a month with the doubt spelled out - the reader should not have
+    // to do the subtraction to learn the page might be lying.
+    var uh=$("blUpdated");
+    if(uh){
+      uh.innerHTML="";
+      var d=new Date(BL_UPDATED+"T12:00:00");
+      var days=Math.floor((Date.now()-d.getTime())/86400000);
+      var ago = days<=0 ? S.blUpdToday
+              : days===1 ? S.blUpdYday
+              : S.blUpdAgo.split("{n}").join(String(days));
+      var line=el("div","blupd"+(days>30?" bad":days>14?" warn":""));
+      line.appendChild(el("i"));
+      // Hebrew keeps the numeric form - day-first is universal in Israel and
+      // reads cleaner. English spells the month, because "10.7.2026" is a real
+      // ambiguity for anyone who reads month-first.
+      var ds = LANG==="he"
+        ? d.getDate()+"."+(d.getMonth()+1)+"."+d.getFullYear()
+        : d.toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+      var txt=S.blUpd+" · "+ds+" · "+ago;
+      if(days>14) txt+=" · "+S.blUpdStale;
+      var t=el("span","term",txt);
+      t.setAttribute("data-tip",S.blUpdTip);
+      line.appendChild(t);
+      uh.appendChild(line);
+    }
 
     // summary strip: the four numbers that answer "where does the work stand"
     var sum=$("blSummary"); sum.innerHTML="";
