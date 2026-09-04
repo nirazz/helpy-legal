@@ -443,7 +443,7 @@
   #psList tr.psclosed td { opacity:.55; }
   #psList tr.psclosed:hover td { opacity:.85; }
   .term.bare { border-bottom:0; cursor:default; }
-  .pszero { color:var(--warning); font-weight:700; }
+  .pszero { color:var(--muted); font-weight:600; }
   .psdot { display:inline-block; width:6px; height:6px; border-radius:50%;
            background:var(--good-text); margin-inline-end:6px; vertical-align:middle; }
   #psList .plain td { vertical-align:middle; }
@@ -1598,7 +1598,7 @@
       rdDens:function(ans,sil,thin){ return "בקשה שנענתה הייתה מוקפת <b>"+ans+"</b> שכנים בממוצע; בקשה ששתקה - <b>"+sil+"</b> בלבד. מתחת ל-10 שכנים בטווח, אף בקשה לא קיבלה מענה באותו יום. המסקנה חדה: המוצר עובד היכן שיש צפיפות ונכשל היכן שאין, ולכן <b>"+thin+"</b> הבקשות החיות באזור דליל הן אנשים שיקבלו שתיקה. זו הצדקה ישירה לרכז את כל תקציב הרכישה בעיר אחת במקום לפזר."; },
       tabPosts:"כרטיסים",
       psTitle:"כל הכרטיסים שקיימים",
-      psSub:"שורה אחת לכל פוסט – כולל סגורים ומוקים, שהפיד מסתיר מעצם הגדרתו · ריחוף על מונח מסביר אותו",
+      psSub:"שורה אחת לכל פוסט – כולל הסגורים, שהפיד מסתיר מעצם הגדרתו · פוסטי בדיקה מוסתרים, הצ׳יפ ״מוקים״ מחזיר אותם · ריחוף על מונח מסביר אותו",
       psTypeL:"סוג", psStatusL:"מצב", psRespL:"מענה", psSortL:"סדר", psAll:"הכל",
       psReq:"בקשות", psOff:"הצעות", psLive:"חיים", psClosed:"סגורים", psMock:"מוקים",
       psReq1:"בקשה", psOff1:"הצעה", psMock1:"מוק", psInstant:"מיד", psHours:"אחרי {n} שעות",
@@ -1622,7 +1622,7 @@
       psAgeTip:"כמה זמן עבר מאז הפרסום. פוסט חי בן חודשיים הוא בדרך כלל פוסט שנשכח, לא ביקוש פתוח",
       psFirstTip:"כמה שעות עברו עד ההצעה הראשונה",
       psDaysN:"{n} ימים", psDay1:"יום", psToday:"היום",
-      psNoOffers:"אין", psClosedLbl:"נסגר", psLiveLbl:"חי",
+      psClosedLbl:"נסגר", psLiveLbl:"חי",
       psByOwner:"נמחק בידי הבעלים", psClosedInstead:"נסגר במקום להימחק",
       psEmptyData:"רשימת הכרטיסים לא נטענה. רענון יביא אותה",
       tabBacklog:"בקלוג",
@@ -1975,7 +1975,7 @@
       rdDens:function(ans,sil,thin){ return "An answered request sat among <b>"+ans+"</b> neighbours on average; a silent one among just <b>"+sil+"</b>. Below 10 neighbours in range, not one request was answered the same day. The conclusion is sharp: the product works where density exists and fails where it does not, so the <b>"+thin+"</b> live requests in thin areas are people about to be met with silence. This is direct justification for concentrating every acquisition shekel in one city instead of spreading."; },
       tabPosts:"Cards",
       psTitle:"Every card that exists",
-      psSub:"One row per post \u2013 closed posts and mock fixtures included, which the feed hides by construction \u00b7 hover any term for an explanation",
+      psSub:"One row per post \u2013 closed ones included, which the feed hides by construction \u00b7 test fixtures are hidden; the \u201cMock\u201d chip brings them back \u00b7 hover any term for an explanation",
       psTypeL:"Type", psStatusL:"State", psRespL:"Response", psSortL:"Order", psAll:"All",
       psReq:"Requests", psOff:"Offers", psLive:"Live", psClosed:"Closed", psMock:"Mock",
       psReq1:"Request", psOff1:"Offer", psMock1:"Mock", psInstant:"instantly", psHours:"after {n}h",
@@ -1999,7 +1999,7 @@
       psAgeTip:"How long since it was posted. A live post two months old is usually a forgotten post, not open demand",
       psFirstTip:"Hours until the first offer arrived",
       psDaysN:"{n} days", psDay1:"1 day", psToday:"today",
-      psNoOffers:"none", psClosedLbl:"closed", psLiveLbl:"live",
+      psClosedLbl:"closed", psLiveLbl:"live",
       psByOwner:"deleted by the owner", psClosedInstead:"closed instead of deleted",
       psEmptyData:"The card list did not load. A refresh will fetch it",
       tabBacklog:"Backlog",
@@ -4857,10 +4857,10 @@
         }
         oTd.appendChild(num);
       } else if(p.is_active){
-        var z=el("span","pszero term",S.psNoOffers);
+        var z=el("span","pszero term bare","\u2014");
         z.setAttribute("data-tip",S.psSilentTip);
         oTd.appendChild(z);
-      } else { oTd.textContent="-"; }
+      } else { oTd.textContent="\u2014"; }
       tr.appendChild(oTd);
 
       var cTd=el("td");
@@ -4871,7 +4871,7 @@
           cTd.appendChild(tw);
         }
         cTd.appendChild(document.createTextNode(fmt(p.messages)));
-      } else { cTd.textContent="-"; }
+      } else { cTd.textContent="\u2014"; }
       tr.appendChild(cTd);
 
       // "live" is the default state of ~85% of rows; a green pill repeated a
