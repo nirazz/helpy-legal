@@ -1272,6 +1272,11 @@
 
   <div id="archView" class="hidden">
     <section class="panel" style="opacity:1;transform:none">
+      <h2 data-i18n="arInsTitle">מה דורש תשומת לב בארכיטקטורה</h2>
+      <div class="sub" data-i18n="pnInsSub"></div>
+      <div id="arInsights"></div>
+    </section>
+    <section class="panel" style="opacity:1;transform:none">
       <h2 data-i18n="archTitle">איך Helpy עובד</h2>
       <div class="sub" data-i18n="archSub">כל רכיב, מה מחובר למה, ואיפה כל דבר מאוחסן · הריחוף על מונח מקוצר מסביר אותו</div>
       <div class="flowbar" id="flowBar"></div>
@@ -1367,14 +1372,18 @@
       <div id="pnInsights"></div>
     </section>
     <div class="tiles" id="pnTiles"></div>
+
+    <div class="sechead" style="--sec-c:var(--s1)" data-i18n="pnSecWorks">1 · האם ההתראות משיגות משהו</div>
     <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="pnEffTitle">האם ההתראות עובדות</h2>
       <span class="pntag" data-i18n="pnAllTime">כל הזמן</span>
       <div class="sub" data-i18n="pnEffSub"></div>
       <div id="pnEff"></div>
     </section>
+    <div class="sechead" style="--sec-c:var(--s3)" data-i18n="pnSecDelivery">2 · האם הן בכלל הגיעו</div>
     <section class="panel wide" style="opacity:1;transform:none">
-      <h2 data-i18n="pnTitle">מה קרה עם ההתראות ששלחנו</h2>
+      <h2 data-i18n="pnTitle">מסירה, פתיחה ותשובה</h2>
+      <span class="pntag" id="pnWinTag1"></span>
       <div class="sub" data-i18n="pnSub"></div>
       <div id="pnFunnel"></div>
       <div id="pnChart"></div>
@@ -1384,6 +1393,7 @@
       <div class="sub" data-i18n="pnHoSub"></div>
       <div id="pnHoldout"></div>
     </section>
+    <div class="sechead" style="--sec-c:var(--s5)" data-i18n="pnSecQuestion">3 · השאלה היחידה שאנחנו שואלים</div>
     <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="pnQTitle">השאלה ששאלנו</h2>
       <div class="sub" data-i18n="pnQSub"></div>
@@ -1391,7 +1401,8 @@
       <div id="pnReasons"></div>
     </section>
     <section class="panel wide" style="opacity:1;transform:none">
-      <h2 data-i18n="pnTypesTitle">לפי סוג התראה</h2>
+      <h2 data-i18n="pnTypesTitle">מסירה לפי סוג התראה</h2>
+      <span class="pntag" id="pnWinTag2"></span>
       <div class="sub" data-i18n="pnTypesSub"></div>
       <div id="pnTypes"></div>
     </section>
@@ -1836,6 +1847,15 @@
       pnHoNote:"ההפרש מוצג רק כשהוא עובר מבחן מובהקות של 95% (z מעל 1.96). בנפחים שלנו זה ייקח שבועות - וזו בדיוק הסיבה שעדיף להמתין מאשר להסיק ממספר קטן.",
       pnInsHoSig:function(n,all){ return "<b>"+n+"</b> מתוך "+all+" השולחים עם ביקורת הראו הפרש מובהק - יש להם הוכחה, לא רק שיעור."; },
       pnInsHoRunning:function(all,held){ return "קבוצת ביקורת פעילה על <b>"+all+"</b> שולחים שיווקיים ("+held+" אנשים לא קיבלו עד כה). עוד אין מספיק נתונים למסקנה - זה תקין, ובינתיים כל שיעור על המסך הוא תיאור ולא הוכחה."; },
+      pnSecWorks:"1 · האם ההתראות משיגות משהו",
+      pnSecDelivery:"2 · האם הן בכלל הגיעו",
+      pnSecQuestion:"3 · השאלה היחידה שאנחנו שואלים",
+      pnWinTag:function(d){ return d+" ימים אחרונים"; },
+      arInsTitle:"מה דורש תשומת לב בארכיטקטורה",
+      arInsDrift:function(n,names){ return "<b>"+n+"</b> סוגי התראה נשלחו בפועל ואינם מתועדים בדף הזה: "+names+". המשמעות היא שהדף אומר משהו לא נכון על מה שמשתמשים מקבלים."; },
+      arInsNoDrift:function(n){ return "כל סוגי ההתראה שנשלחו בפועל מתועדים כאן (<b>"+n+"</b> טקסטים). הדף תואם למציאות."; },
+      arInsSplit:function(ops,mkt){ return "<b>"+ops+"</b> התראות תפעוליות מול <b>"+mkt+"</b> שיווקיות. החלוקה הזו היא קו משפטי - רק השיווקיות כפופות להסכמה ולמכסה השבועית."; },
+      arInsHoldout:function(n){ return "ל-<b>"+n+"</b> שולחים שיווקיים יש קבוצת ביקורת פעילה - 10% מהקהל שלהם לא מקבל את ההודעה, כדי שאפשר יהיה למדוד אם היא בכלל עוזרת."; },
       pnAllTime:"כל הזמן",
       pnTileSentNote:function(n){ return "על פני "+n+" שולחים"; },
       pnTileRateNote:function(a,b){ return a+" מתוך "+b+" · בלי המדדים החלשים"; },
@@ -1850,7 +1870,7 @@
       pnTileDeadNone:"אין - כולם מביאים משהו",
       pnBandWorks:"עובד · 40% ומעלה", pnBandWeak:"חלש · 15%-39%", pnBandDead:"לא עובד · מתחת ל-15%",
       pnEffTitle:"האם ההתראות עובדות",
-      pnEffSub:"לא כמה נשלחו - כמה גרמו למה שרצינו. חלון ייחוס: 7 ימים - פעולה שקרתה חודשים אחרי הפוש אינה ייחוס, ולכן המספר המוביל הוא בחלון, ו\"אי פעם\" מופיע מתחתיו באפור. נמדד על כל ההיסטוריה מהעמודות שכל שולח כבר מסמן. לכל שורה כתוב מה בדיוק נחשב הצלחה.",
+      pnEffSub:"כמה מההתראות גרמו למה שרצינו, לא כמה נשלחו. חלון ייחוס: 7 ימים מהשליחה, והמספר הרחב יותר מופיע מתחתיו באפור.",
       pnEffCol:"התראה", pnEffSent:"נשלחו", pnEffActed:"הצליחו", pnEffRate:"שיעור",
       pnEffOutcome:"מה נחשב הצלחה", pnEffRange:"מאז",
       pnEffWeak:"מדד חלש",
@@ -1866,20 +1886,20 @@
       tabPush:"התראות",
       pnWinL:"חלון",
       pnTitle:"מה קרה עם ההתראות ששלחנו",
-      pnSub:"כל פוש שיוצא נרשם: מה Expo אישר, מה באמת הגיע למכשיר, מה נפתח ומה נענה. הרישום התחיל ב-4.9.2026 - מה שנשלח לפני כן לא קיים כאן, וזה לא תקלה.",
+      pnSub:"מה Expo אישר, מה הגיע למכשיר, מה נפתח ומה נענה.",
       pnSent:"נשלחו",
       pnDelivered:"נמסרו למכשיר",
       pnOpened:"נפתחו",
       pnAnswered:"נענו",
       pnFailed:"נכשלו",
       pnQTitle:"השאלה ששאלנו: איך הלך עם העזרה?",
-      pnQSub:"ההתראה היחידה ששואלת שאלה. המספרים כאן לא תלויים ברישום - הם נספרים מהתשובות עצמן, ולכן כוללים גם את כל מי שנשאל לפני שהרישום קם.",
+      pnQSub:"ההתראה היחידה ששואלת שאלה. המספרים כאן לא תלויים ביומן - הם נספרים מהתשובות עצמן.",
       pnQAsked:"נשאלו",
       pnQGot:"ענו: כן, קיבלתי",
       pnQNot:"ענו: עוד לא",
       pnQUnanswered:"לא ענו כלל",
       pnTypesTitle:"לפי סוג התראה",
-      pnTypesSub:"כל שורה היא התראה אחת מהקטלוג, בשמה האמיתי. אחוז הפתיחה מחושב מתוך מה שנמסר - לא מתוך מה שנשלח.",
+      pnTypesSub:"אותם מספרים, מפורקים לפי סוג. אחוז הפתיחה מחושב מתוך מה שנמסר, לא מתוך מה שנשלח.",
       pnErrTitle:"כשלים במסירה",
       pnErrSub:"קוד השגיאה כפי ש-Expo החזיר אותו. DeviceNotRegistered = האפליקציה הוסרה או שהטוקן התחלף, וזה תקין. כל קוד אחר הוא בעיה שלנו.",
       pnEmpty:"עוד לא נרשמה אף התראה בחלון הזה.",
@@ -2344,6 +2364,15 @@
       pnHoNote:"A lift is shown only once it clears a 95% significance test (z above 1.96). At our volume that will take weeks - which is exactly why waiting beats concluding from a small number.",
       pnInsHoSig:function(n,all){ return "<b>"+n+"</b> of "+all+" senders with a control group show a significant lift - they have evidence, not just a rate."; },
       pnInsHoRunning:function(all,held){ return "A control group is running on <b>"+all+"</b> marketing senders ("+held+" people held back so far). Not enough data for a verdict yet - that is expected, and until then every rate on this screen is a description, not proof."; },
+      pnSecWorks:"1 · Do the notifications achieve anything",
+      pnSecDelivery:"2 · Did they even arrive",
+      pnSecQuestion:"3 · The one question we ask",
+      pnWinTag:function(d){ return "last "+d+" days"; },
+      arInsTitle:"What needs attention in the architecture",
+      arInsDrift:function(n,names){ return "<b>"+n+"</b> notification types have actually been sent and are not documented on this page: "+names+". That means this page states something false about what users receive."; },
+      arInsNoDrift:function(n){ return "Every notification type actually sent is documented here (<b>"+n+"</b> texts). The page matches reality."; },
+      arInsSplit:function(ops,mkt){ return "<b>"+ops+"</b> operational notifications against <b>"+mkt+"</b> marketing ones. That split is a LEGAL line - only the marketing ones are subject to consent and the weekly cap."; },
+      arInsHoldout:function(n){ return "<b>"+n+"</b> marketing senders have a live control group - 10% of their audience does not get the message, so we can measure whether it helps at all."; },
       pnAllTime:"all time",
       pnTileSentNote:function(n){ return "across "+n+" senders"; },
       pnTileRateNote:function(a,b){ return a+" of "+b+" · weak measures excluded"; },
@@ -2359,7 +2388,7 @@
       pnTileDeadNone:"none - they all bring something",
       pnBandWorks:"Works · 40% and up", pnBandWeak:"Weak · 15%-39%", pnBandDead:"Not working · under 15%",
       pnEffTitle:"Are the notifications working",
-      pnEffSub:"Not how many went out - how many CAUSED what we wanted. Attribution window: 7 days - an action months after the push is not an attribution, so the leading number is in-window and \"ever\" sits under it in grey. Measured over the whole history from the columns every sender already stamps. Each row names what counts as success.",
+      pnEffSub:"How many notifications caused what we wanted, not how many went out. Attribution window: 7 days, with the looser all-time number under it in grey.",
       pnEffCol:"Notification", pnEffSent:"Sent", pnEffActed:"Worked", pnEffRate:"Rate",
       pnEffOutcome:"What counts as success", pnEffRange:"Since",
       pnEffWeak:"weak measure",
@@ -2375,20 +2404,20 @@
       tabPush:"Notifications",
       pnWinL:"Window",
       pnTitle:"What happened to the notifications we sent",
-      pnSub:"Every push is logged: what Expo accepted, what actually reached the device, what was opened and what was answered. Logging started 4 Sep 2026 - anything sent before that is not here, and that is not a fault.",
+      pnSub:"What Expo accepted, what reached the device, what was opened and what was answered.",
       pnSent:"Sent",
       pnDelivered:"Reached the device",
       pnOpened:"Opened",
       pnAnswered:"Answered",
       pnFailed:"Failed",
       pnQTitle:"The question we asked: how did it go?",
-      pnQSub:"The one notification that asks a question. These numbers do not depend on the log - they are counted from the answers themselves, so they include everyone asked before logging existed.",
+      pnQSub:"The one notification that asks a question. These numbers do not depend on the log - they are counted from the answers themselves.",
       pnQAsked:"Asked",
       pnQGot:"Answered: yes, I did",
       pnQNot:"Answered: not yet",
       pnQUnanswered:"Never answered",
       pnTypesTitle:"By notification type",
-      pnTypesSub:"One row per notification in the catalogue, under its real name. Open rate is out of what was DELIVERED, not out of what was sent.",
+      pnTypesSub:"The same numbers, split by type. Open rate is out of what was DELIVERED, not out of what was sent.",
       pnErrTitle:"Delivery failures",
       pnErrSub:"The error code exactly as Expo returned it. DeviceNotRegistered = the app was removed or the token rotated, which is normal. Any other code is our problem.",
       pnEmpty:"No notification logged in this window yet.",
@@ -7169,6 +7198,9 @@
                 biggest? pct(actedWin(biggest), biggest.sent) : "-"));
     }
     var T=N.total||{}, Q=N.question||{};
+    ["pnWinTag1","pnWinTag2"].forEach(function(id){
+      var t=$(id); if(t) t.textContent = S.pnWinTag(String(N.days || NOTIF_DAYS));
+    });
     renderPushInsights(N);
     var ramp=[tok("--seq250"),tok("--seq400"),tok("--seq550"),tok("--seq700")];
 
@@ -7327,7 +7359,47 @@
     }
   }
 
+  // The architecture tab is a map, so its insights are about whether the MAP
+  // still matches the territory - which is the one thing a hand-written
+  // catalogue cannot guarantee about itself.
+  function renderArchInsights(){
+    var rows=[], N=(DATA && DATA.notifications) || {};
+    // every notification type the catalogue documents
+    var known={};
+    ["edge","nudge"].forEach(function(g){
+      (NOTIF_GROUPS[g]||[]).forEach(function(grp){
+        (grp.items||[]).forEach(function(it){ known[it.k]=true; });
+      });
+    });
+    var docCount=Object.keys(known).length;
+    // ...against every type that has actually been SENT
+    var seen=(N.by_type||[]).map(function(r){ return r.type; })
+      .concat((N.effectiveness||[]).map(function(r){ return r.type; }));
+    var undocumented=seen.filter(function(t,i){
+      return seen.indexOf(t)===i && !known[t] && !PUSH_LABEL[t];
+    });
+    if(undocumented.length){
+      // this is the standing rule enforcing itself: a new sender that never
+      // reached NOTIF_GROUPS makes this page state something false
+      rows.push(["bad", S.arInsDrift(String(undocumented.length), undocumented.join(" · "))]);
+    } else {
+      rows.push(["good", S.arInsNoDrift(String(docCount))]);
+    }
+    var ops=0, mkt=0;
+    ["edge","nudge"].forEach(function(g){
+      (NOTIF_GROUPS[g]||[]).forEach(function(grp){
+        (grp.items||[]).forEach(function(it){ if(it.kind==="op") ops++; else mkt++; });
+      });
+    });
+    rows.push(["info", S.arInsSplit(String(ops), String(mkt))]);
+    // a holdout means some of those senders now deliberately skip people
+    var HO=((N.landing||{}).holdout)||[];
+    if(HO.length) rows.push(["info", S.arInsHoldout(String(HO.length))]);
+    insightsInto("arInsights", rows);
+  }
+
   function renderArch(){
+    try{ renderArchInsights(); }catch(e){ console.error("renderArchInsights failed",e); }
     if(!archBuilt){ archBuilt=true; }
     buildArch();
     var bar=$("flowBar"); bar.innerHTML="";
