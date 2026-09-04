@@ -1346,6 +1346,11 @@
           <button data-d="90" data-i18n="r90">90 יום</button>
         </span></span>
     </div>
+    <section class="panel" id="pnInsightsPanel" style="opacity:1;transform:none">
+      <h2 data-i18n="pnInsTitle">מה דורש תשומת לב בהתראות</h2>
+      <div class="sub" data-i18n="pnInsSub"></div>
+      <div id="pnInsights"></div>
+    </section>
     <div class="tiles" id="pnTiles"></div>
     <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="pnEffTitle">האם ההתראות עובדות</h2>
@@ -1748,6 +1753,22 @@
       densThin:"בקשות חיות באזור דליל (מתחת ל-10 שכנים)",
       rdDens:function(ans,sil,thin){ return "בקשה שנענתה הייתה מוקפת <b>"+ans+"</b> שכנים בממוצע; בקשה ששתקה - <b>"+sil+"</b> בלבד. מתחת ל-10 שכנים בטווח, אף בקשה לא קיבלה מענה באותו יום. המסקנה חדה: המוצר עובד היכן שיש צפיפות ונכשל היכן שאין, ולכן <b>"+thin+"</b> הבקשות החיות באזור דליל הן אנשים שיקבלו שתיקה. זו הצדקה ישירה לרכז את כל תקציב הרכישה בעיר אחת במקום לפזר."; },
       pnNoClient:"⚠️ \"נפתחו\" ו\"נענו\" נרשמים על ידי האפליקציה, והחצי הזה עולה רק בבילד הבא. עד אז שתי השורות האלה הן אפס מבנית - זה לא אומר שאף אחד לא פותח.",
+      pnInsTitle:"מה דורש תשומת לב בהתראות",
+      pnInsSub:"תובנות מחושבות מהנתונים - מסודרות לפי חומרה, שלוש הראשונות מודגשות",
+      pnInsConc:function(bigName,bigShare,bigRate,bestName,bestRate){
+        return "הנפח מרוכז הפוך לאפקטיביות: <b>"+bigName+"</b> הוא <b>"+bigShare+"</b> מכל מה שנשלח אי פעם וממיר ב-"+bigRate+", בזמן ש<b>"+bestName+"</b> ממיר ב-<b>"+bestRate+"</b> ונשלח לעתים נדירות."; },
+      pnInsFeed:function(loaded,swiped,p){
+        return "<b>"+loaded+"</b> אנשים טענו את הפיד אי פעם, ורק <b>"+swiped+"</b> ("+p+") החליקו פעם אחת. ההתראות מביאות תנועה שהפיד לא ממיר - זו בעיית נחיתה, לא בעיית שליחה."; },
+      pnInsActivation:function(sent,opened,acted){
+        return "הדחיפה של יום אחרי ההרשמה: <b>"+sent+"</b> נשלחו, <b>"+opened+"</b> טענו את הפיד, <b>"+acted+"</b> עשה משהו. הפידים שלהם לא היו ריקים."; },
+      pnInsQuestion:function(asked,answered){
+        return "<b>"+asked+"</b> נשאלו \"איך הלך עם העזרה?\" ו-<b>"+answered+"</b> ענו. הכפתורים לענות עולים בבילד הבא - עד אז אין דרך לענות מההתראה."; },
+      pnInsDelivery:function(p,d,s2){
+        return "<b>"+p+"</b> מההתראות בחלון הזה באמת הגיעו למכשיר ("+d+" מתוך "+s2+"), לפי ה-receipt של Expo."; },
+      pnInsNoOpens:"\"נפתחו\" ו\"נענו\" נחתמים על ידי האפליקציה - החצי הזה עולה בבילד הבא, ועד אז הם אפס מבנית.",
+      pnInsLogNew:"היומן נולד ב-4.9.2026. פאנלי המסירה יתמלאו ככל שיֵצאו התראות; פאנל האפקטיביות מעליהם כבר קורא חודשים אחורה.",
+      pnInsDead:function(n,names){
+        return "<b>"+n+"</b> שולחים מתחת ל-10% המרה עם נפח משמעותי: "+names+"."; },
       pnAllTime:"כל הזמן",
       pnTileSentNote:function(n){ return "על פני "+n+" שולחים"; },
       pnTileRateNote:function(a,b){ return a+" מתוך "+b+" · בלי המדדים החלשים"; },
@@ -2198,6 +2219,22 @@
       densThin:"Live requests in a thin area (under 10 neighbours)",
       rdDens:function(ans,sil,thin){ return "An answered request sat among <b>"+ans+"</b> neighbours on average; a silent one among just <b>"+sil+"</b>. Below 10 neighbours in range, not one request was answered the same day. The conclusion is sharp: the product works where density exists and fails where it does not, so the <b>"+thin+"</b> live requests in thin areas are people about to be met with silence. This is direct justification for concentrating every acquisition shekel in one city instead of spreading."; },
       pnNoClient:"⚠️ \"Opened\" and \"answered\" are stamped by the APP, and that half ships with the next store build. Until then these two rows are structurally zero - it does not mean nobody opens them.",
+      pnInsTitle:"What needs attention in notifications",
+      pnInsSub:"Computed from the data - severity ordered, the first three amplified",
+      pnInsConc:function(bigName,bigShare,bigRate,bestName,bestRate){
+        return "Volume is concentrated inversely to effectiveness: <b>"+bigName+"</b> is <b>"+bigShare+"</b> of everything ever sent and converts at "+bigRate+", while <b>"+bestName+"</b> converts at <b>"+bestRate+"</b> and is sent rarely."; },
+      pnInsFeed:function(loaded,swiped,p){
+        return "<b>"+loaded+"</b> people have loaded the feed, and only <b>"+swiped+"</b> ("+p+") ever swiped once. The notifications deliver traffic the feed does not convert - a landing problem, not a sending one."; },
+      pnInsActivation:function(sent,opened,acted){
+        return "The day-after-signup nudge: <b>"+sent+"</b> sent, <b>"+opened+"</b> loaded the feed, <b>"+acted+"</b> acted. Their feeds were not empty."; },
+      pnInsQuestion:function(asked,answered){
+        return "<b>"+asked+"</b> were asked \"how did the help go?\" and <b>"+answered+"</b> answered. The answer buttons ship with the next build - until then there is no way to answer from the notification."; },
+      pnInsDelivery:function(p,d,s2){
+        return "<b>"+p+"</b> of this window's notifications actually reached a device ("+d+" of "+s2+"), per Expo's receipt."; },
+      pnInsNoOpens:"\"Opened\" and \"answered\" are stamped by the app - that half ships with the next build, so until then they are structurally zero.",
+      pnInsLogNew:"The log was born on 4 Sep 2026. The delivery panels fill as notifications go out; the effectiveness panel above them already reads months back.",
+      pnInsDead:function(n,names){
+        return "<b>"+n+"</b> senders convert under 10% at meaningful volume: "+names+"."; },
       pnAllTime:"all time",
       pnTileSentNote:function(n){ return "across "+n+" senders"; },
       pnTileRateNote:function(a,b){ return a+" of "+b+" · weak measures excluded"; },
@@ -3610,7 +3647,13 @@
     // severity order first, then only the top 3 stay loud - a wall of ten
     // equal rows means nothing stands out (Few: attention is zero-sum)
     var rank={bad:0,warn:1,good:2,info:3};
-    rows.sort(function(a,b){ return (rank[a[0]]||9)-(rank[b[0]]||9); });
+    // `rank.bad` is 0, and `0 || 9` is 9 - so `||` sent the MOST severe rows to
+    // the bottom and denied them the .lead treatment. Present since this sort
+    // was written; found 2026-09-04 when the notifications tab reused it.
+    rows.sort(function(a,b){
+      var ra = rank[a[0]]; var rb = rank[b[0]];
+      return (ra===undefined?9:ra) - (rb===undefined?9:rb);
+    });
     rows.forEach(function(r,i){
       var row=insight(r[0],r[1],r[2]);
       if(i<3) row.classList.add("lead");
@@ -6700,6 +6743,71 @@
     return wrap;
   }
 
+  // The tab's own "what needs attention", built the same way the metrics tab
+  // builds its own: computed rows, severity-ordered, top three amplified.
+  // Attention is zero-sum - ten equal rows say nothing.
+  function renderPushInsights(N){
+    var host=$("pnInsights"); if(!host) return;
+    host.innerHTML="";
+    var rows=[], eff=N.effectiveness||[], T=N.total||{}, Q=N.question||{}, L=N.landing||{};
+    var rate=function(r){ return r.sent? r.acted/r.sent : 0; };
+    var totSent=eff.reduce(function(a,r){return a+r.sent;},0);
+
+    // 1. the shape of the whole thing: volume sits where the results do not
+    if(eff.length){
+      var big=eff.slice().sort(function(a,b){return b.sent-a.sent;})[0];
+      var best=eff.slice().sort(function(a,b){return rate(b)-rate(a);})
+                 .filter(function(r){return !r.weak && r.sent>=10;})[0];
+      if(big && best && rate(big) < rate(best)/2){
+        rows.push(["bad", S.pnInsConc(pushTitleFor(big.type), pct(big.sent,totSent),
+                                      pct(big.acted,big.sent), pushTitleFor(best.type),
+                                      pct(best.acted,best.sent))]);
+      }
+    }
+
+    // 2. the push delivers traffic the landing screen does not convert
+    if(L.feed_loaded){
+      var sw = Math.round(100*(L.ever_swiped||0)/L.feed_loaded);
+      rows.push([sw<10?"bad":"warn", S.pnInsFeed(fmt(L.feed_loaded), fmt(L.ever_swiped), sw+"%")]);
+      var A=L.activation||{};
+      if(A.sent) rows.push(["info", S.pnInsActivation(fmt(A.sent), fmt(A.opened), fmt(A.acted))]);
+    }
+
+    // 3. the one question we ask, and whether it can be answered at all yet
+    if(Q.asked){
+      var ans=(Q.got_help||0)+(Q.not_yet||0);
+      rows.push([ans? "warn":"bad", S.pnInsQuestion(fmt(Q.asked), fmt(ans))]);
+    }
+
+    // 4. delivery health for the window - the Android-outage shape
+    if(T.sent){
+      var dl=Math.round(100*(T.delivered||0)/T.sent);
+      rows.push([dl<90?"bad":"good", S.pnInsDelivery(dl+"%", fmt(T.delivered), fmt(T.sent))]);
+      if(!T.opened && !T.answered) rows.push(["info", S.pnInsNoOpens]);
+    } else {
+      rows.push(["info", S.pnInsLogNew]);
+    }
+
+    // 5. senders with nothing to show for themselves
+    var dead=eff.filter(function(r){ return !r.weak && r.sent>=10 && rate(r)<0.10; });
+    if(dead.length) rows.push(["warn", S.pnInsDead(String(dead.length),
+      dead.map(function(r){return pushTitleFor(r.type);}).join(" · "))]);
+
+    var rank={bad:0,warn:1,good:2,info:3};
+    // `rank.bad` is 0, and `0 || 9` is 9 - so `||` sent the MOST severe rows to
+    // the bottom and denied them the .lead treatment. Present since this sort
+    // was written; found 2026-09-04 when the notifications tab reused it.
+    rows.sort(function(a,b){
+      var ra = rank[a[0]]; var rb = rank[b[0]];
+      return (ra===undefined?9:ra) - (rb===undefined?9:rb);
+    });
+    rows.forEach(function(r,i){
+      var row=insight(r[0],r[1]);
+      if(i<3) row.classList.add("lead");
+      host.appendChild(row);
+    });
+  }
+
   function renderPush(){
     var fh=$("pnFunnel"), qh=$("pnQuestion"), th=$("pnTypes"), eh=$("pnErrors");
     var xh=$("pnEff"), ch=$("pnChart");
@@ -6789,6 +6897,7 @@
                 biggest? pct(biggest.acted, biggest.sent) : "-"));
     }
     var T=N.total||{}, Q=N.question||{};
+    renderPushInsights(N);
     var ramp=[tok("--seq250"),tok("--seq400"),tok("--seq550"),tok("--seq700")];
 
     // ── the funnel ─────────────────────────────────────────────────────────
