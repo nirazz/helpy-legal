@@ -1077,6 +1077,9 @@
   .pnrate .track { flex:0 0 64px; height:6px; border-radius:3px; background:var(--plane); overflow:hidden; }
   .pnrate .fill { height:100%; border-radius:3px; }
   .pnrate b { font-variant-numeric:tabular-nums; min-width:38px; text-align:end; }
+  /* the rate and the ratio it came from, as one block */
+  .pnratio { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
+  .pnratio .pnkey { direction:rtl; text-align:end; }
   /* the window chips scope the LOG panels, not this one - a control that
      appears to govern a panel it cannot touch is worse than no control */
   .pntag { display:inline-block; font-size:10px; padding:2px 8px; border-radius:99px;
@@ -1890,6 +1893,8 @@
       pnQNoneLine:function(n){ return "<b>"+n+"</b> אנשים נשאלו \"איך הלך עם העזרה?\" ואף אחד לא ענה. אין לזה דרך לקרות כרגע: הכפתורים לענות והכרטיס באפליקציה עולים בבילד הבא."; },
       pnHoFrac:function(x,n,p){ return x+" מתוך "+n+" · "+p+"%"; },
       clFilterL:"הצגה",
+      pnEffRateCol:"הצלחה · תוך 7 ימים",
+      pnEffOf:function(a,b){ return a+" מתוך "+b; },
       pnAllTime:"כל הזמן",
       pnTileSentNote:function(n){ return "על פני "+n+" שולחים"; },
       pnTileRateNote:function(a,b){ return a+" מתוך "+b+" · בלי המדדים החלשים"; },
@@ -1904,7 +1909,7 @@
       pnTileDeadNone:"אין - כולם מביאים משהו",
       pnBandWorks:"עובד · 40% ומעלה", pnBandWeak:"חלש · 15%-39%", pnBandDead:"לא עובד · מתחת ל-15%",
       pnEffTitle:"האם ההתראות עובדות",
-      pnEffSub:"כמה מההתראות גרמו למה שרצינו, לא כמה נשלחו. חלון ייחוס: 7 ימים מהשליחה, והמספר הרחב יותר מופיע מתחתיו באפור.",
+      pnEffSub:"כמה מההתראות גרמו למה שרצינו, לא כמה נשלחו. לכל שורה כתוב מה בדיוק נחשב הצלחה אצלה, והשורה האפורה מתחת לשיעור היא המספר הרחב יותר, בלי חלון.",
       pnEffCol:"התראה", pnEffSent:"נשלחו", pnEffActed:"הצליחו", pnEffRate:"שיעור",
       pnEffOutcome:"מה נחשב הצלחה", pnEffRange:"מאז",
       pnEffWeak:"מדד חלש",
@@ -2414,6 +2419,8 @@
       pnQNoneLine:function(n){ return "<b>"+n+"</b> people were asked \"how did the help go?\" and none answered. There is currently no way for that to happen: the answer buttons and the in-app card ship with the next build."; },
       pnHoFrac:function(x,n,p){ return x+" of "+n+" · "+p+"%"; },
       clFilterL:"Show",
+      pnEffRateCol:"Success · within 7 days",
+      pnEffOf:function(a,b){ return a+" of "+b; },
       pnAllTime:"all time",
       pnTileSentNote:function(n){ return "across "+n+" senders"; },
       pnTileRateNote:function(a,b){ return a+" of "+b+" · weak measures excluded"; },
@@ -2429,7 +2436,7 @@
       pnTileDeadNone:"none - they all bring something",
       pnBandWorks:"Works · 40% and up", pnBandWeak:"Weak · 15%-39%", pnBandDead:"Not working · under 15%",
       pnEffTitle:"Are the notifications working",
-      pnEffSub:"How many notifications caused what we wanted, not how many went out. Attribution window: 7 days, with the looser all-time number under it in grey.",
+      pnEffSub:"How many notifications CAUSED what we wanted, not how many went out. Each row names what counts as success for that sender, and the grey line under a rate is the wider all-time number.",
       pnEffCol:"Notification", pnEffSent:"Sent", pnEffActed:"Worked", pnEffRate:"Rate",
       pnEffOutcome:"What counts as success", pnEffRange:"Since",
       pnEffWeak:"weak measure",
@@ -7208,34 +7215,43 @@
         var inBand = byRate.filter(function(r){ return rate(r) < prev && rate(r) >= b.min; });
         if(inBand.length){ ordered.push({band:b.label}); inBand.forEach(function(r){ ordered.push(r); }); }
       });
+      // Six columns put the NUMBER and the MEANING OF THE NUMBER at opposite
+      // ends of the row: you read "6", then jump three columns to learn that 6
+      // means "the post got an offer". And a bare "אי פעם: 25" hanging under a
+      // 7 explains nothing about how the two relate.
+      //
+      // Four columns instead. The whole ratio lives in ONE cell - the rate, the
+      // bar, and "6 מתוך 12" underneath it - and the definition sits directly
+      // beside it. `נשלחו` disappears because it was the denominator all along.
       pushTable(xh,[
         {label:S.pnEffCol, cls:"name"},
-        {label:S.pnEffSent, cls:"num"},
-        {label:S.pnEffActed, cls:"num"},
-        {label:S.pnEffRate, cls:"num"},
+        {label:S.pnEffRateCol, cls:"num"},
         {label:S.pnEffOutcome, cls:"dim"},
         {label:S.pnEffRange, cls:"num dim"}
       ], ordered.map(function(r){
-        if(r.band) return [{v:r.band, cls:"band"}, "", "", "", "", ""];
+        if(r.band) return [{v:r.band, cls:"band"}, "", "", ""];
         var nm=el("div");
         var t=el("div",null,pushTitleFor(r.type));
         if(r.weak) t.appendChild(el("span","pnweak",S.pnEffWeak));
         nm.appendChild(t);
         nm.appendChild(el("div","pnkey",r.type));
-        // the windowed count leads; the unbounded one trails it, dimmed
-        var ac=el("div");
-        ac.appendChild(el("div",null,fmt(actedWin(r))));
+
+        var cell=el("div","pnratio");
+        cell.appendChild(pushRateCell(actedWin(r), r.sent, r.weak));
+        var sub = S.pnEffOf(fmt(actedWin(r)), fmt(r.sent));
+        // the unbounded number only earns a mention when it disagrees
         if(r.acted_win!=null && r.acted!==r.acted_win)
-          ac.appendChild(el("div","pnkey",S.pnEverShort(fmt(r.acted))));
-        return [ {node:nm}, fmt(r.sent), {node:ac, cls:"num"},
-                 {node:pushRateCell(actedWin(r),r.sent,r.weak), cls:"num"},
+          sub += " · " + S.pnEverShort(fmt(r.acted));
+        cell.appendChild(el("div","pnkey",sub));
+
+        return [ {node:nm}, {node:cell, cls:"num"},
                  pushOutcomeLabel(r.outcome), fmtDay(r.first_at) ];
       }), function(row, tr){
         if(!(row[0] && row[0].cls === "band")) return;
         tr.className = "pnband";
         tr.innerHTML = "";
         var td = el("td", null, row[0].v);
-        td.colSpan = 6;
+        td.colSpan = 4;
         tr.appendChild(td);
       });
       if(eff.some(function(r){return r.weak;})) xh.appendChild(el("div","note",S.pnEffWeakNote));
