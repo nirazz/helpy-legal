@@ -111,8 +111,8 @@
   main { max-width:1120px; margin:0 auto; padding:20px 24px 48px; }
   .filters { display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
   .filters .cap { color:var(--muted); font-size:12px; }
-  .filters .fsep { width:1px; align-self:stretch; background:var(--grid);
-                   margin:2px 4px; flex-shrink:0; }
+  /* the groups carry their own edges now, so the divider between them is noise */
+  .filters .fsep { display:none; }
 
   /* Stripe-pattern: jobs-based side rail (scrollspy-highlighted) */
   #rail { position:fixed; top:78px; inset-inline-start:20px; width:130px; z-index:15;
@@ -680,7 +680,23 @@
      per item: what it is, why it matters (with the measurement behind it),
      and what it costs. Status owns the colour; nothing else is tinted, so a
      scan down the left edge reads as a priority list. */
-  .blfgrp { display:inline-flex; align-items:center; gap:8px; }
+  /* A tiny caption next to a chip strip is not a boundary - four groups on one
+     wrapping line read as one long undifferentiated row. Each group now sits in
+     its own quiet container, so the eye can find where one filter ends. */
+  .blfgrp { display:inline-flex; align-items:center; gap:8px;
+            background:var(--glass); border:1px solid var(--hairline);
+            border-radius:12px; padding:5px 10px 5px 6px; }
+  .blfgrp .cap { white-space:nowrap; }
+  /* ordering is not filtering: push it to the far end of the row */
+  .blfgrp.sortgrp { margin-inline-start:auto; }
+  /* the checkbox set is one control group, and its labels are long */
+  .blfgrp.checks { flex-wrap:wrap; gap:6px 12px; padding:6px 10px; }
+  .blfgrp.checks label { font-size:12px; color:var(--ink2); display:inline-flex;
+                         gap:6px; align-items:center; white-space:nowrap; }
+  @media (max-width:760px){
+    .blfgrp.sortgrp { margin-inline-start:0; }
+    .blfgrp, .blfgrp .seg { flex-wrap:wrap; }
+  }
   .blsum { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px;
       margin-bottom:16px; }
   .blsum .blcell { background:var(--glass); border:1px solid var(--hairline);
@@ -1251,20 +1267,26 @@
     </section>
     <div class="chatbar">
       <input type="text" id="chatSearch" placeholder="חיפוש בשם, בפוסט או בתוכן..." data-i18n-ph="searchPh">
-      <div class="seg" id="chatRangeSeg">
-        <button data-d="7" data-i18n="r7">שבוע</button>
-        <button data-d="30" class="on" data-i18n="r30">30 יום</button>
-        <button data-d="90" data-i18n="r90">90 יום</button>
-      </div>
-      <div class="seg" id="chatTypeSeg">
-        <button data-t="all" class="on" data-i18n="segAll">הכל</button>
-        <button data-t="request" data-i18n="segRequests">בקשות</button>
-        <button data-t="offer" data-i18n="segOffers">הצעות</button>
-      </div>
-      <label><input type="checkbox" id="hideMock" checked> <span data-i18n="hideMockL">הסתרת חשבונות בדיקה</span></label>
-      <label><input type="checkbox" id="onlyOneWay"> <span data-i18n="onlyOneWayL">רק ללא מענה</span></label>
-      <label><input type="checkbox" id="onlyPhone"> <span data-i18n="onlyPhoneL">הוחלף בהן טלפון</span></label>
       <span id="drillHost"></span>
+    </div>
+    <div class="filters">
+      <span class="blfgrp"><span class="cap" data-i18n="range">טווח</span>
+        <span class="seg" id="chatRangeSeg">
+          <button data-d="7" data-i18n="r7">שבוע</button>
+          <button data-d="30" class="on" data-i18n="r30">30 יום</button>
+          <button data-d="90" data-i18n="r90">90 יום</button>
+        </span></span>
+      <span class="blfgrp"><span class="cap" data-i18n="psTypeL">סוג</span>
+        <span class="seg" id="chatTypeSeg">
+          <button data-t="all" class="on" data-i18n="segAll">הכל</button>
+          <button data-t="request" data-i18n="segRequests">בקשות</button>
+          <button data-t="offer" data-i18n="segOffers">הצעות</button>
+        </span></span>
+      <span class="blfgrp checks"><span class="cap" data-i18n="clFilterL">הצגה</span>
+        <label><input type="checkbox" id="hideMock" checked> <span data-i18n="hideMockL">הסתרת חשבונות בדיקה</span></label>
+        <label><input type="checkbox" id="onlyOneWay"> <span data-i18n="onlyOneWayL">רק ללא מענה</span></label>
+        <label><input type="checkbox" id="onlyPhone"> <span data-i18n="onlyPhoneL">הוחלף בהן טלפון</span></label>
+      </span>
     </div>
     <p class="note" style="margin-bottom:12px"><span id="chatCount"></span> · <span data-i18n="chatNote">מוצג לצורכי פיקוח ובטיחות בלבד · לקריאה בלבד · מספרי טלפון מודגשים</span></p>
     <div id="convoList"></div>
@@ -1339,8 +1361,7 @@
       <span class="fsep" aria-hidden="true"></span>
       <span class="blfgrp"><span class="cap" data-i18n="psRespL">מענה</span>
         <span class="seg" id="psResps"></span></span>
-      <span class="fsep" aria-hidden="true"></span>
-      <span class="blfgrp"><span class="cap" data-i18n="psSortL">סדר</span>
+      <span class="blfgrp sortgrp"><span class="cap" data-i18n="psSortL">סדר</span>
         <span class="seg" id="psSorts"></span></span>
     </div>
     <div class="pssum" id="psSummary"></div>
@@ -1863,6 +1884,7 @@
       pnColPending:"(מהבילד הבא)",
       pnQNoneLine:function(n){ return "<b>"+n+"</b> אנשים נשאלו \"איך הלך עם העזרה?\" ואף אחד לא ענה. אין לזה דרך לקרות כרגע: הכפתורים לענות והכרטיס באפליקציה עולים בבילד הבא."; },
       pnHoFrac:function(x,n,p){ return x+" מתוך "+n+" · "+p+"%"; },
+      clFilterL:"הצגה",
       pnAllTime:"כל הזמן",
       pnTileSentNote:function(n){ return "על פני "+n+" שולחים"; },
       pnTileRateNote:function(a,b){ return a+" מתוך "+b+" · בלי המדדים החלשים"; },
@@ -2386,6 +2408,7 @@
       pnColPending:"(next build)",
       pnQNoneLine:function(n){ return "<b>"+n+"</b> people were asked \"how did the help go?\" and none answered. There is currently no way for that to happen: the answer buttons and the in-app card ship with the next build."; },
       pnHoFrac:function(x,n,p){ return x+" of "+n+" · "+p+"%"; },
+      clFilterL:"Show",
       pnAllTime:"all time",
       pnTileSentNote:function(n){ return "across "+n+" senders"; },
       pnTileRateNote:function(a,b){ return a+" of "+b+" · weak measures excluded"; },
