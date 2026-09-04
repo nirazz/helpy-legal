@@ -1747,6 +1747,7 @@
       pnOutAnswered:"ענו על השאלה", pnOutRating:"השאירו דירוג", pnOutMessage:"נכתבה הודעה בשיחה",
       pnOutOffer:"הפוסט קיבל הצעה", pnOutDecided:"ההצעות הוכרעו", pnOutPosted:"פרסמו פוסט",
       pnOutEngaged:"חזרו לפעול בשיחה", pnOutBadge:"ראו את התג", pnOutOpened:"פתחו את האפליקציה",
+      pnOutActed:"עשו משהו - פוסט, החלקה או הודעה",
       pnQReasons:"ולמה \"עוד לא\"",
       pnQStill:"עדיין מתאמים", pnQNoResp:"לא קיבלו מענה", pnQNoNeed:"כבר לא צריך",
       pnQOwed:"ענו מההתראה, טרם נשאלו למה",
@@ -2183,6 +2184,7 @@
       pnOutAnswered:"answered the question", pnOutRating:"left a rating", pnOutMessage:"a message was written",
       pnOutOffer:"the post got an offer", pnOutDecided:"offers were decided", pnOutPosted:"posted",
       pnOutEngaged:"acted in the chat again", pnOutBadge:"saw the badge", pnOutOpened:"opened the app",
+      pnOutActed:"did anything - posted, swiped or wrote",
       pnQReasons:"and why \"not yet\"",
       pnQStill:"still coordinating", pnQNoResp:"got no response", pnQNoNeed:"no longer needed",
       pnQOwed:"answered from the banner, not yet asked why",
@@ -6637,7 +6639,8 @@
   function pushOutcomeLabel(o){
     return ({answered:S.pnOutAnswered, rating_left:S.pnOutRating, message_sent:S.pnOutMessage,
              offer_received:S.pnOutOffer, offer_decided:S.pnOutDecided, posted:S.pnOutPosted,
-             engaged:S.pnOutEngaged, badge_seen:S.pnOutBadge, app_opened:S.pnOutOpened})[o] || o;
+             engaged:S.pnOutEngaged, badge_seen:S.pnOutBadge, app_opened:S.pnOutOpened,
+             acted_at_all:S.pnOutActed})[o] || o;
   }
   function pushRateCell(acted, sent, weak){
     var pctv = sent? Math.round(100*acted/sent) : 0;
