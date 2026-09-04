@@ -1814,9 +1814,12 @@
       maInsAttrib:function(inst,su){
         return "מטא ייחסה <b>"+inst+"</b> התקנות מול <b>"+su+"</b> הרשמות אמיתיות - הפער הזה הוא הסיבה שהוורדיקט לא נשען על המספרים שלה."; },
       blInsOverdue:function(n,names){ return "<b>"+n+"</b> פריטים עברו את התאריך שנקבע להם: "+names+"."; },
-      blInsDue:function(n,d){ return "<b>"+n+"</b> פריטים עם תאריך יעד; הקרוב ביותר ב-"+d+"."; },
+      blInsDue:function(n,d){ return "<b>"+n+"</b> פריטים עם תאריך יעד; הקרוב ביותר ב-"+fmtDay(d)+"."; },
       blInsNow:function(n,all){ return "<b>"+n+"</b> מתוך "+all+" הפריטים הפתוחים מסומנים \"לעשות עכשיו\"."; },
-      blInsAge:function(age,d){ return "הרשימה נכתבת ביד ועודכנה לאחרונה לפני <b>"+age+" ימים</b> ("+d+")."; },
+      blInsAge:function(age,d){
+        // "0 days ago" is not how anyone says today
+        var when = age==="0" ? "היום" : age==="1" ? "אתמול" : "לפני "+age+" ימים";
+        return "הרשימה נכתבת ביד ועודכנה לאחרונה <b>"+when+"</b> ("+fmtDay(d)+")."; },
       pnInsTitle:"מה דורש תשומת לב בהתראות",
       pnInsSub:"תובנות מחושבות מהנתונים - מסודרות לפי חומרה, שלוש הראשונות מודגשות",
       pnInsConc:function(bigName,bigShare,bigRate,bestName,bestRate){
@@ -1855,7 +1858,7 @@
       arInsDrift:function(n,names){ return "<b>"+n+"</b> סוגי התראה נשלחו בפועל ואינם מתועדים בדף הזה: "+names+". המשמעות היא שהדף אומר משהו לא נכון על מה שמשתמשים מקבלים."; },
       arInsNoDrift:function(n){ return "כל סוגי ההתראה שנשלחו בפועל מתועדים כאן (<b>"+n+"</b> טקסטים). הדף תואם למציאות."; },
       arInsSplit:function(ops,mkt){ return "<b>"+ops+"</b> התראות תפעוליות מול <b>"+mkt+"</b> שיווקיות. החלוקה הזו היא קו משפטי - רק השיווקיות כפופות להסכמה ולמכסה השבועית."; },
-      arInsHoldout:function(n){ return "ל-<b>"+n+"</b> שולחים שיווקיים יש קבוצת ביקורת פעילה - 10% מהקהל שלהם לא מקבל את ההודעה, כדי שאפשר יהיה למדוד אם היא בכלל עוזרת."; },
+      arInsHoldout:function(n){ return "קבוצת ביקורת פעילה על <b>"+n+"</b> שולחים שיווקיים - 10% מהקהל שלהם לא מקבל את ההודעה, כדי שאפשר יהיה למדוד אם היא בכלל עוזרת."; },
       pnNoErrLine:function(d){ return "אף התראה לא נכשלה בחלון הזה. כל <b>"+d+"</b> שנמסרו הגיעו ליעדן."; },
       pnColPending:"(מהבילד הבא)",
       pnQNoneLine:function(n){ return "<b>"+n+"</b> אנשים נשאלו \"איך הלך עם העזרה?\" ואף אחד לא ענה. אין לזה דרך לקרות כרגע: הכפתורים לענות והכרטיס באפליקציה עולים בבילד הבא."; },
@@ -2335,9 +2338,11 @@
       maInsAttrib:function(inst,su){
         return "Meta attributed <b>"+inst+"</b> installs against <b>"+su+"</b> real signups - that gap is why the verdict does not lean on Meta's numbers."; },
       blInsOverdue:function(n,names){ return "<b>"+n+"</b> items are past their own date: "+names+"."; },
-      blInsDue:function(n,d){ return "<b>"+n+"</b> items carry a due date; the nearest is "+d+"."; },
+      blInsDue:function(n,d){ return "<b>"+n+"</b> items carry a due date; the nearest is "+fmtDay(d)+"."; },
       blInsNow:function(n,all){ return "<b>"+n+"</b> of "+all+" open items are marked \"do now\"."; },
-      blInsAge:function(age,d){ return "This list is hand-written and was last updated <b>"+age+" days</b> ago ("+d+")."; },
+      blInsAge:function(age,d){
+        var when = age==="0" ? "today" : age==="1" ? "yesterday" : age+" days ago";
+        return "This list is hand-written and was last updated <b>"+when+"</b> ("+fmtDay(d)+")."; },
       pnInsTitle:"What needs attention in notifications",
       pnInsSub:"Computed from the data - severity ordered, the first three amplified",
       pnInsConc:function(bigName,bigShare,bigRate,bestName,bestRate){
