@@ -1857,6 +1857,9 @@
       arInsSplit:function(ops,mkt){ return "<b>"+ops+"</b> התראות תפעוליות מול <b>"+mkt+"</b> שיווקיות. החלוקה הזו היא קו משפטי - רק השיווקיות כפופות להסכמה ולמכסה השבועית."; },
       arInsHoldout:function(n){ return "ל-<b>"+n+"</b> שולחים שיווקיים יש קבוצת ביקורת פעילה - 10% מהקהל שלהם לא מקבל את ההודעה, כדי שאפשר יהיה למדוד אם היא בכלל עוזרת."; },
       pnNoErrLine:function(d){ return "אף התראה לא נכשלה בחלון הזה. כל <b>"+d+"</b> שנמסרו הגיעו ליעדן."; },
+      pnColPending:"(מהבילד הבא)",
+      pnQNoneLine:function(n){ return "<b>"+n+"</b> אנשים נשאלו \"איך הלך עם העזרה?\" ואף אחד לא ענה. אין לזה דרך לקרות כרגע: הכפתורים לענות והכרטיס באפליקציה עולים בבילד הבא."; },
+      pnHoFrac:function(x,n,p){ return x+" מתוך "+n+" · "+p+"%"; },
       pnAllTime:"כל הזמן",
       pnTileSentNote:function(n){ return "על פני "+n+" שולחים"; },
       pnTileRateNote:function(a,b){ return a+" מתוך "+b+" · בלי המדדים החלשים"; },
@@ -1886,7 +1889,7 @@
       pnSeriesSent:"נשלחו", pnSeriesDelivered:"נמסרו", pnSeriesOpened:"נפתחו", pnSeriesAnswered:"נענו",
       tabPush:"התראות",
       pnWinL:"חלון",
-      pnTitle:"מה קרה עם ההתראות ששלחנו",
+      pnTitle:"מסירה, פתיחה ותשובה",
       pnSub:"מה Expo אישר, מה הגיע למכשיר, מה נפתח ומה נענה.",
       pnSent:"נשלחו",
       pnDelivered:"נמסרו למכשיר",
@@ -1899,7 +1902,7 @@
       pnQGot:"ענו: כן, קיבלתי",
       pnQNot:"ענו: עוד לא",
       pnQUnanswered:"לא ענו כלל",
-      pnTypesTitle:"לפי סוג התראה",
+      pnTypesTitle:"מסירה לפי סוג התראה",
       pnTypesSub:"אותם מספרים, מפורקים לפי סוג. אחוז הפתיחה מחושב מתוך מה שנמסר, לא מתוך מה שנשלח.",
       pnErrTitle:"כשלים במסירה",
       pnErrSub:"קוד השגיאה כפי ש-Expo החזיר אותו. DeviceNotRegistered = האפליקציה הוסרה או שהטוקן התחלף, וזה תקין. כל קוד אחר הוא בעיה שלנו.",
@@ -2375,6 +2378,9 @@
       arInsSplit:function(ops,mkt){ return "<b>"+ops+"</b> operational notifications against <b>"+mkt+"</b> marketing ones. That split is a LEGAL line - only the marketing ones are subject to consent and the weekly cap."; },
       arInsHoldout:function(n){ return "<b>"+n+"</b> marketing senders have a live control group - 10% of their audience does not get the message, so we can measure whether it helps at all."; },
       pnNoErrLine:function(d){ return "No notification failed in this window. All <b>"+d+"</b> that were delivered reached their destination."; },
+      pnColPending:"(next build)",
+      pnQNoneLine:function(n){ return "<b>"+n+"</b> people were asked \"how did the help go?\" and none answered. There is currently no way for that to happen: the answer buttons and the in-app card ship with the next build."; },
+      pnHoFrac:function(x,n,p){ return x+" of "+n+" · "+p+"%"; },
       pnAllTime:"all time",
       pnTileSentNote:function(n){ return "across "+n+" senders"; },
       pnTileRateNote:function(a,b){ return a+" of "+b+" · weak measures excluded"; },
@@ -2405,7 +2411,7 @@
       pnSeriesSent:"Sent", pnSeriesDelivered:"Delivered", pnSeriesOpened:"Opened", pnSeriesAnswered:"Answered",
       tabPush:"Notifications",
       pnWinL:"Window",
-      pnTitle:"What happened to the notifications we sent",
+      pnTitle:"Delivery, opens and answers",
       pnSub:"What Expo accepted, what reached the device, what was opened and what was answered.",
       pnSent:"Sent",
       pnDelivered:"Reached the device",
@@ -2418,7 +2424,7 @@
       pnQGot:"Answered: yes, I did",
       pnQNot:"Answered: not yet",
       pnQUnanswered:"Never answered",
-      pnTypesTitle:"By notification type",
+      pnTypesTitle:"Delivery by notification type",
       pnTypesSub:"The same numbers, split by type. Open rate is out of what was DELIVERED, not out of what was sent.",
       pnErrTitle:"Delivery failures",
       pnErrSub:"The error code exactly as Expo returned it. DeviceNotRegistered = the app was removed or the token rotated, which is normal. Any other code is our problem.",
@@ -7018,6 +7024,7 @@
   // Attention is zero-sum - ten equal rows say nothing.
   // Every tab's insight panel goes through here, so severity ordering, the
   // three-row emphasis and the empty state can never drift between tabs.
+  var insOpen={};   // which panels the reader has expanded, per host
   function insightsInto(hostId, rows){
     var host=$(hostId); if(!host) return;
     host.innerHTML="";
@@ -7029,11 +7036,24 @@
       var ra=rank[a[0]], rb=rank[b[0]];
       return (ra===undefined?9:ra)-(rb===undefined?9:rb);
     });
+    // Nine equal rows are a wall, not a signal - attention is zero-sum. Three
+    // lead, the rest sit one click behind, exactly as the metrics tab does.
     rows.forEach(function(r,i){
       var row=insight(r[0],r[1],r[2]);
       if(i<3) row.classList.add("lead");
+      else if(!insOpen[hostId]) row.classList.add("hidden");
       host.appendChild(row);
     });
+    if(rows.length>3){
+      var more=el("button","linklike",
+        insOpen[hostId]? S.insLess : S.insMore(rows.length-3));
+      more.type="button";
+      more.addEventListener("click",function(){
+        insOpen[hostId]=!insOpen[hostId];
+        insightsInto(hostId, rows);
+      });
+      host.appendChild(more);
+    }
   }
 
   function renderPushInsights(N){
@@ -7216,12 +7236,19 @@
       // never reached the device cannot be opened, and counting it in the
       // denominator would quietly flatter every rate on this page.
       var base=T.delivered||T.sent;
-      hbars(fh,[
+      // While the client half is unbuilt, opened and answered are structurally
+      // zero - so four bars would be two identical full ones and two empty
+      // rows, a shape that carries no information. Draw only the rows that can
+      // currently differ from each other.
+      var bars=[
         {label:S.pnSent,      v1:T.sent,      c1:ramp[0], suffix:" · 100%"},
-        {label:S.pnDelivered, v1:T.delivered, c1:ramp[1], suffix:" · "+pct(T.delivered,T.sent)},
-        {label:S.pnOpened,    v1:T.opened,    c1:ramp[2], suffix:" · "+pct(T.opened,base)},
-        {label:S.pnAnswered,  v1:T.answered,  c1:ramp[3], suffix:" · "+pct(T.answered,base)}
-      ]);
+        {label:S.pnDelivered, v1:T.delivered, c1:ramp[1], suffix:" · "+pct(T.delivered,T.sent)}
+      ];
+      if(T.opened || T.answered){
+        bars.push({label:S.pnOpened,   v1:T.opened,   c1:ramp[2], suffix:" · "+pct(T.opened,base)});
+        bars.push({label:S.pnAnswered, v1:T.answered, c1:ramp[3], suffix:" · "+pct(T.answered,base)});
+      }
+      hbars(fh,bars);
       Array.prototype.forEach.call(fh.querySelectorAll(".hrow"),function(r){ r.classList.add("wrap"); });
       if(T.failed) fh.appendChild(el("div","note",S.pnFailed+" · "+fmt(T.failed)));
       // Braze's "influenced open": the app was opened within 30 minutes of the
@@ -7275,9 +7302,12 @@
         var liftCell = r.significant && r.lift_pp!=null
                      ? {v:(r.lift_pp>0?"+":"")+r.lift_pp+"pp", cls:"num "+(r.lift_pp>0?"":"bad")}
                      : {v:"-", cls:"num dim"};
+        // "1 / 2" reverses visually in an RTL row - the words do not.
+        // And 0 people held back is not "0%", it is nothing measured yet.
+        var frac=function(x,n,p){ return n? S.pnHoFrac(String(x),String(n),String(p)) : "-"; };
         return [ {node:nm},
-                 r.sent_x+" / "+r.sent_n+" · "+r.p_sent+"%",
-                 r.held_x+" / "+r.held_n+" · "+r.p_held+"%",
+                 frac(r.sent_x, r.sent_n, r.p_sent),
+                 frac(r.held_x, r.held_n, r.p_held),
                  liftCell,
                  verdict ];
       }));
@@ -7286,13 +7316,21 @@
 
     // ── the one question we ask ────────────────────────────────────────────
     qh.innerHTML="";
-    hbars(qh,[
-      {label:S.pnQAsked,      v1:Q.asked||0,      c1:ramp[0], suffix:" · 100%"},
-      {label:S.pnQGot,        v1:Q.got_help||0,   c1:ramp[3], suffix:" · "+pct(Q.got_help,Q.asked)},
-      {label:S.pnQNot,        v1:Q.not_yet||0,    c1:ramp[2], suffix:" · "+pct(Q.not_yet,Q.asked)},
-      {label:S.pnQUnanswered, v1:Q.unanswered||0, c1:tok("--s8"), suffix:" · "+pct(Q.unanswered,Q.asked)}
-    ]);
-    Array.prototype.forEach.call(qh.querySelectorAll(".hrow"),function(r){ r.classList.add("wrap"); });
+    var answered=(Q.got_help||0)+(Q.not_yet||0);
+    if(!answered){
+      // Nobody has answered yet, so a four-row chart would be one full bar, one
+      // identical full bar, and two empty rows - a shape that says nothing a
+      // sentence does not. One line until there is a composition worth drawing.
+      qh.appendChild(insight("bad", S.pnQNoneLine(fmt(Q.asked||0))));
+    } else {
+      hbars(qh,[
+        {label:S.pnQAsked,      v1:Q.asked||0,      c1:ramp[0], suffix:" · 100%"},
+        {label:S.pnQGot,        v1:Q.got_help||0,   c1:ramp[3], suffix:" · "+pct(Q.got_help,Q.asked)},
+        {label:S.pnQNot,        v1:Q.not_yet||0,    c1:ramp[2], suffix:" · "+pct(Q.not_yet,Q.asked)},
+        {label:S.pnQUnanswered, v1:Q.unanswered||0, c1:tok("--s8"), suffix:" · "+pct(Q.unanswered,Q.asked)}
+      ]);
+      Array.prototype.forEach.call(qh.querySelectorAll(".hrow"),function(r){ r.classList.add("wrap"); });
+    }
     // WHY "not yet" - the diagnosis, and the only place the marketplace's own
     // failure shows up as a number rather than as silence
     // its OWN host: hbars() clears whatever it is given, so rendering these into
@@ -7315,12 +7353,17 @@
     if(!types.length){
       th.innerHTML=""; emptyState(th,S.pnEmpty,"bell");
     } else {
+      // opened/answered are stamped by the APP; until that build ships they are
+      // structurally zero, and a column of zeros with no explanation reads as a
+      // failure. The header carries the reason so the cells do not have to.
+      var noClient = !T.opened && !T.answered;
+      var pend = noClient ? " " + S.pnColPending : "";
       pushTable(th,[
         {label:S.pnColType, cls:"name"},
         {label:S.pnColSent, cls:"num"},
         {label:S.pnColDelivered, cls:"num"},
-        {label:S.pnColOpened, cls:"num"},
-        {label:S.pnColAnswered, cls:"num"},
+        {label:S.pnColOpened + pend, cls:noClient? "num dim" : "num"},
+        {label:S.pnColAnswered + pend, cls:noClient? "num dim" : "num"},
         {label:S.pnColFailed, cls:"num"},
         {label:S.pnColLast, cls:"num dim"}
       ], types.map(function(r){
