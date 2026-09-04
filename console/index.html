@@ -1751,10 +1751,11 @@
       pnAllTime:"כל הזמן",
       pnTileSentNote:function(n){ return "על פני "+n+" שולחים"; },
       pnTileRateNote:function(a,b){ return a+" מתוך "+b+" · בלי המדדים החלשים"; },
-      rdEff:function(dead,total,share,bestName,bestRate){
-        return dead==="0"
-          ? "כל "+total+" השולחים מביאים תוצאה כלשהי. החזק ביותר: <b>"+bestName+"</b> ב-"+bestRate+"."
-          : "<b>"+dead+" מתוך "+total+"</b> השולחים מתחת ל-10%, והם <b>"+share+"</b> מכל הנפח שנשלח אי פעם. החזק ביותר, "+bestName+", מביא "+bestRate+" - שם צריך להיות הנפח.";
+      rdEff:function(dead,total,bestName,bestRate,bigName,bigShare,bigRate){
+        return "הנפח מרוכז הפוך לאפקטיביות: <b>"+bigName+"</b> לבדו הוא <b>"+bigShare+"</b> מכל מה שנשלח אי פעם, ב-"+bigRate+
+               " - בזמן ש<b>"+bestName+"</b> מביא <b>"+bestRate+"</b> ונשלח לעתים נדירות. "+
+               (dead==="0" ? "כל "+total+" השולחים מביאים תוצאה כלשהי."
+                           : dead+" מתוך "+total+" השולחים מתחת ל-10%.");
       },
       pnTileSent:"התראות שנשלחו אי פעם", pnTileRate:"שיעור הצלחה משוקלל",
       pnTileBest:"השולח הכי חזק", pnTileDead:"שולחים בלי תוצאה",
@@ -1765,7 +1766,7 @@
       pnEffCol:"התראה", pnEffSent:"נשלחו", pnEffActed:"הצליחו", pnEffRate:"שיעור",
       pnEffOutcome:"מה נחשב הצלחה", pnEffRange:"מאז",
       pnEffWeak:"מדד חלש",
-      pnEffWeakNote:"שתי השורות המסומנות מודדות \"פתח/ה את האפליקציה\" לפי last_seen_at - חותמת אחת שנדרסת, לא יומן אירועים. היא לא יודעת להבדיל בין פתיחה בגלל ההתראה לבין פתיחה כלשהי מאז, אז זה חסם עליון לייחוס.",
+      pnEffWeakNote:"תג \"מדד חלש\" = התוצאה נמדדת כ\"פתח/ה את האפליקציה\" לפי last_seen_at, חותמת אחת שנדרסת ולא יומן אירועים - כלומר חסם עליון לייחוס.",
       pnOutAnswered:"ענו על השאלה", pnOutRating:"השאירו דירוג", pnOutMessage:"נכתבה הודעה בשיחה",
       pnOutOffer:"הפוסט קיבל הצעה", pnOutDecided:"ההצעות הוכרעו", pnOutPosted:"פרסמו פוסט",
       pnOutEngaged:"חזרו לפעול בשיחה", pnOutBadge:"ראו את התג", pnOutOpened:"פתחו את האפליקציה",
@@ -2200,10 +2201,12 @@
       pnAllTime:"all time",
       pnTileSentNote:function(n){ return "across "+n+" senders"; },
       pnTileRateNote:function(a,b){ return a+" of "+b+" · weak measures excluded"; },
-      rdEff:function(dead,total,share,bestName,bestRate){
-        return dead==="0"
-          ? "All "+total+" senders bring some result. Strongest: <b>"+bestName+"</b> at "+bestRate+"."
-          : "<b>"+dead+" of "+total+"</b> senders are under 10%, and they are <b>"+share+"</b> of everything ever sent. The strongest, "+bestName+", brings "+bestRate+" - that is where the volume should be.";
+      rdEff:function(dead,total,bestName,bestRate,bigName,bigShare,bigRate){
+        return "Volume is concentrated inversely to effectiveness: <b>"+bigName+"</b> alone is <b>"+bigShare+
+               "</b> of everything ever sent, at "+bigRate+" - while <b>"+bestName+"</b> brings <b>"+bestRate+
+               "</b> and is sent rarely. "+
+               (dead==="0" ? "All "+total+" senders bring some result."
+                           : dead+" of "+total+" senders are under 10%.");
       },
       pnTileSent:"Notifications ever sent", pnTileRate:"Weighted success rate",
       pnTileBest:"Strongest sender", pnTileDead:"Senders with no result",
@@ -2214,7 +2217,7 @@
       pnEffCol:"Notification", pnEffSent:"Sent", pnEffActed:"Worked", pnEffRate:"Rate",
       pnEffOutcome:"What counts as success", pnEffRange:"Since",
       pnEffWeak:"weak measure",
-      pnEffWeakNote:"The two marked rows measure \"opened the app\" from last_seen_at - a single overwritten timestamp, not an event log. It cannot separate an open caused by the push from any open since, so treat it as an upper bound on attribution.",
+      pnEffWeakNote:"A \"weak measure\" tag means the outcome is \"opened the app\", from last_seen_at - one overwritten timestamp, not an event log, so an upper bound on attribution.",
       pnOutAnswered:"answered the question", pnOutRating:"left a rating", pnOutMessage:"a message was written",
       pnOutOffer:"the post got an offer", pnOutDecided:"offers were decided", pnOutPosted:"posted",
       pnOutEngaged:"acted in the chat again", pnOutBadge:"saw the badge", pnOutOpened:"opened the app",
@@ -6773,10 +6776,17 @@
       });
       if(eff.some(function(r){return r.weak;})) xh.appendChild(el("div","note",S.pnEffWeakNote));
       // the console's own convention: every panel states its conclusion
-      var deadShare = totSent? Math.round(100*dead.reduce(function(a,r){return a+r.sent;},0)/totSent) : 0;
+      // The dead band is only ~7% of volume, so quoting it alone reads as "small
+      // problem". The real shape is concentration: the single biggest sender is
+      // about half of everything ever sent, at a rate the good band beats
+      // several times over. Name that, or the verdict understates its own screen.
+      var biggest = eff.slice().sort(function(a,b){ return b.sent-a.sent; })[0];
       panelRead("pnEff", dead.length>=3? "bad" : dead.length? "warn" : "good",
-        S.rdEff(String(dead.length), String(eff.length), deadShare + "%",
-                best? pushTitleFor(best.type) : "-", best? pct(best.acted,best.sent) : "-"));
+        S.rdEff(String(dead.length), String(eff.length),
+                best? pushTitleFor(best.type) : "-", best? pct(best.acted,best.sent) : "-",
+                biggest? pushTitleFor(biggest.type) : "-",
+                biggest? pct(biggest.sent, totSent) : "-",
+                biggest? pct(biggest.acted, biggest.sent) : "-"));
     }
     var T=N.total||{}, Q=N.question||{};
     var ramp=[tok("--seq250"),tok("--seq400"),tok("--seq550"),tok("--seq700")];
