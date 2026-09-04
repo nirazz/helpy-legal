@@ -426,8 +426,9 @@
   @media (max-width:720px){ .pssum { grid-template-columns:repeat(2,minmax(0,1fr)); } }
   .pssearch { margin:2px 0 14px; }
   .pssearch input { width:100%; box-sizing:border-box; padding:9px 12px; font:inherit;
-    font-size:13.5px; color:var(--ink); background:var(--wash); border:1px solid var(--line);
-    border-radius:9px; outline:none; }
+    font-size:13.5px; color:var(--ink); background:var(--plane); border:1px solid var(--grid);
+    border-radius:9px; outline:none; transition:border-color .15s ease, background .15s ease; }
+  .pssearch input::placeholder { color:var(--muted); }
   .pssearch input:focus { border-color:var(--s1); background:var(--surface); }
   #psCount { font-size:12px; color:var(--ink2); margin:-6px 0 10px; }
   /* One line of description, clipped. Wrapping it made every row a different
@@ -441,6 +442,7 @@
      column - it is history, not news */
   #psList tr.psclosed td { opacity:.55; }
   #psList tr.psclosed:hover td { opacity:.85; }
+  .term.bare { border-bottom:0; cursor:default; }
   .pszero { color:var(--warning); font-weight:700; }
   .psdot { display:inline-block; width:6px; height:6px; border-radius:50%;
            background:var(--good-text); margin-inline-end:6px; vertical-align:middle; }
@@ -4849,7 +4851,7 @@
       if(p.offers){
         var num=el("span",null,String(p.offers));
         if(p.first_offer_h!=null){
-          num.className="term below";
+          num.className="term below bare";
           num.setAttribute("data-tip", S.psFirstAfter.split("{v}").join(
             p.first_offer_h<1? S.psInstant : S.psHours.split("{n}").join(String(p.first_offer_h))));
         }
@@ -4864,7 +4866,7 @@
       var cTd=el("td");
       if(p.messages){
         if(p.two_way){
-          var tw=el("span","term",""); tw.setAttribute("data-tip",S.psTwoTip);
+          var tw=el("span","term bare",""); tw.setAttribute("data-tip",S.psTwoTip);
           tw.appendChild(el("i","psdot"));
           cTd.appendChild(tw);
         }
