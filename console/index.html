@@ -687,6 +687,11 @@
             background:var(--glass); border:1px solid var(--hairline);
             border-radius:12px; padding:5px 10px 5px 6px; }
   .blfgrp .cap { white-space:nowrap; }
+  /* the group already draws the frame - a bordered seg inside it is a box in a
+     box, which reads as an unfinished nesting rather than as one control */
+  .blfgrp .seg { border-color:transparent; background:transparent; padding:0; }
+  /* native checkboxes default to the browser's blue; tie them to the brand */
+  .blfgrp.checks input[type=checkbox] { accent-color:var(--s1); }
   /* ordering is not filtering: push it to the far end of the row */
   .blfgrp.sortgrp { margin-inline-start:auto; }
   /* the checkbox set is one control group, and its labels are long */
