@@ -1645,6 +1645,7 @@
       psMsgCancel:"ביטול", psMsgSend:"שליחה", psMsgSending:"שולח…",
       psMsgSent:"ההודעה נשלחה אל {name}",
       psMsgFail:"השליחה נכשלה ({err}) · הטקסט נשמר, אפשר לנסות שוב",
+      psMsgTimeout:"אין תשובה מהשרת · לא ידוע אם ההודעה נשלחה, בדוק/י בשרשור לפני שליחה חוזרת",
       psTypeTip:"הספירה כאן כוללת גם כרטיסים סגורים. בטאב המטריקות ״בפיד · עכשיו״ סופר רק את החיים, ולכן המספרים שם נמוכים יותר · לפילוח החיים בלבד בחר/י גם ״חיים״ במצב",
       psReq:"בקשות", psOff:"הצעות", psLive:"חיים", psClosed:"סגורים", psMock:"מוקים",
       psReq1:"בקשה", psOff1:"הצעה", psMock1:"מוק", psInstant:"מיד", psHours:"אחרי {n} שעות",
@@ -2032,6 +2033,7 @@
       psMsgCancel:"Cancel", psMsgSend:"Send", psMsgSending:"Sending\u2026",
       psMsgSent:"Message sent to {name}",
       psMsgFail:"Sending failed ({err}) \u00b7 your text is kept, you can retry",
+      psMsgTimeout:"No answer from the server \u00b7 it is unknown whether the message was sent - check the thread before retrying",
       psTypeTip:"This count includes closed cards. The metrics tab's live-feed tile counts only the live ones, which is why its numbers are lower \u00b7 pick \"Live\" under State for the live-only split",
       psReq:"Requests", psOff:"Offers", psLive:"Live", psClosed:"Closed", psMock:"Mock",
       psReq1:"Request", psOff1:"Offer", psMock1:"Mock", psInstant:"instantly", psHours:"after {n}h",
@@ -5031,11 +5033,18 @@
       err.style.display="none";
       var hdrs={"content-type":"application/json"};
       if(SESSION && SESSION.access_token) hdrs["authorization"]="Bearer "+SESSION.access_token;
+      // A send that never settles would leave the button stuck on "שולח…" with
+      // cancel disabled - the reader would have no idea whether the message
+      // went out. Bound it, same as the dashboard fetch does.
+      var ctl = ("AbortController" in window) ? new AbortController() : null;
+      var timedOut = false;
+      var killer = setTimeout(function(){ timedOut = true; if(ctl) ctl.abort(); }, 20000);
       fetch("https://lwomstzzmyegpbidibfm.supabase.co/functions/v1/admin-dashboard",{
-        method:"POST", headers:hdrs,
+        method:"POST", headers:hdrs, signal: ctl ? ctl.signal : undefined,
         body:JSON.stringify({action:"send_message", target_user_id:post.owner_id,
                              content:text, persona:MSG_PERSONA})
       }).then(function(r){
+        clearTimeout(killer);
         return r.json().catch(function(){ return {}; }).then(function(d){
           if(!r.ok) throw new Error(d && d.error ? d.error : String(r.status));
           return d;
@@ -5044,10 +5053,14 @@
         closeMsg();
         toastMsg(S.psMsgSent.split("{name}").join(post.owner||""));
       }).catch(function(e){
+        clearTimeout(killer);
         // the text is never cleared on failure - retyping a message someone
         // just composed is the worst possible response to an error
         go.disabled=false; cancel.disabled=false; go.textContent=S.psMsgSend;
-        err.textContent=S.psMsgFail.split("{err}").join(String(e.message||e));
+        // a timeout is the one failure where we genuinely do not know whether
+        // it was delivered, and the reader must be told exactly that
+        err.textContent = timedOut ? S.psMsgTimeout
+          : S.psMsgFail.split("{err}").join(String(e.message||e));
         err.style.display="";
       });
     };
