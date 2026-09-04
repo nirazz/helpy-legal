@@ -458,6 +458,7 @@
            padding:0 16px; border-radius:9px; border:1px solid var(--s1);
            background:transparent; color:var(--s1); cursor:pointer; }
   .psnew:hover { background:var(--wash1); }
+  .tplbtn { margin-inline-start:auto; padding:5px 12px; font-size:12px; }
   /* the conversation so far, inside the composer: sending into a thread you
      cannot see is how you repeat yourself to someone who already answered */
   .msgthread { max-height:190px; overflow-y:auto; border:1px solid var(--grid);
@@ -1665,6 +1666,9 @@
       psTypeL:"סוג", psStatusL:"מצב", psRespL:"מענה", psSortL:"סדר", psAll:"הכל",
       psMsgHint:"שליחת הודעה למפרסם/ת",
       psMsgNew:"הודעה לשכן/ה",
+      psMsgTpl:"פתיח וסיום",
+      psMsgTplHint:"מוסיף את אותו פתיח וסיום שהאפליקציה מוסיפה, בשפת האפליקציה של הנמען/ת · הסמן נכנס בדיוק במקום שבו נכתב הגוף",
+      psMsgTplEmpty:"יש פתיח וסיום בלי תוכן באמצע · הוסף/י את גוף ההודעה",
       psMsgPickTitle:"למי לכתוב?",
       psMsgPickSub:"חיפוש לפי שם · אפשר לכתוב גם למי שלא פרסם/ה כלום",
       psMsgPickPh:"שם של שכן/ה", psMsgNoUsers:"לא נמצאו שכנים בשם הזה",
@@ -2059,6 +2063,9 @@
       psTypeL:"Type", psStatusL:"State", psRespL:"Response", psSortL:"Order", psAll:"All",
       psMsgHint:"Send a message to the poster",
       psMsgNew:"Message a neighbour",
+      psMsgTpl:"Opening & closing",
+      psMsgTplHint:"Adds the same opening and closing the app adds, in the recipient\u2019s app language \u00b7 the caret lands exactly where the body goes",
+      psMsgTplEmpty:"An opening and a closing with nothing between them \u00b7 add the message body",
       psMsgPickTitle:"Who to write to?",
       psMsgPickSub:"Search by name \u00b7 you can write to someone who never posted",
       psMsgPickPh:"Neighbour\u2019s name", psMsgNoUsers:"No neighbour by that name",
@@ -5019,6 +5026,56 @@
   // against admin_users. The browser never holds a secret, and every delivery
   // rule stays where it already lives.
   var MSG_PERSONA="helpy";
+  // Ported verbatim from the app's admin compose (AdminBroadcastModal
+  // TEMPLATES.<persona>.direct). Same words on both surfaces on purpose: a
+  // neighbour should not be able to tell which screen the reply was written on.
+  // If the app's wording changes, this table changes with it.
+  var MSG_TPL={
+    helpy:{
+      he:{ greeting:"היי {name},", intro:"כאן צוות Helpy. תודה על הפנייה.",
+           close:"אם נשאר משהו לא ברור או שצריך עזרה נוספת, אפשר להשיב להודעה הזו ונחזור אליכם.\nתודה שאתם חלק מקהילת Helpy 💜\n\nבברכה,\nצוות Helpy" },
+      en:{ greeting:"Hi {name},", intro:"This is the Helpy team. Thank you for reaching out.",
+           close:"If anything is still unclear or you need further help, just reply to this message and we'll get back to you.\nThank you for being part of the Helpy community 💜\n\nBest regards,\nThe Helpy team" }
+    },
+    founder:{
+      he:{ greeting:"היי {name},", intro:"כאן ניר, המייסד של Helpy. תודה על הפנייה.",
+           close:"אם נשאר משהו לא ברור או שצריך עזרה נוספת, אפשר להשיב להודעה הזו ואחזור אליכם.\nתודה שאתם חלק מ-Helpy 💜\n\nבברכה,\nניר · מייסד Helpy" },
+      en:{ greeting:"Hi {name},", intro:"This is Nir, the founder of Helpy. Thank you for reaching out.",
+           close:"If anything is still unclear or you need further help, just reply to this message and I'll get back to you.\nThank you for being part of Helpy 💜\n\nBest regards,\nNir · Founder, Helpy" }
+    }
+  };
+  function tplList(){
+    var out=[];
+    ["helpy","founder"].forEach(function(p){ ["he","en"].forEach(function(l){ out.push(MSG_TPL[p][l]); }); });
+    return out;
+  }
+  // Re-applying must REPLACE the previous wrapper, never stack a second
+  // signature on it - both ends are matched exactly: the closings verbatim, the
+  // openings by their static intro line (the greeting carries a name).
+  function tplStrip(text){
+    var out=text, all=tplList(), i;
+    for(i=0;i<all.length;i++){
+      var c=all[i].close;
+      if(out.replace(/\s+$/,"").slice(-c.length)===c){ out=out.replace(/\s+$/,"").slice(0,-c.length); break; }
+    }
+    var lines=out.split("\n");
+    var intros=all.map(function(t){ return t.intro; });
+    var idx=-1;
+    for(i=0;i<Math.min(3,lines.length);i++){ if(intros.indexOf(lines[i].trim())>-1){ idx=i; break; } }
+    if(idx>=0) lines.splice(0, idx+1);
+    return lines.join("\n").trim();
+  }
+  function tplHas(text){
+    var intros=tplList().map(function(t){ return t.intro; });
+    return text.split("\n").slice(0,3).some(function(l){ return intros.indexOf(l.trim())>-1; });
+  }
+  function tplApply(text, persona, lang, name){
+    var t=MSG_TPL[persona][lang==="en"?"en":"he"];
+    var open=t.greeting.split("{name}").join(name||"").replace(" ,", ",");
+    var middle=tplStrip(text);
+    var prefix=open+"\n"+t.intro+"\n\n";
+    return { text: prefix+middle+"\n\n"+t.close, caret: prefix.length+middle.length };
+  }
   // Every console->sender call goes through admin-dashboard, which verifies the
   // SSO session and forwards this same JWT. The browser holds no secret, and
   // the function whitelists the four modes the console may reach.
@@ -5091,6 +5148,10 @@
       th.appendChild(el("div","mtempty",S.psMsgNoThreadErr));
     });
 
+    var ta=el("textarea"); ta.maxLength=2000; ta.placeholder=S.psMsgPlaceholder;
+    // the recipient's OWN app language decides the template - not the console's
+    var lang = post.owner_lang==="en" ? "en" : "he";
+
     var personaRow=el("div","msgrow");
     personaRow.appendChild(el("span","cap",S.psMsgFrom));
     var seg=el("span","seg");
@@ -5100,14 +5161,26 @@
         MSG_PERSONA=o[0];
         [].forEach.call(seg.children,function(c){ c.classList.remove("on"); });
         b.classList.add("on");
+        // a signature must follow the persona: re-wrap when one is applied,
+        // and leave freehand text alone
+        if(tplHas(ta.value)){ applyTpl(false); }
       };
       seg.appendChild(b);
     });
     personaRow.appendChild(seg);
+    var tplBtn=el("button","psnew tplbtn",S.psMsgTpl);
+    tplBtn.title=S.psMsgTplHint;
+    personaRow.appendChild(tplBtn);
     box.appendChild(personaRow);
-
-    var ta=el("textarea"); ta.maxLength=2000; ta.placeholder=S.psMsgPlaceholder;
     box.appendChild(ta);
+
+    function applyTpl(focus){
+      var r=tplApply(ta.value, MSG_PERSONA, lang, post.owner);
+      ta.value=r.text;
+      ta.dispatchEvent(new Event("input"));
+      if(focus){ ta.focus(); ta.setSelectionRange(r.caret, r.caret); }
+    }
+    tplBtn.onclick=function(){ applyTpl(true); };
     var meta=el("div","msgrow");
     var count=el("span","msgcount","0 / 2000");
     meta.appendChild(count); box.appendChild(meta);
@@ -5126,6 +5199,13 @@
     go.onclick=function(){
       var text=ta.value.trim();
       if(!text) return;
+      // An opening and a closing with nothing between them is not a message.
+      // It is BLOCKED rather than warned about, unlike the app's broadcast
+      // screen: this one cannot be recalled and reaches a named person.
+      if(tplHas(text) && !tplStrip(text)){
+        err.textContent=S.psMsgTplEmpty; err.style.display="";
+        return;
+      }
       // in-flight guard: a second click must not send a second message
       go.disabled=true; cancel.disabled=true; go.textContent=S.psMsgSending;
       err.style.display="none";
@@ -5186,7 +5266,8 @@
           us.forEach(function(u){
             var label=(u.name||"—")+(u.is_mock?" · "+S.psMock1:"");
             var b=el("button",null,label);
-            b.onclick=function(){ openMsg({owner_id:u.user_id, owner:u.name, title:null}); };
+            b.onclick=function(){ openMsg({owner_id:u.user_id, owner:u.name, title:null,
+                                           owner_lang:u.preferred_language}); };
             list.appendChild(b);
           });
         }).catch(function(){
