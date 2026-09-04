@@ -1085,6 +1085,9 @@
   .pntag { display:inline-block; font-size:10px; padding:2px 8px; border-radius:99px;
            border:1px solid var(--hairline); color:var(--muted); vertical-align:middle;
            margin-inline-start:8px; }
+  /* amber when the log covers LESS than the window asked for: the chip is then
+     a correction, not a caption, and must not read as chrome */
+  .pntag.warn { border-color:var(--s4,#d97706); color:var(--s4,#d97706); font-weight:700; }
   /* band headers: 12 flat rows is a list, three bands is a judgement */
   .pnband td { padding-top:16px; padding-bottom:4px; font-size:11px; font-weight:700;
                letter-spacing:.04em; color:var(--muted); border-bottom:none; }
@@ -1817,7 +1820,7 @@
       densAvgAns:"ממוצע שכנים · בקשות שנענו", densAvgSil:"ממוצע שכנים · בקשות ששתקו",
       densThin:"בקשות חיות באזור דליל (מתחת ל-10 שכנים)",
       rdDens:function(ans,sil,thin){ return "בקשה שנענתה הייתה מוקפת <b>"+ans+"</b> שכנים בממוצע; בקשה ששתקה - <b>"+sil+"</b> בלבד. מתחת ל-10 שכנים בטווח, אף בקשה לא קיבלה מענה באותו יום. המסקנה חדה: המוצר עובד היכן שיש צפיפות ונכשל היכן שאין, ולכן <b>"+thin+"</b> הבקשות החיות באזור דליל הן אנשים שיקבלו שתיקה. זו הצדקה ישירה לרכז את כל תקציב הרכישה בעיר אחת במקום לפזר."; },
-      pnNoClient:"⚠️ \"נפתחו\" ו\"נענו\" נרשמים על ידי האפליקציה, והחצי הזה עולה רק בבילד הבא. עד אז שתי השורות האלה הן אפס מבנית - זה לא אומר שאף אחד לא פותח.",
+      pnNoClient:"⚠️ פתיחה ותשובה נחתמות על ידי האפליקציה, והחצי הזה עולה רק בבילד הבא. לכן שתי המדידות האלה אינן על המסך - הן אפס מבנית, וזה לא אומר שאף אחד לא פותח.",
       insNone:"אין כרגע שום דבר שדורש תשומת לב בטאב הזה.",
       psInsTitle:"מה דורש תשומת לב בכרטיסים",
       clInsTitle:"מה דורש תשומת לב בשיחות",
@@ -1883,6 +1886,12 @@
       pnSecDelivery:"2 · האם הן בכלל הגיעו",
       pnSecQuestion:"3 · השאלה היחידה שאנחנו שואלים",
       pnWinTag:function(d){ return d+" ימים אחרונים"; },
+      // The chip states what the LOG covers, never what the button asked for.
+      pnWinReal:function(span,since){ return "הנתונים מכסים "+span+" בלבד · מאז "+since; },
+      pnWinHours:function(h){ return h===1? "שעה אחת" : h+" שעות"; },
+      pnWinDays:function(d){ return d===1? "יום אחד" : d+" ימים"; },
+      pnAllArrived:"כולן הגיעו למכשיר",
+      pnYoungLog:function(span,n){ return "⚠️ יומן ההתראות נוצר לפני "+span+" ומכיל "+n+" רשומות בלבד. כל אחוז כאן מחושב על המדגם הזה - זה תיאור של הערב האחרון, לא של קצב שבועי."; },
       arInsTitle:"מה דורש תשומת לב בארכיטקטורה",
       arInsDrift:function(n,names){ return "<b>"+n+"</b> סוגי התראה נשלחו בפועל ואינם מתועדים בדף הזה: "+names+". המשמעות היא שהדף אומר משהו לא נכון על מה שמשתמשים מקבלים."; },
       arInsNoDrift:function(n){ return "כל סוגי ההתראה שנשלחו בפועל מתועדים כאן (<b>"+n+"</b> טקסטים). הדף תואם למציאות."; },
@@ -2344,7 +2353,7 @@
       densAvgAns:"Avg neighbours · answered requests", densAvgSil:"Avg neighbours · silent requests",
       densThin:"Live requests in a thin area (under 10 neighbours)",
       rdDens:function(ans,sil,thin){ return "An answered request sat among <b>"+ans+"</b> neighbours on average; a silent one among just <b>"+sil+"</b>. Below 10 neighbours in range, not one request was answered the same day. The conclusion is sharp: the product works where density exists and fails where it does not, so the <b>"+thin+"</b> live requests in thin areas are people about to be met with silence. This is direct justification for concentrating every acquisition shekel in one city instead of spreading."; },
-      pnNoClient:"⚠️ \"Opened\" and \"answered\" are stamped by the APP, and that half ships with the next store build. Until then these two rows are structurally zero - it does not mean nobody opens them.",
+      pnNoClient:"⚠️ Opened and answered are stamped by the APP, and that half ships with the next store build. That is why those two measures are not on screen - they are structurally zero, and it does not mean nobody opens them.",
       insNone:"Nothing needs attention on this tab right now.",
       psInsTitle:"What needs attention in the cards",
       clInsTitle:"What needs attention in the conversations",
@@ -2409,6 +2418,11 @@
       pnSecDelivery:"2 · Did they even arrive",
       pnSecQuestion:"3 · The one question we ask",
       pnWinTag:function(d){ return "last "+d+" days"; },
+      pnWinReal:function(span,since){ return "data covers "+span+" only · since "+since; },
+      pnWinHours:function(h){ return h===1? "1 hour" : h+" hours"; },
+      pnWinDays:function(d){ return d===1? "1 day" : d+" days"; },
+      pnAllArrived:"all reached the device",
+      pnYoungLog:function(span,n){ return "⚠️ The notification log was created "+span+" ago and holds "+n+" rows. Every percentage here is computed on that sample - it describes one evening, not a weekly rate."; },
       arInsTitle:"What needs attention in the architecture",
       arInsDrift:function(n,names){ return "<b>"+n+"</b> notification types have actually been sent and are not documented on this page: "+names+". That means this page states something false about what users receive."; },
       arInsNoDrift:function(n){ return "Every notification type actually sent is documented here (<b>"+n+"</b> texts). The page matches reality."; },
@@ -7269,8 +7283,31 @@
                 biggest? pct(actedWin(biggest), biggest.sent) : "-"));
     }
     var T=N.total||{}, Q=N.question||{};
+    // The window chip must state what the LOG covers, never what the button
+    // asked for. notification_log was created on 2026-09-04, so on its first
+    // evening a "7 days" chip sat over 7 rows from 7 hours - a reader concludes
+    // we send ~7 pushes a week when the real rate is ~24 a day. The number was
+    // plausible, which is exactly what made it dangerous. Same rule the Meta
+    // panel already follows: derive the label from the data in the payload.
+    var LOGSTART = N.log_start ? new Date(N.log_start) : null;
+    var winSince = N.since ? new Date(N.since) : null;
+    var covHours = LOGSTART ? Math.max(1, Math.round((Date.now()-LOGSTART.getTime())/3600000)) : null;
+    // "Young" = the log begins after the window starts, i.e. the window is a
+    // promise the data cannot keep. One hour of slack so a full-coverage log
+    // does not flicker into the warning on clock skew.
+    var youngLog = !!(LOGSTART && winSince && LOGSTART.getTime() > winSince.getTime()+3600000);
+    var covSpan = covHours==null ? "" :
+      (covHours < 48 ? S.pnWinHours(covHours) : S.pnWinDays(Math.round(covHours/24)));
     ["pnWinTag1","pnWinTag2"].forEach(function(id){
-      var t=$(id); if(t) t.textContent = S.pnWinTag(String(N.days || NOTIF_DAYS));
+      var t=$(id); if(!t) return;
+      if(youngLog){
+        t.textContent = S.pnWinReal(covSpan,
+          String(LOGSTART.getDate()).padStart(2,"0")+"."+String(LOGSTART.getMonth()+1).padStart(2,"0"));
+        t.classList.add("warn");
+      } else {
+        t.textContent = S.pnWinTag(String(N.days || NOTIF_DAYS));
+        t.classList.remove("warn");
+      }
     });
     renderPushInsights(N);
     var ramp=[tok("--seq250"),tok("--seq400"),tok("--seq550"),tok("--seq700")];
@@ -7289,10 +7326,15 @@
       // zero - so four bars would be two identical full ones and two empty
       // rows, a shape that carries no information. Draw only the rows that can
       // currently differ from each other.
-      var bars=[
-        {label:S.pnSent,      v1:T.sent,      c1:ramp[0], suffix:" · 100%"},
-        {label:S.pnDelivered, v1:T.delivered, c1:ramp[1], suffix:" · "+pct(T.delivered,T.sent)}
-      ];
+      // Two bars of identical length are the panel's largest object saying
+      // nothing: when everything sent also arrived, "7 and 7" is a sentence,
+      // not a chart. Draw the pair only when they can actually differ.
+      var bars = (T.delivered === T.sent)
+        ? [{label:S.pnSent, v1:T.sent, c1:ramp[1], suffix:" · "+S.pnAllArrived}]
+        : [
+            {label:S.pnSent,      v1:T.sent,      c1:ramp[0], suffix:" · 100%"},
+            {label:S.pnDelivered, v1:T.delivered, c1:ramp[1], suffix:" · "+pct(T.delivered,T.sent)}
+          ];
       if(T.opened || T.answered){
         bars.push({label:S.pnOpened,   v1:T.opened,   c1:ramp[2], suffix:" · "+pct(T.opened,base)});
         bars.push({label:S.pnAnswered, v1:T.answered, c1:ramp[3], suffix:" · "+pct(T.answered,base)});
@@ -7300,6 +7342,10 @@
       hbars(fh,bars);
       Array.prototype.forEach.call(fh.querySelectorAll(".hrow"),function(r){ r.classList.add("wrap"); });
       if(T.failed) fh.appendChild(el("div","note",S.pnFailed+" · "+fmt(T.failed)));
+      // A percentage over a handful of rows describes an evening, not a rate.
+      // This sits ABOVE the influenced line because it qualifies every
+      // percentage below it.
+      if(youngLog) fh.appendChild(el("div","note warn", S.pnYoungLog(covSpan, fmt(T.sent))));
       // Braze's "influenced open": the app was opened within 30 minutes of the
       // push landing, WITHOUT the banner being tapped. On iOS that is most of
       // the real opens - tapping a banner is the exception. Computable today
