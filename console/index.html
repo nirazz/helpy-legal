@@ -424,6 +424,42 @@
   .pscell > span, .pscell .term { font-size:11.5px; color:var(--ink2); font-weight:500; }
   .pscell.accent b { color:var(--warning); }
   @media (max-width:720px){ .pssum { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  /* First write surface the console has ever had, so it is deliberately a
+     stop-and-read step rather than an inline field: the recipient is named, the
+     text is previewed as written, and the line about the push is not hidden. */
+  .msgwrap { position:fixed; inset:0; z-index:60; display:grid; place-items:center;
+             background:rgba(8,6,22,.55); backdrop-filter:blur(5px);
+             -webkit-backdrop-filter:blur(5px); padding:20px; }
+  .msgbox { background:var(--surface); border:1px solid var(--grid); border-radius:16px;
+            width:min(560px,100%); padding:20px 22px; box-shadow:0 24px 60px rgba(8,6,22,.35); }
+  .msgbox h3 { margin:0 0 3px; font-size:17px; font-weight:700; color:var(--ink); }
+  .msgbox .msgsub { font-size:12px; color:var(--ink2); margin-bottom:14px; line-height:1.5; }
+  .msgbox textarea { width:100%; box-sizing:border-box; min-height:120px; resize:vertical;
+      font:inherit; font-size:14px; line-height:1.55; color:var(--ink); background:var(--plane);
+      border:1px solid var(--grid); border-radius:10px; padding:11px 13px; outline:none; }
+  .msgbox textarea:focus { border-color:var(--s1); }
+  .msgrow { display:flex; align-items:center; gap:10px; margin:10px 0 4px; flex-wrap:wrap; }
+  .msgrow .cap { font-size:11.5px; color:var(--muted); }
+  .msgcount { margin-inline-start:auto; font-size:11.5px; color:var(--muted);
+              font-variant-numeric:tabular-nums; }
+  .msgnote { font-size:11.5px; color:var(--ink2); line-height:1.55; margin:10px 0 16px;
+             padding:9px 12px; border:1px solid var(--grid); border-radius:9px;
+             background:var(--wash1); }
+  .msgerr { font-size:12px; color:var(--bad-text); margin:0 0 10px; font-weight:600; }
+  .msgacts { display:flex; gap:8px; justify-content:flex-end; }
+  .msgacts button { font:inherit; font-size:13px; font-weight:600; padding:9px 18px;
+      border-radius:9px; border:1px solid var(--grid); background:transparent;
+      color:var(--ink2); cursor:pointer; }
+  .msgacts button.go { background:var(--s1); border-color:var(--s1); color:#fff; }
+  .msgacts button:disabled { opacity:.5; cursor:default; }
+  .msgtoast { position:fixed; inset:0 0 auto 0; z-index:61; display:flex;
+              justify-content:center; padding-top:70px; pointer-events:none; }
+  .msgtoastbox { background:var(--surface); border:1px solid var(--grid); border-radius:12px;
+      padding:12px 18px; font-size:13px; font-weight:600; color:var(--ink);
+      box-shadow:0 16px 40px rgba(8,6,22,.28); max-width:380px; }
+  .psowner { background:none; border:0; font:inherit; color:var(--ink); cursor:pointer;
+             padding:0; text-align:start; border-bottom:1px dotted var(--muted); }
+  .psowner:hover { color:var(--s1); border-bottom-color:var(--s1); }
   .pssearch { margin:2px 0 14px; }
   .pssearch input { width:100%; box-sizing:border-box; padding:9px 12px; font:inherit;
     font-size:13.5px; color:var(--ink); background:var(--plane); border:1px solid var(--grid);
@@ -1600,6 +1636,15 @@
       psTitle:"כל הכרטיסים שקיימים",
       psSub:"שורה אחת לכל פוסט – כולל הסגורים, שהפיד מסתיר מעצם הגדרתו · פוסטי בדיקה מוסתרים, הצ׳יפ ״מוקים״ מחזיר אותם · ריחוף על מונח מסביר אותו",
       psTypeL:"סוג", psStatusL:"מצב", psRespL:"מענה", psSortL:"סדר", psAll:"הכל",
+      psMsgHint:"שליחת הודעה למפרסם/ת",
+      psMsgTitle:"הודעה אל {name}",
+      psMsgAbout:"בעקבות הכרטיס: {title} · ההקשר הזה לא נשלח, הוא רק כדי שתדע/י על מה כתבת",
+      psMsgFrom:"בשם", psMsgAsHelpy:"צוות Helpy", psMsgAsFounder:"ניר · מייסד",
+      psMsgPlaceholder:"מה לכתוב?",
+      psMsgNote:"ההודעה תופיע בשרשור Helpy של הנמען/ת באפליקציה, ותישלח גם כהתראה למכשיר. זו הודעה תפעולית 1:1, ולכן היא אינה כפופה להסכמת הדיוור ואי אפשר לבטל אותה אחרי השליחה.",
+      psMsgCancel:"ביטול", psMsgSend:"שליחה", psMsgSending:"שולח…",
+      psMsgSent:"ההודעה נשלחה אל {name}",
+      psMsgFail:"השליחה נכשלה ({err}) · הטקסט נשמר, אפשר לנסות שוב",
       psTypeTip:"הספירה כאן כוללת גם כרטיסים סגורים. בטאב המטריקות ״בפיד · עכשיו״ סופר רק את החיים, ולכן המספרים שם נמוכים יותר · לפילוח החיים בלבד בחר/י גם ״חיים״ במצב",
       psReq:"בקשות", psOff:"הצעות", psLive:"חיים", psClosed:"סגורים", psMock:"מוקים",
       psReq1:"בקשה", psOff1:"הצעה", psMock1:"מוק", psInstant:"מיד", psHours:"אחרי {n} שעות",
@@ -1978,6 +2023,15 @@
       psTitle:"Every card that exists",
       psSub:"One row per post \u2013 closed ones included, which the feed hides by construction \u00b7 test fixtures are hidden; the \u201cMock\u201d chip brings them back \u00b7 hover any term for an explanation",
       psTypeL:"Type", psStatusL:"State", psRespL:"Response", psSortL:"Order", psAll:"All",
+      psMsgHint:"Send a message to the poster",
+      psMsgTitle:"Message to {name}",
+      psMsgAbout:"About the card: {title} \u00b7 this context is not sent, it is here so you know what you are writing about",
+      psMsgFrom:"From", psMsgAsHelpy:"Helpy team", psMsgAsFounder:"Nir \u00b7 founder",
+      psMsgPlaceholder:"What would you like to say?",
+      psMsgNote:"The message appears in the recipient\u2019s Helpy thread in the app and is also delivered as a push. It is an operational 1:1 message, so it is not subject to marketing consent \u2013 and it cannot be recalled once sent.",
+      psMsgCancel:"Cancel", psMsgSend:"Send", psMsgSending:"Sending\u2026",
+      psMsgSent:"Message sent to {name}",
+      psMsgFail:"Sending failed ({err}) \u00b7 your text is kept, you can retry",
       psTypeTip:"This count includes closed cards. The metrics tab's live-feed tile counts only the live ones, which is why its numbers are lower \u00b7 pick \"Live\" under State for the live-only split",
       psReq:"Requests", psOff:"Offers", psLive:"Live", psClosed:"Closed", psMock:"Mock",
       psReq1:"Request", psOff1:"Offer", psMock1:"Mock", psInstant:"instantly", psHours:"after {n}h",
@@ -4849,7 +4903,16 @@
 
       tr.appendChild(el("td",null,p.type==="offer"? S.psOff1 : S.psReq1));
       tr.appendChild(el("td",null,catLabel(p.category)));
-      tr.appendChild(el("td",null,p.owner||"-"));
+      // The owner's name IS the button - the row already names the person, so a
+      // separate "message" column would repeat them and cost a column.
+      var oTd2=el("td");
+      if(p.owner_id){
+        var ob=el("button","psowner",p.owner||"-");
+        ob.title=S.psMsgHint;
+        ob.onclick=function(){ openMsg(p); };
+        oTd2.appendChild(ob);
+      } else { oTd2.textContent=p.owner||"-"; }
+      tr.appendChild(oTd2);
       tr.appendChild(el("td",null,(LANG==="he"? p.city : (p.city_en||p.city))||"-"));
       tr.appendChild(el("td",null,psAge(p.age_days)));
 
@@ -4902,6 +4965,105 @@
       t.appendChild(tr);
     });
     host.appendChild(t);
+  }
+
+  // ---- send a message to one user -----------------------------------------
+  // The console has been read-only its whole life; this is its first write. It
+  // does NOT talk to the sender directly: it posts action:"send_message" to
+  // admin-dashboard, which verifies the Google SSO session and then forwards
+  // this same JWT to system-broadcast (mode "direct"), which re-checks it
+  // against admin_users. The browser never holds a secret, and every delivery
+  // rule stays where it already lives.
+  var MSG_PERSONA="helpy";
+  function closeMsg(){
+    var w=$("msgWrap"); if(w) w.remove();
+    document.removeEventListener("keydown", msgEsc);
+  }
+  function msgEsc(e){ if(e.key==="Escape") closeMsg(); }
+  function openMsg(post){
+    closeMsg();
+    MSG_PERSONA="helpy";
+    var wrap=el("div","msgwrap"); wrap.id="msgWrap";
+    // clicking the backdrop closes; clicking the card must not
+    wrap.addEventListener("click",function(e){ if(e.target===wrap) closeMsg(); });
+    var box=el("div","msgbox");
+    box.appendChild(el("h3",null,S.psMsgTitle.split("{name}").join(post.owner||"")));
+    box.appendChild(el("div","msgsub",
+      S.psMsgAbout.split("{title}").join(post.title||"")));
+
+    var personaRow=el("div","msgrow");
+    personaRow.appendChild(el("span","cap",S.psMsgFrom));
+    var seg=el("span","seg");
+    [["helpy",S.psMsgAsHelpy],["founder",S.psMsgAsFounder]].forEach(function(o){
+      var b=el("button",MSG_PERSONA===o[0]?"on":null,o[1]);
+      b.onclick=function(){
+        MSG_PERSONA=o[0];
+        [].forEach.call(seg.children,function(c){ c.classList.remove("on"); });
+        b.classList.add("on");
+      };
+      seg.appendChild(b);
+    });
+    personaRow.appendChild(seg);
+    box.appendChild(personaRow);
+
+    var ta=el("textarea"); ta.maxLength=2000; ta.placeholder=S.psMsgPlaceholder;
+    box.appendChild(ta);
+    var meta=el("div","msgrow");
+    var count=el("span","msgcount","0 / 2000");
+    meta.appendChild(count); box.appendChild(meta);
+    box.appendChild(el("div","msgnote",S.psMsgNote));
+    var err=el("div","msgerr"); err.style.display="none"; box.appendChild(err);
+
+    var acts=el("div","msgacts");
+    var cancel=el("button",null,S.psMsgCancel);
+    cancel.onclick=closeMsg;
+    var go=el("button","go",S.psMsgSend);
+    go.disabled=true;
+    ta.addEventListener("input",function(){
+      count.textContent=this.value.length+" / 2000";
+      go.disabled=!this.value.trim();
+    });
+    go.onclick=function(){
+      var text=ta.value.trim();
+      if(!text) return;
+      // in-flight guard: a second click must not send a second message
+      go.disabled=true; cancel.disabled=true; go.textContent=S.psMsgSending;
+      err.style.display="none";
+      var hdrs={"content-type":"application/json"};
+      if(SESSION && SESSION.access_token) hdrs["authorization"]="Bearer "+SESSION.access_token;
+      fetch("https://lwomstzzmyegpbidibfm.supabase.co/functions/v1/admin-dashboard",{
+        method:"POST", headers:hdrs,
+        body:JSON.stringify({action:"send_message", target_user_id:post.owner_id,
+                             content:text, persona:MSG_PERSONA})
+      }).then(function(r){
+        return r.json().catch(function(){ return {}; }).then(function(d){
+          if(!r.ok) throw new Error(d && d.error ? d.error : String(r.status));
+          return d;
+        });
+      }).then(function(){
+        closeMsg();
+        toastMsg(S.psMsgSent.split("{name}").join(post.owner||""));
+      }).catch(function(e){
+        // the text is never cleared on failure - retyping a message someone
+        // just composed is the worst possible response to an error
+        go.disabled=false; cancel.disabled=false; go.textContent=S.psMsgSend;
+        err.textContent=S.psMsgFail.split("{err}").join(String(e.message||e));
+        err.style.display="";
+      });
+    };
+    acts.appendChild(cancel); acts.appendChild(go);
+    box.appendChild(acts);
+    wrap.appendChild(box);
+    document.body.appendChild(wrap);
+    document.addEventListener("keydown", msgEsc);
+    ta.focus();
+  }
+  // Its own classes, not the composer's: sharing them made ".msgbox" mean two
+  // different things for the 3 seconds the toast is up.
+  function toastMsg(text){
+    var t=el("div","msgtoast"); t.appendChild(el("div","msgtoastbox",text));
+    document.body.appendChild(t);
+    setTimeout(function(){ t.remove(); }, 3200);
   }
 
   // ---- backlog -------------------------------------------------------------
