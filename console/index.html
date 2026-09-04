@@ -411,15 +411,40 @@
                     font-variant-numeric:tabular-nums; min-width:52px; }
   table.cohort td.meta { background:none; text-align:start; color:var(--ink2); }
 
+  /* Summary: four equal tiles, number over label, one baseline. The backlog's
+     blsum cell was borrowed at first and read as four huge empty boxes - it
+     carries a colour bar this strip has no use for. Only the silent-post tile
+     takes colour: it is the one number that is bad news. */
+  .pssum { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px;
+           margin:0 0 16px; }
+  .pscell { background:var(--surface); border:1px solid var(--grid); border-radius:12px;
+            padding:11px 14px; display:flex; flex-direction:column; gap:1px; }
+  .pscell b { font-size:21px; font-weight:700; line-height:1.15; letter-spacing:-.01em;
+              font-variant-numeric:tabular-nums; }
+  .pscell > span, .pscell .term { font-size:11.5px; color:var(--ink2); font-weight:500; }
+  .pscell.accent b { color:var(--warning); }
+  @media (max-width:720px){ .pssum { grid-template-columns:repeat(2,minmax(0,1fr)); } }
   .pssearch { margin:2px 0 14px; }
   .pssearch input { width:100%; box-sizing:border-box; padding:9px 12px; font:inherit;
     font-size:13.5px; color:var(--ink); background:var(--wash); border:1px solid var(--line);
     border-radius:9px; outline:none; }
   .pssearch input:focus { border-color:var(--s1); background:var(--surface); }
   #psCount { font-size:12px; color:var(--ink2); margin:-6px 0 10px; }
-  .pstitle { display:flex; flex-direction:column; gap:2px; max-width:320px; white-space:normal; }
-  .pstitle b { font-weight:600; }
-  .pstitle span { font-size:11.5px; color:var(--ink2); font-weight:400; line-height:1.35; }
+  /* One line of description, clipped. Wrapping it made every row a different
+     height and the table impossible to scan - and most rows carry the same
+     filler sentence anyway. The full text is one hover away. */
+  .pstitle { display:flex; flex-direction:column; gap:1px; max-width:330px; min-width:180px; }
+  .pstitle b { font-weight:600; white-space:normal; line-height:1.3; }
+  .pstitle > span { font-size:11.5px; color:var(--muted); font-weight:400;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
+  /* a closed card recedes as a whole row rather than announcing itself in a
+     column - it is history, not news */
+  #psList tr.psclosed td { opacity:.55; }
+  #psList tr.psclosed:hover td { opacity:.85; }
+  .pszero { color:var(--warning); font-weight:700; }
+  .psdot { display:inline-block; width:6px; height:6px; border-radius:50%;
+           background:var(--good-text); margin-inline-end:6px; vertical-align:middle; }
+  #psList .plain td { vertical-align:middle; }
   .pstags { display:inline-flex; gap:4px; margin-inline-start:6px; vertical-align:middle; }
   table.plain { border-collapse:collapse; width:100%; font-size:13px; }
   .plain th, .plain td { padding:9px 10px; text-align:start;
@@ -1189,7 +1214,7 @@
       <span class="blfgrp"><span class="cap" data-i18n="psSortL">סדר</span>
         <span class="seg" id="psSorts"></span></span>
     </div>
-    <div class="blsum" id="psSummary"></div>
+    <div class="pssum" id="psSummary"></div>
     <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="psTitle">כל הכרטיסים שקיימים</h2>
       <div class="sub" data-i18n="psSub"></div>
@@ -1574,7 +1599,12 @@
       psSub:"שורה אחת לכל פוסט – כולל סגורים ומוקים, שהפיד מסתיר מעצם הגדרתו · ריחוף על מונח מסביר אותו",
       psTypeL:"סוג", psStatusL:"מצב", psRespL:"מענה", psSortL:"סדר", psAll:"הכל",
       psReq:"בקשות", psOff:"הצעות", psLive:"חיים", psClosed:"סגורים", psMock:"מוקים",
-      psReq1:"בקשה", psOff1:"הצעה", psMock1:"מוק", psInstant:"מיד", psHours:"{n} ש׳",
+      psReq1:"בקשה", psOff1:"הצעה", psMock1:"מוק", psInstant:"מיד", psHours:"אחרי {n} שעות",
+      psFirstAfter:"ההצעה הראשונה הגיעה {v}",
+      psImg1:"תמונה", psImgN:"{n} תמונות",
+      psMod:{content_flagged:"סומן", content_review_pending:"ממתין לבדיקה",
+             content_approved:"אושר", content_rejected:"נדחה",
+             admin_content_removed:"הוסר", client_blocked:"נחסם בטופס"},
       psRespNone:"בלי אף הצעה", psRespOffers:"עם הצעות", psRespTalk:"עם שיחה", psRespTwo:"דו־כיווני",
       psSortNew:"חדשים", psSortOld:"ותיקים", psSortOffers:"הכי מוצעים", psSortSilent:"שותקים קודם",
       psSearch:"חיפוש בכותרת, בתיאור, בשם או בעיר",
@@ -1946,7 +1976,12 @@
       psSub:"One row per post \u2013 closed posts and mock fixtures included, which the feed hides by construction \u00b7 hover any term for an explanation",
       psTypeL:"Type", psStatusL:"State", psRespL:"Response", psSortL:"Order", psAll:"All",
       psReq:"Requests", psOff:"Offers", psLive:"Live", psClosed:"Closed", psMock:"Mock",
-      psReq1:"Request", psOff1:"Offer", psMock1:"Mock", psInstant:"instant", psHours:"{n}h",
+      psReq1:"Request", psOff1:"Offer", psMock1:"Mock", psInstant:"instantly", psHours:"after {n}h",
+      psFirstAfter:"First offer arrived {v}",
+      psImg1:"1 photo", psImgN:"{n} photos",
+      psMod:{content_flagged:"flagged", content_review_pending:"pending review",
+             content_approved:"approved", content_rejected:"rejected",
+             admin_content_removed:"removed", client_blocked:"blocked in form"},
       psRespNone:"No offer at all", psRespOffers:"Got offers", psRespTalk:"Has messages", psRespTwo:"Two-way",
       psSortNew:"Newest", psSortOld:"Oldest", psSortOffers:"Most offers", psSortSilent:"Silent first",
       psSearch:"Search title, description, name or city",
@@ -4689,7 +4724,7 @@
      [S.psSumClosed,R.filter(function(p){return !p.is_active;}).length,null],
      [S.psSumSilent,R.filter(function(p){return !p.offers;}).length,S.psSilentTip]]
       .forEach(function(t){
-        var cell=el("div","blcell");
+        var cell=el("div","pscell"+(t[2]?" accent":""));
         cell.appendChild(el("b",null,fmt(t[1])));
         if(t[2]){ var sp=el("span","term",t[0]); sp.setAttribute("data-tip",t[2]); cell.appendChild(sp); }
         else cell.appendChild(el("span",null,t[0]));
@@ -4769,7 +4804,7 @@
     t.appendChild(hr);
 
     rows.forEach(function(p){
-      var tr=el("tr");
+      var tr=el("tr", p.is_active? null : "psclosed");
 
       // title + the first line of the description: the card as the neighbour
       // reads it. Both are public content already, so nothing new is exposed.
@@ -4777,15 +4812,19 @@
       var box=el("div","pstitle");
       var b=el("b",null,p.title||"-");
       var tags=el("span","pstags");
-      if(p.images) tags.appendChild(el("span","tagpill",String(p.images)+" 🖼"));
+      if(p.images) tags.appendChild(el("span","tagpill",
+        p.images===1? S.psImg1 : S.psImgN.split("{n}").join(String(p.images))));
       if(p.is_mock||p.owner_mock){
         var mk=el("span","chip warn",S.psMock1);
         mk.classList.add("term"); mk.setAttribute("data-tip",S.psMockTip);
         tags.appendChild(mk);
       }
       if(p.moderation){
-        var md=el("span","chip bad term",p.moderation);
-        md.setAttribute("data-tip",S.psModTip);
+        // approved is good news and must not wear the same red as removed
+        var tone = /approved/.test(p.moderation) ? "good"
+                 : /removed|rejected|blocked/.test(p.moderation) ? "bad" : "warn";
+        var md=el("span","chip "+tone+" term", S.psMod[p.moderation] || p.moderation);
+        md.setAttribute("data-tip", S.psModTip+" · "+p.moderation);
         tags.appendChild(md);
       }
       if(tags.childNodes.length) b.appendChild(tags);
@@ -4801,17 +4840,22 @@
       tr.appendChild(el("td",null,psAge(p.age_days)));
 
       // offers: zero on a LIVE post is the product failing, and says so
+      // One token per cell. The count used to sit in a green pill with the
+      // time-to-first-offer stacked under it in a second unit, and zero was a
+      // red pill - on a screen where half the rows have no offer, that painted
+      // the column red and the colour stopped meaning anything. Now: a plain
+      // number, the timing on hover, and colour reserved for the exception.
       var oTd=el("td");
       if(p.offers){
-        oTd.appendChild(el("span","chip good",String(p.offers)));
+        var num=el("span",null,String(p.offers));
         if(p.first_offer_h!=null){
-          var fh=el("span","term below"," "+(p.first_offer_h<1? S.psInstant
-                    : S.psHours.split("{n}").join(String(p.first_offer_h))));
-          fh.setAttribute("data-tip",S.psFirstTip);
-          oTd.appendChild(fh);
+          num.className="term below";
+          num.setAttribute("data-tip", S.psFirstAfter.split("{v}").join(
+            p.first_offer_h<1? S.psInstant : S.psHours.split("{n}").join(String(p.first_offer_h))));
         }
+        oTd.appendChild(num);
       } else if(p.is_active){
-        var z=el("span","chip bad term",S.psNoOffers);
+        var z=el("span","pszero term",S.psNoOffers);
         z.setAttribute("data-tip",S.psSilentTip);
         oTd.appendChild(z);
       } else { oTd.textContent="-"; }
@@ -4819,25 +4863,26 @@
 
       var cTd=el("td");
       if(p.messages){
-        cTd.appendChild(document.createTextNode(fmt(p.messages)));
         if(p.two_way){
-          var tw=el("span","chip good term"," "+S.psRespTwo);
-          tw.setAttribute("data-tip",S.psTwoTip);
+          var tw=el("span","term",""); tw.setAttribute("data-tip",S.psTwoTip);
+          tw.appendChild(el("i","psdot"));
           cTd.appendChild(tw);
         }
+        cTd.appendChild(document.createTextNode(fmt(p.messages)));
       } else { cTd.textContent="-"; }
       tr.appendChild(cTd);
 
+      // "live" is the default state of ~85% of rows; a green pill repeated a
+      // hundred times is decoration, not information. Plain words here, and the
+      // dimmed row above is what actually separates closed from live.
       var sTd=el("td");
-      if(p.is_active){ sTd.appendChild(el("span","chip good",S.psLiveLbl)); }
-      else {
-        sTd.appendChild(el("span","chip",S.psClosedLbl));
-        if(p.close_outcome){
-          sTd.appendChild(el("span","term below"," "+
-            (p.close_outcome==="deleted"? S.psByOwner :
-             p.close_outcome==="closed_instead"? S.psClosedInstead : p.close_outcome)));
-        }
-      }
+      if(p.is_active){ sTd.textContent=S.psLiveLbl; }
+      else if(p.close_outcome){
+        var cs=el("span","term",S.psClosedLbl);
+        cs.setAttribute("data-tip", p.close_outcome==="deleted"? S.psByOwner :
+          p.close_outcome==="closed_instead"? S.psClosedInstead : p.close_outcome);
+        sTd.appendChild(cs);
+      } else { sTd.textContent=S.psClosedLbl; }
       tr.appendChild(sTd);
 
       t.appendChild(tr);
