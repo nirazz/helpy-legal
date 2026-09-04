@@ -1049,6 +1049,13 @@
   /* a zero in a delivery column is not a neutral zero - it is the shape the
      Android outage had for two months, so it must not read as ordinary text */
   .pntbl td.bad { color:var(--s8); font-weight:700; }
+  /* the rate is the column the eye should land on, so it gets the only ink */
+  .pnrate { display:flex; align-items:center; gap:8px; justify-content:flex-end; }
+  .pnrate .track { flex:0 0 64px; height:6px; border-radius:3px; background:var(--plane); overflow:hidden; }
+  .pnrate .fill { height:100%; border-radius:3px; }
+  .pnrate b { font-variant-numeric:tabular-nums; min-width:38px; text-align:end; }
+  .pnweak { font-size:10px; padding:1px 6px; border-radius:99px; border:1px solid var(--hairline);
+            color:var(--muted); margin-inline-start:6px; white-space:nowrap; }
 </style>
 </head>
 <body>
@@ -1330,14 +1337,21 @@
         </span></span>
     </div>
     <section class="panel wide" style="opacity:1;transform:none">
+      <h2 data-i18n="pnEffTitle">האם ההתראות עובדות</h2>
+      <div class="sub" data-i18n="pnEffSub"></div>
+      <div id="pnEff"></div>
+    </section>
+    <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="pnTitle">מה קרה עם ההתראות ששלחנו</h2>
       <div class="sub" data-i18n="pnSub"></div>
       <div id="pnFunnel"></div>
+      <div id="pnChart"></div>
     </section>
     <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="pnQTitle">השאלה ששאלנו</h2>
       <div class="sub" data-i18n="pnQSub"></div>
       <div id="pnQuestion"></div>
+      <div id="pnReasons"></div>
     </section>
     <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="pnTypesTitle">לפי סוג התראה</h2>
@@ -1721,6 +1735,19 @@
       densAvgAns:"ממוצע שכנים · בקשות שנענו", densAvgSil:"ממוצע שכנים · בקשות ששתקו",
       densThin:"בקשות חיות באזור דליל (מתחת ל-10 שכנים)",
       rdDens:function(ans,sil,thin){ return "בקשה שנענתה הייתה מוקפת <b>"+ans+"</b> שכנים בממוצע; בקשה ששתקה - <b>"+sil+"</b> בלבד. מתחת ל-10 שכנים בטווח, אף בקשה לא קיבלה מענה באותו יום. המסקנה חדה: המוצר עובד היכן שיש צפיפות ונכשל היכן שאין, ולכן <b>"+thin+"</b> הבקשות החיות באזור דליל הן אנשים שיקבלו שתיקה. זו הצדקה ישירה לרכז את כל תקציב הרכישה בעיר אחת במקום לפזר."; },
+      pnEffTitle:"האם ההתראות עובדות",
+      pnEffSub:"לא כמה נשלחו - כמה גרמו למה שרצינו. נמדד על כל ההיסטוריה מהעמודות שכל שולח כבר מסמן, ולכן זה עובד גם לפני שהיומן קם. לכל שורה כתוב מה בדיוק נחשב הצלחה, כי שיעור בלי מונה מוגדר הוא חסר ערך.",
+      pnEffCol:"התראה", pnEffSent:"נשלחו", pnEffActed:"הצליחו", pnEffRate:"שיעור",
+      pnEffOutcome:"מה נחשב הצלחה", pnEffRange:"מאז",
+      pnEffWeak:"מדד חלש",
+      pnEffWeakNote:"שתי השורות המסומנות מודדות \"פתח/ה את האפליקציה\" לפי last_seen_at - חותמת אחת שנדרסת, לא יומן אירועים. היא לא יודעת להבדיל בין פתיחה בגלל ההתראה לבין פתיחה כלשהי מאז, אז זה חסם עליון לייחוס.",
+      pnOutAnswered:"ענו על השאלה", pnOutRating:"השאירו דירוג", pnOutMessage:"נכתבה הודעה בשיחה",
+      pnOutOffer:"הפוסט קיבל הצעה", pnOutDecided:"ההצעות הוכרעו", pnOutPosted:"פרסמו פוסט",
+      pnOutEngaged:"חזרו לפעול בשיחה", pnOutBadge:"ראו את התג", pnOutOpened:"פתחו את האפליקציה",
+      pnQReasons:"ולמה \"עוד לא\"",
+      pnQStill:"עדיין מתאמים", pnQNoResp:"לא קיבלו מענה", pnQNoNeed:"כבר לא צריך",
+      pnQOwed:"ענו מההתראה, טרם נשאלו למה",
+      pnSeriesSent:"נשלחו", pnSeriesDelivered:"נמסרו", pnSeriesOpened:"נפתחו", pnSeriesAnswered:"נענו",
       tabPush:"התראות",
       pnWinL:"חלון",
       pnTitle:"מה קרה עם ההתראות ששלחנו",
@@ -2143,6 +2170,19 @@
       densAvgAns:"Avg neighbours · answered requests", densAvgSil:"Avg neighbours · silent requests",
       densThin:"Live requests in a thin area (under 10 neighbours)",
       rdDens:function(ans,sil,thin){ return "An answered request sat among <b>"+ans+"</b> neighbours on average; a silent one among just <b>"+sil+"</b>. Below 10 neighbours in range, not one request was answered the same day. The conclusion is sharp: the product works where density exists and fails where it does not, so the <b>"+thin+"</b> live requests in thin areas are people about to be met with silence. This is direct justification for concentrating every acquisition shekel in one city instead of spreading."; },
+      pnEffTitle:"Are the notifications working",
+      pnEffSub:"Not how many went out - how many CAUSED what we wanted. Measured over the whole history from the columns every sender already stamps, so it works from before the log existed. Each row names what counts as success, because a rate with an undefined numerator is worthless.",
+      pnEffCol:"Notification", pnEffSent:"Sent", pnEffActed:"Worked", pnEffRate:"Rate",
+      pnEffOutcome:"What counts as success", pnEffRange:"Since",
+      pnEffWeak:"weak measure",
+      pnEffWeakNote:"The two marked rows measure \"opened the app\" from last_seen_at - a single overwritten timestamp, not an event log. It cannot separate an open caused by the push from any open since, so treat it as an upper bound on attribution.",
+      pnOutAnswered:"answered the question", pnOutRating:"left a rating", pnOutMessage:"a message was written",
+      pnOutOffer:"the post got an offer", pnOutDecided:"offers were decided", pnOutPosted:"posted",
+      pnOutEngaged:"acted in the chat again", pnOutBadge:"saw the badge", pnOutOpened:"opened the app",
+      pnQReasons:"and why \"not yet\"",
+      pnQStill:"still coordinating", pnQNoResp:"got no response", pnQNoNeed:"no longer needed",
+      pnQOwed:"answered from the banner, not yet asked why",
+      pnSeriesSent:"Sent", pnSeriesDelivered:"Delivered", pnSeriesOpened:"Opened", pnSeriesAnswered:"Answered",
       tabPush:"Notifications",
       pnWinL:"Window",
       pnTitle:"What happened to the notifications we sent",
@@ -6529,7 +6569,22 @@
   // the architecture tab quotes. A bare type key means nothing to a reader.
   // new_message's catalogue title is the SENDER'S NAME - a template, useless as
   // a row label. Anything else keeps its real text from the catalogue.
-  var PUSH_LABEL={ new_message:{he:"הודעה חדשה בצ'אט", en:"New chat message"} };
+  var PUSH_LABEL={
+    new_message:            {he:"הודעה חדשה בצ'אט",            en:"New chat message"},
+    // these are watermark keys, not push types - the catalogue has no entry, or
+    // has one whose title is generic ("צוות Helpy") and would tell a reader nothing
+    completion_nudge:       {he:"איך הלך עם העזרה?",           en:"How did the help go?"},
+    reengagement:           {he:"חזרה אחרי היעדרות",           en:"Come-back nudge"},
+    unanswered_nudge:       {he:"מחכים לתשובה ממך",            en:"Someone is waiting for you"},
+    activation_nudge:       {he:"יום אחרי ההרשמה",             en:"Day-after-signup nudge"},
+    offer_owner_nudge:      {he:"בעל/ת הצעה שלא הגיב/ה",       en:"Offer owner who never replied"},
+    silent_room_nudge:      {he:"שיחה פתוחה בלי אף הודעה",     en:"An open chat with no message"},
+    helper_badge:           {he:"תג עוזר/ת נפתח",              en:"Helper badge unlocked"},
+    pending_offer_reminder: {he:"הצעות שממתינות להחלטה",       en:"Offers waiting for a decision"},
+    silent_post:            {he:"פוסט ששקט - אין הצעות",       en:"A post with no offers"},
+    weekly_digest:          {he:"סיכום שבועי",                 en:"Weekly digest"},
+    rating_nudge:           {he:"בקשת דירוג",                  en:"Rating request"}
+  };
   function pushTitleFor(k){
     if(PUSH_LABEL[k]) return PUSH_LABEL[k][LANG==="he"?"he":"en"];
     var out=null;
@@ -6563,11 +6618,59 @@
     t.appendChild(tb); host.appendChild(t);
   }
 
+  // what each sender's success actually MEANS - printed next to every rate,
+  // because a conversion number whose numerator is unexplained invites the
+  // reader to invent one
+  function pushOutcomeLabel(o){
+    return ({answered:S.pnOutAnswered, rating_left:S.pnOutRating, message_sent:S.pnOutMessage,
+             offer_received:S.pnOutOffer, offer_decided:S.pnOutDecided, posted:S.pnOutPosted,
+             engaged:S.pnOutEngaged, badge_seen:S.pnOutBadge, app_opened:S.pnOutOpened})[o] || o;
+  }
+  function pushRateCell(acted, sent, weak){
+    var pctv = sent? Math.round(100*acted/sent) : 0;
+    var wrap=el("div","pnrate");
+    var b=el("b", null, sent? pctv+"%" : "-");
+    // the same zone scale the campaigns tab uses: this is a judgement, not decoration
+    var col = weak? tok("--muted") : (pctv>=40? tok("--s5")||tok("--seq700")
+                    : (pctv>=15? tok("--seq550") : tok("--s8")));
+    b.style.color = col;
+    var track=el("div","track"), fill=el("div","fill");
+    fill.style.width = Math.max(2, pctv) + "%"; fill.style.background = col;
+    track.appendChild(fill);
+    wrap.appendChild(b); wrap.appendChild(track);
+    return wrap;
+  }
+
   function renderPush(){
     var fh=$("pnFunnel"), qh=$("pnQuestion"), th=$("pnTypes"), eh=$("pnErrors");
-    if(!fh||!qh||!th||!eh) return;
+    var xh=$("pnEff"), ch=$("pnChart");
+    if(!fh||!qh||!th||!eh||!xh) return;
     var N=DATA && DATA.notifications;
-    if(!N){ emptyState(fh,S.pnEmpty,"bell"); qh.innerHTML=""; th.innerHTML=""; eh.innerHTML=""; return; }
+    if(!N){ emptyState(fh,S.pnEmpty,"bell"); xh.innerHTML=""; qh.innerHTML=""; th.innerHTML=""; eh.innerHTML=""; return; }
+
+    // ── does the sender cause the thing? all-time, independent of the log ────
+    var eff=N.effectiveness||[];
+    if(!eff.length){ xh.innerHTML=""; emptyState(xh,S.pnEmpty,"bell"); }
+    else {
+      pushTable(xh,[
+        {label:S.pnEffCol, cls:"name"},
+        {label:S.pnEffSent, cls:"num"},
+        {label:S.pnEffActed, cls:"num"},
+        {label:S.pnEffRate, cls:"num"},
+        {label:S.pnEffOutcome, cls:"dim"},
+        {label:S.pnEffRange, cls:"num dim"}
+      ], eff.map(function(r){
+        var nm=el("div");
+        var t=el("div",null,pushTitleFor(r.type));
+        if(r.weak) t.appendChild(el("span","pnweak",S.pnEffWeak));
+        nm.appendChild(t);
+        nm.appendChild(el("div","pnkey",r.type));
+        return [ {node:nm}, fmt(r.sent), fmt(r.acted),
+                 {node:pushRateCell(r.acted,r.sent,r.weak), cls:"num"},
+                 pushOutcomeLabel(r.outcome), fmtDay(r.first_at) ];
+      }));
+      if(eff.some(function(r){return r.weak;})) xh.appendChild(el("div","note",S.pnEffWeakNote));
+    }
     var T=N.total||{}, Q=N.question||{};
     var ramp=[tok("--seq250"),tok("--seq400"),tok("--seq550"),tok("--seq700")];
 
@@ -6590,6 +6693,19 @@
       Array.prototype.forEach.call(fh.querySelectorAll(".hrow"),function(r){ r.classList.add("wrap"); });
       if(T.failed) fh.appendChild(el("div","note",S.pnFailed+" · "+fmt(T.failed)));
     }
+    // the shape over time - a single total hides the day a sender broke
+    if(ch){
+      var days=(N.by_day||[]).map(function(r){ return {d:r.d, sent:r.sent, delivered:r.delivered,
+                                                       opened:r.opened, answered:r.answered}; });
+      if(days.length>1){
+        timeChart("pnChart", days, [
+          {key:"sent",      name:S.pnSeriesSent,      type:"bar",  color:tok("--seq250")},
+          {key:"delivered", name:S.pnSeriesDelivered, type:"line", color:tok("--seq550")},
+          {key:"opened",    name:S.pnSeriesOpened,    type:"line", color:tok("--s3")},
+          {key:"answered",  name:S.pnSeriesAnswered,  type:"line", color:tok("--s5")||tok("--seq700")}
+        ], {group:true, fadeLast:true});
+      } else { ch.innerHTML=""; }
+    }
 
     // ── the one question we ask ────────────────────────────────────────────
     qh.innerHTML="";
@@ -6600,6 +6716,22 @@
       {label:S.pnQUnanswered, v1:Q.unanswered||0, c1:tok("--s8"), suffix:" · "+pct(Q.unanswered,Q.asked)}
     ]);
     Array.prototype.forEach.call(qh.querySelectorAll(".hrow"),function(r){ r.classList.add("wrap"); });
+    // WHY "not yet" - the diagnosis, and the only place the marketplace's own
+    // failure shows up as a number rather than as silence
+    // its OWN host: hbars() clears whatever it is given, so rendering these into
+    // qh silently erased the four answer bars above them
+    var rh=$("pnReasons");
+    if(rh) rh.innerHTML="";
+    if(rh && ((Q.not_yet||0) > 0 || (Q.reason_owed||0) > 0)){
+      rh.appendChild(el("div","note",S.pnQReasons));
+      hbars(rh,[
+        {label:S.pnQStill,  v1:Q.still_coordinating||0, c1:ramp[2]},
+        {label:S.pnQNoResp, v1:Q.no_response||0,        c1:tok("--s8")},
+        {label:S.pnQNoNeed, v1:Q.no_longer_needed||0,   c1:ramp[1]},
+        {label:S.pnQOwed,   v1:Q.reason_owed||0,        c1:tok("--muted")}
+      ]);
+      Array.prototype.forEach.call(rh.querySelectorAll(".hrow"),function(r){ r.classList.add("wrap"); });
+    }
 
     // ── per type ───────────────────────────────────────────────────────────
     var types=N.by_type||[];
