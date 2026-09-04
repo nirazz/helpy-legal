@@ -452,6 +452,30 @@
       color:var(--ink2); cursor:pointer; }
   .msgacts button.go { background:var(--s1); border-color:var(--s1); color:#fff; }
   .msgacts button:disabled { opacity:.5; cursor:default; }
+  .psbar { display:flex; gap:8px; align-items:stretch; margin:2px 0 14px; }
+  .psbar .pssearch { flex:1; margin:0; }
+  .psnew { font:inherit; font-size:13px; font-weight:600; white-space:nowrap;
+           padding:0 16px; border-radius:9px; border:1px solid var(--s1);
+           background:transparent; color:var(--s1); cursor:pointer; }
+  .psnew:hover { background:var(--wash1); }
+  /* the conversation so far, inside the composer: sending into a thread you
+     cannot see is how you repeat yourself to someone who already answered */
+  .msgthread { max-height:190px; overflow-y:auto; border:1px solid var(--grid);
+      border-radius:10px; padding:10px 12px; margin:0 0 12px; background:var(--plane);
+      display:flex; flex-direction:column; gap:8px; }
+  .msgthread .mt { font-size:12.5px; line-height:1.5; max-width:85%; padding:7px 10px;
+      border-radius:10px; white-space:pre-wrap; word-break:break-word; }
+  .msgthread .mt.them { align-self:flex-start; background:var(--surface);
+      border:1px solid var(--grid); color:var(--ink); }
+  .msgthread .mt.us { align-self:flex-end; background:var(--wash1); color:var(--ink); }
+  .msgthread .mtwhen { font-size:10.5px; color:var(--muted); margin-top:3px; }
+  .msgthread .mtempty { font-size:12px; color:var(--muted); text-align:center; padding:6px 0; }
+  .msgpick { display:flex; flex-direction:column; gap:6px; max-height:260px; overflow-y:auto;
+             margin-top:10px; }
+  .msgpick button { font:inherit; font-size:13px; text-align:start; padding:9px 12px;
+      border:1px solid var(--grid); border-radius:9px; background:var(--plane);
+      color:var(--ink); cursor:pointer; }
+  .msgpick button:hover { border-color:var(--s1); color:var(--s1); }
   .msgtoast { position:fixed; inset:0 0 auto 0; z-index:61; display:flex;
               justify-content:center; padding-top:70px; pointer-events:none; }
   .msgtoastbox { background:var(--surface); border:1px solid var(--grid); border-radius:12px;
@@ -1256,7 +1280,10 @@
     <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="psTitle">כל הכרטיסים שקיימים</h2>
       <div class="sub" data-i18n="psSub"></div>
-      <div class="pssearch"><input id="psSearch" type="search" data-i18n-ph="psSearch"></div>
+      <div class="psbar">
+        <div class="pssearch"><input id="psSearch" type="search" data-i18n-ph="psSearch"></div>
+        <button id="psNewMsg" class="psnew" data-i18n="psMsgNew">הודעה לשכן/ה</button>
+      </div>
       <div id="psCount"></div>
       <div id="psList"></div>
     </section>
@@ -1637,6 +1664,12 @@
       psSub:"שורה אחת לכל פוסט – כולל הסגורים, שהפיד מסתיר מעצם הגדרתו · פוסטי בדיקה מוסתרים, הצ׳יפ ״מוקים״ מחזיר אותם · ריחוף על מונח מסביר אותו",
       psTypeL:"סוג", psStatusL:"מצב", psRespL:"מענה", psSortL:"סדר", psAll:"הכל",
       psMsgHint:"שליחת הודעה למפרסם/ת",
+      psMsgNew:"הודעה לשכן/ה",
+      psMsgPickTitle:"למי לכתוב?",
+      psMsgPickSub:"חיפוש לפי שם · אפשר לכתוב גם למי שלא פרסם/ה כלום",
+      psMsgPickPh:"שם של שכן/ה", psMsgNoUsers:"לא נמצאו שכנים בשם הזה",
+      psMsgLoading:"טוען…", psMsgNoThread:"אין עדיין התכתבות",
+      psMsgNoThreadErr:"לא הצלחתי לטעון את ההתכתבות",
       psMsgTitle:"הודעה אל {name}",
       psMsgAbout:"בעקבות הכרטיס: {title} · ההקשר הזה לא נשלח, הוא רק כדי שתדע/י על מה כתבת",
       psMsgFrom:"בשם", psMsgAsHelpy:"צוות Helpy", psMsgAsFounder:"ניר · מייסד",
@@ -2025,6 +2058,12 @@
       psSub:"One row per post \u2013 closed ones included, which the feed hides by construction \u00b7 test fixtures are hidden; the \u201cMock\u201d chip brings them back \u00b7 hover any term for an explanation",
       psTypeL:"Type", psStatusL:"State", psRespL:"Response", psSortL:"Order", psAll:"All",
       psMsgHint:"Send a message to the poster",
+      psMsgNew:"Message a neighbour",
+      psMsgPickTitle:"Who to write to?",
+      psMsgPickSub:"Search by name \u00b7 you can write to someone who never posted",
+      psMsgPickPh:"Neighbour\u2019s name", psMsgNoUsers:"No neighbour by that name",
+      psMsgLoading:"Loading\u2026", psMsgNoThread:"No conversation yet",
+      psMsgNoThreadErr:"Could not load the conversation",
       psMsgTitle:"Message to {name}",
       psMsgAbout:"About the card: {title} \u00b7 this context is not sent, it is here so you know what you are writing about",
       psMsgFrom:"From", psMsgAsHelpy:"Helpy team", psMsgAsFounder:"Nir \u00b7 founder",
@@ -4838,6 +4877,9 @@
       capType.setAttribute("data-tip",S.psTypeTip);
     }
 
+    var nb=$("psNewMsg");
+    if(nb && !nb.dataset.wired){ nb.dataset.wired="1"; nb.onclick=openMsgPicker; }
+
     var sb=$("psSearch");
     if(sb && !sb.dataset.wired){
       sb.dataset.wired="1";
@@ -4977,6 +5019,38 @@
   // against admin_users. The browser never holds a secret, and every delivery
   // rule stays where it already lives.
   var MSG_PERSONA="helpy";
+  // Every console->sender call goes through admin-dashboard, which verifies the
+  // SSO session and forwards this same JWT. The browser holds no secret, and
+  // the function whitelists the four modes the console may reach.
+  function relayCall(action, extra){
+    var hdrs={"content-type":"application/json"};
+    if(SESSION && SESSION.access_token) hdrs["authorization"]="Bearer "+SESSION.access_token;
+    var ctl=("AbortController" in window)? new AbortController() : null;
+    var timedOut=false;
+    var killer=setTimeout(function(){ timedOut=true; if(ctl) ctl.abort(); }, 20000);
+    var body={action:action};
+    for(var k in extra) body[k]=extra[k];
+    return fetch("https://lwomstzzmyegpbidibfm.supabase.co/functions/v1/admin-dashboard",{
+      method:"POST", headers:hdrs, signal: ctl? ctl.signal : undefined,
+      body:JSON.stringify(body)
+    }).then(function(r){
+      clearTimeout(killer);
+      return r.json().catch(function(){ return {}; }).then(function(d){
+        if(!r.ok) throw new Error(d && d.error ? d.error : String(r.status));
+        return d;
+      });
+    }).catch(function(e){
+      clearTimeout(killer);
+      throw timedOut ? new Error("timeout") : e;
+    });
+  }
+  function msgWhen(iso){
+    var d=new Date(iso);
+    if(isNaN(d)) return "";
+    var day=d.getDate()+"."+(d.getMonth()+1);
+    var t=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+    return day+" "+t;
+  }
   function closeMsg(){
     var w=$("msgWrap"); if(w) w.remove();
     document.removeEventListener("keydown", msgEsc);
@@ -4990,8 +5064,32 @@
     wrap.addEventListener("click",function(e){ if(e.target===wrap) closeMsg(); });
     var box=el("div","msgbox");
     box.appendChild(el("h3",null,S.psMsgTitle.split("{name}").join(post.owner||"")));
-    box.appendChild(el("div","msgsub",
-      S.psMsgAbout.split("{title}").join(post.title||"")));
+    // the card line only makes sense when the composer was opened FROM a card;
+    // from the picker there is no card, and a line about one would be a lie
+    if(post.title) box.appendChild(el("div","msgsub",
+      S.psMsgAbout.split("{title}").join(post.title)));
+
+    // the conversation so far - loaded async, so an unreachable thread never
+    // blocks writing a message
+    var th=el("div","msgthread");
+    th.appendChild(el("div","mtempty",S.psMsgLoading));
+    box.appendChild(th);
+    relayCall("user_thread",{target_user_id:post.owner_id}).then(function(d){
+      th.innerHTML="";
+      var rows=(d && d.thread) || [];
+      if(!rows.length){ th.appendChild(el("div","mtempty",S.psMsgNoThread)); return; }
+      rows.forEach(function(m){
+        // "them" is the person; anything we sent (helpy, broadcast, founder
+        // persona) is us
+        var b=el("div","mt "+(m.sender==="user"?"them":"us"), m.content||"");
+        b.appendChild(el("div","mtwhen",msgWhen(m.created_at)));
+        th.appendChild(b);
+      });
+      th.scrollTop=th.scrollHeight;
+    }).catch(function(){
+      th.innerHTML="";
+      th.appendChild(el("div","mtempty",S.psMsgNoThreadErr));
+    });
 
     var personaRow=el("div","msgrow");
     personaRow.appendChild(el("span","cap",S.psMsgFrom));
@@ -5031,35 +5129,17 @@
       // in-flight guard: a second click must not send a second message
       go.disabled=true; cancel.disabled=true; go.textContent=S.psMsgSending;
       err.style.display="none";
-      var hdrs={"content-type":"application/json"};
-      if(SESSION && SESSION.access_token) hdrs["authorization"]="Bearer "+SESSION.access_token;
-      // A send that never settles would leave the button stuck on "שולח…" with
-      // cancel disabled - the reader would have no idea whether the message
-      // went out. Bound it, same as the dashboard fetch does.
-      var ctl = ("AbortController" in window) ? new AbortController() : null;
-      var timedOut = false;
-      var killer = setTimeout(function(){ timedOut = true; if(ctl) ctl.abort(); }, 20000);
-      fetch("https://lwomstzzmyegpbidibfm.supabase.co/functions/v1/admin-dashboard",{
-        method:"POST", headers:hdrs, signal: ctl ? ctl.signal : undefined,
-        body:JSON.stringify({action:"send_message", target_user_id:post.owner_id,
-                             content:text, persona:MSG_PERSONA})
-      }).then(function(r){
-        clearTimeout(killer);
-        return r.json().catch(function(){ return {}; }).then(function(d){
-          if(!r.ok) throw new Error(d && d.error ? d.error : String(r.status));
-          return d;
-        });
-      }).then(function(){
+      relayCall("send_message",{target_user_id:post.owner_id, content:text,
+                                persona:MSG_PERSONA}).then(function(){
         closeMsg();
         toastMsg(S.psMsgSent.split("{name}").join(post.owner||""));
       }).catch(function(e){
-        clearTimeout(killer);
         // the text is never cleared on failure - retyping a message someone
         // just composed is the worst possible response to an error
         go.disabled=false; cancel.disabled=false; go.textContent=S.psMsgSend;
         // a timeout is the one failure where we genuinely do not know whether
         // it was delivered, and the reader must be told exactly that
-        err.textContent = timedOut ? S.psMsgTimeout
+        err.textContent = String(e.message||e)==="timeout" ? S.psMsgTimeout
           : S.psMsgFail.split("{err}").join(String(e.message||e));
         err.style.display="";
       });
@@ -5073,6 +5153,54 @@
   }
   // Its own classes, not the composer's: sharing them made ".msgbox" mean two
   // different things for the 3 seconds the toast is up.
+  // Reaching a user who has never posted: the card list cannot offer them,
+  // and they are exactly the people worth writing to (signed up, did nothing).
+  function openMsgPicker(){
+    closeMsg();
+    var wrap=el("div","msgwrap"); wrap.id="msgWrap";
+    wrap.addEventListener("click",function(e){ if(e.target===wrap) closeMsg(); });
+    var box=el("div","msgbox");
+    box.appendChild(el("h3",null,S.psMsgPickTitle));
+    box.appendChild(el("div","msgsub",S.psMsgPickSub));
+    var inp=el("input"); inp.type="search"; inp.placeholder=S.psMsgPickPh;
+    var sw=el("div","pssearch"); sw.style.margin="0"; sw.appendChild(inp);
+    box.appendChild(sw);
+    var list=el("div","msgpick"); box.appendChild(list);
+    var acts=el("div","msgacts"); acts.style.marginTop="12px";
+    var cancel=el("button",null,S.psMsgCancel); cancel.onclick=closeMsg;
+    acts.appendChild(cancel); box.appendChild(acts);
+    var timer=null, seq=0;
+    inp.addEventListener("input",function(){
+      var q=this.value.trim();
+      clearTimeout(timer);
+      if(q.length<2){ list.innerHTML=""; return; }
+      // debounce: a search per keystroke would be a request per keystroke
+      timer=setTimeout(function(){
+        var mine=++seq;
+        list.innerHTML=""; list.appendChild(el("div","mtempty",S.psMsgLoading));
+        relayCall("search_users",{query:q}).then(function(d){
+          if(mine!==seq) return;           // a later query already answered
+          list.innerHTML="";
+          var us=(d && d.users) || [];
+          if(!us.length){ list.appendChild(el("div","mtempty",S.psMsgNoUsers)); return; }
+          us.forEach(function(u){
+            var label=(u.name||"—")+(u.is_mock?" · "+S.psMock1:"");
+            var b=el("button",null,label);
+            b.onclick=function(){ openMsg({owner_id:u.user_id, owner:u.name, title:null}); };
+            list.appendChild(b);
+          });
+        }).catch(function(){
+          if(mine!==seq) return;
+          list.innerHTML="";
+          list.appendChild(el("div","mtempty",S.psMsgNoUsers));
+        });
+      }, 300);
+    });
+    wrap.appendChild(box); document.body.appendChild(wrap);
+    document.addEventListener("keydown", msgEsc);
+    inp.focus();
+  }
+
   function toastMsg(text){
     var t=el("div","msgtoast"); t.appendChild(el("div","msgtoastbox",text));
     document.body.appendChild(t);
