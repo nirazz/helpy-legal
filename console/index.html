@@ -1817,6 +1817,11 @@
       pnInsLogNew:"היומן נולד ב-4.9.2026. פאנלי המסירה יתמלאו ככל שיֵצאו התראות; פאנל האפקטיביות מעליהם כבר קורא חודשים אחורה.",
       pnInsDead:function(n,names){
         return "<b>"+n+"</b> שולחים מתחת ל-10% המרה עם נפח משמעותי: "+names+"."; },
+      pnEverShort:function(n){ return "אי פעם: "+n; },
+      pnInfluenced:function(n,p,min){
+        return "פתיחות מושפעות: ב-"+n+" מהמקרים ("+p+") האפליקציה נפתחה תוך "+min+" דקות מהפוש, בלי להקיש עליו. זו רצפה - last_seen_at נדרסת, אז מי שפתח וגם חזר מאוחר יותר לא נספר."; },
+      pnInsInfluenced:function(n,all,p){
+        return "<b>"+n+"</b> מתוך "+all+" ההתראות ("+p+") הובילו לפתיחת האפליקציה תוך 30 דקות, בלי הקשה על הבאנר - זה מה ש-Braze קוראת \"פתיחה מושפעת\", ובאייפון היא רוב הפתיחות האמיתיות."; },
       pnAllTime:"כל הזמן",
       pnTileSentNote:function(n){ return "על פני "+n+" שולחים"; },
       pnTileRateNote:function(a,b){ return a+" מתוך "+b+" · בלי המדדים החלשים"; },
@@ -1831,7 +1836,7 @@
       pnTileDeadNone:"אין - כולם מביאים משהו",
       pnBandWorks:"עובד · 40% ומעלה", pnBandWeak:"חלש · 15%-39%", pnBandDead:"לא עובד · מתחת ל-15%",
       pnEffTitle:"האם ההתראות עובדות",
-      pnEffSub:"לא כמה נשלחו - כמה גרמו למה שרצינו. נמדד על כל ההיסטוריה מהעמודות שכל שולח כבר מסמן, ולכן זה עובד גם לפני שהיומן קם. לכל שורה כתוב מה בדיוק נחשב הצלחה, כי שיעור בלי מונה מוגדר הוא חסר ערך.",
+      pnEffSub:"לא כמה נשלחו - כמה גרמו למה שרצינו. <b>חלון ייחוס: 7 ימים</b> - פעולה שקרתה חודשים אחרי הפוש אינה ייחוס, ולכן המספר המוביל הוא בחלון, ו\"אי פעם\" מופיע מתחתיו באפור. נמדד על כל ההיסטוריה מהעמודות שכל שולח כבר מסמן. לכל שורה כתוב מה בדיוק נחשב הצלחה.",
       pnEffCol:"התראה", pnEffSent:"נשלחו", pnEffActed:"הצליחו", pnEffRate:"שיעור",
       pnEffOutcome:"מה נחשב הצלחה", pnEffRange:"מאז",
       pnEffWeak:"מדד חלש",
@@ -2311,6 +2316,11 @@
       pnInsLogNew:"The log was born on 4 Sep 2026. The delivery panels fill as notifications go out; the effectiveness panel above them already reads months back.",
       pnInsDead:function(n,names){
         return "<b>"+n+"</b> senders convert under 10% at meaningful volume: "+names+"."; },
+      pnEverShort:function(n){ return "ever: "+n; },
+      pnInfluenced:function(n,p,min){
+        return "Influenced opens: in "+n+" cases ("+p+") the app was opened within "+min+" minutes of the push, without the banner being tapped. A floor, not a rate - last_seen_at is overwritten, so anyone who opened and came back later is not counted."; },
+      pnInsInfluenced:function(n,all,p){
+        return "<b>"+n+"</b> of "+all+" notifications ("+p+") led to the app being opened within 30 minutes without the banner being tapped - what Braze calls an \"influenced open\", and on iOS most real opens are of that kind."; },
       pnAllTime:"all time",
       pnTileSentNote:function(n){ return "across "+n+" senders"; },
       pnTileRateNote:function(a,b){ return a+" of "+b+" · weak measures excluded"; },
@@ -2326,7 +2336,7 @@
       pnTileDeadNone:"none - they all bring something",
       pnBandWorks:"Works · 40% and up", pnBandWeak:"Weak · 15%-39%", pnBandDead:"Not working · under 15%",
       pnEffTitle:"Are the notifications working",
-      pnEffSub:"Not how many went out - how many CAUSED what we wanted. Measured over the whole history from the columns every sender already stamps, so it works from before the log existed. Each row names what counts as success, because a rate with an undefined numerator is worthless.",
+      pnEffSub:"Not how many went out - how many CAUSED what we wanted. <b>Attribution window: 7 days</b> - an action months after the push is not an attribution, so the leading number is in-window and \"ever\" sits under it in grey. Measured over the whole history from the columns every sender already stamps. Each row names what counts as success.",
       pnEffCol:"Notification", pnEffSent:"Sent", pnEffActed:"Worked", pnEffRate:"Rate",
       pnEffOutcome:"What counts as success", pnEffRange:"Since",
       pnEffWeak:"weak measure",
@@ -6925,7 +6935,10 @@
 
   function renderPushInsights(N){
     var rows=[], eff=N.effectiveness||[], T=N.total||{}, Q=N.question||{}, L=N.landing||{};
-    var rate=function(r){ return r.sent? r.acted/r.sent : 0; };
+    // the SAME windowed definition the table uses - an insight that quotes a
+    // different number than the table under it is worse than no insight
+    var actedWin=function(r){ return r.acted_win!=null? r.acted_win : r.acted; };
+    var rate=function(r){ return r.sent? actedWin(r)/r.sent : 0; };
     var totSent=eff.reduce(function(a,r){return a+r.sent;},0);
 
     // 1. the shape of the whole thing: volume sits where the results do not
@@ -6935,8 +6948,8 @@
                  .filter(function(r){return !r.weak && r.sent>=10;})[0];
       if(big && best && rate(big) < rate(best)/2){
         rows.push(["bad", S.pnInsConc(pushTitleFor(big.type), pct(big.sent,totSent),
-                                      pct(big.acted,big.sent), pushTitleFor(best.type),
-                                      pct(best.acted,best.sent))]);
+                                      pct(actedWin(big),big.sent), pushTitleFor(best.type),
+                                      pct(actedWin(best),best.sent))]);
       }
     }
 
@@ -6958,6 +6971,11 @@
     if(T.sent){
       var dl=Math.round(100*(T.delivered||0)/T.sent);
       rows.push([dl<90?"bad":"good", S.pnInsDelivery(dl+"%", fmt(T.delivered), fmt(T.sent))]);
+      var INF2=L.influenced;
+      if(INF2 && INF2.sent){
+        var ip=Math.round(100*(INF2.influenced||0)/INF2.sent);
+        rows.push([ip>=20?"good":"info", S.pnInsInfluenced(fmt(INF2.influenced), fmt(INF2.sent), ip+"%")]);
+      }
       if(!T.opened && !T.answered) rows.push(["info", S.pnInsNoOpens]);
     } else {
       rows.push(["info", S.pnInsLogNew]);
@@ -6984,7 +7002,13 @@
     if(tileHost) tileHost.innerHTML="";
     if(!eff.length){ xh.innerHTML=""; emptyState(xh,S.pnEmpty,"bell"); }
     else {
-      var rate=function(r){ return r.sent? r.acted/r.sent : 0; };
+      // Braze and Iterable attribute a conversion only inside a declared window.
+      // Ours is 7 days. `acted` (ever) is still shown, dimmed, beside it - it is
+      // what this screen used to lead with, and the gap between the two is
+      // itself informative: pending_offer_reminder reads 78% unbounded and 22%
+      // in-window, and only the second number is an attribution.
+      var actedWin=function(r){ return r.acted_win!=null? r.acted_win : r.acted; };
+      var rate=function(r){ return r.sent? actedWin(r)/r.sent : 0; };
       // Volume and effectiveness are two different orderings, and the payload
       // arrives in volume order. Reading a performance table by volume buries
       // the answer, so the table is re-sorted by RATE and banded.
@@ -6995,7 +7019,7 @@
       // measured against "opened the app", which is not the same currency
       var strong=eff.filter(function(r){ return !r.weak; });
       var sSent=strong.reduce(function(a,r){return a+r.sent;},0);
-      var sActed=strong.reduce(function(a,r){return a+r.acted;},0);
+      var sActed=strong.reduce(function(a,r){return a+actedWin(r);},0);
       var best=byRate.filter(function(r){ return !r.weak && r.sent>=10; })[0];
       var dead=eff.filter(function(r){ return !r.weak && rate(r)<0.10; });
       if(tileHost){
@@ -7034,8 +7058,13 @@
         if(r.weak) t.appendChild(el("span","pnweak",S.pnEffWeak));
         nm.appendChild(t);
         nm.appendChild(el("div","pnkey",r.type));
-        return [ {node:nm}, fmt(r.sent), fmt(r.acted),
-                 {node:pushRateCell(r.acted,r.sent,r.weak), cls:"num"},
+        // the windowed count leads; the unbounded one trails it, dimmed
+        var ac=el("div");
+        ac.appendChild(el("div",null,fmt(actedWin(r))));
+        if(r.acted_win!=null && r.acted!==r.acted_win)
+          ac.appendChild(el("div","pnkey",S.pnEverShort(fmt(r.acted))));
+        return [ {node:nm}, fmt(r.sent), {node:ac, cls:"num"},
+                 {node:pushRateCell(actedWin(r),r.sent,r.weak), cls:"num"},
                  pushOutcomeLabel(r.outcome), fmtDay(r.first_at) ];
       }), function(row, tr){
         if(!(row[0] && row[0].cls === "band")) return;
@@ -7054,10 +7083,10 @@
       var biggest = eff.slice().sort(function(a,b){ return b.sent-a.sent; })[0];
       panelRead("pnEff", dead.length>=3? "bad" : dead.length? "warn" : "good",
         S.rdEff(String(dead.length), String(eff.length),
-                best? pushTitleFor(best.type) : "-", best? pct(best.acted,best.sent) : "-",
+                best? pushTitleFor(best.type) : "-", best? pct(actedWin(best),best.sent) : "-",
                 biggest? pushTitleFor(biggest.type) : "-",
                 biggest? pct(biggest.sent, totSent) : "-",
-                biggest? pct(biggest.acted, biggest.sent) : "-"));
+                biggest? pct(actedWin(biggest), biggest.sent) : "-"));
     }
     var T=N.total||{}, Q=N.question||{};
     renderPushInsights(N);
@@ -7081,6 +7110,15 @@
       ]);
       Array.prototype.forEach.call(fh.querySelectorAll(".hrow"),function(r){ r.classList.add("wrap"); });
       if(T.failed) fh.appendChild(el("div","note",S.pnFailed+" · "+fmt(T.failed)));
+      // Braze's "influenced open": the app was opened within 30 minutes of the
+      // push landing, WITHOUT the banner being tapped. On iOS that is most of
+      // the real opens - tapping a banner is the exception. Computable today
+      // from last_seen_at, which is why this line exists before the build.
+      var INF=(N.landing||{}).influenced;
+      if(INF && INF.sent){
+        fh.appendChild(el("div","note", S.pnInfluenced(fmt(INF.influenced),
+          pct(INF.influenced, INF.sent), String(INF.window_min))));
+      }
       // Opens and answers are stamped by the APP, and that half ships with the
       // next store build. Until then these two rows are structurally zero, and
       // a reader who does not know that will read "nobody opens our
