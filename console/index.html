@@ -4650,9 +4650,13 @@
     var q=PS_Q.trim().toLowerCase();
     return P.filter(function(p){
       if(PS_TYPE!=="all" && p.type!==PS_TYPE) return false;
+      // Test fixtures are noise on an oversight screen (Nir, 2026-09-04): they
+      // are reachable through their own chip and counted into nothing else.
+      var mock = p.is_mock || p.owner_mock;
+      if(PS_STATUS==="mock"){ if(!mock) return false; }
+      else if(mock) return false;
       if(PS_STATUS==="live"   && !p.is_active) return false;
       if(PS_STATUS==="closed" &&  p.is_active) return false;
-      if(PS_STATUS==="mock"   && !(p.is_mock||p.owner_mock)) return false;
       if(PS_RESP==="none"   && p.offers>0) return false;
       if(PS_RESP==="offers" && !p.offers) return false;
       if(PS_RESP==="talk"   && !p.messages) return false;
@@ -4673,11 +4677,17 @@
     ["psSummary","psCount"].forEach(function(id){ var h=$(id); if(h) h.innerHTML=""; });
     if(!D){ emptyState(host,S.psEmptyData,"file"); return; }
 
-    // summary strip: the five numbers that answer "what is out there right now".
-    // "no offer" is deliberately one of them - it is the product's own scoreboard.
+    // summary strip: the four numbers that answer "what is out there right now",
+    // counted over REAL posts only - a test fixture must not move a number Nir
+    // reads as the state of the marketplace. Counted client-side rather than
+    // from the server totals for exactly that reason; the array is the whole
+    // table while it stays under the fetch limit (180 of 500 today).
+    var R=P.filter(function(p){ return !(p.is_mock||p.owner_mock); });
     var sum=$("psSummary");
-    [[S.psSumTotal,D.total,null],[S.psSumLive,D.live,null],[S.psSumClosed,D.closed,null],
-     [S.psSumSilent,D.no_offer,S.psSilentTip],[S.psSumMock,D.mock,S.psMockTip]]
+    [[S.psSumTotal,R.length,null],
+     [S.psSumLive,R.filter(function(p){return p.is_active;}).length,null],
+     [S.psSumClosed,R.filter(function(p){return !p.is_active;}).length,null],
+     [S.psSumSilent,R.filter(function(p){return !p.offers;}).length,S.psSilentTip]]
       .forEach(function(t){
         var cell=el("div","blcell");
         cell.appendChild(el("b",null,fmt(t[1])));
@@ -4697,9 +4707,11 @@
         h.appendChild(b);
       });
     }
-    function n(fn2){ return P.filter(fn2).length; }
+    // counts over real posts - the one exception is the mock chip, which counts
+    // exactly what it is for
+    function n(fn2){ return R.filter(fn2).length; }
     seg("psTypes", PS_TYPE, [
-      {id:"all",label:S.psAll,n:P.length},
+      {id:"all",label:S.psAll,n:R.length},
       {id:"request",label:S.psReq,n:n(function(p){return p.type==="request";})},
       {id:"offer",label:S.psOff,n:n(function(p){return p.type==="offer";})}
     ], function(v){ PS_TYPE=v; });
@@ -4707,7 +4719,7 @@
       {id:"all",label:S.psAll,n:null},
       {id:"live",label:S.psLive,n:n(function(p){return p.is_active;})},
       {id:"closed",label:S.psClosed,n:n(function(p){return !p.is_active;})},
-      {id:"mock",label:S.psMock,n:n(function(p){return p.is_mock||p.owner_mock;})}
+      {id:"mock",label:S.psMock,n:P.length-R.length}
     ], function(v){ PS_STATUS=v; });
     seg("psResps", PS_RESP, [
       {id:"all",label:S.psAll,n:null},
@@ -4741,7 +4753,7 @@
 
     var cnt=$("psCount");
     if(cnt) cnt.textContent=S.psShowing.split("{n}").join(fmt(rows.length))
-                                       .split("{t}").join(fmt(P.length));
+                                       .split("{t}").join(fmt(PS_STATUS==="mock"? P.length-R.length : R.length));
     if(!rows.length){ emptyState(host,S.psNone,"file"); return; }
 
     var t=el("table","plain");
