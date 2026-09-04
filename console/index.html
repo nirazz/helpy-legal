@@ -1380,6 +1380,11 @@
       <div id="pnChart"></div>
     </section>
     <section class="panel wide" style="opacity:1;transform:none">
+      <h2 data-i18n="pnHoTitle">האם ההתראה באמת גורמת לזה</h2>
+      <div class="sub" data-i18n="pnHoSub"></div>
+      <div id="pnHoldout"></div>
+    </section>
+    <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="pnQTitle">השאלה ששאלנו</h2>
       <div class="sub" data-i18n="pnQSub"></div>
       <div id="pnQuestion"></div>
@@ -1822,6 +1827,15 @@
         return "פתיחות מושפעות: ב-"+n+" מהמקרים ("+p+") האפליקציה נפתחה תוך "+min+" דקות מהפוש, בלי להקיש עליו. זו רצפה - last_seen_at נדרסת, אז מי שפתח וגם חזר מאוחר יותר לא נספר."; },
       pnInsInfluenced:function(n,all,p){
         return "<b>"+n+"</b> מתוך "+all+" ההתראות ("+p+") הובילו לפתיחת האפליקציה תוך 30 דקות, בלי הקשה על הבאנר - זה מה ש-Braze קוראת \"פתיחה מושפעת\", ובאייפון היא רוב הפתיחות האמיתיות."; },
+      pnHoTitle:"האם ההתראה באמת גורמת לזה",
+      pnHoSub:"קבוצת ביקורת: 10% מקהל היעד של כל שולח שיווקי לא מקבלים את ההודעה, ואנחנו משווים. שיעור לבדו הוא תיאור; ההפרש מול מי שלא קיבל הוא ההוכחה היחידה שההתראה גרמה למשהו.",
+      pnHoSent:"קיבלו", pnHoHeld:"לא קיבלו (ביקורת)", pnHoLift:"הפרש", pnHoVerdict:"מסקנה",
+      pnHoSig:function(z){ return "מובהק · z="+z; },
+      pnHoNotYet:function(n){ return "עוד אין מספיק נתונים ("+n+" עד כה)"; },
+      pnHoEmpty:"הביקורת התחילה היום. השורות יופיעו אחרי הריצה הראשונה של כל שולח בתוך חלון השליחה.",
+      pnHoNote:"ההפרש מוצג רק כשהוא עובר מבחן מובהקות של 95% (z מעל 1.96). בנפחים שלנו זה ייקח שבועות - וזו בדיוק הסיבה שעדיף להמתין מאשר להסיק ממספר קטן.",
+      pnInsHoSig:function(n,all){ return "<b>"+n+"</b> מתוך "+all+" השולחים עם ביקורת הראו הפרש מובהק - יש להם הוכחה, לא רק שיעור."; },
+      pnInsHoRunning:function(all,held){ return "קבוצת ביקורת פעילה על <b>"+all+"</b> שולחים שיווקיים ("+held+" אנשים לא קיבלו עד כה). עוד אין מספיק נתונים למסקנה - זה תקין, ובינתיים כל שיעור על המסך הוא תיאור ולא הוכחה."; },
       pnAllTime:"כל הזמן",
       pnTileSentNote:function(n){ return "על פני "+n+" שולחים"; },
       pnTileRateNote:function(a,b){ return a+" מתוך "+b+" · בלי המדדים החלשים"; },
@@ -2321,6 +2335,15 @@
         return "Influenced opens: in "+n+" cases ("+p+") the app was opened within "+min+" minutes of the push, without the banner being tapped. A floor, not a rate - last_seen_at is overwritten, so anyone who opened and came back later is not counted."; },
       pnInsInfluenced:function(n,all,p){
         return "<b>"+n+"</b> of "+all+" notifications ("+p+") led to the app being opened within 30 minutes without the banner being tapped - what Braze calls an \"influenced open\", and on iOS most real opens are of that kind."; },
+      pnHoTitle:"Does the notification actually cause it",
+      pnHoSub:"Control group: 10% of each marketing sender's audience does not get the message, and we compare. A rate alone is a description; the gap against the people who got nothing is the only evidence the notification caused anything.",
+      pnHoSent:"Sent", pnHoHeld:"Held back (control)", pnHoLift:"Lift", pnHoVerdict:"Verdict",
+      pnHoSig:function(z){ return "significant · z="+z; },
+      pnHoNotYet:function(n){ return "not enough data yet ("+n+" so far)"; },
+      pnHoEmpty:"The control group started today. Rows appear after each sender's first run inside its send window.",
+      pnHoNote:"A lift is shown only once it clears a 95% significance test (z above 1.96). At our volume that will take weeks - which is exactly why waiting beats concluding from a small number.",
+      pnInsHoSig:function(n,all){ return "<b>"+n+"</b> of "+all+" senders with a control group show a significant lift - they have evidence, not just a rate."; },
+      pnInsHoRunning:function(all,held){ return "A control group is running on <b>"+all+"</b> marketing senders ("+held+" people held back so far). Not enough data for a verdict yet - that is expected, and until then every rate on this screen is a description, not proof."; },
       pnAllTime:"all time",
       pnTileSentNote:function(n){ return "across "+n+" senders"; },
       pnTileRateNote:function(a,b){ return a+" of "+b+" · weak measures excluded"; },
@@ -6971,6 +6994,14 @@
     if(T.sent){
       var dl=Math.round(100*(T.delivered||0)/T.sent);
       rows.push([dl<90?"bad":"good", S.pnInsDelivery(dl+"%", fmt(T.delivered), fmt(T.sent))]);
+      var HO=(L.holdout)||[];
+      var hoSig=HO.filter(function(r){ return r.significant; });
+      var hoRun=HO.reduce(function(a,r){ return a + (r.held_n||0); }, 0);
+      if(HO.length){
+        rows.push([hoSig.length? "good":"info",
+          hoSig.length ? S.pnInsHoSig(String(hoSig.length), String(HO.length))
+                       : S.pnInsHoRunning(String(HO.length), String(hoRun))]);
+      }
       var INF2=L.influenced;
       if(INF2 && INF2.sent){
         var ip=Math.round(100*(INF2.influenced||0)/INF2.sent);
@@ -7138,6 +7169,37 @@
         ], {group:true, fadeLast:true});
       } else { ch.innerHTML=""; }
     }
+
+    // ── holdout: the only thing here that is evidence rather than a rate ───
+    (function(){
+      var hh=$("pnHoldout"); if(!hh) return;
+      var H=(N.landing||{}).holdout||[];
+      if(!H.length){ hh.innerHTML=""; hh.appendChild(el("div","note",S.pnHoEmpty)); return; }
+      pushTable(hh,[
+        {label:S.pnEffCol, cls:"name"},
+        {label:S.pnHoSent, cls:"num"},
+        {label:S.pnHoHeld, cls:"num"},
+        {label:S.pnHoLift, cls:"num"},
+        {label:S.pnHoVerdict, cls:"dim"}
+      ], H.map(function(r){
+        var nm=el("div");
+        nm.appendChild(el("div",null,pushTitleFor(r.type)));
+        nm.appendChild(el("div","pnkey",r.type+" · "+r.pct+"%"));
+        // A lift is only reportable once the z-test clears; until then the
+        // honest cell is the sample size, not a number that looks like a result.
+        var verdict = r.significant ? S.pnHoSig(String(r.z))
+                    : S.pnHoNotYet(String(r.sent_n + r.held_n));
+        var liftCell = r.significant && r.lift_pp!=null
+                     ? {v:(r.lift_pp>0?"+":"")+r.lift_pp+"pp", cls:"num "+(r.lift_pp>0?"":"bad")}
+                     : {v:"-", cls:"num dim"};
+        return [ {node:nm},
+                 r.sent_x+" / "+r.sent_n+" · "+r.p_sent+"%",
+                 r.held_x+" / "+r.held_n+" · "+r.p_held+"%",
+                 liftCell,
+                 verdict ];
+      }));
+      hh.appendChild(el("div","note",S.pnHoNote));
+    })();
 
     // ── the one question we ask ────────────────────────────────────────────
     qh.innerHTML="";
