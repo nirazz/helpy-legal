@@ -1034,6 +1034,21 @@
              background:var(--wash1); color:var(--s1); margin-inline-start:7px;
              vertical-align:1px; }
   .hidden { display:none !important; }
+  /* notifications tab - one plain table; the numbers are the design */
+  .pntbl { width:100%; border-collapse:collapse; font-size:13px; }
+  .pntbl th { text-align:start; font-weight:700; color:var(--ink2); padding:8px 10px;
+              border-bottom:1px solid var(--hairline); white-space:nowrap; }
+  .pntbl td { padding:9px 10px; border-bottom:1px solid var(--hairline); color:var(--ink); }
+  .pntbl tbody tr:last-child td { border-bottom:none; }
+  .pntbl th.num, .pntbl td.num { text-align:end; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .pntbl td.dim { color:var(--muted); }
+  .pntbl td.name { max-width:300px; }
+  /* the type key under the name: three catalogue titles are just "עדכון", and
+     two different notifications reading the same word is worse than no name */
+  .pnkey { font-size:11px; color:var(--muted); direction:ltr; text-align:start; margin-top:2px; }
+  /* a zero in a delivery column is not a neutral zero - it is the shape the
+     Android outage had for two months, so it must not read as ordinary text */
+  .pntbl td.bad { color:var(--s8); font-weight:700; }
 </style>
 </head>
 <body>
@@ -1062,6 +1077,7 @@
     <button data-v="chat" data-ic="msg"><span data-i18n="tabChat">צ'אט</span></button>
     <button data-v="arch" data-ic="layers"><span data-i18n="tabArch">ארכיטקטורה</span></button>
     <button data-v="ads" data-ic="radio"><span data-i18n="tabAds">קמפיינים</span></button>
+    <button data-v="push" data-ic="bell"><span data-i18n="tabPush">התראות</span></button>
     <button data-v="backlog" data-ic="box"><span data-i18n="tabBacklog">בקלוג</span></button>
   </div>
   <div class="hactions">
@@ -1287,6 +1303,38 @@
       </div>
       <div id="psCount"></div>
       <div id="psList"></div>
+    </section>
+  </div>
+
+  <div id="pushView" class="hidden">
+    <div class="filters">
+      <span class="blfgrp"><span class="cap" data-i18n="pnWinL">חלון</span>
+        <span class="seg" id="pnWinSeg">
+          <button data-d="7" class="on" data-i18n="r7">שבוע</button>
+          <button data-d="14" data-i18n="r14">שבועיים</button>
+          <button data-d="30" data-i18n="r30">30 יום</button>
+          <button data-d="90" data-i18n="r90">90 יום</button>
+        </span></span>
+    </div>
+    <section class="panel wide" style="opacity:1;transform:none">
+      <h2 data-i18n="pnTitle">מה קרה עם ההתראות ששלחנו</h2>
+      <div class="sub" data-i18n="pnSub"></div>
+      <div id="pnFunnel"></div>
+    </section>
+    <section class="panel wide" style="opacity:1;transform:none">
+      <h2 data-i18n="pnQTitle">השאלה ששאלנו</h2>
+      <div class="sub" data-i18n="pnQSub"></div>
+      <div id="pnQuestion"></div>
+    </section>
+    <section class="panel wide" style="opacity:1;transform:none">
+      <h2 data-i18n="pnTypesTitle">לפי סוג התראה</h2>
+      <div class="sub" data-i18n="pnTypesSub"></div>
+      <div id="pnTypes"></div>
+    </section>
+    <section class="panel wide" style="opacity:1;transform:none">
+      <h2 data-i18n="pnErrTitle">כשלים במסירה</h2>
+      <div class="sub" data-i18n="pnErrSub"></div>
+      <div id="pnErrors"></div>
     </section>
   </div>
 
@@ -1660,6 +1708,31 @@
       densAvgAns:"ממוצע שכנים · בקשות שנענו", densAvgSil:"ממוצע שכנים · בקשות ששתקו",
       densThin:"בקשות חיות באזור דליל (מתחת ל-10 שכנים)",
       rdDens:function(ans,sil,thin){ return "בקשה שנענתה הייתה מוקפת <b>"+ans+"</b> שכנים בממוצע; בקשה ששתקה - <b>"+sil+"</b> בלבד. מתחת ל-10 שכנים בטווח, אף בקשה לא קיבלה מענה באותו יום. המסקנה חדה: המוצר עובד היכן שיש צפיפות ונכשל היכן שאין, ולכן <b>"+thin+"</b> הבקשות החיות באזור דליל הן אנשים שיקבלו שתיקה. זו הצדקה ישירה לרכז את כל תקציב הרכישה בעיר אחת במקום לפזר."; },
+      tabPush:"התראות",
+      pnWinL:"חלון",
+      pnTitle:"מה קרה עם ההתראות ששלחנו",
+      pnSub:"כל פוש שיוצא נרשם: מה Expo אישר, מה באמת הגיע למכשיר, מה נפתח ומה נענה. הרישום התחיל ב-4.9.2026 - מה שנשלח לפני כן לא קיים כאן, וזה לא תקלה.",
+      pnSent:"נשלחו",
+      pnDelivered:"נמסרו למכשיר",
+      pnOpened:"נפתחו",
+      pnAnswered:"נענו",
+      pnFailed:"נכשלו",
+      pnQTitle:"השאלה ששאלנו: איך הלך עם העזרה?",
+      pnQSub:"ההתראה היחידה ששואלת שאלה. המספרים כאן לא תלויים ברישום - הם נספרים מהתשובות עצמן, ולכן כוללים גם את כל מי שנשאל לפני שהרישום קם.",
+      pnQAsked:"נשאלו",
+      pnQGot:"ענו: כן, קיבלתי",
+      pnQNot:"ענו: עוד לא",
+      pnQUnanswered:"לא ענו כלל",
+      pnTypesTitle:"לפי סוג התראה",
+      pnTypesSub:"כל שורה היא התראה אחת מהקטלוג, בשמה האמיתי. אחוז הפתיחה מחושב מתוך מה שנמסר - לא מתוך מה שנשלח.",
+      pnErrTitle:"כשלים במסירה",
+      pnErrSub:"קוד השגיאה כפי ש-Expo החזיר אותו. DeviceNotRegistered = האפליקציה הוסרה או שהטוקן התחלף, וזה תקין. כל קוד אחר הוא בעיה שלנו.",
+      pnEmpty:"עוד לא נרשמה אף התראה בחלון הזה.",
+      pnEmptyHint:"הרישום מתחיל ברגע שפונקציות הקצה נפרסות. עד אז הטבלה ריקה - זה המצב הצפוי, לא כשל.",
+      pnNoErr:"אף כשל בחלון הזה.",
+      pnColType:"התראה", pnColSent:"נשלחו", pnColDelivered:"נמסרו",
+      pnColOpened:"נפתחו", pnColAnswered:"נענו", pnColFailed:"נכשלו", pnColLast:"אחרונה",
+      pnColCode:"קוד", pnColCount:"מקרים",
       tabPosts:"כרטיסים",
       psTitle:"כל הכרטיסים שקיימים",
       psSub:"שורה אחת לכל פוסט – כולל הסגורים, שהפיד מסתיר מעצם הגדרתו · פוסטי בדיקה מוסתרים, הצ׳יפ ״מוקים״ מחזיר אותם · ריחוף על מונח מסביר אותו",
@@ -2057,6 +2130,31 @@
       densAvgAns:"Avg neighbours · answered requests", densAvgSil:"Avg neighbours · silent requests",
       densThin:"Live requests in a thin area (under 10 neighbours)",
       rdDens:function(ans,sil,thin){ return "An answered request sat among <b>"+ans+"</b> neighbours on average; a silent one among just <b>"+sil+"</b>. Below 10 neighbours in range, not one request was answered the same day. The conclusion is sharp: the product works where density exists and fails where it does not, so the <b>"+thin+"</b> live requests in thin areas are people about to be met with silence. This is direct justification for concentrating every acquisition shekel in one city instead of spreading."; },
+      tabPush:"Notifications",
+      pnWinL:"Window",
+      pnTitle:"What happened to the notifications we sent",
+      pnSub:"Every push is logged: what Expo accepted, what actually reached the device, what was opened and what was answered. Logging started 4 Sep 2026 - anything sent before that is not here, and that is not a fault.",
+      pnSent:"Sent",
+      pnDelivered:"Reached the device",
+      pnOpened:"Opened",
+      pnAnswered:"Answered",
+      pnFailed:"Failed",
+      pnQTitle:"The question we asked: how did it go?",
+      pnQSub:"The one notification that asks a question. These numbers do not depend on the log - they are counted from the answers themselves, so they include everyone asked before logging existed.",
+      pnQAsked:"Asked",
+      pnQGot:"Answered: yes, I did",
+      pnQNot:"Answered: not yet",
+      pnQUnanswered:"Never answered",
+      pnTypesTitle:"By notification type",
+      pnTypesSub:"One row per notification in the catalogue, under its real name. Open rate is out of what was DELIVERED, not out of what was sent.",
+      pnErrTitle:"Delivery failures",
+      pnErrSub:"The error code exactly as Expo returned it. DeviceNotRegistered = the app was removed or the token rotated, which is normal. Any other code is our problem.",
+      pnEmpty:"No notification logged in this window yet.",
+      pnEmptyHint:"Logging begins the moment the edge functions are deployed. Until then this stays empty - expected, not a failure.",
+      pnNoErr:"No failures in this window.",
+      pnColType:"Notification", pnColSent:"Sent", pnColDelivered:"Delivered",
+      pnColOpened:"Opened", pnColAnswered:"Answered", pnColFailed:"Failed", pnColLast:"Last",
+      pnColCode:"Code", pnColCount:"Cases",
       tabPosts:"Cards",
       psTitle:"Every card that exists",
       psSub:"One row per post \u2013 closed ones included, which the feed hides by construction \u00b7 test fixtures are hidden; the \u201cMock\u201d chip brings them back \u00b7 hover any term for an explanation",
@@ -2685,6 +2783,7 @@
     $("archView").classList.toggle("hidden",v!=="arch");
     $("adsView").classList.toggle("hidden",v!=="ads");
     $("backlogView").classList.toggle("hidden",v!=="backlog");
+    $("pushView").classList.toggle("hidden",v!=="push");
     $("rail").classList.toggle("hidden",v!=="metrics");
     if(v==="chat"){
       // visiting the chat tab advances the stored watermark (next reload starts
@@ -2697,6 +2796,7 @@
     if(v==="posts") renderPosts();
     if(v==="arch") renderArch();
     if(v==="backlog") renderBacklog();
+    if(v==="push") renderPush();
     // EVERY tab with a chart, not just metrics: a chart initialised while its
     // view was display:none measures zero width and stays a 100px sliver
     // forever. This guard was written when metrics owned the only charts; the
@@ -4728,6 +4828,7 @@
     refresh:["M3 12a9 9 0 0 1 9-9 9.7 9.7 0 0 1 6.7 2.7L21 8","M21 3v5h-5","M21 12a9 9 0 0 1-9 9 9.7 9.7 0 0 1-6.7-2.7L3 16","M8 16H3v5"],
     filter:["M22 3H2l8 9.5V19l4 2v-8.5z"],
     layers:["m12 2 9 5-9 5-9-5z","m3 17 9 5 9-5","m3 12 9 5 9-5"],
+    bell:["M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9","M10.3 21a1.9 1.9 0 0 0 3.4 0"],
     moon:["M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"],
     sun:["M12 2v2","M12 20v2","m4.9 4.9 1.4 1.4","m17.7 17.7 1.4 1.4","M2 12h2","M20 12h2","m6.3 17.7-1.4 1.4","m19.1 4.9-1.4 1.4"],
     globe:["M2 12h20","M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"],
@@ -6403,6 +6504,141 @@
     }
     step();
   }
+  // ---- notifications: what happened to every push we sent -----------------
+  // The log behind this tab is written by all seven senders (log_push_batch).
+  // "Reached the device" is the Expo RECEIPT, harvested ~15 minutes after the
+  // send - the only thing in the system that knows a push actually arrived. A
+  // ticket alone only says Expo ACCEPTED it, and that distinction is exactly
+  // what let Android push die unnoticed for two months.
+  var NOTIF_DAYS=7;
+
+  // Name every row with the notification's real text, from the same catalogue
+  // the architecture tab quotes. A bare type key means nothing to a reader.
+  // new_message's catalogue title is the SENDER'S NAME - a template, useless as
+  // a row label. Anything else keeps its real text from the catalogue.
+  var PUSH_LABEL={ new_message:{he:"הודעה חדשה בצ'אט", en:"New chat message"} };
+  function pushTitleFor(k){
+    if(PUSH_LABEL[k]) return PUSH_LABEL[k][LANG==="he"?"he":"en"];
+    var out=null;
+    ["edge","nudge"].forEach(function(g){
+      (NOTIF_GROUPS[g]||[]).forEach(function(grp){
+        (grp.items||[]).forEach(function(it){
+          if(it.k===k && !out) out=(LANG==="he"? it.tH : it.tE);
+        });
+      });
+    });
+    // the Hebrew catalogue titles carry a leading "!" for RTL rendering
+    return out ? out.replace(/^!+|!+$/g,"") : k;
+  }
+
+  function pushTable(host, cols, rows){
+    host.innerHTML="";
+    var t=el("table","pntbl"), thead=el("thead"), tr=el("tr");
+    cols.forEach(function(c){ tr.appendChild(el("th",c.cls||null,c.label)); });
+    thead.appendChild(tr); t.appendChild(thead);
+    var tb=el("tbody");
+    rows.forEach(function(r){
+      var row=el("tr");
+      r.forEach(function(cell,i){
+        var td=el("td", cell && cell.cls ? cell.cls : (cols[i].cls||null));
+        if(cell && cell.node) td.appendChild(cell.node);
+        else td.textContent = (cell && cell.v!==undefined ? cell.v : cell);
+        row.appendChild(td);
+      });
+      tb.appendChild(row);
+    });
+    t.appendChild(tb); host.appendChild(t);
+  }
+
+  function renderPush(){
+    var fh=$("pnFunnel"), qh=$("pnQuestion"), th=$("pnTypes"), eh=$("pnErrors");
+    if(!fh||!qh||!th||!eh) return;
+    var N=DATA && DATA.notifications;
+    if(!N){ emptyState(fh,S.pnEmpty,"bell"); qh.innerHTML=""; th.innerHTML=""; eh.innerHTML=""; return; }
+    var T=N.total||{}, Q=N.question||{};
+    var ramp=[tok("--seq250"),tok("--seq400"),tok("--seq550"),tok("--seq700")];
+
+    // ── the funnel ─────────────────────────────────────────────────────────
+    fh.innerHTML="";
+    if(!T.sent){
+      emptyState(fh,S.pnEmpty,"bell");
+      fh.appendChild(el("div","note",S.pnEmptyHint));
+    } else {
+      // opened/answered are measured against DELIVERED, not sent: a push that
+      // never reached the device cannot be opened, and counting it in the
+      // denominator would quietly flatter every rate on this page.
+      var base=T.delivered||T.sent;
+      hbars(fh,[
+        {label:S.pnSent,      v1:T.sent,      c1:ramp[0], suffix:" · 100%"},
+        {label:S.pnDelivered, v1:T.delivered, c1:ramp[1], suffix:" · "+pct(T.delivered,T.sent)},
+        {label:S.pnOpened,    v1:T.opened,    c1:ramp[2], suffix:" · "+pct(T.opened,base)},
+        {label:S.pnAnswered,  v1:T.answered,  c1:ramp[3], suffix:" · "+pct(T.answered,base)}
+      ]);
+      Array.prototype.forEach.call(fh.querySelectorAll(".hrow"),function(r){ r.classList.add("wrap"); });
+      if(T.failed) fh.appendChild(el("div","note",S.pnFailed+" · "+fmt(T.failed)));
+    }
+
+    // ── the one question we ask ────────────────────────────────────────────
+    qh.innerHTML="";
+    hbars(qh,[
+      {label:S.pnQAsked,      v1:Q.asked||0,      c1:ramp[0], suffix:" · 100%"},
+      {label:S.pnQGot,        v1:Q.got_help||0,   c1:ramp[3], suffix:" · "+pct(Q.got_help,Q.asked)},
+      {label:S.pnQNot,        v1:Q.not_yet||0,    c1:ramp[2], suffix:" · "+pct(Q.not_yet,Q.asked)},
+      {label:S.pnQUnanswered, v1:Q.unanswered||0, c1:tok("--s8"), suffix:" · "+pct(Q.unanswered,Q.asked)}
+    ]);
+    Array.prototype.forEach.call(qh.querySelectorAll(".hrow"),function(r){ r.classList.add("wrap"); });
+
+    // ── per type ───────────────────────────────────────────────────────────
+    var types=N.by_type||[];
+    if(!types.length){
+      th.innerHTML=""; emptyState(th,S.pnEmpty,"bell");
+    } else {
+      pushTable(th,[
+        {label:S.pnColType, cls:"name"},
+        {label:S.pnColSent, cls:"num"},
+        {label:S.pnColDelivered, cls:"num"},
+        {label:S.pnColOpened, cls:"num"},
+        {label:S.pnColAnswered, cls:"num"},
+        {label:S.pnColFailed, cls:"num"},
+        {label:S.pnColLast, cls:"num dim"}
+      ], types.map(function(r){
+        var base=r.delivered||r.sent;
+        var nm=el("div");
+        nm.appendChild(el("div",null,pushTitleFor(r.type)));
+        nm.appendChild(el("div","pnkey",r.type));
+        return [
+          {node:nm},
+          fmt(r.sent),
+          {v:fmt(r.delivered)+" · "+pct(r.delivered,r.sent),
+           cls:(r.sent&&!r.delivered)? "num bad" : "num"},
+          fmt(r.opened)+" · "+pct(r.opened,base),
+          fmt(r.answered),
+          {v:fmt(r.failed), cls:r.failed? "num bad":"num dim"},
+          fmtDay(r.last_sent)
+        ];
+      }));
+    }
+
+    // ── failures ───────────────────────────────────────────────────────────
+    var errs=N.errors||[];
+    if(!errs.length){
+      eh.innerHTML=""; eh.appendChild(el("div","note",S.pnNoErr));
+    } else {
+      pushTable(eh,[
+        {label:S.pnColCode, cls:"name"},
+        {label:S.pnColCount, cls:"num"},
+        {label:S.pnColLast, cls:"num dim"}
+      ], errs.map(function(e){
+        return [
+          e.code,
+          // DeviceNotRegistered is an uninstall, not a fault; anything else is
+          {v:fmt(e.n), cls:(e.code==="DeviceNotRegistered")? "num dim" : "num bad"},
+          fmtDay(e.last_at)
+        ];
+      }));
+    }
+  }
+
   function renderArch(){
     if(!archBuilt){ archBuilt=true; }
     buildArch();
@@ -6489,7 +6725,11 @@
       // nobody is looking at; the previous pull is carried forward instead.
       body:JSON.stringify({days:fetchDays,chatDays:chatDays,window:RANGE,
                            metaDays: wantMeta? META_DAYS : 0,
-                           postsLimit: wantPosts? 500 : 0})
+                           postsLimit: wantPosts? 500 : 0,
+                           // always pulled: unlike Meta this is a local indexed
+                           // aggregate, and stale delivery numbers are exactly
+                           // the thing this tab exists to prevent
+                           notifDays: NOTIF_DAYS})
     }).then(function(r){
       clearTimeout(killer);
       if(r.status===401) throw new Error("unauthorized");
@@ -6514,6 +6754,7 @@
       // the cards tab is additive: a throw inside it must never take the whole
       // console down with it, the way an un-caught render would from here
       try{ renderPosts(); }catch(e){ console.error("renderPosts failed",e); }
+      try{ renderPush(); }catch(e){ console.error("renderPush failed",e); }
       paintIcons(); observePanels();
       syncChrome();  // the header/rail only get their real height once shown
     }).catch(function(e){
@@ -6595,6 +6836,12 @@
   // the payload only ever holds the days that were asked for
   segWire("metaRangeSeg",function(){
     META_DAYS=segVal("metaRangeSeg"); META_CAMP=null;
+    load().catch(function(){});
+  });
+  // the notification window is its own, like the campaigns one: the payload only
+  // ever holds the days that were asked for, so changing it must go back
+  segWire("pnWinSeg",function(){
+    NOTIF_DAYS=segVal("pnWinSeg");
     load().catch(function(){});
   });
   segWire("chatTypeSeg",renderChat);
