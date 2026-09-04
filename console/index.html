@@ -1408,7 +1408,7 @@
     </section>
     <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="pnErrTitle">כשלים במסירה</h2>
-      <div class="sub" data-i18n="pnErrSub"></div>
+      <div class="sub" id="pnErrSubLine" data-i18n="pnErrSub"></div>
       <div id="pnErrors"></div>
     </section>
   </div>
@@ -1856,6 +1856,7 @@
       arInsNoDrift:function(n){ return "כל סוגי ההתראה שנשלחו בפועל מתועדים כאן (<b>"+n+"</b> טקסטים). הדף תואם למציאות."; },
       arInsSplit:function(ops,mkt){ return "<b>"+ops+"</b> התראות תפעוליות מול <b>"+mkt+"</b> שיווקיות. החלוקה הזו היא קו משפטי - רק השיווקיות כפופות להסכמה ולמכסה השבועית."; },
       arInsHoldout:function(n){ return "ל-<b>"+n+"</b> שולחים שיווקיים יש קבוצת ביקורת פעילה - 10% מהקהל שלהם לא מקבל את ההודעה, כדי שאפשר יהיה למדוד אם היא בכלל עוזרת."; },
+      pnNoErrLine:function(d){ return "אף התראה לא נכשלה בחלון הזה. כל <b>"+d+"</b> שנמסרו הגיעו ליעדן."; },
       pnAllTime:"כל הזמן",
       pnTileSentNote:function(n){ return "על פני "+n+" שולחים"; },
       pnTileRateNote:function(a,b){ return a+" מתוך "+b+" · בלי המדדים החלשים"; },
@@ -2373,6 +2374,7 @@
       arInsNoDrift:function(n){ return "Every notification type actually sent is documented here (<b>"+n+"</b> texts). The page matches reality."; },
       arInsSplit:function(ops,mkt){ return "<b>"+ops+"</b> operational notifications against <b>"+mkt+"</b> marketing ones. That split is a LEGAL line - only the marketing ones are subject to consent and the weekly cap."; },
       arInsHoldout:function(n){ return "<b>"+n+"</b> marketing senders have a live control group - 10% of their audience does not get the message, so we can measure whether it helps at all."; },
+      pnNoErrLine:function(d){ return "No notification failed in this window. All <b>"+d+"</b> that were delivered reached their destination."; },
       pnAllTime:"all time",
       pnTileSentNote:function(n){ return "across "+n+" senders"; },
       pnTileRateNote:function(a,b){ return a+" of "+b+" · weak measures excluded"; },
@@ -7341,8 +7343,14 @@
 
     // ── failures ───────────────────────────────────────────────────────────
     var errs=N.errors||[];
+    // Zero failures is good news and deserves ONE line, not a full-height card
+    // with two paragraphs explaining an error code that is not on the screen.
+    // The explanation appears with the codes it explains, and not before.
+    var esub=$("pnErrSubLine");
+    if(esub) esub.classList.toggle("hidden", !errs.length);
     if(!errs.length){
-      eh.innerHTML=""; eh.appendChild(el("div","note",S.pnNoErr));
+      eh.innerHTML="";
+      eh.appendChild(insight("good", S.pnNoErrLine(fmt(T.delivered||0))));
     } else {
       pushTable(eh,[
         {label:S.pnColCode, cls:"name"},
