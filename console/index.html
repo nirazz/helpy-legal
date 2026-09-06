@@ -5830,7 +5830,7 @@
   // Bump this whenever BACKLOG below changes. It sits here, touching the array,
   // because a stamp kept anywhere else is a second thing to forget - and a
   // stamp that lies is worse than no stamp at all.
-  var BL_UPDATED = "2026-09-04";
+  var BL_UPDATED = "2026-09-06";
   var BACKLOG = [
     // ---- act now -----------------------------------------------------------
     {st:"now", cat:"legal", rice:null, eff:0.05, due:"2026-09-07",
@@ -5845,6 +5845,11 @@
      wE:"19 merges and 15 client files have piled up since 1.1.20, and two of them fix bugs that are still producing bad data every day. Store review is the long pole, so the clock only starts when you submit."},
 
     // ---- riding the next build ---------------------------------------------
+    {st:"build", cat:"product", rice:null, eff:1,
+     tH:"מסך הפעילות בעיצוב החדש",
+     tE:"The Activity tab in the new layout",
+     wH:"ניר אישר מוקאפ של Claude Design (06.09) ו-PR #268 מיישם אותו: הכותרת וקישור ההיסטוריה בסרגל העליון, ספירות חיות על הטאבים, גלולת סטטוס אחת בקצה הכרטיס במקום שורת טקסט שלישית, ושורת Helpy עברה מתחת לרשימה. אומת בסימולטור באור ובכהה; אנדרואיד וגלולות הסגירה עדיין לא נראו על מכשיר.",
+     wE:"Nir approved a Claude Design mockup (06.09) and PR #268 implements it: title + history link in the nav bar, live counts on the segments, one status pill at the card edge instead of a third text line, and the Helpy row moved below the list. Simulator-verified light + dark; Android and the closed-post pills not yet seen on a device."},
     {st:"build", cat:"sec", rice:null, eff:0,
      tH:"הלקוח מפסיק לכתוב את שם העיר לפוסט",
      tE:"The client stops writing the post's city",
