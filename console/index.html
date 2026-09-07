@@ -5882,6 +5882,16 @@
      wE:"A Skip pill that outweighed the primary CTA, long titles pushing the requester row off the card, the colored status-card option, real feed totals, and correct routing for the support-reply push."},
 
     // ---- queued ------------------------------------------------------------
+    {st:"next", cat:"sec", rice:null, eff:0.5,
+     tH:"לנעול את המיקום המדויק של פוסטים (החצי השני של דליפת ה-PII)",
+     tE:"Lock the exact post coordinates (the PII lockdown's second half)",
+     wH:"P1. הפרופילים ננעלו ב-16.08, אבל help_requests עדיין מעניקה SELECT ברמת הטבלה ל-authenticated, כולל location_lat/lng - המיקום המדויק של הפוסט מבטל את הטשטוש של קילומטר. הנעילה חיכתה לבילד שבו ProfileScreen מפסיק לקרוא select('*'); 1.1.21 חי בשתי החנויות מ-06.09, אז התנאי התקיים. הצעדים: להעלות את שער הגרסה, REVOKE ברמת הטבלה + GRANT על כל העמודות חוץ מהמיקום, אימות תלת-שכבתי כמו ב-PR #178, ולהפוך את בדיקה 26 לדרוש NULL בשתי הטבלאות.",
+     wE:"P1. Profiles were locked on 16.08, but help_requests still grants table-level SELECT to authenticated, location_lat/lng included - an exact post coordinate defeats the 1 km fuzz. The lock waited for the build in which ProfileScreen stops calling select('*'); 1.1.21 has been live on both stores since 06.09, so the condition is met. Steps: raise the version gate, table-level REVOKE + GRANT on every column but the coordinates, the same 3-layer verification as PR #178, then flip health check 26 to require NULL on both tables."},
+    {st:"next", cat:"infra", rice:null, eff:0.25,
+     tH:"לקצר את CLAUDE.md מתחת ל-150k תווים",
+     tE:"Trim CLAUDE.md back under 150k characters",
+     wH:"P2. הקובץ עומד על 157k, מעל תקרת ההקשר של 150k שכבר נפגעה פעם אחת. הסבב הקודם (04.09) חתך מ-190k ל-140k, ומאז ערכי שחרור חדשים העלו אותו חזרה. אותה שיטה: לקפל ערכי ⏳ ששוחררו (לבדוק את ה-sha מול ענף הבילד, לא את הכותרת), להעביר נרטיב ל-SESSION_HISTORY.md ופרטים לקבצי זיכרון. שום דבר לא נמחק.",
+     wE:"P2. The file sits at 157k, above the 150k context ceiling that has already been hit once. The previous pass (04.09) cut it from 190k to 140k, and new release entries have since pushed it back up. Same method: fold ⏳ entries that have shipped (test the sha against the build branch, not the headline), move narrative to SESSION_HISTORY.md and detail to memory files. Nothing gets deleted."},
     {st:"next", cat:"growth", rice:1050, eff:0,
      tH:"לרכז את כל תקציב הפרסום בעיר אחת",
      tE:"Concentrate the entire ad budget on one city",
@@ -6103,6 +6113,11 @@
      wE:"Dark mode, the manual-location screen and everything that changed since 1.1.20 were checked on iPhone only. Android is about half the active users, and everything said about it so far is reasoning from the code rather than looking at a screen."},
 
     // ---- done --------------------------------------------------------------
+    {st:"done", cat:"product", rice:null, eff:0.5,
+     tH:"משתמש שהטוקן שלו מת נעלם מהאפליקציה באותה נשימה",
+     tE:"A user whose push token died leaves the app in the same breath",
+     wH:"07.09, PR #271, שרת בלבד, בלי בילד. נמדד: 29 מתוך 56 שיחות היו חד-צדדיות, והפוש על הודעה לא היה הסיבה - הנמענים עזבו, 5 מהם בעלי הצעות שהפוסט שלהם עדיין הוצג. עכשיו טוקן מת מסתיר את הפוסטים מהפיד וסוגר חדרים שבהם המשתמש מעולם לא כתב. הסתרה, לא מחיקה: התקנה מחדש או פתיחה של האפליקציה מחזירות אותו לבד. 63 משתמשים, 11 פוסטים ו-2 חדרים טופלו בבקפיל.",
+     wE:"07.09, PR #271, server-only, no build. Measured: 29 of 56 chats were one-sided, and the message push was not the cause - the recipients were gone, 5 of them offer owners whose post was still showing. A dead token now hides the user's posts from the feed and closes rooms they never wrote in. Hiding, not deletion: a reinstall or an app open brings them back on their own. 63 users, 11 posts and 2 rooms handled by the backfill."},
     {st:"done", cat:"sec", rice:null, eff:0,
      tH:"נסגרה דליפת המידע האישי בפרופילים",
      tE:"The profiles PII exposure was closed",
