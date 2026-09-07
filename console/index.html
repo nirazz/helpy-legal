@@ -5830,7 +5830,7 @@
   // Bump this whenever BACKLOG below changes. It sits here, touching the array,
   // because a stamp kept anywhere else is a second thing to forget - and a
   // stamp that lies is worse than no stamp at all.
-  var BL_UPDATED = "2026-09-06";
+  var BL_UPDATED = "2026-09-07";
   var BACKLOG = [
     // ---- act now -----------------------------------------------------------
     {st:"now", cat:"legal", rice:null, eff:0.05, due:"2026-09-07",
@@ -5845,6 +5845,11 @@
      wE:"19 merges and 15 client files have piled up since 1.1.20, and two of them fix bugs that are still producing bad data every day. Store review is the long pole, so the clock only starts when you submit."},
 
     // ---- riding the next build ---------------------------------------------
+    {st:"build", cat:"product", rice:null, eff:1,
+     tH:"פונט Heebo בכל האפליקציה",
+     tE:"Heebo as the app-wide typeface",
+     wH:"ניר השווה את המוקאפ לאפליקציה ובחר ב-Heebo (07.09, PR #269). שינוי נייטיב דרך תוסף expo-font, אז הוא מחכה לבילד. ממצא צדדי: ביטול הגדלת הטקסט של המערכת לא עבד מאז RN 0.81, והבילד הזה מחזיר אותו - משתמשים עם טקסט גדול יראו את האפליקציה מתכווצת לגודל העיצוב. אומת ב-iOS על ארבעה טאבים ובאנדרואיד על מסך הכניסה בלבד.",
+     wE:"Nir compared the mockup to the app and chose Heebo (07.09, PR #269). A native change through the expo-font plugin, so it waits for a build. Side finding: the app-wide block on system text scaling had been a no-op since RN 0.81 and this build restores it - large-text users will see the app shrink back to design size. Verified on iOS across four tabs, on Android on the auth screen only."},
     {st:"build", cat:"product", rice:null, eff:1,
      tH:"מסך הפעילות בעיצוב החדש",
      tE:"The Activity tab in the new layout",
