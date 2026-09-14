@@ -7771,8 +7771,11 @@
         s.textContent="";
         if(sub) s.appendChild(document.createTextNode(sub+(dl!=null? " · " : "")));
         if(dl!=null){
+          // number + phrase travel as ONE flex item, so a wrap never splits them
+          var wrap=el("span"); wrap.style.whiteSpace="nowrap";
           var n=el("span",null,dl); n.setAttribute("dir","ltr"); n.style.unicodeBidi="isolate";
-          s.appendChild(n); s.appendChild(document.createTextNode(" "+S.brVsYest));
+          wrap.appendChild(n); wrap.appendChild(document.createTextNode(" "+S.brVsYest));
+          s.appendChild(wrap);
         }
         s.style.flexWrap="wrap";
       }
