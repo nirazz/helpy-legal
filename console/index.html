@@ -805,6 +805,29 @@
     .blitem .blmeta .blcap { margin-top:0; }
     .blitem .blmeta .bleff { margin-top:0; padding-top:0; border-top:0; }
   }
+  @media (max-width:720px){
+    /* A filter row made of labelled GROUPS (cards, notifications, backlog,
+       campaigns) does not fit a one-line shelf: four groups shrank to ~85px
+       each and their chips spilled across one another. Each group becomes
+       its own full-width row - label on the start edge, the chips scroll
+       sideways inside it - so every label is readable and every chip
+       reachable. The plain range shelf (no groups) keeps scrolling as one. */
+    .filters:has(.blfgrp) { flex-wrap:wrap; overflow:visible;
+      -webkit-mask-image:none; mask-image:none; gap:8px; }
+    .filters .blfgrp { width:100%; box-sizing:border-box; flex:0 0 100%;
+      flex-wrap:nowrap; padding:6px 8px 6px 8px; }
+    .filters .blfgrp .cap { flex-shrink:0; min-width:38px; font-size:12px; }
+    .filters .blfgrp .seg { flex:1 1 auto; min-width:0; flex-wrap:nowrap;
+      overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch;
+      -webkit-mask-image:linear-gradient(to right, transparent 0, #000 10px,
+                          #000 calc(100% - 10px), transparent 100%);
+      mask-image:linear-gradient(to right, transparent 0, #000 10px,
+                  #000 calc(100% - 10px), transparent 100%); }
+    .filters .blfgrp .seg::-webkit-scrollbar { display:none; }
+    .filters .blfgrp .seg button { flex-shrink:0; white-space:nowrap; }
+    .filters .blfgrp.checks { flex-wrap:wrap; }
+    .filters .fsep { display:none; }
+  }
   /* ---- phone ----------------------------------------------------------
      This console is read from a phone more than from a desktop, so the small
      screen is a first-class layout, not a fallback. */
@@ -7738,18 +7761,29 @@
 
     // ---- the day in eight tiles ------------------------------------------
     var T=$("brTiles");
-    var delta=function(a,b){ var d=(a||0)-(b||0); return (d>=0?"+":"")+fmt(d)+" "+S.brVsYest; };
-    function t(label,val,sub,hero){
+    // the delta is a signed number inside RTL prose - without isolation
+    // "-8" renders as "8-" on the phone; it travels as its own LTR span
+    var delta=function(a,b){ var d=(a||0)-(b||0); return (d>=0?"+":"")+fmt(d); };
+    function t(label,val,sub,hero,dl){
       var x=tile(label, fmt(val)); if(hero) x.classList.add("hero");
-      var s=x.querySelector(".sub"); if(s && sub){ s.textContent=sub; }
+      var s=x.querySelector(".sub");
+      if(s){
+        s.textContent="";
+        if(sub) s.appendChild(document.createTextNode(sub+(dl!=null? " · " : "")));
+        if(dl!=null){
+          var n=el("span",null,dl); n.setAttribute("dir","ltr"); n.style.unicodeBidi="isolate";
+          s.appendChild(n); s.appendChild(document.createTextNode(" "+S.brVsYest));
+        }
+        s.style.flexWrap="wrap";
+      }
       T.appendChild(x);
     }
     t(S.brTDone, D.completed, S.brNorth, true);
-    t(S.brTSignups, D.signups, "iOS "+fmt(D.signups_ios)+" · Android "+fmt(D.signups_android)+" · "+delta(D.signups,P.signups));
-    t(S.brTSeen, D.seen, delta(D.seen,P.seen));
-    t(S.brTPosts, (D.new_requests||0)+(D.new_offers||0), S.brReqOff(fmt(D.new_requests),fmt(D.new_offers))+" · "+delta((D.new_requests||0)+(D.new_offers||0),P.posts));
-    t(S.brTSwipes, D.swipes, S.brAccepted(fmt(D.accepted))+" · "+delta(D.swipes,P.swipes));
-    t(S.brTMsgs, D.messages, S.brSenders(fmt(D.chat_senders),fmt(D.chat_rooms))+" · "+delta(D.messages,P.messages));
+    t(S.brTSignups, D.signups, "iOS "+fmt(D.signups_ios)+" · Android "+fmt(D.signups_android), false, delta(D.signups,P.signups));
+    t(S.brTSeen, D.seen, "", false, delta(D.seen,P.seen));
+    t(S.brTPosts, (D.new_requests||0)+(D.new_offers||0), S.brReqOff(fmt(D.new_requests),fmt(D.new_offers)), false, delta((D.new_requests||0)+(D.new_offers||0),P.posts));
+    t(S.brTSwipes, D.swipes, S.brAccepted(fmt(D.accepted)), false, delta(D.swipes,P.swipes));
+    t(S.brTMsgs, D.messages, S.brSenders(fmt(D.chat_senders),fmt(D.chat_rooms)), false, delta(D.messages,P.messages));
     t(S.brTGone, (D.deletions||0)+(D.posts_deleted||0), S.brGoneSub(fmt(D.deletions),fmt(D.posts_deleted)));
     t(S.brTSafety, (D.reports||0)+(D.blocks||0), S.brSafetySub(fmt(D.reports),fmt(D.blocks)));
 
