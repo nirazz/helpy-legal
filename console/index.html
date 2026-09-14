@@ -1544,12 +1544,17 @@
       <div class="sub" data-i18n="pnHoSub"></div>
       <div id="pnHoldout"></div>
     </section>
-    <div class="sechead" style="--sec-c:var(--s5)" data-i18n="pnSecQuestion">3 · השאלה היחידה שאנחנו שואלים</div>
+    <div class="sechead" style="--sec-c:var(--s5)" data-i18n="pnSecQuestion">3 · השאלות שאנחנו שואלים</div>
     <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="pnQTitle">השאלה ששאלנו</h2>
       <div class="sub" data-i18n="pnQSub"></div>
       <div id="pnQuestion"></div>
       <div id="pnReasons"></div>
+    </section>
+    <section class="panel wide" style="opacity:1;transform:none">
+      <h2 data-i18n="pnStuckTitle">השאלה השנייה: הודעה שנשארה בלי מענה - הכל בסדר?</h2>
+      <div class="sub" data-i18n="pnStuckSub"></div>
+      <div id="pnStuck"></div>
     </section>
     <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="pnTypesTitle">מסירה לפי סוג התראה</h2>
@@ -2003,7 +2008,7 @@
       pnInsHoRunning:function(all,held){ return "קבוצת ביקורת פעילה על <b>"+all+"</b> שולחים שיווקיים ("+held+" אנשים לא קיבלו עד כה). עוד אין מספיק נתונים למסקנה - זה תקין, ובינתיים כל שיעור על המסך הוא תיאור ולא הוכחה."; },
       pnSecWorks:"1 · האם ההתראות משיגות משהו",
       pnSecDelivery:"2 · האם הן בכלל הגיעו",
-      pnSecQuestion:"3 · השאלה היחידה שאנחנו שואלים",
+      pnSecQuestion:"3 · השאלות שאנחנו שואלים",
       pnWinTag:function(d){ return d+" ימים אחרונים"; },
       // The chip states what the LOG covers, never what the button asked for.
       pnWinReal:function(span,since){ return "הנתונים מכסים "+span+" בלבד · מאז "+since; },
@@ -2065,6 +2070,12 @@
       pnQGot:"ענו: כן, קיבלתי",
       pnQNot:"ענו: עוד לא",
       pnQUnanswered:"לא ענו כלל",
+      pnStuckTitle:"השאלה השנייה: הודעה שנשארה בלי מענה - הכל בסדר?",
+      pnStuckSub:"נשלחת ביד, מצוות Helpy, למי שמעולם לא כתב/ה בחדר שבו הודעה חיכתה 3-14 יום. תשובה = מילה בשרשור, או שהאדם חזר וכתב לשכן - השני הוא התוצאה הטובה יותר. קו מחיקה: פחות מ-10% אחרי 30 שאלות.",
+      pnStuckEmpty:"עדיין לא נשאל אף אחד.",
+      pnStuckLine:function(a,t,r,p){ return "<b>"+a+"</b> נשאלו · <b>"+t+"</b> ענו בשרשור · <b>"+r+"</b> חזרו לשיחה · שיעור מענה <b>"+p+"</b>"; },
+      pnStuckColWhen:"מתי", pnStuckColWho:"מי", pnStuckColAbout:"על", pnStuckColStatus:"מצב", pnStuckColAnswer:"התשובה",
+      pnStuckAnswered:"ענה/תה", pnStuckWrote:"חזר/ה לשיחה", pnStuckWaiting:"ממתין/ה", pnStuckSilent:"לא ענה/תה (7 ימים)", pnStuckNoPush:"ללא פוש",
       pnTypesTitle:"מסירה לפי סוג התראה",
       pnTypesSub:"אותם מספרים, מפורקים לפי סוג. אחוז הפתיחה מחושב מתוך מה שנמסר, לא מתוך מה שנשלח.",
       pnErrTitle:"כשלים במסירה",
@@ -2588,7 +2599,7 @@
       pnInsHoRunning:function(all,held){ return "A control group is running on <b>"+all+"</b> marketing senders ("+held+" people held back so far). Not enough data for a verdict yet - that is expected, and until then every rate on this screen is a description, not proof."; },
       pnSecWorks:"1 · Do the notifications achieve anything",
       pnSecDelivery:"2 · Did they even arrive",
-      pnSecQuestion:"3 · The one question we ask",
+      pnSecQuestion:"3 · The questions we ask",
       pnWinTag:function(d){ return "last "+d+" days"; },
       pnWinReal:function(span,since){ return "data covers "+span+" only · since "+since; },
       pnWinHours:function(h){ return h===1? "1 hour" : h+" hours"; },
@@ -2650,6 +2661,12 @@
       pnQGot:"Answered: yes, I did",
       pnQNot:"Answered: not yet",
       pnQUnanswered:"Never answered",
+      pnStuckTitle:"The second question: an unanswered message - everything okay?",
+      pnStuckSub:"Sent by hand, from the Helpy team, to whoever never wrote in a room where a message waited 3-14 days. An answer = a word in the thread, or the person went back and wrote to the neighbour - the second is the better outcome. Kill line: under 10% after 30 asks.",
+      pnStuckEmpty:"Nobody has been asked yet.",
+      pnStuckLine:function(a,t,r,p){ return "<b>"+a+"</b> asked · <b>"+t+"</b> answered in the thread · <b>"+r+"</b> went back to the chat · answer rate <b>"+p+"</b>"; },
+      pnStuckColWhen:"When", pnStuckColWho:"Who", pnStuckColAbout:"About", pnStuckColStatus:"Status", pnStuckColAnswer:"Answer",
+      pnStuckAnswered:"Answered", pnStuckWrote:"Went back to the chat", pnStuckWaiting:"Waiting", pnStuckSilent:"No answer (7 days)", pnStuckNoPush:"no push",
       pnTypesTitle:"Delivery by notification type",
       pnTypesSub:"The same numbers, split by type. Open rate is out of what was DELIVERED, not out of what was sent.",
       pnErrTitle:"Delivery failures",
@@ -8121,6 +8138,42 @@
                  verdict ];
       }));
       hh.appendChild(el("div","note",S.pnHoNote));
+    })();
+
+    // ── the second question: an unanswered message - everything okay? ─────
+    // Payload-level (DATA.stuck_chat), not under the windowed notifications
+    // object: the batches are small and hand-sent, and a discovery readout
+    // must never lose its early rows to a range.
+    (function(){
+      var sh=$("pnStuck"); if(!sh) return;
+      sh.innerHTML="";
+      var R=(DATA && DATA.stuck_chat)||[];
+      if(!R.length){ sh.appendChild(el("div","note",S.pnStuckEmpty)); return; }
+      var asked=R.length,
+          inThread=R.filter(function(r){ return !!r.answered_at; }).length,
+          wrote=R.filter(function(r){ return !!r.wrote_in_room_at && !r.answered_at; }).length;
+      sh.appendChild(insight(inThread+wrote ? "good" : "info",
+        S.pnStuckLine(fmt(asked), fmt(inThread), fmt(wrote), pct(inThread+wrote, asked))));
+      var dd=function(iso){ var d=new Date(iso); return String(d.getDate()).padStart(2,"0")+"."+String(d.getMonth()+1).padStart(2,"0"); };
+      pushTable(sh,[
+        {label:S.pnStuckColWhen, cls:"dim"},
+        {label:S.pnStuckColWho, cls:"name"},
+        {label:S.pnStuckColAbout, cls:"dim"},
+        {label:S.pnStuckColStatus},
+        {label:S.pnStuckColAnswer}
+      ], R.map(function(r){
+        var status, cls;
+        if(r.answered_at){ status=S.pnStuckAnswered; cls="good"; }
+        else if(r.wrote_in_room_at){ status=S.pnStuckWrote; cls="good"; }
+        else if(Date.now()-new Date(r.asked_at).getTime() > 7*86400000){ status=S.pnStuckSilent; cls="dim"; }
+        else { status=S.pnStuckWaiting; cls="warn"; }
+        var who=el("div");
+        who.appendChild(el("div",null,r.user_name||"-"));
+        who.appendChild(el("div","pnkey",(r.sender_name||"-")+(r.pushed?"":" · "+S.pnStuckNoPush)));
+        var ans=r.answer ? String(r.answer) : "";
+        if(ans.length>120) ans=ans.slice(0,119)+"…";
+        return [ dd(r.asked_at), {node:who}, String(r.post_title||"").slice(0,40), {v:status, cls:cls}, ans||"-" ];
+      }));
     })();
 
     // ── the one question we ask ────────────────────────────────────────────
