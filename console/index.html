@@ -8654,6 +8654,17 @@
   segWire("tabs",function(){
     switchTab(document.querySelector("#tabs button.on").getAttribute("data-v"));
   });
+  // Deep link: help-y.com/console#ads opens that tab directly. The morning
+  // digest's cost-per-signup line points here (2026-09-14), so a reader who
+  // never had the explanation lands on the panel that explains itself. Only a
+  // hash that names a tab counts - the SSO callback also arrives in the hash.
+  (function(){
+    var h=(location.hash||"").replace("#","");
+    var btn=h && document.querySelector('#tabs button[data-v="'+h+'"]');
+    if(!btn) return;
+    document.querySelectorAll("#tabs button").forEach(function(b){ b.classList.toggle("on", b===btn); });
+    switchTab(h);
+  })();
   ["chatSearch","hideMock","onlyOneWay","onlyPhone"].forEach(function(id){
     $(id).addEventListener("input",renderChat);
   });
