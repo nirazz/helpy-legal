@@ -6101,6 +6101,11 @@
      wE:"07.09, PR #270, merged. Came out of the question why everyone was on an old version: the banner had no event at all, so its effect could not be separated from the store's background auto-update, which is what moves most people. Three events: shown / cta / dismissed. Reading rule: the banner re-appears on every launch until dismissed, so count people, never events. Side finding that corrected a number: app_version reports the last app OPEN, not what is installed."},
 
     // ---- queued ------------------------------------------------------------
+    {st:"next", cat:"product", rice:null, eff:0.5,
+     tH:"מסך התשובה למשתמש נפתח לאט מהפוש - למדוד, ואז שני תיקונים זולים",
+     tE:"The admin reply screen opens slowly from the push - measure, then two cheap fixes",
+     wH:"ניר (14.09): לחץ על הפוש 'משתמש כתב לך' וחיכה הרבה עד שהמסך נטען. השרת נבדק ונקי: ארבע הקריאות של המסך רצו במקביל ונגמרו תוך פחות משנייה. ההמתנה היא בטלפון, בין הלחיצה לקריאות, ואין לה טלמטריה. קודם למדוד (לחיצה → מסך נראה → נמען זוהה), ואז: להעביר את שם המשתמש ב-data של הפוש כדי לבחור אותו מיד ולטעון את השרשור במקביל במקום לחכות לרשימת הפניות; ולא לטעון את כל רשימת 900 המשתמשים בפתיחה כשהנמען כבר ידוע, רק כשפותחים את החיפוש. שינוי לקוח קטן, בילד הבא. החלק הגדול - עליית האפליקציה מקור - הוא פריט ה-cold-start הקיים.",
+     wE:"Nir (14.09): tapped the 'a user wrote to you' push and waited a long time for the screen. The server was checked and is clean: the screen's four calls ran in parallel and finished under a second. The wait is on the phone, between the tap and those calls, and it has no telemetry. Measure first (tap → screen visible → recipient resolved), then: carry the user's name in the push data so the screen selects them at once and loads the thread in parallel instead of waiting for the recent-replies list; and stop loading the full 900-user roster on open when the recipient is already known - only when the search is opened. Small client change, next build. The big part - the app's cold launch - is the existing cold-start item."},
     {st:"next", cat:"product", rice:null, eff:2,
      tH:"לשאול את מי שלא ענה בצ'אט למה - בנוי, ממתין לאישור המשלוח הראשון",
      tE:"Ask the person who left a chat unanswered why - built, first batch awaits a GO",
