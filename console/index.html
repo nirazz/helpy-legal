@@ -3247,7 +3247,7 @@
       daily.forEach(function(r){
         var d=new Date(String(r.d).slice(0,10)+"T00:00:00");
         var w=new Date(d); w.setDate(d.getDate()-((d.getDay()+6)%7));
-        var k=w.toISOString().slice(0,10);
+        var k=localYmd(w);
         counts[k]=(counts[k]||0)+1;
       });
       wk=wk.map(function(r){
@@ -3639,7 +3639,7 @@
     function eventsFor(weekStart){
       var d0=String(weekStart).slice(0,10);
       var d1=new Date(d0+"T00:00:00"); d1.setDate(d1.getDate()+7);
-      var d1s=d1.toISOString().slice(0,10);
+      var d1s=localYmd(d1);
       return ANNOT.filter(function(a){ return a.d>=d0 && a.d<d1s; })
                   .map(function(a){ return LANG==="he"? a.he : a.en; });
     }
@@ -3899,12 +3899,19 @@
     }
     return segVal("rangeSeg");
   }
+  // YYYY-MM-DD of a Date in LOCAL time. Never toISOString() a local-midnight
+  // Date: it converts to UTC first, and in Israel (UTC+2/+3) that is 21:00 or
+  // 22:00 the previous evening - every weekly label read Sunday for a Monday bucket.
+  function localYmd(d){
+    var m=d.getMonth()+1, day=d.getDate();
+    return d.getFullYear()+"-"+(m<10?"0":"")+m+"-"+(day<10?"0":"")+day;
+  }
   function byWeek(rows, keys){
     var out=[], cur=null, curKey="";
     (rows||[]).forEach(function(r){
       var d=new Date(String(r.d).slice(0,10)+"T00:00:00");
       var wk=new Date(d); wk.setDate(d.getDate()-((d.getDay()+6)%7)); // Monday
-      var wkStr=wk.toISOString().slice(0,10);
+      var wkStr=localYmd(wk);
       if(wkStr!==curKey){ cur={d:wkStr}; keys.forEach(function(key){ cur[key]=0; }); out.push(cur); curKey=wkStr; }
       keys.forEach(function(key){ cur[key]+=(+r[key]||0); });
     });
@@ -6739,7 +6746,7 @@
 
     // ---- what needs attention: dated items that have gone past their date --
     (function(){
-      var rows=[], today=new Date().toISOString().slice(0,10);
+      var rows=[], today=localYmd(new Date());
       var open=BACKLOG.filter(function(b){ return b.st!=="done"; });
       var overdue=open.filter(function(b){ return b.due && b.due < today; });
       var soon=open.filter(function(b){ return b.due && b.due >= today; });
