@@ -235,6 +235,21 @@
      wraps on its own */
   #briefView .brk .brbar { flex:1 0 100%; margin-top:5px; }
 
+  #briefView .brgo { all:unset; box-sizing:border-box; cursor:pointer;
+                     display:inline-flex; align-items:center; gap:7px;
+                     margin-top:10px; padding:8px 13px; border-radius:9px;
+                     border:1px solid var(--hairline); color:var(--s1);
+                     font-size:12.5px; font-weight:600; line-height:1;
+                     transition:background .15s ease, border-color .15s ease,
+                                transform .12s ease; }
+  #briefView .brgo:hover { background:var(--wash1); border-color:rgba(99,102,241,0.35); }
+  #briefView .brgo:active { transform:translateY(1px); }
+  #briefView .brgo:focus-visible { outline:2px solid var(--s1); outline-offset:2px; }
+  #briefView .brgo .ar { font-style:normal; font-size:14px; line-height:1;
+                         transition:transform .15s ease; }
+  #briefView .brgo:hover .ar { transform:translateX(3px); }
+  html[dir="rtl"] #briefView .brgo:hover .ar { transform:translateX(-3px); }
+
   /* ---- stat tiles ---- */
   .tiles { display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
            gap:12px; margin-bottom:8px; }
@@ -2246,7 +2261,7 @@
       brAdsSpend:"הוצאה", brAdsSignups:"הרשמות אמיתיות", brAdsCost:"להרשמה",
       brAds7:function(spend,su,cost){ return "7 ימים מלאים: ₪"+spend+" · "+su+" הרשמות · "+(cost!=null? "₪"+cost+" להרשמה" : "-"); },
       brAdsNone:"נתוני Meta לא נטענו בטעינה הזו - הלשונית קמפיינים תמשוך אותם ברענון.",
-      brDeskNone:"אין כרטיסים במצב «עכשיו» או «בילד הבא».", brDeskGo:"לבקלוג ←", brDue:"יעד",
+      brDeskNone:"אין כרטיסים במצב «עכשיו» או «בילד הבא».", brDeskGo:"לבקלוג", brDue:"יעד",
       brStNow:"עכשיו", brStBuild:"הבילד הבא",
       brInsSupport:function(n){ return n==="1"? "<b>אדם אחד</b> כתב/ה לצוות Helpy ולא קיבל/ה תשובה אנושית" : "<b>"+n+"</b> אנשים כתבו לצוות Helpy ולא קיבלו תשובה אנושית"; },
       brInsPending:function(n){ return "<b>"+n+"</b> פניות מחכות להחלטה של בעל/ת הבקשה יותר מיממה"; },
@@ -2845,7 +2860,7 @@
       brAdsSpend:"Spend", brAdsSignups:"Real signups", brAdsCost:"Per signup",
       brAds7:function(spend,su,cost){ return "7 full days: ₪"+spend+" · "+su+" signups · "+(cost!=null? "₪"+cost+" per signup" : "-"); },
       brAdsNone:"Meta data was not pulled on this load - the Campaigns tab fetches it on refresh.",
-      brDeskNone:"No cards in \"now\" or \"next build\".", brDeskGo:"To the backlog →", brDue:"due",
+      brDeskNone:"No cards in \"now\" or \"next build\".", brDeskGo:"To the backlog", brDue:"due",
       brStNow:"now", brStBuild:"next build",
       brInsSupport:function(n){ return n==="1"? "<b>One person</b> wrote to the Helpy team and got no human reply" : "<b>"+n+"</b> people wrote to the Helpy team and got no human reply"; },
       brInsPending:function(n){ return "<b>"+n+"</b> offers have waited over a day for the request owner's decision"; },
@@ -8013,7 +8028,9 @@
       if(c.due){ var late=c.due<todayIL; r.appendChild(el("span","due"+(late?" late":""), S.brDue+" "+fmtDay(c.due))); }
       dh.appendChild(r);
     });
-    var go=el("button","act",S.brDeskGo); go.type="button"; go.style.marginTop="8px";
+    var go=el("button","brgo"); go.type="button";
+    go.appendChild(el("span",null,S.brDeskGo));
+    go.appendChild(el("i","ar", LANG==="he"? "\u2190" : "\u2192"));
     go.addEventListener("click",function(){
       document.querySelectorAll("#tabs button").forEach(function(b){ b.classList.toggle("on", b.getAttribute("data-v")==="backlog"); });
       switchTab("backlog");
