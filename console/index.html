@@ -161,14 +161,18 @@
 
   /* ---- morning brief ---- */
   #brGreet { font-size:22px; font-weight:800; letter-spacing:-.01em; }
-  .brrow { display:flex; gap:10px; align-items:baseline; padding:8px 0; font-size:13.5px;
-           border-bottom:1px solid var(--grid); flex-wrap:wrap; }
+  .brrow { display:grid; grid-template-columns:1fr auto auto; gap:2px 10px;
+           align-items:baseline; padding:8px 0; font-size:13.5px;
+           border-bottom:1px solid var(--grid); }
+  .brrow .who  { grid-column:1; min-width:0; }
+  .brrow .when { grid-column:2; }
+  .brrow .act  { grid-column:3; }
+  .brrow .what { grid-column:1 / -1; }
   .brrow:last-child { border-bottom:0; }
   .brrow .who { font-weight:700; unicode-bidi:isolate; }
   .brrow .when { color:var(--muted); font-size:12px; white-space:nowrap;
                  font-variant-numeric:tabular-nums; }
-  .brrow .what { flex:1 1 220px; min-width:0; color:var(--ink2); overflow:hidden;
-                 text-overflow:ellipsis; unicode-bidi:isolate; }
+  .brrow .what { min-width:0; color:var(--ink2); unicode-bidi:isolate; }
   .brrow .act { all:unset; cursor:pointer; color:var(--s1); font-weight:600; font-size:12.5px; white-space:nowrap; }
   .brrow .act:hover { text-decoration:underline; }
   .brmore { font-size:12px; color:var(--muted); padding-top:6px; }
@@ -218,6 +222,18 @@
   #briefView .brdesk { padding:6px 0; }
   #briefView .ins { padding:6px 0; }
   #briefView .ins.lead { padding:8px 0; }
+
+  /* The waiting grid held four panels of very different heights, so a 2-col
+     grid left a hole under the short one - 234px of empty background in the
+     measured case. Columns pack instead of aligning rows: no holes, and a
+     panel is never split across a column. */
+  #brWait { display:block; column-count:2; column-gap:14px; }
+  #briefView #brWait > .panel { margin-bottom:14px; break-inside:avoid;
+                                -webkit-column-break-inside:avoid; }
+  @media (max-width:880px){ #brWait { column-count:1; } }
+  /* a bar is a full-width line under its number, never a third column that
+     wraps on its own */
+  #briefView .brk .brbar { flex:1 0 100%; margin-top:5px; }
 
   /* ---- stat tiles ---- */
   .tiles { display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
@@ -7774,6 +7790,12 @@
   // text way to drop a Hebrew name into an English sentence (or the reverse)
   // without the sentence around it flipping. Works in textContent - no markup.
   function iso(t){ return "\u2068"+(t==null? "" : t)+"\u2069"; }
+  // <bdi> = isolated AND dir=auto, on an INLINE box: the string orders itself,
+  // the line it sits on still starts where the page starts. dir=auto on the
+  // CELL instead made a Hebrew title right-align inside an English page (and
+  // the reverse), so a list of mixed titles came out ragged on both edges.
+  function bdi(t){ var b=document.createElement("bdi");
+                   b.textContent = t==null? "" : String(t); return b; }
   function brIL(t){ return new Date(t).toLocaleDateString("en-CA",{timeZone:"Asia/Jerusalem"}); }
   function brHM(iso){
     return new Date(iso).toLocaleTimeString(LANG==="he"?"he-IL":"en-GB",
@@ -7788,17 +7810,20 @@
     opt=opt||{};
     var r=el("div","brrow");
     // A name or a post title is free user text - Hebrew or English - so it
-    // picks its own direction. A sentence we composed keeps the UI direction.
-    if(who){ var w=el("span","who",who); w.setAttribute("dir","auto"); r.appendChild(w); }
+    // picks its own direction inside a bdi. A sentence we composed already
+    // carries FSI/PDI around the names and keeps the UI direction.
+    if(who){ var w=el("span","who"); w.appendChild(bdi(who)); r.appendChild(w); }
     if(when) r.appendChild(el("span","when",when));
-    if(what){ var t=el("span","what",what);
-              if(opt.autoWhat) t.setAttribute("dir","auto");
+    if(what){ var t=el("span","what");
+              if(opt.autoWhat) t.appendChild(bdi(what)); else t.textContent=what;
               r.appendChild(t); }
     if(act){ var b=el("button","act",act.label); b.type="button"; b.addEventListener("click",act.fn); r.appendChild(b); }
     host.appendChild(r); return r;
   }
   function brKV(host, label, html){
-    var r=el("div","brk"); r.appendChild(el("span","lbl",label));
+    var r=el("div","brk");
+    // an empty label used to keep its 120px min-width and indent the value
+    if(label) r.appendChild(el("span","lbl",label));
     var v=el("span"); v.innerHTML=html; r.appendChild(v); // trusted: dictionary + numbers
     host.appendChild(r); return r;
   }
