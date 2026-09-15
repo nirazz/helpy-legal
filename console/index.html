@@ -202,6 +202,23 @@
   .brdesk .due { color:var(--muted); font-size:12px; white-space:nowrap; }
   .brdesk .due.late { color:var(--bad-text); font-weight:700; }
 
+  /* Density, scoped to this tab. Two things made the brief airier than any
+     other tab: .panel carries margin-bottom:18px AND .grid2 adds gap:16px, so
+     every seam between panel rows was 34px of nothing; and a section header
+     opened with margin-top:34px on top of that. A morning read should fit on
+     one screen-and-a-bit, not scroll past its own whitespace. Other tabs keep
+     the original spacing - they are studied, not scanned. */
+  #briefView .grid2 { gap:14px; }
+  #briefView .grid2 > .panel { margin-bottom:0; }
+  #briefView .sechead { margin-top:24px; margin-bottom:12px; }
+  #briefView .panel { padding:15px 16px 13px; }
+  #briefView .panel .sub { margin-bottom:8px; }
+  #briefView .brrow { padding:6px 0; gap:4px 10px; }
+  #briefView .brk { padding:6px 0; }
+  #briefView .brdesk { padding:6px 0; }
+  #briefView .ins { padding:6px 0; }
+  #briefView .ins.lead { padding:8px 0; }
+
   /* ---- stat tiles ---- */
   .tiles { display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
            gap:12px; margin-bottom:8px; }
