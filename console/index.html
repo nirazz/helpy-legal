@@ -231,6 +231,12 @@
   #briefView #brWait > .panel { margin-bottom:14px; break-inside:avoid;
                                 -webkit-column-break-inside:avoid; }
   @media (max-width:880px){ #brWait { column-count:1; } }
+  /* an empty panel is not a panel - it is one line at the end of the section */
+  /* both strips hang off the same edge as the section head, and the quiet
+     line lines up with the prose above it rather than half a character out */
+  #briefView .brquiet { font-size:12.5px; color:var(--muted);
+                        margin:8px 2px 0; padding-inline-start:15px; }
+  #briefView .secbrief.brstuck { margin:0 2px 2px; font-size:13.5px; }
   /* a bar is a full-width line under its number, never a third column that
      wraps on its own */
   #briefView .brk .brbar { flex:1 0 100%; margin-top:5px; }
@@ -1305,12 +1311,9 @@
         <div class="sub" data-i18n="brNoOfferS">בקשות פעילות בנות יום עד שבוע שאף אחד לא החליק עליהן</div>
         <div id="brNoOffer"></div>
       </section>
-      <section class="panel" style="opacity:1;transform:none">
-        <h2 data-i18n="brStuckT">שיחות שנתקעו</h2>
-        <div class="sub" data-i18n="brStuckS">שיחות פתוחות שההודעה האחרונה בהן היא בת 3 עד 14 ימים</div>
-        <div id="brStuck"></div>
-      </section>
     </div>
+    <div class="secbrief brstuck" id="brStuck" style="--sec-c:var(--s2)"></div>
+    <div class="brquiet" id="brQuiet" hidden></div>
     <div class="sechead" style="--sec-c:var(--s3)" data-i18n="brSecRun">3 · האם המכונה רצה בלילה</div>
     <div class="grid2">
       <section class="panel" style="opacity:1;transform:none">
@@ -2236,7 +2239,8 @@
       brAccepted:function(n){ return n+" אושרו"; }, brSenders:function(p,r){ return p+" אנשים · "+r+" שיחות"; },
       brNorth:"מדד הצפון · מקבל/ת העזרה סימן/ה שהושלם", brGoneSub:function(a,p){ return a+" חשבונות · "+p+" פוסטים"; },
       brSafetySub:function(r,b){ return r+" דיווחים · "+b+" חסימות"; },
-      brNone:"אין - כולם נענו", brNoneShort:"אין", brAgo:function(h){ return h<48? "לפני "+h+" שעות" : "לפני "+Math.round(h/24)+" ימים"; },
+      brNone:"אין - כולם נענו", brNoneShort:"אין",
+      brQuietLine:function(list){ return "אף אחד לא מחכה ב: "+list; }, brAgo:function(h){ return h<48? "לפני "+h+" שעות" : "לפני "+Math.round(h/24)+" ימים"; },
       brReply:"לענות", brWroteAt:"כתב/ה", brSwiped:function(h,r){ return iso(h)+" החליק/ה על הבקשה של "+iso(r); },
       brPendMore:function(n){ return "ועוד "+n+" פניות ממתינות"; }, brNoOffMore:function(n){ return "ועוד "+n+" בקשות בלי פנייה"; },
       brStuckLine:function(t,o){ return "<b>"+t+"</b> שיחות שקטות 3-14 יום, מהן <b>"+o+"</b> חד-צדדיות - צד אחד כתב והשני מעולם לא ענה. אלה השיחות שהשאלה «מה קרה?» מיועדת להן."; },
@@ -2836,7 +2840,8 @@
       brAccepted:function(n){ return n+" accepted"; }, brSenders:function(p,r){ return p+" people · "+r+" rooms"; },
       brNorth:"North star · receiver marked it complete", brGoneSub:function(a,p){ return a+" accounts · "+p+" posts"; },
       brSafetySub:function(r,b){ return r+" reports · "+b+" blocks"; },
-      brNone:"None - everyone answered", brNoneShort:"None", brAgo:function(h){ return h<48? h+" hours ago" : Math.round(h/24)+" days ago"; },
+      brNone:"None - everyone answered", brNoneShort:"None",
+      brQuietLine:function(list){ return "Nobody waiting in: "+list; }, brAgo:function(h){ return h<48? h+" hours ago" : Math.round(h/24)+" days ago"; },
       brReply:"Reply", brWroteAt:"wrote", brSwiped:function(h,r){ return iso(h)+" swiped on the request of "+iso(r); },
       brPendMore:function(n){ return n+" more waiting"; }, brNoOffMore:function(n){ return n+" more without an offer"; },
       brStuckLine:function(t,o){ return "<b>"+t+"</b> rooms quiet for 3-14 days, <b>"+o+"</b> of them one-sided - one side wrote, the other never answered. These are the rooms the \"what happened?\" question is for."; },
@@ -7956,7 +7961,7 @@
     if((W.requests_no_offer_n||0)>(W.requests_no_offer||[]).length)
       nh.appendChild(el("div","brmore",S.brNoOffMore(fmt(W.requests_no_offer_n-(W.requests_no_offer||[]).length))));
     var st=$("brStuck"), SK=W.stuck||{};
-    var sl=el("div","brnote"); sl.style.marginTop="0"; sl.style.fontSize="13.5px"; sl.style.color="var(--ink2)";
+    var sl=el("div");
     sl.innerHTML=S.brStuckLine(fmt(SK.total||0), fmt(SK.one_sided||0)); st.appendChild(sl);
     var q=W.stuck_question||[];
     var qn=el("div","brnote");
@@ -7965,6 +7970,25 @@
       qn.innerHTML=S.brStuckQ(fmt(q.length), fmt(answered));
     } else qn.textContent=S.brStuckQNone;
     st.appendChild(qn);
+
+    // A card whose whole content is "None - everyone answered" is dead space
+    // with a title on it, and its height never matches the card beside it.
+    // Empty ones drop out and are named in one muted line under the section.
+    var quiet=[];
+    [["brSupport", supN, S.brSupportT],
+     ["brPending", (W.pending_offers||[]).length, S.brPendingT],
+     ["brNoOffer", (W.requests_no_offer||[]).length, S.brNoOfferT]
+    ].forEach(function(x){
+      var host=$(x[0]), sec=host && host.closest("section.panel");
+      if(!sec) return;
+      sec.hidden = !x[1];
+      if(!x[1]) quiet.push(x[2]);
+    });
+    var qh=$("brQuiet");
+    if(qh){
+      qh.hidden = !quiet.length;
+      qh.textContent = quiet.length? S.brQuietLine(quiet.join(" \u00b7 ")) : "";
+    }
 
     // ---- did the machine run --------------------------------------------------
     var hh=$("brHealth");
