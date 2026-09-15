@@ -164,9 +164,11 @@
   .brrow { display:flex; gap:10px; align-items:baseline; padding:8px 0; font-size:13.5px;
            border-bottom:1px solid var(--grid); flex-wrap:wrap; }
   .brrow:last-child { border-bottom:0; }
-  .brrow .who { font-weight:700; }
-  .brrow .when { color:var(--muted); font-size:12px; white-space:nowrap; }
-  .brrow .what { flex:1 1 220px; min-width:0; color:var(--ink2); overflow:hidden; text-overflow:ellipsis; }
+  .brrow .who { font-weight:700; unicode-bidi:isolate; }
+  .brrow .when { color:var(--muted); font-size:12px; white-space:nowrap;
+                 font-variant-numeric:tabular-nums; }
+  .brrow .what { flex:1 1 220px; min-width:0; color:var(--ink2); overflow:hidden;
+                 text-overflow:ellipsis; unicode-bidi:isolate; }
   .brrow .act { all:unset; cursor:pointer; color:var(--s1); font-weight:600; font-size:12.5px; white-space:nowrap; }
   .brrow .act:hover { text-decoration:underline; }
   .brmore { font-size:12px; color:var(--muted); padding-top:6px; }
@@ -180,12 +182,18 @@
   .brpill.up   { color:var(--good-text); background:rgba(21,128,61,0.10); }
   .brpill.down { color:var(--bad-text);  background:rgba(220,38,38,0.10); }
   .brpill.mid  { color:var(--warning);   background:rgba(217,119,6,0.12); }
-  .brbar { position:relative; height:8px; border-radius:4px; background:var(--grid); overflow:hidden;
+  .brbar { position:relative; height:6px; border-radius:3px; background:var(--grid); overflow:hidden;
            flex:1 1 120px; min-width:80px; direction:ltr; }
-  .brbar i { position:absolute; inset:0 auto 0 0; border-radius:4px;
+  .brbar i { position:absolute; inset:0 auto 0 0; border-radius:3px;
              background:linear-gradient(90deg,var(--s1),var(--violet)); }
   .brbar i.warn { background:var(--warning); } .brbar i.bad { background:var(--bad-text); }
   .brnote { font-size:12px; color:var(--muted); margin-top:8px; line-height:1.5; }
+  .brstat { display:flex; flex-wrap:wrap; gap:10px 26px; margin:4px 0 2px; }
+  .brstat > div { display:flex; flex-direction:column; gap:3px; min-width:88px; }
+  .brstat b { font-size:21px; font-weight:800; letter-spacing:-.015em;
+              font-variant-numeric:tabular-nums; line-height:1.1; }
+  .brstat .cap { font-size:11.5px; color:var(--muted); letter-spacing:.02em; }
+  .brday { font-size:12px; color:var(--ink2); margin-bottom:2px; }
   .brdesk { display:flex; gap:10px; align-items:baseline; padding:7px 0; border-bottom:1px solid var(--grid); font-size:13.5px; }
   .brdesk:last-child { border-bottom:0; }
   .brdesk .st { font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
@@ -201,12 +209,6 @@
   .tile.hero { border-top:3px solid var(--s1); position:relative;
                background:radial-gradient(circle at 85% -30%, rgba(139,92,246,0.14), transparent 60%),
                           var(--glass); }
-  /* HUD corner brackets on the north-star tile */
-  .tile.hero::before, .tile.hero::after { content:""; position:absolute;
-               width:14px; height:14px; border:2px solid rgba(99,102,241,0.55);
-               pointer-events:none; }
-  .tile.hero::before { top:6px; inset-inline-start:6px; border-inline-end:none; border-bottom:none; }
-  .tile.hero::after  { bottom:6px; inset-inline-end:6px; border-inline-start:none; border-top:none; }
   .sechead { font-size:13px; font-weight:700; margin:34px 2px 14px;
              letter-spacing:0.08em; color:var(--ink2);
              display:flex; align-items:center; gap:8px; }
@@ -218,8 +220,7 @@
               border-inline-start:2px solid var(--sec-c, var(--s1)); max-width:78ch; }
   .secbrief b { color:var(--ink); font-variant-numeric:tabular-nums; }
   .sechead::before { content:""; width:9px; height:9px; border-radius:3px;
-                     background:var(--sec-c, var(--s1));
-                     box-shadow:0 0 8px var(--sec-c, var(--s1)); }
+                     background:var(--sec-c, var(--s1)); }
   .panel.vis { opacity:1; transform:none; }
   @media (prefers-reduced-motion: reduce){ .panel{ opacity:1; transform:none; } }
   .clickable { cursor:pointer; }
@@ -286,11 +287,21 @@
   .ins > span:nth-child(2) { flex:1; max-width:88ch; }
   .ins .go { flex-shrink:0; color:var(--s1); font-size:12.5px; font-weight:600;
              opacity:0; transition:opacity .18s ease; white-space:nowrap; }
+  .ins .go .ar { display:none; font-style:normal; font-size:15px; line-height:1.1; }
   .ins.clickable:hover .go, .ins.clickable:focus-within .go { opacity:1; }
-  @media (hover:none){ .ins .go { opacity:.75; } }
+  /* Touch has no hover, so the affordance is permanently on screen. A column
+     of N identical "jump to the data" sentences reads louder than the findings
+     it points at, so on touch only the arrow survives, dimmed. */
+  @media (hover:none){
+    .ins .go { opacity:.5; }
+    .ins .go .lb { display:none; }
+    .ins .go .ar { display:inline; }
+  }
   .ins.lead { font-size:14.5px; font-weight:500; padding:10px 0; }
   .ins.lead .dot { width:11px; height:11px; }
   .ins.rest { font-size:13px; color:var(--ink2); }
+  /* the first line that needs nothing done about it: a breath, not a rule */
+  .ins.calmtop { margin-top:9px; }
   @keyframes rise { from { opacity:0; transform:translateY(10px); } }
   .tile { background:var(--glass); border:1px solid var(--hairline);
           backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
@@ -2178,12 +2189,17 @@
       brNorth:"מדד הצפון · מקבל/ת העזרה סימן/ה שהושלם", brGoneSub:function(a,p){ return a+" חשבונות · "+p+" פוסטים"; },
       brSafetySub:function(r,b){ return r+" דיווחים · "+b+" חסימות"; },
       brNone:"אין - כולם נענו", brNoneShort:"אין", brAgo:function(h){ return h<48? "לפני "+h+" שעות" : "לפני "+Math.round(h/24)+" ימים"; },
-      brReply:"לענות", brWroteAt:"כתב/ה", brSwiped:function(h,r){ return h+" החליק/ה על הבקשה של "+r; },
+      brReply:"לענות", brWroteAt:"כתב/ה", brSwiped:function(h,r){ return iso(h)+" החליק/ה על הבקשה של "+iso(r); },
       brPendMore:function(n){ return "ועוד "+n+" פניות ממתינות"; }, brNoOffMore:function(n){ return "ועוד "+n+" בקשות בלי פנייה"; },
       brStuckLine:function(t,o){ return "<b>"+t+"</b> שיחות שקטות 3-14 יום, מהן <b>"+o+"</b> חד-צדדיות - צד אחד כתב והשני מעולם לא ענה. אלה השיחות שהשאלה «מה קרה?» מיועדת להן."; },
       brStuckQ:function(asked,ans){ return "השאלה נשלחה ל-<b>"+asked+"</b> אנשים · <b>"+ans+"</b> ענו"; },
       brStuckQNone:"השאלה «מה קרה?» עדיין לא נשלחה לאף אחד - הסבב הראשון מחכה ל-GO.",
       brWatchdog:"כלב השמירה", brUp:"תקין", brDown:"נפול", brInconc:"לא חד-משמעי", brSince:"מאז",
+      // the pill reads in Hebrew; the raw check_name stays in the tooltip
+      brChecks:{ push_auth:"דחיפות", founder_alerts:"התראות למייסד", moderate_post:"מודרציית תוכן",
+                 cron_delivery:"קריאות קרון", cron_jobs:"פקודות קרון", outbox:"תור ה-webhook",
+                 push_tickets:"כרטיסי פוש", daily_digest:"הסיכום היומי" },
+      brCheck:function(x){ return (this.brChecks && this.brChecks[x]) || String(x||"").replace(/_/g," "); },
       brCron:"קריאות קרון → פונקציה", brCronLine:function(ok,to,dns,from,to2){ return "<b>"+ok+"</b> הצליחו · <b>"+to+"</b> נגמר הזמן (5 שניות) · <b>"+dns+"</b> מהן לא יצאו כלל (DNS) · חלון "+from+"–"+to2; },
       brCronNote:"קריאה שנגמר זמנה בדרך כלל עדיין מריצה את הפונקציה - הקרון רק לא חיכה לתשובה. תקיעת DNS היא קריאה שמעולם לא יצאה.",
       brDigest:"הסיכום של 09:00", brDigestOk:function(t){ return "נשלח היום ב-"+t; }, brDigestMissing:"לא נשלח היום - לבדוק את daily-metrics",
@@ -2193,7 +2209,8 @@
       brDead:function(d,tot,g){ return "טוקנים שמתו: <b>"+d+"</b> ביממה · <b>"+tot+"</b> פתוחים · ~"+g+" חשודים שעוד לא נסרקו"; },
       brVersions:"על הגרסה האחרונה", brVerLine:function(p,latest,on,tot){ return p+": <b>"+on+"</b> מתוך "+tot+" שנראו השבוע על <b>"+latest+"</b>"; },
       brVerNote:"app_version מדווח על הפתיחה האחרונה, לא על מה שמותקן - מי שלא פתח מאז העדכון עדיין נספר על הישנה.",
-      brAdsLine:function(d,spend,su,cost){ return d+": הוצאה <b>₪"+spend+"</b> · <b>"+su+"</b> הרשמות אמיתיות · "+(cost!=null? "<b>₪"+cost+"</b> להרשמה" : "אין הרשמות"); },
+      brAdsDay:function(d){ return "היום הישראלי האחרון שנסגר · "+d; },
+      brAdsSpend:"הוצאה", brAdsSignups:"הרשמות אמיתיות", brAdsCost:"להרשמה",
       brAds7:function(spend,su,cost){ return "7 ימים מלאים: ₪"+spend+" · "+su+" הרשמות · "+(cost!=null? "₪"+cost+" להרשמה" : "-"); },
       brAdsNone:"נתוני Meta לא נטענו בטעינה הזו - הלשונית קמפיינים תמשוך אותם ברענון.",
       brDeskNone:"אין כרטיסים במצב «עכשיו» או «בילד הבא».", brDeskGo:"לבקלוג ←", brDue:"יעד",
@@ -2203,8 +2220,11 @@
       brInsNoOffer:function(n){ return "<b>"+n+"</b> בקשות פעילות עדיין בלי אף פנייה"; },
       brInsCronBad:function(p){ return "<b>"+p+"%</b> מקריאות הקרון לפונקציות נגמר זמנן בחלון האחרון - הפלטפורמה איטית, לא בהכרח שבורה"; },
       brInsCronOk:"קריאות הקרון לפונקציות תקינות",
-      brInsWatchBad:function(n){ return "כלב השמירה מדווח על <b>"+n+"</b> בדיקות שאינן תקינות"; },
-      brInsWatchOk:"כלב השמירה: שלוש הבדיקות תקינות",
+      brInsWatchBad:function(n){ return n==1
+        ? "כלב השמירה מדווח על <b>בדיקה אחת</b> שאינה תקינה"
+        : "כלב השמירה מדווח על <b>"+n+"</b> בדיקות שאינן תקינות"; },
+      brInsWatchOk:function(n){ return n==1? "כלב השמירה: הבדיקה תקינה"
+                                           : "כלב השמירה: כל "+n+" הבדיקות תקינות"; },
       brInsDigest:"הסיכום של 09:00 לא נשלח היום",
       brInsPushFail:function(n){ return "<b>"+n+"</b> דחיפות נכשלו ביממה"; },
       brInsVer:function(p){ return "<b>"+p+"%</b> מהמשתמשים שנראו השבוע על הגרסה האחרונה"; },
@@ -2769,12 +2789,16 @@
       brNorth:"North star · receiver marked it complete", brGoneSub:function(a,p){ return a+" accounts · "+p+" posts"; },
       brSafetySub:function(r,b){ return r+" reports · "+b+" blocks"; },
       brNone:"None - everyone answered", brNoneShort:"None", brAgo:function(h){ return h<48? h+" hours ago" : Math.round(h/24)+" days ago"; },
-      brReply:"Reply", brWroteAt:"wrote", brSwiped:function(h,r){ return h+" swiped on "+r+"'s request"; },
+      brReply:"Reply", brWroteAt:"wrote", brSwiped:function(h,r){ return iso(h)+" swiped on the request of "+iso(r); },
       brPendMore:function(n){ return n+" more waiting"; }, brNoOffMore:function(n){ return n+" more without an offer"; },
       brStuckLine:function(t,o){ return "<b>"+t+"</b> rooms quiet for 3-14 days, <b>"+o+"</b> of them one-sided - one side wrote, the other never answered. These are the rooms the \"what happened?\" question is for."; },
       brStuckQ:function(asked,ans){ return "The question went to <b>"+asked+"</b> people · <b>"+ans+"</b> answered"; },
       brStuckQNone:"The \"what happened?\" question has not been sent to anyone yet - the first batch waits for a GO.",
       brWatchdog:"Watchdog", brUp:"up", brDown:"down", brInconc:"inconclusive", brSince:"since",
+      brChecks:{ push_auth:"Push", founder_alerts:"Founder alerts", moderate_post:"Content moderation",
+                 cron_delivery:"Cron delivery", cron_jobs:"Cron jobs", outbox:"Webhook outbox",
+                 push_tickets:"Push tickets", daily_digest:"Daily digest" },
+      brCheck:function(x){ return (this.brChecks && this.brChecks[x]) || String(x||"").replace(/_/g," "); },
       brCron:"Cron → function calls", brCronLine:function(ok,to,dns,from,to2){ return "<b>"+ok+"</b> succeeded · <b>"+to+"</b> timed out (5s) · <b>"+dns+"</b> of them never left (DNS) · window "+from+"–"+to2; },
       brCronNote:"A timed-out call usually still runs the function - the cron just stopped waiting. A DNS stall is a call that never left.",
       brDigest:"The 09:00 digest", brDigestOk:function(t){ return "sent today at "+t; }, brDigestMissing:"not sent today - check daily-metrics",
@@ -2784,7 +2808,8 @@
       brDead:function(d,tot,g){ return "Dead tokens: <b>"+d+"</b> in 24h · <b>"+tot+"</b> open · ~"+g+" suspects not yet scanned"; },
       brVersions:"On the latest version", brVerLine:function(p,latest,on,tot){ return p+": <b>"+on+"</b> of "+tot+" seen this week on <b>"+latest+"</b>"; },
       brVerNote:"app_version reports the last OPEN, not what is installed - anyone who has not opened the app since updating still counts on the old one.",
-      brAdsLine:function(d,spend,su,cost){ return d+": spend <b>₪"+spend+"</b> · <b>"+su+"</b> real signups · "+(cost!=null? "<b>₪"+cost+"</b> per signup" : "no signups"); },
+      brAdsDay:function(d){ return "Last closed Israeli day · "+d; },
+      brAdsSpend:"Spend", brAdsSignups:"Real signups", brAdsCost:"Per signup",
       brAds7:function(spend,su,cost){ return "7 full days: ₪"+spend+" · "+su+" signups · "+(cost!=null? "₪"+cost+" per signup" : "-"); },
       brAdsNone:"Meta data was not pulled on this load - the Campaigns tab fetches it on refresh.",
       brDeskNone:"No cards in \"now\" or \"next build\".", brDeskGo:"To the backlog →", brDue:"due",
@@ -2794,8 +2819,11 @@
       brInsNoOffer:function(n){ return "<b>"+n+"</b> active requests still have no offer at all"; },
       brInsCronBad:function(p){ return "<b>"+p+"%</b> of cron calls to functions timed out in the last window - the platform is slow, not necessarily broken"; },
       brInsCronOk:"Cron calls to functions are healthy",
-      brInsWatchBad:function(n){ return "The watchdog reports <b>"+n+"</b> checks not up"; },
-      brInsWatchOk:"Watchdog: all three checks up",
+      brInsWatchBad:function(n){ return n==1
+        ? "The watchdog reports <b>one check</b> that is not up"
+        : "The watchdog reports <b>"+n+"</b> checks not up"; },
+      brInsWatchOk:function(n){ return n==1? "Watchdog: the only check is up"
+                                           : "Watchdog: all "+n+" checks up"; },
       brInsDigest:"The 09:00 digest was not sent today",
       brInsPushFail:function(n){ return "<b>"+n+"</b> pushes failed in 24h"; },
       brInsVer:function(p){ return "<b>"+p+"%</b> of users seen this week are on the latest version"; },
@@ -3974,7 +4002,11 @@
     if(onClick){
       row.classList.add("clickable");
       row.addEventListener("click",onClick);
-      row.appendChild(el("span","go",S.insGo));
+      var go=el("span","go");
+      go.appendChild(el("span","lb",S.insGo));
+      go.appendChild(el("i","ar", LANG==="he"? "\u2190" : "\u2192"));
+      go.title=S.insGo;
+      row.appendChild(go);
     }
     return row;
   }
@@ -7721,6 +7753,10 @@
   // payload already carries for other tabs: meta_ads (yesterday's spend),
   // the backlog array (what is on the desk) and nothing else. No chart: a
   // brief is read, not studied - the charts are one tab over.
+  // U+2068 FIRST STRONG ISOLATE ... U+2069 POP DIRECTIONAL ISOLATE: the plain
+  // text way to drop a Hebrew name into an English sentence (or the reverse)
+  // without the sentence around it flipping. Works in textContent - no markup.
+  function iso(t){ return "\u2068"+(t==null? "" : t)+"\u2069"; }
   function brIL(t){ return new Date(t).toLocaleDateString("en-CA",{timeZone:"Asia/Jerusalem"}); }
   function brHM(iso){
     return new Date(iso).toLocaleTimeString(LANG==="he"?"he-IL":"en-GB",
@@ -7731,11 +7767,16 @@
     if(h<1){ var m=Math.max(1,Math.round((Date.now()-new Date(iso).getTime())/60000)); return LANG==="he"? "לפני "+m+" דקות" : m+" min ago"; }
     return S.brAgo(h);
   }
-  function brRow(host, who, when, what, act){
+  function brRow(host, who, when, what, act, opt){
+    opt=opt||{};
     var r=el("div","brrow");
-    if(who) r.appendChild(el("span","who",who));
+    // A name or a post title is free user text - Hebrew or English - so it
+    // picks its own direction. A sentence we composed keeps the UI direction.
+    if(who){ var w=el("span","who",who); w.setAttribute("dir","auto"); r.appendChild(w); }
     if(when) r.appendChild(el("span","when",when));
-    if(what) r.appendChild(el("span","what",what));
+    if(what){ var t=el("span","what",what);
+              if(opt.autoWhat) t.setAttribute("dir","auto");
+              r.appendChild(t); }
     if(act){ var b=el("button","act",act.label); b.type="button"; b.addEventListener("click",act.fn); r.appendChild(b); }
     host.appendChild(r); return r;
   }
@@ -7770,7 +7811,8 @@
     if(supN) ins.push(["warn", S.brInsSupport(fmt(supN)), "brSupport"]);
     if(W.pending_offers_n) ins.push(["warn", S.brInsPending(fmt(W.pending_offers_n)), "brPending"]);
     var wdBad=wd.filter(function(w){ return w.status!=="up"; }).length;
-    ins.push(wdBad? ["bad", S.brInsWatchBad(wdBad), "brHealth"] : ["good", S.brInsWatchOk, "brHealth"]);
+    ins.push(wdBad? ["bad", S.brInsWatchBad(wdBad), "brHealth"]
+                  : ["good", S.brInsWatchOk(wd.length), "brHealth"]);
     var calls=(http.ok||0)+(http.timeouts||0)+(http.other_fail||0);
     var toPct=calls? Math.round(100*(http.timeouts||0)/calls) : 0;
     if(calls) ins.push([toPct>=25? "bad" : toPct>=10? "warn" : "good", toPct>=10? S.brInsCronBad(toPct) : S.brInsCronOk, "brHealth"]);
@@ -7786,8 +7828,19 @@
                    .reduce(function(a,r){ return a+(r.n||0); },0);
     if(seen7) ins.push(["info", S.brInsVer(Math.round(100*onLatest/seen7)), "brPush"]);
     if(!(D.new_requests||D.new_offers||D.swipes||D.messages)) ins.push(["info", S.brInsQuiet, "brTiles"]);
+    // Severity first, and a gap before the lines that are merely true: the
+    // list used to run an outage, a spend figure and "74% on the latest
+    // version" at one weight, in push order, so the eye had to read all of it
+    // to find out whether anything was wrong. Sort is stable - inside a band
+    // the original order (the order the morning is worked in) survives.
+    var rank={bad:0,warn:1,good:2,info:3};
+    ins.sort(function(a,b){ return rank[a[0]]-rank[b[0]]; });
+    var calmSeen=false;
     ins.forEach(function(x,i){
-      host.appendChild(insight((i===0?"lead ":"")+x[0], x[1], function(){ flashTo(x[2]); }));
+      var calm=rank[x[0]]>=2, top=calm&&!calmSeen;
+      if(calm) calmSeen=true;
+      host.appendChild(insight((i===0?"lead ":"")+x[0]+(calm?" rest":"")+(top?" calmtop":""),
+                               x[1], function(){ flashTo(x[2]); }));
     });
 
     // ---- the day in eight tiles ------------------------------------------
@@ -7829,7 +7882,7 @@
         // the card-list composer, opened without a card: owner_lang picks the
         // default template language, the thread loads inside it
         openMsg({owner:u.name||"", owner_id:u.user_id, owner_lang:u.lang});
-      }});
+      }}, {autoWhat:true});
     });
     var ph=$("brPending");
     if(!(W.pending_offers||[]).length) ph.appendChild(el("div","brmore",S.brNoneShort));
@@ -7841,7 +7894,7 @@
     var nh=$("brNoOffer");
     if(!(W.requests_no_offer||[]).length) nh.appendChild(el("div","brmore",S.brNoneShort));
     (W.requests_no_offer||[]).forEach(function(r){
-      brRow(nh, r.title||"", S.brAgo(r.hours||0), (r.owner||"?")+(r.city? " · "+r.city : ""));
+      brRow(nh, r.title||"", S.brAgo(r.hours||0), iso(r.owner||"?")+(r.city? " · "+iso(r.city) : ""));
     });
     if((W.requests_no_offer_n||0)>(W.requests_no_offer||[]).length)
       nh.appendChild(el("div","brmore",S.brNoOffMore(fmt(W.requests_no_offer_n-(W.requests_no_offer||[]).length))));
@@ -7861,8 +7914,8 @@
     var wr=el("div","brk"); wr.appendChild(el("span","lbl",S.brWatchdog));
     wd.forEach(function(w){
       var cls=w.status==="up"?"up":w.status==="down"?"down":"mid";
-      var p=el("span","brpill "+cls, w.check+" · "+(w.status==="up"?S.brUp:w.status==="down"?S.brDown:S.brInconc));
-      p.title=S.brSince+" "+fmtTime(w.since); wr.appendChild(p);
+      var p=el("span","brpill "+cls, S.brCheck(w.check)+" · "+(w.status==="up"?S.brUp:w.status==="down"?S.brDown:S.brInconc));
+      p.title=w.check+" · "+S.brSince+" "+fmtTime(w.since); wr.appendChild(p);
     });
     hh.appendChild(wr);
     if(calls){
@@ -7894,10 +7947,17 @@
       var spendOn=function(d){ return MA.daily.filter(function(r){ return String(r.d).slice(0,10)===d; }).reduce(function(a,r){ return a+(r.spend||0); },0); };
       var suOn=function(d){ var r=(MA.signups||[]).filter(function(x){ return String(x.d).slice(0,10)===d; })[0]; return r? (r.signups||0) : 0; };
       var sp=spendOn(yd), su=suOn(yd);
-      brKV(ah, "", S.brAdsLine(fmtDay(yd), sp.toFixed(0), fmt(su), su? (sp/su).toFixed(1) : null));
+      ah.appendChild(el("div","brday",S.brAdsDay(fmtDay(yd))));
+      var sr=el("div","brstat");
+      function brStat(v,cap){ var c=el("div"); c.appendChild(el("b",null,v));
+                              c.appendChild(el("span","cap",cap)); sr.appendChild(c); }
+      brStat("\u20aa"+sp.toFixed(0), S.brAdsSpend);
+      brStat(fmt(su), S.brAdsSignups);
+      brStat(su? "\u20aa"+(sp/su).toFixed(1) : "\u2013", S.brAdsCost);
+      ah.appendChild(sr);
       var s7=0, u7=0;
       for(var i=1;i<=7;i++){ var d=brIL(Date.now()-i*86400000); s7+=spendOn(d); u7+=suOn(d); }
-      brKV(ah, "", S.brAds7(s7.toFixed(0), fmt(u7), u7? (s7/u7).toFixed(1) : null));
+      ah.appendChild(el("div","brnote",S.brAds7(s7.toFixed(0), fmt(u7), u7? (s7/u7).toFixed(1) : null)));
     }
 
     // ---- on the desk ---------------------------------------------------------------
