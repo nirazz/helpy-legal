@@ -6168,14 +6168,14 @@
   // Bump this whenever BACKLOG below changes. It sits here, touching the array,
   // because a stamp kept anywhere else is a second thing to forget - and a
   // stamp that lies is worse than no stamp at all.
-  var BL_UPDATED = "2026-09-14";
+  var BL_UPDATED = "2026-09-16";
   var BACKLOG = [
     // ---- act now -----------------------------------------------------------
-    {st:"now", cat:"legal", rice:null, eff:0.05, due:"2026-09-07",
-     tH:"לענות על שאלון דירוג הגיל של אפל",
-     tE:"Answer Apple's age-rating questionnaire",
-     wH:"באנר ממתין ב-App Store Connect מאז 1.1.18. נמדד 05.09: בדיוק ארבעה שדות ריקים בהצהרה (רשת חברתית, הגבלת גיל לרשת חברתית, קבוצת גיל לילדים, קישור למידע); צ'אט ותוכן משתמשים כבר מוצהרים והדירוג 17+. זה לא חסם את 1.1.21, אבל ההגשה הבאה - זו שנושאת את Heebo ואת מסך הפעילות - היא שבסיכון. 'רשת חברתית' היא הצהרה משפטית על מהות המוצר ויכולה להזיז את דירוג הגיל, ולכן התשובה של ניר. הקריאה שהוצעה ועוד לא הוכרעה: Helpy אינה רשת חברתית (אין עוקבים, אין פיד חברים, אין פרסום לקהל).",
-     wE:"An App Store Connect banner has been waiting since 1.1.18. Measured 05.09: exactly four NULL fields in the declaration (social media, social-media age restriction, kids age band, info URL); chat and user content are already declared and the rating is 17+. It did not block 1.1.21, but the NEXT submission - the one carrying Heebo and the Activity tab - is the one at risk. 'Social media' is a legal declaration about what the product is and can move the age rating, so it is Nir's to answer. The reading offered and not yet ruled on: Helpy is not a social network (no followers, no friend feed, no publishing to an audience)."},
+    {st:"done", cat:"legal", rice:null, eff:0.05,
+     tH:"שאלון דירוג הגיל של אפל - נענה",
+     tE:"Apple's age-rating questionnaire - answered",
+     wH:"נענה 16.09 עם הגשת 1.1.22, אחרי שישב פתוח מ-03.08. רשת חברתית: לא. הגבלת גיל לרשת חברתית: לא. שני השדות האחרים נשארו ריקים בצדק (אחד רלוונטי רק לאפליקציות ילדים, השני אופציונלי). אומת מול ה-API של אפל ולא מול המסך. ⚠️ התשובה התהפכה תוך כדי: ההמלצה הראשונה הייתה כן, ואז קריאת הניסוח של אפל עצמה שינתה אותה - היא שואלת על הפצה מחדש והגברה שמפיצה תוכן להמון משתמשים, וצ׳אט ותוכן גולשים כבר מוצהרים בשתי שאלות נפרדות משלהם. אל תגזרו מחדש את ה׳כן׳. הפחד שתקע את זה חודש וחצי - שזה יזיז את דירוג הגיל - היה מיותר: האפליקציה נעולה ידנית על 18+, שזו התקרה, והשאלון עצמו מחשב 4+.",
+     wE:"Answered 16.09 alongside the 1.1.22 submission, after sitting open since 03.08. Social media: no. Social-media age restriction: no. The other two fields stay null correctly (one is Kids-Category only, one optional). Verified against Apple's API, not the screen. ⚠️ The answer REVERSED mid-way: the first recommendation was yes, and reading Apple's own wording changed it - it asks about redistribution and amplification that visibly spreads content to many users, and chat and user content are already declared under their own separate questions. Do not re-derive the 'yes'. The fear that parked this for six weeks - that it would move the age rating - was groundless: the app is manually overridden to 18+, the ceiling, and the questionnaire itself computes 4+."},
 
     // ---- riding the next build ---------------------------------------------
     {st:"build", cat:"product", rice:null, eff:1,
@@ -6194,7 +6194,25 @@
      wH:"07.09, PR #270, מוזג. עלה מהשאלה 'למה כולם על גרסה ישנה': לבאנר לא היה אירוע בכלל, אז אי אפשר היה להפריד את ההשפעה שלו מהעדכון האוטומטי של החנות - שהוא מה שמזיז את רוב האנשים. שלושה אירועים: הוצג / לחיצה / נסגר. כלל קריאה: הבאנר חוזר בכל פתיחה עד שסוגרים אותו, אז סופרים אנשים ולא אירועים. ממצא צדדי שתיקן מספר: app_version מדווח על הפתיחה האחרונה, לא על מה שמותקן.",
      wE:"07.09, PR #270, merged. Came out of the question why everyone was on an old version: the banner had no event at all, so its effect could not be separated from the store's background auto-update, which is what moves most people. Three events: shown / cta / dismissed. Reading rule: the banner re-appears on every launch until dismissed, so count people, never events. Side finding that corrected a number: app_version reports the last app OPEN, not what is installed."},
 
+    {st:"build", cat:"growth", rice:null, eff:1.5,
+     tH:"לדעת מאיפה כל התקנה הגיעה",
+     tE:"Knowing where each install came from",
+     wH:"עלה מהשאלה 'למה רוב ההתקנות לא מתל אביב', שלקחה שעה לענות עליה בהסקה כי שום דבר בבסיס הנתונים לא תיעד מאיפה מישהו הגיע (PR #300, מוזג 15.09, נוסע על 1.1.22). באנדרואיד זו תשובה אמיתית דרך Play Install Referrer: קליק ממודעה, הזמנה משכן, דף פוסט משותף, או גלישה רגילה בחנות. ⚠️ באייפון זה בלתי אפשרי מבנית ותמיד יהיה - לאפל אין install referrer, ולכן כל שורת iOS תקרא 'לא ידוע'. לפלח לפי פלטפורמה או שהמספרים משקרים. הקישורים שלנו היו חשופים עד עכשיו, אז מפה לאוזן ופרסום היו בלתי ניתנים להפרדה אפילו בקונסולה של גוגל. מותנה בהסכמה לפרסום (PR #303), כך שמשתמש אירופי לא נקלט - במכוון.",
+     wE:"Came out of the question why most installs were not from Tel Aviv, which took an hour to answer by inference because nothing in the DB ever recorded how anyone found us (PR #300, merged 15.09, riding 1.1.22). On Android it is a real answer via the Play Install Referrer: an ad click, a neighbour\'s invite, a shared post page, or a plain store browse. ⚠️ On iPhone it is structurally impossible and always will be - Apple has no install referrer, so every iOS row reads \'unknown\'. Segment by platform or the numbers lie. Our own links were bare until now, so word-of-mouth and paid were indistinguishable even inside Play Console. Gated on ad-measurement consent (PR #303), so an EEA user records nothing, by design."},
+
     // ---- queued ------------------------------------------------------------
+    {st:"next", cat:"product", rice:null, eff:0.2,
+     tH:"קריסה אחת על 1.1.22 - לעקוב, לא להיבהל",
+     tE:"One crash on 1.1.22 - watch it, do not panic",
+     wH:"Sentry 147336496: הקריסה הראשונה מסוגה ב-90 יום, ודווקא על בילד 138, דקות אחרי שניר התקין אותו מטסט פלייט (16.09 08:49, production, fatal, האפליקציה בחזית). מה שהופך אותה לאות: היא ראשונה מסוגה ועל הבילד החדש. מה שמרגיע באותה מידה: אירוע אחד ממשתמש אחד, והזיהוי של Sentry הוא היוריסטיקה - הוא מסיק מוות בידי המערכת מתוך 'לא נסגר יפה ולא נרשמה קריסה', וזה בדיוק מה שסגירה כפויה אחרי התקנה טרייה מייצרת. אם זה אמיתי, המנגנון כמעט בוודאי Heebo: זה השינוי היחיד ברכבת הזו שרץ נייטיב בזמן העלייה, שזה הרגע שהמערכת מודדת. ההחלטה שהתקבלה: לא למשוך הגשה בגלל אירוע היוריסטי אחד מהמכשיר של הבודק עצמו. לבדוק שוב כשיהיה נפח התקנות אמיתי.",
+     wE:"Sentry 147336496: the first of its kind in 90 days, and it is on build 138, minutes after Nir installed it from TestFlight (16.09 08:49, production, fatal, app in foreground). What makes it a signal: first of its kind, on the brand-new build. What is equally concrete on the other side: one event from one user, and Sentry\'s watchdog detection is a heuristic - it infers an OS kill from \'did not exit cleanly and no crash was recorded\', which a force-quit after a fresh install reproduces exactly. If it is real, the mechanism is almost certainly Heebo: it is the only change in this train that runs natively at LAUNCH, which is when the watchdog measures. Decision taken: do not pull a submission for one heuristic event from the tester\'s own device. Re-check once 1.1.22 has real install volume."},
+
+    {st:"next", cat:"product", rice:null, eff:0.1,
+     tH:"לפתוח את 1.1.22 על מכשיר אנדרואיד אמיתי - ברגע שהוא עולה",
+     tE:"Open 1.1.22 on a real Android device - the moment it is live",
+     wH:"גרסה 142 הוגשה לפרודקשן בלי שנפתחה על אף מכשיר או אמולטור אנדרואיד. ניר קיבל את ההחלטה במפורש ומתוך ידיעת הסיכון; הפריט הזה הוא החצי השני של ההחלטה, לא ערעור עליה. זו רכבת הנייטיב הראשונה באנדרואיד מאז 1.1.21, ולכן שני הדברים לבדוק הם בדיוק שני שינויי הנייטיב - ושניהם נכשלים בשקט: האם הגופן Heebo באמת נטען (גופן חסר לא זורק שגיאה, אנדרואיד פשוט נופל לברירת מחדל), והאם האפליקציה בכלל עולה עם התלות החדשה. ואז לוודא שמקור ההתקנה נרשם בפועל ולא נשאר ריק.",
+     wE:"versionCode 142 was submitted to production without ever being opened on any Android device or emulator. Nir made that call explicitly, knowing the risk; this item is the other half of the decision, not a second-guess. It is the first native Android train since 1.1.21, so the two things to check are exactly the two native changes - and both fail silently: does the Heebo font actually load (a missing font throws nothing, Android just falls back), and does the app launch at all with the new dependency linked. Then confirm the acquisition source records a real value rather than staying null."},
+
     {st:"next", cat:"product", rice:null, eff:0.5,
      tH:"מסך התשובה למשתמש נפתח לאט מהפוש - למדוד, ואז שני תיקונים זולים",
      tE:"The admin reply screen opens slowly from the push - measure, then two cheap fixes",
@@ -6636,6 +6654,17 @@
 ,
     // 29. Empty-feed CTA buttons - declined,
     // ---- done --------------------------------------------------------------
+    {st:"done", cat:"growth", rice:null, eff:0.3,
+     tH:"שומר על לאן כסף הפרסום באמת הלך",
+     tE:"A guard on where the ad money actually went",
+     wH:"⚡ חי מ-16.09 (PR #302). השומר מ-14.09 קורא מה סט המודעות אומר; זה קורא לאן הכסף הלך אתמול בפועל. שתי בדיקות שונות, והפער ביניהן הוא כל הסיפור: הגדרה שעדיין כתוב בה פייסבוק ואינסטגרם בזמן שמטא מציגה במקום אחר משאירה את השומר הראשון מדווח 'נקי'. ככה Audience Network רץ מיוני עד 14.09 ועשה כל מדידת iOS לשקר. רשימת היתר ולא רשימת חסימה, כדי שגם מיקום שמטא עוד לא המציאה ייתפס. בהרצה הראשונה הוא מיד תפס ₪2.59 ב-AN בזמן שבדיקת ההגדרות אמרה נקי - הזנב של 14.09 לפני הכיבוי, לא דליפה חיה.",
+     wE:"⚡ Live 16.09 (PR #302). The guard added on 14.09 reads what the ad set SAYS; this reads where the money actually WENT yesterday. Two different checks, and the gap between them is the whole story: a config that still reads facebook+instagram while Meta serves somewhere else leaves the first guard reporting \'clean\'. That is how Audience Network ran from June to 14.09 and made every iOS metric lie. An allow-list, not an audience_network blocklist, so a surface Meta has not invented yet is caught too. On its first run it immediately caught \u20aa2.59 on AN while the config guard said clean - the tail of 14.09 before Nir killed it, not a live leak."},
+    {st:"done", cat:"legal", rice:null, eff:0.3,
+     tH:"ריוויו הפרטיות ל-4 הכיוונים - סגור",
+     tE:"The 4-way privacy review - closed",
+     wH:"נסגר 16.09 עם הגשת 1.1.22. אנדרואיד אוסף עכשיו נתוני מקור התקנה, וזה סוג נתון חדש, אז כל ארבעת המקומות נבדקו. גוגל: רשומה אחת חדשה תחת App activity / Other actions - נאסף, לא משותף, אופציונלי, לאנליטיקה ולשיווק. האתר: פסקה בשתי השפות, פורסמה ביום ההגשה ולא אחריה, כי הרביו נעשה מול הבינארי שהוגש. שני הסעיפים של אפל לא דרשו כלום, ווידאנו ולא הנחנו: הספרייה לא מכילה שום קוד iOS. ⚠️ הריוויו גם תפס פער אמיתי בקוד - הקליטה לא הייתה מותנית בהסכמה, כלומר האפליקציה הייתה סותרת את ההודעה הפומבית של עצמה מול משתמשים אירופיים. תוקן ב-PR #303.",
+     wE:"Closed 16.09 with the 1.1.22 submission. Android now collects install-referrer data, a new data type, so all four places were checked. Google: one new entry under App activity / Other actions - collected, not shared, optional, analytics + marketing. The site: a paragraph in both languages, published on submission day rather than after, because review happens against the submitted binary. Both Apple items needed nothing, verified rather than assumed: the library ships no iOS code at all. \u26a0\ufe0f The review also caught a real code gap - capture was not gated on consent, so the app would have contradicted its own published notice for exactly the EEA users that notice protects. Fixed in PR #303."},
+
     {st:"done", cat:"infra", rice:null, eff:0.5,
      tH:"שומר המערכת זעק שווא - פעם אחת ב-1,900 ריצות",
      tE:"The watchdog cried wolf, once in ~1,900 runs",
