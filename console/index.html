@@ -425,6 +425,32 @@
   .panel h2 .ico { color:var(--s1); flex-shrink:0; opacity:.9; }
   .panel .sub { line-height:1.45; }
   .panel .sub { font-size:12px; color:var(--muted); margin-bottom:10px; }
+  /* public pages - what anyone on the internet can open */
+  .pubsum { display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 16px; }
+  .pubsum span { font-size:12.5px; color:var(--ink2); background:var(--wash1);
+                 border-radius:999px; padding:4px 11px; }
+  .pubsum b { color:var(--ink); font-weight:700; margin-inline-end:4px; }
+  .pubgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:14px; }
+  .pubgrp { border:1px solid var(--hairline); border-radius:12px; background:var(--surface);
+            padding:14px 14px 8px; min-width:0; }
+  .pubgrp h3 { font-size:13.5px; font-weight:700; margin:0 0 2px; display:flex;
+               align-items:center; gap:7px; }
+  .pubgrp h3 .n { font-weight:500; color:var(--muted); font-size:12px; }
+  .pubgrp .why { font-size:12px; color:var(--muted); line-height:1.5; margin-bottom:10px; }
+  .pubrow { display:flex; align-items:center; gap:10px; padding:9px 8px; margin:0 -8px;
+            border-radius:9px; text-decoration:none; color:inherit; }
+  .pubrow + .pubrow { border-top:1px solid var(--grid); }
+  .pubrow:hover { background:var(--wash-hover); }
+  .pubrow .nm { flex:1; min-width:0; }
+  .pubrow .nm b { display:block; font-size:13px; font-weight:600; color:var(--ink); }
+  .pubrow .nm small { display:block; font-size:11.5px; color:var(--muted); direction:ltr;
+                      unicode-bidi:isolate; text-align:start; overflow:hidden;
+                      text-overflow:ellipsis; white-space:nowrap; }
+  .pubrow .when { font-size:11.5px; color:var(--muted); white-space:nowrap; }
+  .pubrow .ico { color:var(--baseline); flex-shrink:0; }
+  .pubrow:hover .ico { color:var(--s1); }
+  .pubflag { font-size:11px; font-weight:600; color:var(--warning); white-space:nowrap;
+             border:1px solid currentColor; border-radius:999px; padding:1px 8px; }
   .legend { display:flex; gap:16px; font-size:12px; color:var(--ink2); margin-bottom:8px; }
   .legend .sw { display:inline-block; width:10px; height:10px; border-radius:3px;
                 margin-inline-end:5px; vertical-align:-1px; }
@@ -1489,6 +1515,11 @@
       <h2 data-i18n="arInsTitle">מה דורש תשומת לב בארכיטקטורה</h2>
       <div class="sub" data-i18n="pnInsSub"></div>
       <div id="arInsights"></div>
+    </section>
+    <section class="panel" style="opacity:1;transform:none">
+      <h2 id="pubTitle"></h2>
+      <div class="sub" id="pubSub"></div>
+      <div id="pubPages"></div>
     </section>
     <section class="panel" style="opacity:1;transform:none">
       <h2 data-i18n="archTitle">איך Helpy עובד</h2>
@@ -7839,8 +7870,104 @@
     insightsInto("arInsights", rows);
   }
 
+  // Every page help-y.com serves, since the site is built from a PUBLIC repo.
+  // Only public facts belong here (the pages are public already); no judgement
+  // about what is inside them beyond "worth a look".
+  var PUB_GROUPS=[
+    {id:"users", he:"דפים למשתמשים", en:"Pages for users",
+     whyH:"אלה חייבים להיות פתוחים: המשתמשים, אפל וגוגל מגיעים אליהם.",
+     whyE:"These must stay open: users, Apple and Google all link to them.",
+     pages:[
+      ["index-he.html","דף הבית","Home page (Hebrew)","2026-09-15"],
+      ["index.html","דף הבית באנגלית","Home page","2026-09-15"],
+      ["terms-he.html","תנאי שימוש","Terms (Hebrew)","2026-08-20"],
+      ["terms.html","תנאי שימוש באנגלית","Terms of Service","2026-08-20"],
+      ["privacy-he.html","מדיניות פרטיות","Privacy (Hebrew)","2026-09-16"],
+      ["privacy.html","מדיניות פרטיות באנגלית","Privacy Policy","2026-09-16"],
+      ["delete-account-he.html","מחיקת חשבון","Delete account (Hebrew)","2026-08-20"],
+      ["delete-account.html","מחיקת חשבון באנגלית","Delete account","2026-08-20"],
+      ["console/","הקונסול - מסך כניסה בלבד","Console - sign-in screen only","2026-09-17"]
+     ]},
+    {id:"docs", he:"מסמכי מוצר", en:"Product documents",
+     whyH:"נכתבו במרץ, כנראה כתיק עבודות. להחליט אם הם נשארים פתוחים.",
+     whyE:"Written in March, probably as a portfolio. Decide whether they stay open.",
+     pages:[
+      ["prd.html","מסמך דרישות (PRD)","PRD","2026-03-15"],
+      ["roadmap.html","מפת דרכים","Roadmap","2026-03-15"],
+      ["backlog.html","בקלוג (הישן)","Backlog (the old one)","2026-03-15"],
+      ["okrs.html","יעדים (OKRs)","OKR tracker","2026-03-15"],
+      ["sprint.html","תכנון ספרינט","Sprint planning","2026-03-15"],
+      ["retro.html","רטרוספקטיבה","Sprint retro","2026-03-15"],
+      ["decisions.html","יומן החלטות","Decision log","2026-03-14"],
+      ["eng-brief.html","תדריך הנדסי","Engineering brief","2026-03-14"],
+      ["launch-checklist.html","רשימת השקה","Launch checklist","2026-03-15"],
+      ["postmortem.html","פוסט-מורטם","Post-mortem","2026-03-15"],
+      ["premortem.html","פרה-מורטם","Pre-mortem","2026-03-15"]
+     ]},
+    {id:"research", he:"מחקר ושוק", en:"Research & market",
+     whyH:"גם אלה ממרץ. אין בהם נתוני משתמשים, אבל יש בהם את החשיבה העסקית.",
+     whyE:"Also from March. No user data, but the business thinking is all here.",
+     pages:[
+      ["vision.html","חזון ושוק","Vision & market","2026-03-15"],
+      ["competitive.html","ניתוח מתחרים","Competitive analysis","2026-03-13"],
+      ["gtm.html","תוכנית יציאה לשוק","Go-to-market plan","2026-03-15"],
+      ["jtbd.html","Jobs to be done","Jobs to be done","2026-03-15"],
+      ["assumptions.html","מפת הנחות","Assumption map","2026-03-15"],
+      ["experiments.html","יומן ניסויים","Experiment log","2026-03-15"],
+      ["tracking.html","תוכנית מדידה","Tracking plan","2026-03-15"],
+      ["user-interviews.html","תסריט ראיונות משתמשים","User interview script","2026-03-15"],
+      ["nps.html","סקר NPS","NPS survey","2026-03-15"],
+      ["stakeholder-update.html","עדכון לבעלי עניין","Stakeholder update","2026-03-14"]
+     ]},
+    {id:"other", he:"הדגמות וראיונות", en:"Demos & interviews",
+     whyH:"עודכנו מאוחר יותר. את הכנה לראיון כדאי לקרוא לפני שמחליטים.",
+     whyE:"Updated later. Read the interview prep before deciding.",
+     pages:[
+      ["interview-prep.html","הכנה לראיון PM","PM interview prep","2026-06-25",true],
+      ["demo.html","הדגמת האפליקציה","App demo","2026-06-25"],
+      ["docs.html","תיעוד מוצר","Product docs","2026-04-29"]
+     ]}
+  ];
+  function renderPublicPages(){
+    var host=$("pubPages"); if(!host) return;
+    var he=LANG==="he";
+    $("pubTitle").textContent = he ? "מה פתוח לכל אחד באינטרנט" : "What anyone on the internet can open";
+    if(!$("pubTitle").querySelector(".ico")){ $("pubTitle").insertBefore(icon("globe",17), $("pubTitle").firstChild); $("pubTitle").classList.add("withico"); }
+    $("pubSub").textContent = he
+      ? "כל הדפים באתר, כי האתר נבנה מתיקייה ציבורית בגיטהאב · לחיצה פותחת בלשונית חדשה"
+      : "Every page the site serves, because it is built from a public GitHub repo · opens in a new tab";
+    host.innerHTML="";
+    var total=0, review=0;
+    PUB_GROUPS.forEach(function(g){ total+=g.pages.length; if(g.id!=="users") review+=g.pages.length; });
+    var sum=el("div","pubsum");
+    [[total, he?"דפים פתוחים":"open pages"],
+     [PUB_GROUPS[0].pages.length, he?"צריכים להיות פתוחים":"should be open"],
+     [review, he?"להחליט אם להשאיר":"to decide on"]].forEach(function(x){
+      var sp=el("span"); sp.appendChild(el("b",null,String(x[0]))); sp.appendChild(document.createTextNode(x[1])); sum.appendChild(sp);
+    });
+    host.appendChild(sum);
+    var grid=el("div","pubgrid");
+    PUB_GROUPS.forEach(function(g){
+      var box=el("div","pubgrp");
+      var h=el("h3",null,he?g.he:g.en); h.appendChild(el("span","n","· "+g.pages.length));
+      box.appendChild(h);
+      box.appendChild(el("div","why",he?g.whyH:g.whyE));
+      g.pages.forEach(function(pg){
+        var a=el("a","pubrow"); a.href="https://help-y.com/"+pg[0]; a.target="_blank"; a.rel="noopener";
+        var nm=el("span","nm"); nm.appendChild(el("b",null,he?pg[1]:pg[2])); nm.appendChild(el("small",null,"help-y.com/"+pg[0]));
+        a.appendChild(nm);
+        if(pg[4]) a.appendChild(el("span","pubflag",he?"לבדוק":"check"));
+        else { var d=pg[3].split("-"); a.appendChild(el("span","when",parseInt(d[2],10)+"."+parseInt(d[1],10))); }
+        a.appendChild(icon("link",14));
+        box.appendChild(a);
+      });
+      grid.appendChild(box);
+    });
+    host.appendChild(grid);
+  }
   function renderArch(){
     try{ renderArchInsights(); }catch(e){ console.error("renderArchInsights failed",e); }
+    try{ renderPublicPages(); }catch(e){ console.error("renderPublicPages failed",e); }
     if(!archBuilt){ archBuilt=true; }
     buildArch();
     var bar=$("flowBar"); bar.innerHTML="";
@@ -8166,6 +8293,7 @@
     // the backlog is static text, so it must repaint on a language flip even
     // when no dashboard payload has arrived yet
     renderBacklog();
+    try{ renderPublicPages(); }catch(e){ console.error("renderPublicPages failed",e); }
     syncChrome();  // English labels wrap the header differently than Hebrew
   }
   $("themeBtn").addEventListener("click",function(){
