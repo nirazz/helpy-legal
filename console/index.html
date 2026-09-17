@@ -449,7 +449,7 @@
              border:1px solid var(--grid); border-radius:999px; padding:5px 12px;
              transition:background .15s, border-color .15s, color .15s; }
   .pubchip:hover { color:var(--ink); border-color:var(--s1); background:var(--wash1); }
-  .pubchip.flag { color:var(--warning); border-color:currentColor; font-weight:600; }
+  button.pubchip { font:inherit; font-size:12.5px; cursor:pointer; }
   .pubchip .ico { opacity:.55; }
   .legend { display:flex; gap:16px; font-size:12px; color:var(--ink2); margin-bottom:8px; }
   .legend .sw { display:inline-block; width:10px; height:10px; border-radius:3px;
@@ -5951,6 +5951,34 @@
   // Every console->sender call goes through admin-dashboard, which verifies the
   // SSO session and forwards this same JWT. The browser holds no secret, and
   // the function whitelists the four modes the console may reach.
+  // Internal documents (PRD, roadmap, interview prep...) are no longer files on
+  // this public site; admin-dashboard hands one over after sign-in and it opens
+  // in a new tab as a local page. <base> keeps its images and fonts loading from
+  // help-y.com, and a link to another internal document is routed back here
+  // instead of hitting the 404 the old file name now returns.
+  var DOC_NAMES=["assumptions","backlog","competitive","decisions","demo","docs","eng-brief",
+    "experiments","gtm","interview-prep","jtbd","launch-checklist","nps","okrs","postmortem",
+    "prd","premortem","retro","roadmap","sprint","stakeholder-update","tracking",
+    "user-interviews","vision"];
+  function openDoc(name){
+    var w=window.open("","_blank");   // opened inside the click, or it is blocked
+    if(!w) return;
+    w.document.title="Helpy";
+    w.document.body.style.cssText="font:14px system-ui;color:#8886a8;display:grid;place-items:center;height:100vh;margin:0";
+    w.document.body.textContent = LANG==="he" ? "טוען..." : "Loading...";
+    relayCall("doc",{name:name}).then(function(d){
+      var router='<base href="https://help-y.com/"><script>document.addEventListener("click",function(e){'
+        +'var a=e.target.closest&&e.target.closest("a[href]");if(!a)return;'
+        +'var m=a.getAttribute("href").match(/^(?:\\.?\\/)?([a-z-]+)\\.html(?:#.*)?$/);'
+        +'if(m&&'+JSON.stringify(DOC_NAMES)+'.indexOf(m[1])>=0&&window.opener&&window.opener.helpyOpenDoc){'
+        +'e.preventDefault();window.opener.helpyOpenDoc(m[1]);}});<\/script>';
+      var html=d.html.replace(/<head([^>]*)>/i, function(h){ return h+router; });
+      w.location.href=URL.createObjectURL(new Blob([html],{type:"text/html"}));
+    }).catch(function(e){
+      w.document.body.textContent=(LANG==="he"?"לא נטען: ":"Could not load: ")+e.message;
+    });
+  }
+  window.helpyOpenDoc=openDoc;
   function relayCall(action, extra){
     var hdrs={"content-type":"application/json"};
     if(SESSION && SESSION.access_token) hdrs["authorization"]="Bearer "+SESSION.access_token;
@@ -7870,9 +7898,9 @@
     insightsInto("arInsights", rows);
   }
 
-  // Every page help-y.com serves, since the site is built from a PUBLIC repo.
-  // Only public facts belong here (the pages are public already); no judgement
-  // about what is inside them beyond "worth a look".
+  // The site's public pages, and the internal documents that used to sit beside
+  // them. The documents are no longer on the site: each opens via openDoc(),
+  // after sign-in. Only names live here - never content.
   var PUB_GROUPS=[
     {id:"users", he:"דפים למשתמשים", en:"Pages for users",
      whyH:"אלה חייבים להיות פתוחים: המשתמשים, אפל וגוגל מגיעים אליהם.",
@@ -7889,8 +7917,8 @@
       ["console/","הקונסול - מסך כניסה בלבד","Console - sign-in screen only","2026-09-17"]
      ]},
     {id:"docs", he:"מסמכי מוצר", en:"Product documents",
-     whyH:"נכתבו במרץ, כנראה כתיק עבודות. להחליט אם הם נשארים פתוחים.",
-     whyE:"Written in March, probably as a portfolio. Decide whether they stay open.",
+     whyH:"נכתבו במרץ. נפתחים רק מכאן, אחרי כניסה.",
+     whyE:"Written in March. Open only from here, after sign-in.",
      pages:[
       ["prd.html","מסמך דרישות (PRD)","PRD","2026-03-15"],
       ["roadmap.html","מפת דרכים","Roadmap","2026-03-15"],
@@ -7905,8 +7933,8 @@
       ["premortem.html","פרה-מורטם","Pre-mortem","2026-03-15"]
      ]},
     {id:"research", he:"מחקר ושוק", en:"Research & market",
-     whyH:"גם אלה ממרץ. אין בהם נתוני משתמשים, אבל יש בהם את החשיבה העסקית.",
-     whyE:"Also from March. No user data, but the business thinking is all here.",
+     whyH:"גם אלה ממרץ. נפתחים רק מכאן, אחרי כניסה.",
+     whyE:"Also from March. Open only from here, after sign-in.",
      pages:[
       ["vision.html","חזון ושוק","Vision & market","2026-03-15"],
       ["competitive.html","ניתוח מתחרים","Competitive analysis","2026-03-13"],
@@ -7920,10 +7948,10 @@
       ["stakeholder-update.html","עדכון לבעלי עניין","Stakeholder update","2026-03-14"]
      ]},
     {id:"other", he:"הדגמות וראיונות", en:"Demos & interviews",
-     whyH:"עודכנו מאוחר יותר. את הכנה לראיון כדאי לקרוא לפני שמחליטים.",
-     whyE:"Updated later. Read the interview prep before deciding.",
+     whyH:"עודכנו מאוחר יותר. נפתחים רק מכאן, אחרי כניסה.",
+     whyE:"Updated later. Open only from here, after sign-in.",
      pages:[
-      ["interview-prep.html","הכנה לראיון PM","PM interview prep","2026-06-25",true],
+      ["interview-prep.html","הכנה לראיון PM","PM interview prep","2026-06-25"],
       ["demo.html","הדגמת האפליקציה","App demo","2026-06-25"],
       ["docs.html","תיעוד מוצר","Product docs","2026-04-29"]
      ]}
@@ -7932,27 +7960,32 @@
     var host=$("pubPages"); if(!host) return;
     var he=LANG==="he";
     var t=$("pubTitle");
-    t.textContent = he ? "מה פתוח לכל אחד באינטרנט" : "What anyone on the internet can open";
+    t.textContent = he ? "דפי האתר ומסמכים פנימיים" : "Site pages and internal documents";
     t.insertBefore(icon("globe",17), t.firstChild); t.classList.add("withico");
     $("pubSub").textContent = he
-      ? "האתר נבנה מתיקייה ציבורית בגיטהאב, אז כל דף בו פתוח לכולם · לחיצה פותחת בלשונית חדשה"
-      : "The site is built from a public GitHub repo, so every page on it is open to all · opens in a new tab";
+      ? "רק דפי המשתמשים פתוחים לכולם. המסמכים הפנימיים עברו לשרת ונפתחים רק מכאן · לחיצה פותחת בלשונית חדשה"
+      : "Only the user-facing pages are public. Internal documents moved to the server and open only from here · opens in a new tab";
     host.innerHTML="";
     var total=0, review=0;
     PUB_GROUPS.forEach(function(g){ total+=g.pages.length; if(g.id!=="users") review+=g.pages.length; });
     var sum=el("div","pubsum");
-    [[total, he?"דפים פתוחים":"open pages"],
-     [PUB_GROUPS[0].pages.length, he?"צריכים להיות פתוחים":"should be open"],
-     [review, he?"להחליט אם להשאיר":"to decide on"]].forEach(function(x){
+    [[PUB_GROUPS[0].pages.length, he?"דפים פתוחים לכולם":"public pages"],
+     [review, he?"מסמכים פנימיים, רק אחרי כניסה":"internal documents, sign-in only"]].forEach(function(x){
       var sp=el("span"); sp.appendChild(el("b",null,String(x[0]))); sp.appendChild(document.createTextNode(x[1])); sum.appendChild(sp);
     });
     host.appendChild(sum);
-    function chip(path,label,flag){
-      var a=el("a","pubchip"+(flag?" flag":""),label);
+    function chip(path,label){
+      var a=el("a","pubchip",label);
       a.href="https://help-y.com/"+path; a.target="_blank"; a.rel="noopener";
       a.title="help-y.com/"+path;
-      a.appendChild(icon(flag?"alert":"link",12));
+      a.appendChild(icon("link",12));
       return a;
+    }
+    function docChip(path,label){
+      var b=el("button","pubchip",label); b.type="button";
+      b.addEventListener("click",function(){ openDoc(path.replace(/\.html$/,"")); });
+      b.appendChild(icon("shield",12));
+      return b;
     }
     var grid=el("div","pubgrid");
     PUB_GROUPS.forEach(function(g){
@@ -7972,7 +8005,7 @@
         });
       } else {
         var cs=el("div","pubchips");
-        g.pages.forEach(function(pg){ cs.appendChild(chip(pg[0], he?pg[1]:pg[2], pg[4])); });
+        g.pages.forEach(function(pg){ cs.appendChild(docChip(pg[0], he?pg[1]:pg[2])); });
         box.appendChild(cs);
       }
       grid.appendChild(box);
