@@ -7942,7 +7942,7 @@
     }).then(function(d){
       if(carryMeta && !d.meta_ads) d.meta_ads=carryMeta;
       if(carryPosts && !d.posts) d.posts=carryPosts;
-      if(d.backlog){ BACKLOG=d.backlog.items||[]; BL_UPDATED=d.backlog.updated||null; }
+      if(d.backlog){ BACKLOG=(d.backlog.items||[]).filter(Boolean); BL_UPDATED=d.backlog.updated||null; }
       DATA=d;
       lastLoadTs=Date.now(); updateTicker(); staleSince=null;
       $("connecting").classList.add("hidden");
