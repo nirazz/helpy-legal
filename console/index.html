@@ -671,6 +671,8 @@
          color:var(--ink2); }
   .tag.mock { border-color:var(--warning); color:var(--ink2); }
   .tag.oneway { color:var(--bad-text); border-color:var(--bad-text); }
+  .tag.phone { color:var(--s1); border-color:var(--s1); font-weight:600; }
+  .tag.good { color:var(--good-text); border-color:var(--good-text); }
   .tag.new { color:#fff; background:var(--s1); border-color:var(--s1); font-weight:700; }
   .tabbadge { display:inline-block; margin-inline-start:6px; min-width:18px; padding:0 5px;
     border-radius:9px; background:var(--s1); color:#fff; font-size:11px; font-weight:700;
@@ -1889,6 +1891,10 @@
       noConvos:"אין שיחות בטווח או בסינון הנוכחי",
       msgsCount:function(n){ return n+" הודעות"; },
       tagOffer:"הצעה", tagRequest:"בקשה", tagOneway:"ללא מענה", tagMock:"בדיקה", tagNew:"חדש",
+      tagPhone:function(d){ return d? "טלפון הוחלף · "+d : "טלפון הוחלף"; },
+      tagStatus:{pending:"ממתינה", accepted:"פעילה", completed:"הושלמה", not_completed:"לא יצא לפועל", expired:"פגה", declined:"נדחתה"},
+      tagAskedNoAns:"נשאלו אם הושלם · לא ענו", tagAnsGot:"ענו: קיבלו עזרה", tagAnsNotYet:"ענו: עוד לא",
+      tagAnsReason:{still_coordinating:"ענו: עדיין מתאמים", no_response:"ענו: לא קיבלו מענה", no_longer_needed:"ענו: כבר לא צריך"},
       noData:"אין נתונים", noDataRange:"אין נתונים בטווח",
       insFunnel:function(p,a,b,w){ return "רק <b>"+p+"%</b> מהנרשמים מגיעים לשיחה עם שכן - זה צוואר הבקבוק המרכזי במשפך ("+a+" מתוך "+b+" ב-"+w+" יום)"; },
       insOfferAns:function(p,a,b,bad){ return "בעלי הצעות ענו ל-<b>"+p+"%</b> מהפניות אליהם ("+a+" מתוך "+b+")"+(bad?" - פנייה שנשארת באוויר מייאשת שכנים":""); },
@@ -2491,6 +2497,10 @@
       noConvos:"No conversations in this range or filter",
       msgsCount:function(n){ return n+" messages"; },
       tagOffer:"offer", tagRequest:"request", tagOneway:"unanswered", tagMock:"test", tagNew:"new",
+      tagPhone:function(d){ return d? "phone shared · "+d : "phone shared"; },
+      tagStatus:{pending:"pending", accepted:"active", completed:"completed", not_completed:"fell through", expired:"expired", declined:"declined"},
+      tagAskedNoAns:"asked if it happened · no answer", tagAnsGot:"answered: got help", tagAnsNotYet:"answered: not yet",
+      tagAnsReason:{still_coordinating:"answered: still coordinating", no_response:"answered: got no response", no_longer_needed:"answered: no longer needed"},
       noData:"No data", noDataRange:"No data in range",
       insFunnel:function(p,a,b,w){ return "Only <b>"+p+"%</b> of signups reach a conversation with a neighbor - the funnel's main bottleneck ("+a+" of "+b+" in "+w+" days)"; },
       insOfferAns:function(p,a,b,bad){ return "Offer owners answered <b>"+p+"%</b> of openers ("+a+" of "+b+")"+(bad?" - an unanswered opener discourages neighbors":""); },
@@ -5458,12 +5468,16 @@
       chip.appendChild(x);
       dh.appendChild(chip);
     }
+    // server stamp (tr_stamp_phone_shared) keyed by match; chats from before
+    // the stamp existed still match the regex, so both count as "shared"
+    var PHONE={};
+    (DATA.phone_exchanges||[]).forEach(function(x){ PHONE[x.match_id]=x; });
     var list=(DATA.conversations||[]).filter(function(c){
       if(hideMock && c.mock) return false;
       if(onlyOneWay && c.two_way) return false;
       if(typeSel!=="all" && c.post_type!==typeSel) return false;
       if(drill.category && c.category!==drill.category) return false;
-      if(onlyPhone && !c.messages.some(function(m){ return PHONE_RE.test(m.content); })) return false;
+      if(onlyPhone && !PHONE[c.match_id] && !c.messages.some(function(m){ return PHONE_RE.test(m.content); })) return false;
       if(q){
         var hay=(c.post_title+" "+c.helper.name+" "+c.requester.name+" "+
           c.messages.map(function(m){return m.content;}).join(" "));
@@ -5514,6 +5528,20 @@
         var lastAt=new Date(c.messages[c.messages.length-1].at).getTime();
         var stale=(Date.now()-lastAt) > 7*86400000;
         meta.appendChild(el("span", stale? "tag" : "tag oneway", S.tagOneway));
+      }
+      // phone exchange: when, how the match ended, and what they answered
+      // when we asked - the WhatsApp exit is where completions go missing
+      var ph=PHONE[c.match_id];
+      if(ph || c.messages.some(function(m){ return PHONE_RE.test(m.content); })){
+        meta.appendChild(el("span","tag phone",S.tagPhone(ph? fmtDay(new Date(ph.shared_at).toLocaleDateString("sv-SE",{timeZone:"Asia/Jerusalem"})) : "")));
+        if(S.tagStatus[c.status])
+          meta.appendChild(el("span", c.status==="completed"? "tag good" : "tag", S.tagStatus[c.status]));
+        if(ph && ph.answer==="got_help") meta.appendChild(el("span","tag good",S.tagAnsGot));
+        else if(ph && ph.answer==="not_yet"){
+          var why=ph.reason && S.tagAnsReason[ph.reason];
+          meta.appendChild(el("span", ph.reason==="no_response"? "tag oneway" : "tag", why||S.tagAnsNotYet));
+        }
+        else if(ph && ph.asked_at) meta.appendChild(el("span","tag",S.tagAskedNoAns));
       }
       if(c.mock) meta.appendChild(el("span","tag mock",S.tagMock));
       main.appendChild(meta);
