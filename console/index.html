@@ -5969,6 +5969,9 @@
     relayCall("doc",{name:name}).then(function(d){
       var router='<base href="https://help-y.com/"><script>document.addEventListener("click",function(e){'
         +'var a=e.target.closest&&e.target.closest("a[href]");if(!a)return;'
+        // <base> would send an in-page #anchor to help-y.com/#anchor; scroll instead
+        +'var hr=a.getAttribute("href");if(hr.charAt(0)==="#"){e.preventDefault();'
+        +'var t=document.getElementById(decodeURIComponent(hr.slice(1)));if(t)t.scrollIntoView({behavior:"smooth"});return;}'
         +'var m=a.getAttribute("href").match(/^(?:\\.?\\/)?([a-z-]+)\\.html(?:#.*)?$/);'
         +'if(m&&'+JSON.stringify(DOC_NAMES)+'.indexOf(m[1])>=0&&window.opener&&window.opener.helpyOpenDoc){'
         +'e.preventDefault();window.opener.helpyOpenDoc(m[1]);}});<\/script>';
