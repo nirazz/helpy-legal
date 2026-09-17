@@ -6171,6 +6171,16 @@
   var BL_UPDATED = "2026-09-17";
   var BACKLOG = [
     // ---- act now -----------------------------------------------------------
+    {st:"next", cat:"product", rice:null, eff:2,
+     tH:"הצעת עזרה מקבלת פניות מחוץ לטווח של מי שפרסם אותה",
+     tE:"An offer receives contact from outside its owner's radius",
+     wH:"P2, נמדד 17.09. הטווח שמשתמש בוחר קובע רק מה הוא רואה בפיד שלו - מי שמציע עזרה לא יכול להגביל מאיפה פונים אליו. שלושה מקרים ביום אחד: מציע אחד הגדיר 2 ק\"מ וקיבל פנייה מ-9.6 ק\"מ, מציע שני הגדיר 5 ק\"מ וקיבל פניות מ-9.7 ומ-7.1. בכל הסירובים הסיבה היא מרחק או 'אין לי רכב'. המציע הראשון מחק את החשבון 5 שעות אחרי הסירוב השלישי שלו, והשני דיווח על פונה שלא כתב שום דבר פוגעני. הכיוון: להציג הצעה רק למי שנמצא גם בתוך הטווח של המפרסם. שלושה מקרים, לכן P2.",
+     wE:"P2, measured 17.09. The radius a user picks only decides what fills their OWN feed - someone offering help cannot limit how far away contact comes from. Three cases in one day: One helper set 2 km and was contacted from 9.6 km; a second set 5 km and was contacted from 9.7 and 7.1. Every refusal names distance or 'I have no car'. The first deleted his account 5h after his third refusal, and the second reported a requester who had written nothing abusive. Direction: show an offer only to viewers who are also inside the poster's radius. n=3, so P2."},
+    {st:"next", cat:"product", rice:null, eff:0.5,
+     tH:"פונים מתייחסים למציעי עזרה כבעלי מקצוע בתשלום",
+     tE:"Requesters treat offer posters as paid tradespeople",
+     wH:"P2, נמדד 17.09. פונה אחד שלח ל-6 מציעי עזרה תוך 4 דקות את השאלה 'כמה יעלה?', ואחד מהם נקב מחיר. אצל אותו מציע זו הפעם היחידה מתוך 8 שיחות, ורק אחרי שנשאל פעמיים - הבעיה בצד השואל. הוחלט עם ניר לא לפנות למציע (הודעה יום אחרי נקראת כ'קראנו לך את הצ'אט'). התיקון: משפט אחד, 'כאן עוזרים בלי תשלום', בטופס הפרסום ובראש צ'אט חדש.",
+     wE:"P2, measured 17.09. One requester asked 6 offer posters 'how much will it cost?' within 4 minutes, and one quoted a price. For that helper it is the only price mention in 8 chats, and only after being asked twice - the defect is on the asking side. Decided with Nir not to message the helper (a message a day later reads as 'we read your chat'). Fix: one line, 'here people help without payment', on the post form and at the top of a new chat."},
     {st:"done", cat:"legal", rice:null, eff:0.05,
      tH:"שאלון דירוג הגיל של אפל - נענה",
      tE:"Apple's age-rating questionnaire - answered",
