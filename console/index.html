@@ -6168,7 +6168,7 @@
   // Bump this whenever BACKLOG below changes. It sits here, touching the array,
   // because a stamp kept anywhere else is a second thing to forget - and a
   // stamp that lies is worse than no stamp at all.
-  var BL_UPDATED = "2026-09-16";
+  var BL_UPDATED = "2026-09-17";
   var BACKLOG = [
     // ---- act now -----------------------------------------------------------
     {st:"done", cat:"legal", rice:null, eff:0.05,
@@ -6177,24 +6177,24 @@
      wH:"נענה 16.09 עם הגשת 1.1.22, אחרי שישב פתוח מ-03.08. רשת חברתית: לא. הגבלת גיל לרשת חברתית: לא. שני השדות האחרים נשארו ריקים בצדק (אחד רלוונטי רק לאפליקציות ילדים, השני אופציונלי). אומת מול ה-API של אפל ולא מול המסך. ⚠️ התשובה התהפכה תוך כדי: ההמלצה הראשונה הייתה כן, ואז קריאת הניסוח של אפל עצמה שינתה אותה - היא שואלת על הפצה מחדש והגברה שמפיצה תוכן להמון משתמשים, וצ׳אט ותוכן גולשים כבר מוצהרים בשתי שאלות נפרדות משלהם. אל תגזרו מחדש את ה׳כן׳. הפחד שתקע את זה חודש וחצי - שזה יזיז את דירוג הגיל - היה מיותר: האפליקציה נעולה ידנית על 18+, שזו התקרה, והשאלון עצמו מחשב 4+.",
      wE:"Answered 16.09 alongside the 1.1.22 submission, after sitting open since 03.08. Social media: no. Social-media age restriction: no. The other two fields stay null correctly (one is Kids-Category only, one optional). Verified against Apple's API, not the screen. ⚠️ The answer REVERSED mid-way: the first recommendation was yes, and reading Apple's own wording changed it - it asks about redistribution and amplification that visibly spreads content to many users, and chat and user content are already declared under their own separate questions. Do not re-derive the 'yes'. The fear that parked this for six weeks - that it would move the age rating - was groundless: the app is manually overridden to 18+, the ceiling, and the questionnaire itself computes 4+."},
 
-    // ---- riding the next build ---------------------------------------------
-    {st:"build", cat:"product", rice:null, eff:1,
+    // ---- shipped in 1.1.22 (folded 2026-09-17, live on both stores) ---------
+    {st:"done", cat:"product", rice:null, eff:1,
      tH:"פונט Heebo בכל האפליקציה",
      tE:"Heebo as the app-wide typeface",
      wH:"ניר השווה את המוקאפ לאפליקציה ובחר ב-Heebo (07.09, PR #269, מוזג). שינוי נייטיב דרך תוסף expo-font, אז הוא מחכה לבילד. ממצא צדדי: ביטול הגדלת הטקסט של המערכת לא עבד מאז RN 0.81, והבילד הזה מחזיר אותו - משתמשים עם טקסט גדול יראו את האפליקציה מתכווצת לגודל העיצוב. אומת ב-iOS על ארבעה טאבים ובאנדרואיד על מסך הכניסה בלבד.",
      wE:"Nir compared the mockup to the app and chose Heebo (07.09, PR #269, merged). A native change through the expo-font plugin, so it waits for a build. Side finding: the app-wide block on system text scaling had been a no-op since RN 0.81 and this build restores it - large-text users will see the app shrink back to design size. Verified on iOS across four tabs, on Android on the auth screen only."},
-    {st:"build", cat:"product", rice:null, eff:1,
+    {st:"done", cat:"product", rice:null, eff:1,
      tH:"מסך הפעילות בעיצוב החדש",
      tE:"The Activity tab in the new layout",
      wH:"ניר אישר מוקאפ של Claude Design (06.09) ו-PR #268 (מוזג 07.09) מיישם אותו: הכותרת וקישור ההיסטוריה בסרגל העליון, ספירות חיות על הטאבים, גלולת סטטוס אחת בקצה הכרטיס במקום שורת טקסט שלישית, ושורת Helpy עברה מתחת לרשימה. אומת בסימולטור באור ובכהה; אנדרואיד וגלולות הסגירה עדיין לא נראו על מכשיר.",
      wE:"Nir approved a Claude Design mockup (06.09) and PR #268 (merged 07.09) implements it: title + history link in the nav bar, live counts on the segments, one status pill at the card edge instead of a third text line, and the Helpy row moved below the list. Simulator-verified light + dark; Android and the closed-post pills not yet seen on a device."},
-    {st:"build", cat:"growth", rice:null, eff:0.5,
+    {st:"done", cat:"growth", rice:null, eff:0.5,
      tH:"באנר העדכון מדווח אם הזיז מישהו",
      tE:"The update banner reports whether it moved anyone",
      wH:"07.09, PR #270, מוזג. עלה מהשאלה 'למה כולם על גרסה ישנה': לבאנר לא היה אירוע בכלל, אז אי אפשר היה להפריד את ההשפעה שלו מהעדכון האוטומטי של החנות - שהוא מה שמזיז את רוב האנשים. שלושה אירועים: הוצג / לחיצה / נסגר. כלל קריאה: הבאנר חוזר בכל פתיחה עד שסוגרים אותו, אז סופרים אנשים ולא אירועים. ממצא צדדי שתיקן מספר: app_version מדווח על הפתיחה האחרונה, לא על מה שמותקן.",
      wE:"07.09, PR #270, merged. Came out of the question why everyone was on an old version: the banner had no event at all, so its effect could not be separated from the store's background auto-update, which is what moves most people. Three events: shown / cta / dismissed. Reading rule: the banner re-appears on every launch until dismissed, so count people, never events. Side finding that corrected a number: app_version reports the last app OPEN, not what is installed."},
 
-    {st:"build", cat:"growth", rice:null, eff:1.5,
+    {st:"done", cat:"growth", rice:null, eff:1.5,
      tH:"לדעת מאיפה כל התקנה הגיעה",
      tE:"Knowing where each install came from",
      wH:"עלה מהשאלה 'למה רוב ההתקנות לא מתל אביב', שלקחה שעה לענות עליה בהסקה כי שום דבר בבסיס הנתונים לא תיעד מאיפה מישהו הגיע (PR #300, מוזג 15.09, נוסע על 1.1.22). באנדרואיד זו תשובה אמיתית דרך Play Install Referrer: קליק ממודעה, הזמנה משכן, דף פוסט משותף, או גלישה רגילה בחנות. ⚠️ באייפון זה בלתי אפשרי מבנית ותמיד יהיה - לאפל אין install referrer, ולכן כל שורת iOS תקרא 'לא ידוע'. לפלח לפי פלטפורמה או שהמספרים משקרים. הקישורים שלנו היו חשופים עד עכשיו, אז מפה לאוזן ופרסום היו בלתי ניתנים להפרדה אפילו בקונסולה של גוגל. מותנה בהסכמה לפרסום (PR #303), כך שמשתמש אירופי לא נקלט - במכוון.",
@@ -6207,11 +6207,11 @@
      wH:"Sentry 147336496, אירוע אחד, 16.09 08:49. הקריאה הראשונה שלי הייתה שגויה ורשומה כאן כדי שלא תחזור: אמרתי \'ראשון מסוגו ב-90 יום ועל הבילד החדש, אז זה אות\' - על סמך הכותרת והתאריך בלבד. ניר הקשה עם הראיה הברורה, שהוא התקין והשתמש בבילד הזה בסדר גמור, ופירורי הלחם סגרו את זה: הסשן נפתח ב-05:49:54.168 ונגמר ב-05:49:55.274. הוא חי 1.1 שניות, וכל 16 הפירורים הם קריאות רשת שהחזירו 200 - מטא, PostHog, וסופאבייס. מוות בידי ה-watchdog דורש בערך עשרים שניות של תקיעה בעלייה. אפליקציה שחיה שנייה, השלימה שש-עשרה קריאות רשת ואז נעלמה - מישהו סגר אותה, היא לא נתקעה. הכלל שנשאר: אף פעם לא לשפוט אירוע watchdog לפי הכותרת והתאריך. משך הסשן הוא המבחין, והוא במרחק שתי קריאות API.",
      wE:"Sentry 147336496, one event, 16.09 08:49. My first read was wrong and is recorded here so it is not repeated: I called it a signal because it was the first of its kind in 90 days and on the brand-new build - on the strength of the headline and the date alone. Nir pushed back with the obvious counter-evidence, that he had installed and used that build fine, and the breadcrumbs settled it: the session opens at 05:49:54.168 and ends at 05:49:55.274. It lived 1.1 seconds, and all 16 breadcrumbs are network calls that returned 200 - Meta, PostHog, Supabase. A real watchdog kill needs roughly twenty seconds of a blocked main thread at launch. An app that lives one second, completes sixteen round trips and then vanishes was closed, not hung. The lasting rule: never judge a watchdog or hang event from its title and date. Session duration is the discriminator and it is two API calls away."},
 
-    {st:"now", cat:"product", rice:null, eff:0.1,
-     tH:"לפתוח את 1.1.22 על מכשיר אנדרואיד - הוא כבר חי",
-     tE:"Open 1.1.22 on a real Android device - it is already live",
-     wH:"⚡ גוגל אישרו תוך שעות ו-142 חי ב-100%. גרסה 142 הוגשה לפרודקשן בלי שנפתחה על אף מכשיר או אמולטור אנדרואיד. ניר קיבל את ההחלטה במפורש ומתוך ידיעת הסיכון; הפריט הזה הוא החצי השני של ההחלטה, לא ערעור עליה. זו רכבת הנייטיב הראשונה באנדרואיד מאז 1.1.21, ולכן שני הדברים לבדוק הם בדיוק שני שינויי הנייטיב - ושניהם נכשלים בשקט: האם הגופן Heebo באמת נטען (גופן חסר לא זורק שגיאה, אנדרואיד פשוט נופל לברירת מחדל), והאם האפליקציה בכלל עולה עם התלות החדשה. ואז לוודא שמקור ההתקנה נרשם בפועל ולא נשאר ריק.",
-     wE:"⚡ Google approved within hours and 142 is at 100% rollout. versionCode 142 was submitted to production without ever being opened on any Android device or emulator. Nir made that call explicitly, knowing the risk; this item is the other half of the decision, not a second-guess. It is the first native Android train since 1.1.21, so the two things to check are exactly the two native changes - and both fail silently: does the Heebo font actually load (a missing font throws nothing, Android just falls back), and does the app launch at all with the new dependency linked. Then confirm the acquisition source records a real value rather than staying null."},
+    {st:"done", cat:"product", rice:null, eff:0.2,
+     tH:"1.1.22 אומת על מכשירי אנדרואיד אמיתיים",
+     tE:"1.1.22 verified on real Android devices",
+     wH:"⚡ שתי החנויות חיות (גוגל 16.09, אפל 17.09). הסיכון שנלקח במודע - 142 יצא ל-100% ממשתמשי האנדרואיד בלי שנפתח על אף מכשיר - נסגר בנתונים ולא בתחושה: חמישה משתמשי אנדרואיד וארבעה iOS כבר על 1.1.22, כלומר האפליקציה עולה. ומקור ההתקנה נקלט בפועל: ארבע שורות meta_ads ואחת organic_store מאנדרואיד, iOS מחזיר \'לא ידוע\' בדיוק כמתוכנן. אין קפיצת קריסות ואין חזרה של ה-watchdog. שווה לשים לב למה שהמספר הראשון הזה כבר אומר: ארבע מתוך חמש ההתקנות באנדרואיד הגיעו ממודעות מטא - וזו בדיוק השאלה שפתחה את כל הגל הזה, רק שעכשיו היא עובדה ולא הסקה.",
+     wE:"⚡ Live on both stores (Google 16.09, Apple 17.09). The risk taken knowingly - 142 going to 100% of Android users having never been opened on a device - is closed with data rather than a feeling: five Android and four iOS users are already on 1.1.22, so the app launches. And the acquisition source is actually being captured: four meta_ads rows and one organic_store from Android, with iOS returning \'unknown\' exactly as designed. No crash spike, no watchdog recurrence. Worth noting what that first number already says: four of the five Android installs came from Meta ads - which is the question that started this whole wave, now a fact instead of an inference."},
 
     {st:"next", cat:"product", rice:null, eff:0.5,
      tH:"מסך התשובה למשתמש נפתח לאט מהפוש - למדוד, ואז שני תיקונים זולים",
