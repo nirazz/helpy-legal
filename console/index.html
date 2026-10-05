@@ -250,7 +250,22 @@
   #briefView .secbrief.brstuck { margin:0 2px 2px; font-size:13.5px; }
   /* a bar is a full-width line under its number, never a third column that
      wraps on its own */
-  #briefView .brk .brbar { flex:1 0 100%; margin-top:5px; }
+  /* Every line in the "did it run" cards is label | value, on one grid, so
+     the values start on the same edge down the card. They used to mix three
+     shapes - label beside value, label wrapped ABOVE its value, and bare
+     sentences with no label at all - and the two cards of a row ended at
+     different heights, leaving a hole under the shorter one. */
+  #briefView .grid2 { align-items:stretch; }
+  #briefView .brk { display:grid; grid-template-columns:132px minmax(0,1fr);
+                    gap:0 14px; align-items:baseline; }
+  #briefView .brk .lbl { min-width:0; color:var(--muted); font-size:12.5px; unicode-bidi:isolate; }
+  #briefView .brk > :not(.lbl) { grid-column:2; }
+  #briefView .brk .brbar { margin-top:6px; }
+  #briefView .brpills { display:flex; flex-wrap:wrap; gap:6px; }
+  @media (max-width:520px){
+    #briefView .brk { grid-template-columns:minmax(0,1fr); }
+    #briefView .brk > :not(.lbl) { grid-column:1; }
+  }
 
   #briefView .brgo { all:unset; box-sizing:border-box; cursor:pointer;
                      display:inline-flex; align-items:center; gap:7px;
@@ -2358,11 +2373,11 @@
       brCron:"קריאות קרון → פונקציה", brCronLine:function(ok,to,dns,from,to2){ return "<b>"+ok+"</b> הצליחו · <b>"+to+"</b> נגמר הזמן (5 שניות) · <b>"+dns+"</b> מהן לא יצאו כלל (DNS) · חלון "+from+"–"+to2; },
       brCronNote:"קריאה שנגמר זמנה בדרך כלל עדיין מריצה את הפונקציה - הקרון רק לא חיכה לתשובה. תקיעת DNS היא קריאה שמעולם לא יצאה.",
       brDigest:"הסיכום של 09:00", brDigestOk:function(t){ return "נשלח היום ב-"+t; }, brDigestMissing:"לא נשלח היום - לבדוק את daily-metrics",
-      brSweep:function(n){ return "הטאטוא הלילי סגר <b>"+n+"</b> התאמות"; },
-      brStore:function(a,c){ return "App Store: <b>"+a+"</b> ("+c+" דירוגים)"; },
-      brPushLine:function(s,d,f,o){ return "<b>"+s+"</b> נשלחו ביממה · <b>"+d+"</b> נמסרו · <b>"+f+"</b> נכשלו · <b>"+o+"</b> נפתחו"; },
-      brDead:function(d,tot,g){ return "טוקנים שמתו: <b>"+d+"</b> ביממה · <b>"+tot+"</b> פתוחים · ~"+g+" חשודים שעוד לא נסרקו"; },
-      brVersions:"על הגרסה האחרונה", brVerLine:function(p,latest,on,tot){ return p+": <b>"+on+"</b> מתוך "+tot+" שנראו השבוע על <b>"+latest+"</b>"; },
+      brSweepL:"הטאטוא הלילי", brSweep:function(n){ return "סגר <b>"+n+"</b> התאמות"; },
+      brStoreL:"App Store", brStore:function(a,c){ return "<b>"+a+"</b> ("+c+" דירוגים)"; },
+      brPushL:"דחיפות ביממה", brPushLine:function(s,d,f,o){ return "<b>"+s+"</b> נשלחו · <b>"+d+"</b> נמסרו · <b>"+f+"</b> נכשלו · <b>"+o+"</b> נפתחו"; },
+      brDeadL:"טוקנים שמתו", brDead:function(d,tot,g){ return "<b>"+d+"</b> ביממה · <b>"+tot+"</b> פתוחים · ~"+g+" חשודים שעוד לא נסרקו"; },
+      brVerLine:function(on,tot){ return "<b>"+on+"</b> מתוך "+tot+" שנראו השבוע כבר עליה"; },
       brVerNote:"app_version מדווח על הפתיחה האחרונה, לא על מה שמותקן - מי שלא פתח מאז העדכון עדיין נספר על הישנה.",
       brAdsDay:function(d){ return "היום הישראלי האחרון שנסגר · "+d; },
       brAdsSpend:"הוצאה", brAdsSignups:"הרשמות אמיתיות", brAdsCost:"להרשמה",
@@ -2963,11 +2978,11 @@
       brCron:"Cron → function calls", brCronLine:function(ok,to,dns,from,to2){ return "<b>"+ok+"</b> succeeded · <b>"+to+"</b> timed out (5s) · <b>"+dns+"</b> of them never left (DNS) · window "+from+"–"+to2; },
       brCronNote:"A timed-out call usually still runs the function - the cron just stopped waiting. A DNS stall is a call that never left.",
       brDigest:"The 09:00 digest", brDigestOk:function(t){ return "sent today at "+t; }, brDigestMissing:"not sent today - check daily-metrics",
-      brSweep:function(n){ return "The nightly sweep closed <b>"+n+"</b> matches"; },
-      brStore:function(a,c){ return "App Store: <b>"+a+"</b> ("+c+" ratings)"; },
-      brPushLine:function(s,d,f,o){ return "<b>"+s+"</b> sent in 24h · <b>"+d+"</b> delivered · <b>"+f+"</b> failed · <b>"+o+"</b> opened"; },
-      brDead:function(d,tot,g){ return "Dead tokens: <b>"+d+"</b> in 24h · <b>"+tot+"</b> open · ~"+g+" suspects not yet scanned"; },
-      brVersions:"On the latest version", brVerLine:function(p,latest,on,tot){ return p+": <b>"+on+"</b> of "+tot+" seen this week on <b>"+latest+"</b>"; },
+      brSweepL:"Nightly sweep", brSweep:function(n){ return "closed <b>"+n+"</b> matches"; },
+      brStoreL:"App Store", brStore:function(a,c){ return "<b>"+a+"</b> ("+c+" ratings)"; },
+      brPushL:"Push in 24h", brPushLine:function(s,d,f,o){ return "<b>"+s+"</b> sent · <b>"+d+"</b> delivered · <b>"+f+"</b> failed · <b>"+o+"</b> opened"; },
+      brDeadL:"Dead tokens", brDead:function(d,tot,g){ return "<b>"+d+"</b> in 24h · <b>"+tot+"</b> open · ~"+g+" suspects not yet scanned"; },
+      brVerLine:function(on,tot){ return "<b>"+on+"</b> of "+tot+" seen this week are on it"; },
       brVerNote:"app_version reports the last OPEN, not what is installed - anyone who has not opened the app since updating still counts on the old one.",
       brAdsDay:function(d){ return "Last closed Israeli day · "+d; },
       brAdsSpend:"Spend", brAdsSignups:"Real signups", brAdsCost:"Per signup",
@@ -7547,10 +7562,11 @@
     // ---- did the machine run --------------------------------------------------
     var hh=$("brHealth");
     var wr=el("div","brk"); wr.appendChild(el("span","lbl",S.brWatchdog));
+    var pills=el("span","brpills"); wr.appendChild(pills);
     wd.forEach(function(w){
       var cls=w.status==="up"?"up":w.status==="down"?"down":"mid";
       var p=el("span","brpill "+cls, S.brCheck(w.check)+" · "+(w.status==="up"?S.brUp:w.status==="down"?S.brDown:S.brInconc));
-      p.title=w.check+" · "+S.brSince+" "+fmtTime(w.since); wr.appendChild(p);
+      p.title=w.check+" · "+S.brSince+" "+fmtTime(w.since); pills.appendChild(p);
     });
     hh.appendChild(wr);
     if(calls){
@@ -7558,18 +7574,18 @@
       brBar(cr, (http.ok||0)/calls, toPct>=25?"bad":toPct>=10?"warn":"");
     }
     brKV(hh, S.brDigest, dg.date===todayIL? S.brDigestOk(brHM(dg.at)) : S.brDigestMissing);
-    if(dg.sweep!=null) brKV(hh, "", S.brSweep(fmt(dg.sweep)));
-    if(dg.store_count!=null) brKV(hh, "", S.brStore(dg.store_avg!=null? Number(dg.store_avg).toFixed(1) : "-", fmt(dg.store_count)));
+    if(dg.sweep!=null) brKV(hh, S.brSweepL, S.brSweep(fmt(dg.sweep)));
+    if(dg.store_count!=null) brKV(hh, S.brStoreL, S.brStore(dg.store_avg!=null? Number(dg.store_avg).toFixed(1) : "-", fmt(dg.store_count)));
     hh.appendChild(el("div","brnote",S.brCronNote));
 
     var pu=$("brPush");
-    brKV(pu, "", S.brPushLine(fmt(push.sent||0), fmt(push.delivered||0), fmt(push.failed||0), fmt(push.opened||0)));
-    brKV(pu, "", S.brDead(fmt(H.dead_tokens_24h||0), fmt(dg.push_dead_total||0), fmt(dg.push_ghosts_remaining||0)));
-    var vh=el("div","brk"); vh.appendChild(el("span","lbl",S.brVersions)); pu.appendChild(vh);
+    brKV(pu, S.brPushL, S.brPushLine(fmt(push.sent||0), fmt(push.delivered||0), fmt(push.failed||0), fmt(push.opened||0)));
+    brKV(pu, S.brDeadL, S.brDead(fmt(H.dead_tokens_24h||0), fmt(dg.push_dead_total||0), fmt(dg.push_ghosts_remaining||0)));
     ["ios","android"].forEach(function(p){
       var tot=(V.seen_7d||[]).filter(function(r){ return r.p===p; }).reduce(function(a,r){ return a+(r.n||0); },0);
       var on=(V.seen_7d||[]).filter(function(r){ return r.p===p && r.v===latestBy[p]; }).reduce(function(a,r){ return a+(r.n||0); },0);
-      var row=brKV(pu, "", S.brVerLine(p==="ios"?"iOS":"Android", latestBy[p]||"-", fmt(on), fmt(tot)));
+      // the label names the platform AND the version it is counted against
+      var row=brKV(pu, (p==="ios"?"iOS":"Android")+" "+(latestBy[p]||"-"), S.brVerLine(fmt(on), fmt(tot)));
       brBar(row, tot? on/tot : 0);
     });
     pu.appendChild(el("div","brnote",S.brVerNote));
