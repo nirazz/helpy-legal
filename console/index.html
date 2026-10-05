@@ -223,14 +223,25 @@
   #briefView .ins { padding:6px 0; }
   #briefView .ins.lead { padding:8px 0; }
 
-  /* The waiting grid held four panels of very different heights, so a 2-col
-     grid left a hole under the short one - 234px of empty background in the
-     measured case. Columns pack instead of aligning rows: no holes, and a
-     panel is never split across a column. */
-  #brWait { display:block; column-count:2; column-gap:14px; }
-  #briefView #brWait > .panel { margin-bottom:14px; break-inside:avoid;
-                                -webkit-column-break-inside:avoid; }
-  @media (max-width:880px){ #brWait { column-count:1; } }
+  /* The waiting section is three lists of very different lengths (3 rows,
+     9 rows, 2 rows). Side by side, in a grid OR in packed columns, the short
+     one always left a hole beside the long one - ~450px of empty background
+     on 05.10, with the stuck-rooms line stranded under it. So the lists are
+     stacked full width, and on a wide screen each row is ONE line laid out
+     as a table: title | detail | when | action. The when/action columns have
+     fixed widths so the dates line up across all three panels, including the
+     two that have no action button. */
+  #brWait { display:block; }
+  #briefView #brWait > .panel { margin-bottom:14px; }
+  @media (min-width:881px){
+    #briefView #brWait .brrow { grid-template-columns:minmax(160px,30%) minmax(0,1fr) 96px 44px;
+                                gap:0 16px; padding:7px 0; }
+    #briefView #brWait .brrow > * { grid-row:1; }
+    #briefView #brWait .brrow .who  { grid-column:1; }
+    #briefView #brWait .brrow .what { grid-column:2; }
+    #briefView #brWait .brrow .when { grid-column:3; text-align:end; }
+    #briefView #brWait .brrow .act  { grid-column:4; justify-self:end; }
+  }
   /* an empty panel is not a panel - it is one line at the end of the section */
   /* both strips hang off the same edge as the section head, and the quiet
      line lines up with the prose above it rather than half a character out */
