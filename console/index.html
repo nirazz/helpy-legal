@@ -8499,13 +8499,23 @@
 
   // ---- boot: Google session only --------------------------------------------
   if(sb){
+    // Both paths below fire on a normal open (the stored session, then
+    // SIGNED_IN for the same one), and each used to start its own load: two
+    // full dashboard pulls at the same millisecond, every time the console
+    // was opened. One boot load, whichever path gets there first.
+    var bootLoading=false;
+    function bootLoad(){
+      if(DATA || bootLoading) return;
+      bootLoading=true;
+      load().catch(function(e){ bootLoading=false; bootFail(e); });
+    }
     sb.auth.onAuthStateChange(function(ev,session){
       SESSION=session;
-      if(ev==="SIGNED_IN" && session && !DATA) load().catch(bootFail);
+      if(ev==="SIGNED_IN" && session) bootLoad();
     });
     sb.auth.getSession().then(function(r){
       SESSION=r.data.session;
-      if(SESSION) load().catch(bootFail);
+      if(SESSION) bootLoad();
       else {
         // the stored key was stale - fall back to the real login card
         $("connecting").classList.add("hidden");
