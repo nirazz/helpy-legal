@@ -695,6 +695,21 @@
   /* a caveat that changes how a number should be READ is not a footnote */
   .note.warn { color:var(--warning); }
   .loading { opacity:0.45; pointer-events:none; transition:opacity .15s; }
+  /* first paint: only the brief has arrived (see loadBriefFirst). Every other
+     tab is a quiet spinner until the full payload lands, never a half-drawn
+     page of empty panels. */
+  body.partial #app > div:not(#briefView) > * { display:none; }
+  body.partial #app > div:not(#briefView)::before { content:""; display:block;
+    width:28px; height:28px; margin:56px auto; border-radius:50%;
+    border:2.5px solid var(--hairline); border-top-color:var(--s1);
+    animation:spin 1.1s linear infinite; }
+  body.partial #rail { display:none; }
+  body.partial.partial-failed #app > div:not(#briefView)::before {
+    content:attr(data-wait); width:auto; height:auto; border:none; animation:none;
+    margin:56px 16px; text-align:center; color:var(--muted); font-size:14px; }
+  .brwait { height:14px; width:62%; margin:6px 0; border-radius:7px;
+    background:var(--hairline); animation:brwait 1.6s ease-in-out infinite; }
+  @keyframes brwait { 0%,100%{ opacity:.45; } 50%{ opacity:.9; } }
 
   footer { text-align:center; color:var(--muted); font-size:11px; padding:20px; }
 
@@ -2308,6 +2323,7 @@
       brHealthT:"שרת וקרונים", brHealthS:"כלב השמירה, קריאות הקרון לפונקציות, הסיכום היומי והטאטוא הלילי",
       brPushT:"התראות וגרסאות", brPushS:"מסירת הדחיפות ביממה, טוקנים שמתו, ועל איזו גרסה המשתמשים הפעילים",
       brAdsT:"קמפיינים אתמול", brAdsS:"הוצאה מול הרשמות אמיתיות ביום הישראלי האחרון שנסגר · המספרים המלאים בלשונית קמפיינים",
+      partialFailed:"שאר הנתונים לא נטענו. לחצו על רענון למעלה.",
       brDeskT:"על השולחן", brDeskS:"כרטיסי הבקלוג במצב «עכשיו» ו«רוכב על הבילד הבא»",
       brTSignups:"הרשמות", brTSeen:"פתחו את האפליקציה", brTPosts:"פוסטים חדשים", brTSwipes:"סווייפים", brTMsgs:"הודעות בצ'אט",
       brTDone:"עזרות שהושלמו", brTGone:"מחיקות", brTSafety:"בטיחות",
@@ -2913,6 +2929,7 @@
       brHealthT:"Server and crons", brHealthS:"The watchdog, cron calls to functions, the daily digest and the nightly sweep",
       brPushT:"Push and versions", brPushS:"Push delivery in 24h, dead tokens, and which version the active users are on",
       brAdsT:"Campaigns yesterday", brAdsS:"Spend against real signups on the last closed Israeli day · full numbers on the Campaigns tab",
+      partialFailed:"The rest of the data did not load. Press refresh above.",
       brDeskT:"On the desk", brDeskS:"Backlog cards in \"now\" and \"rides the next build\"",
       brTSignups:"Signups", brTSeen:"Opened the app", brTPosts:"New posts", brTSwipes:"Swipes", brTMsgs:"Chat messages",
       brTDone:"Helps completed", brTGone:"Deletions", brTSafety:"Safety",
@@ -3532,10 +3549,13 @@
       var tb=document.querySelector('#tabs button[data-v="chat"] .tabbadge');
       if(tb) tb.remove();
     }
-    if(v==="posts") renderPosts();
-    if(v==="arch") renderArch();
-    if(v==="backlog") renderBacklog();
-    if(v==="push") renderPush();
+    // a brief-only payload (first paint) has nothing the other tabs read; the
+    // full load renders them, and arch - rendered only here - right after it
+    var part=!!(DATA && DATA.partial);
+    if(v==="posts" && !part) renderPosts();
+    if(v==="arch" && !part) renderArch();
+    if(v==="backlog" && !part) renderBacklog();
+    if(v==="push" && !part) renderPush();
     if(v==="brief") renderBrief();
     // EVERY tab with a chart, not just metrics: a chart initialised while its
     // view was display:none measures zero width and stays a 100px sliver
@@ -7545,7 +7565,8 @@
 
     // ---- campaigns yesterday (from the payload the campaigns tab uses) ---------
     var ah=$("brAds"), MA=DATA.meta_ads;
-    if(!MA || !MA.daily){ ah.appendChild(el("div","brmore",S.brAdsNone)); }
+    if(DATA.partial){ ah.appendChild(el("div","brwait")); }
+    else if(!MA || !MA.daily){ ah.appendChild(el("div","brmore",S.brAdsNone)); }
     else {
       var yd=brIL(Date.now()-86400000);
       var spendOn=function(d){ return MA.daily.filter(function(r){ return String(r.d).slice(0,10)===d; }).reduce(function(a,r){ return a+(r.spend||0); },0); };
@@ -7567,7 +7588,8 @@
     // ---- on the desk ---------------------------------------------------------------
     var dh=$("brDesk");
     var cards=(typeof BACKLOG!=="undefined"? BACKLOG : []).filter(function(c){ return c.st==="now"||c.st==="build"; });
-    if(!cards.length) dh.appendChild(el("div","brmore",S.brDeskNone));
+    if(DATA.partial) dh.appendChild(el("div","brwait"));
+    else if(!cards.length) dh.appendChild(el("div","brmore",S.brDeskNone));
     cards.forEach(function(c){
       var r=el("div","brdesk");
       r.appendChild(el("span","st "+c.st, c.st==="now"? S.brStNow : S.brStBuild));
@@ -8217,7 +8239,9 @@
       if(carryMeta && !d.meta_ads) d.meta_ads=carryMeta;
       if(carryPosts && !d.posts) d.posts=carryPosts;
       if(d.backlog){ BACKLOG=(d.backlog.items||[]).filter(Boolean); BL_UPDATED=d.backlog.updated||null; }
+      var wasPartial=!!(DATA && DATA.partial);
       DATA=d;
+      document.body.classList.remove("partial","partial-failed");
       lastLoadTs=Date.now(); updateTicker(); staleSince=null;
       $("connecting").classList.add("hidden");
       $("login").classList.add("hidden");
@@ -8235,6 +8259,12 @@
       try{ renderPush(); }catch(e){ console.error("renderPush failed",e); }
       try{ renderBrief(); }catch(e){ console.error("renderBrief failed",e); }
       try{ renderBacklog(); }catch(e){ console.error("renderBacklog failed",e); }
+      // arch is otherwise drawn only on a tab switch, which a brief-only first
+      // paint skipped; every later load leaves it alone (a running flow demo
+      // and an open node would be reset by the minute ticker)
+      if(wasPartial && document.querySelector('#tabs button.on').getAttribute("data-v")==="arch"){
+        try{ renderArch(); }catch(e){ console.error("renderArch failed",e); }
+      }
       paintIcons(); observePanels();
       syncChrome();  // the header/rail only get their real height once shown
     }).catch(function(e){
@@ -8436,7 +8466,9 @@
     Object.keys(einsts).forEach(function(id){ einsts[id].dispose(); });
     einsts={};
     applyChrome();
-    if(DATA){ renderMetrics(); renderChat(); try{ renderBrief(); }catch(e){ console.error("renderBrief failed",e); } paintIcons(); }
+    // a brief-only first paint has only the brief to repaint
+    if(DATA && DATA.partial){ try{ renderBrief(); }catch(e){ console.error("renderBrief failed",e); } paintIcons(); }
+    else if(DATA){ renderMetrics(); renderChat(); try{ renderBrief(); }catch(e){ console.error("renderBrief failed",e); } paintIcons(); }
     // the backlog is static text, so it must repaint on a language flip even
     // when no dashboard payload has arrived yet
     renderBacklog();
@@ -8503,11 +8535,60 @@
     // SIGNED_IN for the same one), and each used to start its own load: two
     // full dashboard pulls at the same millisecond, every time the console
     // was opened. One boot load, whichever path gets there first.
-    var bootLoading=false;
+    var bootLoading=false, bootSettled=false;
     function bootLoad(){
       if(DATA || bootLoading) return;
       bootLoading=true;
-      load().catch(function(e){ bootLoading=false; bootFail(e); });
+      loadBriefFirst();
+      fullBoot(0);
+    }
+    function fullBoot(attempt){
+      load().then(function(){ bootSettled=true; }).catch(function(e){
+        var auth=e.message==="unauthorized" || e.message==="forbidden";
+        // the brief is already on screen: retry the rest quietly, then say so
+        // plainly in the tabs that are waiting - never back to the login card
+        // over a slow second call, and never a spinner that spins for ever
+        if(DATA && DATA.partial && !auth){
+          if(attempt<2){ setTimeout(function(){ fullBoot(attempt+1); }, 2000*(attempt+1)); return; }
+          bootSettled=true;
+          document.querySelectorAll("#app > div:not(#briefView)").forEach(function(v){
+            v.setAttribute("data-wait", S.partialFailed);
+          });
+          document.body.classList.add("partial-failed");
+          markStale();
+          return;
+        }
+        bootSettled=true; bootLoading=false;
+        bootFail(e);
+      });
+    }
+    // First paint (2026-10-05): the brief alone, beside the full load. The
+    // brief is one ~35ms RPC; the full payload is eleven, ~1-3s. Whichever
+    // lands first wins - if the full one already arrived, this is dropped.
+    // Any failure here is silent: the full load owns errors and the login.
+    function loadBriefFirst(){
+      var hdrs={"content-type":"application/json"};
+      if(SESSION && SESSION.access_token) hdrs["authorization"]="Bearer "+SESSION.access_token;
+      fetch("https://lwomstzzmyegpbidibfm.supabase.co/functions/v1/admin-dashboard",{
+        method:"POST", headers:hdrs, body:JSON.stringify({briefOnly:true})
+      }).then(function(r){ return r.ok? r.json() : null; }).then(function(d){
+        // late: the full load already landed, or already failed and owns the
+        // screen (login card / error) - a brief must not paint over either
+        if(!d || !d.brief || DATA || bootSettled) return;
+        DATA={brief:d.brief, partial:true};
+        document.body.classList.add("partial");
+        $("connecting").classList.add("hidden");
+        $("login").classList.add("hidden");
+        $("hdr").classList.remove("hidden");
+        $("app").classList.remove("hidden");
+        // the brief is current, so it is not dimmed; the spinning refresh
+        // icon is what says the rest is still on its way
+        $("app").classList.remove("loading");
+        $("rail").classList.add("hidden");
+        applyChrome();
+        try{ renderBrief(); }catch(e){ console.error("renderBrief (first paint) failed",e); }
+        paintIcons(); syncChrome();
+      }).catch(function(){});
     }
     sb.auth.onAuthStateChange(function(ev,session){
       SESSION=session;
