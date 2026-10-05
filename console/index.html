@@ -8180,7 +8180,9 @@
   // autoTick = the once-a-minute refresh. A refresh the user ASKED for always
   // re-pulls Meta; only the unattended ticker is allowed to skip it.
   function load(autoTick){
-    $("app").classList.add("loading");
+    // not over a brief-only first paint: that brief is current, and the
+    // spinning refresh icon already says the rest is on its way
+    if(!(DATA && DATA.partial)) $("app").classList.add("loading");
     $("refreshIcon").classList.add("spinning");
     var fetchDays, chatDays;
     if(CUSTOM){
@@ -8539,8 +8541,14 @@
     function bootLoad(){
       if(DATA || bootLoading) return;
       bootLoading=true;
-      loadBriefFirst();
-      fullBoot(0);
+      // brief FIRST, the full load after it: fired together, the brief's one
+      // light RPC queued behind the full load's eleven on a small database
+      // and landed ~2s in instead of ~0.5s. The full load starts when the
+      // brief lands or fails, or after 1.5s at the latest.
+      var started=false;
+      function go(){ if(started) return; started=true; fullBoot(0); }
+      loadBriefFirst().then(go,go);
+      setTimeout(go,1500);
     }
     function fullBoot(attempt){
       load().then(function(){ bootSettled=true; }).catch(function(e){
@@ -8562,14 +8570,14 @@
         bootFail(e);
       });
     }
-    // First paint (2026-10-05): the brief alone, beside the full load. The
-    // brief is one ~35ms RPC; the full payload is eleven, ~1-3s. Whichever
-    // lands first wins - if the full one already arrived, this is dropped.
+    // First paint (2026-10-05): the brief alone, just ahead of the full load.
+    // The brief is one ~35ms RPC; the full payload is eleven, ~1-3s. If the
+    // full one somehow lands first, this is dropped.
     // Any failure here is silent: the full load owns errors and the login.
     function loadBriefFirst(){
       var hdrs={"content-type":"application/json"};
       if(SESSION && SESSION.access_token) hdrs["authorization"]="Bearer "+SESSION.access_token;
-      fetch("https://lwomstzzmyegpbidibfm.supabase.co/functions/v1/admin-dashboard",{
+      return fetch("https://lwomstzzmyegpbidibfm.supabase.co/functions/v1/admin-dashboard",{
         method:"POST", headers:hdrs, body:JSON.stringify({briefOnly:true})
       }).then(function(r){ return r.ok? r.json() : null; }).then(function(d){
         // late: the full load already landed, or already failed and owns the
