@@ -677,16 +677,6 @@
   .tabbadge { display:inline-block; margin-inline-start:6px; min-width:18px; padding:0 5px;
     border-radius:9px; background:var(--s1); color:#fff; font-size:11px; font-weight:700;
     line-height:18px; text-align:center; }
-  /* the chat tab's number, pinned to the strip's visible edge while the tab
-     itself is scrolled out of view (a phone: eight tabs, ~4.5 fit). A span,
-     not a button - "#tabs button" is the tab set everywhere. Sticky to the
-     inline-END edge = the left on RTL, where the hidden tabs are. */
-  #chatPeek { position:sticky; inset-inline-end:0; z-index:2; flex:0 0 auto;
-    display:inline-flex; align-items:center; gap:4px; align-self:center;
-    margin-inline-start:4px; padding:0 9px; height:28px; border-radius:14px;
-    background:var(--s1); color:#fff; font-size:12px; font-weight:700; cursor:pointer;
-    box-shadow:0 0 0 4px var(--plane), 0 2px 8px rgba(70,73,196,.35); }
-  #chatPeek .ico { opacity:1; }
   .msg img.chatimg { display:block; max-width:min(240px,100%); max-height:260px;
     border-radius:10px; margin-top:6px; border:1px solid var(--hairline); }
   .cside { font-size:11px; color:var(--muted); text-align:left; direction:ltr; white-space:nowrap; }
@@ -1154,6 +1144,13 @@
                    padding:7px 7px; gap:4px; font-size:12.5px;
                    white-space:nowrap; }
     #tabs button .ico { flex-shrink:0; }
+    /* the chat tab comes SECOND on a phone, so its unread number is always on
+       screen. Eight tabs, ~4.5 fit: in fifth place the badge sat past the edge.
+       A sticky chip at the strip's edge (03.10) was tried first - Safari placed
+       it on the RIGHT, over the morning tab, so it was removed. Order only:
+       every lookup in this file selects by data-v, never by index. */
+    #tabs button[data-v="brief"] { order:-2; }
+    #tabs button[data-v="chat"]  { order:-1; }
 
     /* Same cascade trap as the header: .evrow is declared further down, so
        this had to live below it. One ellipsised line hid the half of the row
@@ -1331,7 +1328,6 @@
     <button data-v="push" data-ic="bell"><span data-i18n="tabPush">התראות</span></button>
     <button data-v="backlog" data-ic="box"><span data-i18n="tabBacklog">בקלוג</span></button>
     <button data-v="arch" data-ic="layers"><span data-i18n="tabArch">ארכיטקטורה</span></button>
-    <span id="chatPeek" class="hidden" role="button" tabindex="0"></span>
   </div>
   <div class="hactions">
     <label class="live" id="liveTog">
@@ -3536,7 +3532,6 @@
       var tb=document.querySelector('#tabs button[data-v="chat"] .tabbadge');
       if(tb) tb.remove();
     }
-    syncChatPeek();
     if(v==="posts") renderPosts();
     if(v==="arch") renderArch();
     if(v==="backlog") renderBacklog();
@@ -5541,7 +5536,6 @@
       var oldBadge=tabBtn.querySelector(".tabbadge"); if(oldBadge) oldBadge.remove();
       if(newCount>0 && !CHAT_VISITED) tabBtn.appendChild(el("span","tabbadge",String(newCount)));
     }
-    syncChatPeek();
     // chat images arrive as signed URLs beside the payload (the bucket is
     // private); merge into the thread by match + message timestamp
     var IMG={};
@@ -8462,33 +8456,6 @@
   segWire("tabs",function(){
     switchTab(document.querySelector("#tabs button.on").getAttribute("data-v"));
   });
-  // Chat-tab number while the tab is off-screen: Nir opened the console on
-  // his phone and had to scroll the strip to learn whether anyone wrote.
-  function syncChatPeek(){
-    var pk=$("chatPeek"), btn=document.querySelector('#tabs button[data-v="chat"]');
-    if(!pk || !btn) return;
-    var tb=btn.querySelector(".tabbadge");
-    // measured, not observed: an IntersectionObserver rooted in #tabs fired
-    // once while the header was still hidden and never again when it showed
-    var r=btn.getBoundingClientRect(), t=$("tabs").getBoundingClientRect();
-    var seen=t.width>0 && r.left>=t.left-1 && r.right<=t.right+1;
-    var show=!!tb && !seen;
-    pk.classList.toggle("hidden",!show);
-    if(!show) return;
-    pk.textContent=""; pk.appendChild(icon("msg",14));
-    pk.appendChild(document.createTextNode(tb.textContent));
-    pk.setAttribute("aria-label",(LANG==="he"?"הודעות חדשות בצ'אט: ":"New chat messages: ")+tb.textContent);
-  }
-  (function(){
-    var chatBtn=document.querySelector('#tabs button[data-v="chat"]'), pk=$("chatPeek");
-    if(!chatBtn || !pk) return;
-    function open(){ chatBtn.click(); chatBtn.scrollIntoView({inline:"nearest",block:"nearest",behavior:"smooth"}); }
-    pk.addEventListener("click",open);
-    pk.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); open(); } });
-    $("tabs").addEventListener("scroll",syncChatPeek,{passive:true});
-    // fires when the header first appears and on every rotate/resize
-    if(window.ResizeObserver) new ResizeObserver(syncChatPeek).observe($("tabs"));
-  })();
   // Deep link: help-y.com/console#ads opens that tab directly. The morning
   // digest's cost-per-signup line points here (2026-09-14), so a reader who
   // never had the explanation lands on the panel that explains itself. Only a
