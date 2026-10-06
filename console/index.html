@@ -238,7 +238,7 @@
                                 gap:0 16px; padding:7px 0; }
     #briefView #brWait .brrow > * { grid-row:1; }
     #briefView #brWait .brrow .who  { grid-column:1; }
-    #briefView #brWait .brrow .what { grid-column:2; }
+    #briefView #brWait .brrow .what { grid-column:2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     #briefView #brWait .brrow .when { grid-column:3; text-align:end; }
     #briefView #brWait .brrow .act  { grid-column:4; justify-self:end; }
   }
@@ -7414,6 +7414,17 @@
     if(act){ var b=el("button","act",act.label); b.type="button"; b.addEventListener("click",act.fn); r.appendChild(b); }
     host.appendChild(r); return r;
   }
+  // The server cuts a support message at 90 characters (morning_brief_console.sql,
+  // left(content, 90)), mid-word and with no mark - it read as a sentence ending in
+  // half a word ("במה לז"). At the cap, step back to the last whole word and say it
+  // was cut.
+  var BR_SNIPPET_CAP=90;
+  function brSnippet(s){
+    s=s||"";
+    if(s.length<BR_SNIPPET_CAP) return s;
+    var cut=s.lastIndexOf(" ");
+    return (cut>BR_SNIPPET_CAP/2 ? s.slice(0,cut) : s).replace(/[\s.,;:\-]+$/,"")+"…";
+  }
   function brKV(host, label, html){
     var r=el("div","brk");
     // an empty label used to keep its 120px min-width and indent the value
@@ -7514,11 +7525,12 @@
     var sh=$("brSupport");
     if(!supN) sh.appendChild(el("div","brmore",S.brNone));
     (W.support||[]).forEach(function(u){
-      brRow(sh, u.name||"?", brAgoIso(u.at), u.snippet||"", {label:S.brReply, fn:function(){
+      var r=brRow(sh, u.name||"?", brAgoIso(u.at), brSnippet(u.snippet), {label:S.brReply, fn:function(){
         // the card-list composer, opened without a card: owner_lang picks the
         // default template language, the thread loads inside it
         openMsg({owner:u.name||"", owner_id:u.user_id, owner_lang:u.lang});
       }}, {autoWhat:true});
+      if(u.snippet) r.title=u.snippet;
     });
     var ph=$("brPending");
     if(!(W.pending_offers||[]).length) ph.appendChild(el("div","brmore",S.brNoneShort));
