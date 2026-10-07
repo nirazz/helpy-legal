@@ -179,7 +179,7 @@
            border-bottom:1px solid var(--grid); }
   .brrow .who  { grid-column:1; min-width:0; }
   .brrow .when { grid-column:2; }
-  .brrow .act  { grid-column:3; }
+  .brrow .acts { grid-column:3; display:inline-flex; gap:14px; justify-self:end; }
   .brrow .what { grid-column:1 / -1; }
   .brrow:last-child { border-bottom:0; }
   /* a cell takes its TEXT's direction (dir=auto) but lines up with the
@@ -192,6 +192,9 @@
   .brrow .what { min-width:0; color:var(--ink2); unicode-bidi:isolate; }
   .brrow .act { all:unset; cursor:pointer; color:var(--s1); font-weight:600; font-size:12.5px; white-space:nowrap; }
   .brrow .act:hover { text-decoration:underline; }
+  /* the second action on a row is the quieter one: it tidies, it does not act */
+  .brrow .act.sec { color:var(--muted); font-weight:500; }
+  .brrow .act.sec:hover { color:var(--ink2); }
   .brmore { font-size:12px; color:var(--muted); padding-top:6px; }
   .brk { display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:7px 0;
          border-bottom:1px solid var(--grid); font-size:13.5px; }
@@ -251,7 +254,7 @@
   #brWait { display:block; }
   #briefView #brWait > .panel { margin-bottom:14px; }
   @media (min-width:881px){
-    #briefView #brWait .brrow { grid-template-columns:minmax(160px,30%) minmax(0,1fr) 96px 44px;
+    #briefView #brWait .brrow { grid-template-columns:minmax(160px,28%) minmax(0,1fr) 96px 220px;
                                 gap:0 16px; padding:7px 0; }
     #briefView #brWait .brrow > * { grid-row:1; }
     #briefView #brWait .brrow .who  { grid-column:1; }
@@ -262,7 +265,7 @@
     #briefView #brWait .brrow .who,
     #briefView #brWait .brrow .what { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     #briefView #brWait .brrow .when { grid-column:3; text-align:end; }
-    #briefView #brWait .brrow .act  { grid-column:4; justify-self:end; }
+    #briefView #brWait .brrow .acts { grid-column:4; justify-self:end; }
   }
   /* an empty panel is not a panel - it is one line at the end of the section */
   /* both strips hang off the same edge as the section head, and the quiet
@@ -302,7 +305,12 @@
   #briefView .brgo .ar { font-style:normal; font-size:14px; line-height:1;
                          transition:transform .15s ease; }
   #briefView .brgo:hover .ar { transform:translateX(3px); }
-  html[dir="rtl"] #briefView .brgo:hover .ar { transform:translateX(-3px); }
+  html[dir="rtl"] #briefView .brgo .ar { transform:scaleX(-1); }
+  html[dir="rtl"] #briefView .brgo:hover .ar { transform:translateX(-3px) scaleX(-1); }
+  #briefView .brstuck .brgo { margin-top:8px; }
+  /* the 7-day line under the north-star tile: context, not a second number */
+  #briefView .tile .brweek { margin-top:4px; font-variant-numeric:tabular-nums; }
+  #briefView .brcalm { margin-top:6px; }
 
   /* ---- stat tiles ---- */
   .tiles { display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
@@ -1139,6 +1147,30 @@
   header .ghost.danger:hover { border-color:rgba(220,38,38,.42); color:var(--bad-text); }
   header .ghost.danger:hover .ico { color:var(--bad-text); }
   html[dir="rtl"] #logoutBtn .ico { transform:scaleX(-1); }
+  header .ghost.iconly { width:34px; padding:0; justify-content:center; gap:0; }
+  /* ONE row from 1100px. Measured by arithmetic (no layout engine here): at
+     1728 the tabs (~905px) + icon-only utilities (~380) + brand (~300) fit; at
+     1440 they did not, so below 1600 the wordmark goes (the pulsing dot and
+     the freshness line stay) and the tabs tighten, and below 1300 the tab
+     icons go too. nowrap + a shrinkable freshness line is the backstop: if a
+     language runs longer, the "updated ..." text ellipsises instead of the
+     toolbar dropping to a second row. Phones (<=720) keep their own rules. */
+  @media (min-width:1100px){
+    header { flex-wrap:nowrap; }
+    header .hactions { flex-wrap:nowrap; flex-shrink:0; }
+    header #tabs { flex-shrink:0; }
+    header .brand { min-width:0; flex:0 1 auto; white-space:nowrap; overflow:hidden; }
+    header .brand i { flex-shrink:0; }
+    header .brand small { min-width:0; overflow:hidden; text-overflow:ellipsis; }
+  }
+  @media (min-width:1100px) and (max-width:1599px){
+    header .brand .bn { display:none; }
+    header #tabs button { padding:7px 11px; }
+  }
+  @media (min-width:1100px) and (max-width:1299px){
+    header #tabs button { padding:7px 9px; gap:0; }
+    header #tabs button .ico { display:none; }
+  }
   /* live refresh is a STATE, so it gets a switch - a checkbox in a pill read
      as "off" at a glance whether it was on or not */
   .live { display:inline-flex; align-items:center; gap:9px; height:34px; padding:0 12px;
@@ -1192,6 +1224,7 @@
     header .ghost { height:36px; padding:0 10px; gap:0; }
     header .ghost > span:not(.ico):not(#refreshIcon) { display:none; }
     #refreshBtn { padding:0 9px; }
+    header .ghost.iconly { width:36px; }
     .live { height:36px; padding:0 9px; gap:7px; font-size:12px; }
     .live > span[data-i18n] { display:none; }
     /* the tab strip is the primary navigation and it was CLIPPED: four tabs
@@ -1422,9 +1455,7 @@
       <div class="sub" id="brSub"></div>
       <div id="brInsights"></div>
     </section>
-    <div class="sechead" style="--sec-c:var(--s1)" data-i18n="brSecDay">1 · מה קרה ביממה האחרונה</div>
-    <div class="tiles" id="brTiles"></div>
-    <div class="sechead" style="--sec-c:var(--s2)" data-i18n="brSecWait">2 · מי מחכה למישהו</div>
+    <div class="sechead" style="--sec-c:var(--s1)" data-i18n="brSecWait">1 · מי מחכה למישהו</div>
     <div class="grid2" id="brWait">
       <section class="panel" style="opacity:1;transform:none">
         <h2 data-i18n="brSupportT">כתבו לצוות Helpy ולא נענו</h2>
@@ -1437,23 +1468,25 @@
         <div id="brPending"></div>
       </section>
       <section class="panel" style="opacity:1;transform:none">
-        <h2 data-i18n="brNoOfferT">בקשות בלי אף פנייה</h2>
+        <h2 data-i18n="brNoOfferT">בקשות חדשות (יום עד שבוע) שעוד לא קיבלו פנייה</h2>
         <div class="sub" data-i18n="brNoOfferS">בקשות פעילות בנות יום עד שבוע שאף אחד לא החליק עליהן</div>
         <div id="brNoOffer"></div>
       </section>
     </div>
-    <div class="secbrief brstuck" id="brStuck" style="--sec-c:var(--s2)"></div>
+    <div class="secbrief brstuck" id="brStuck" style="--sec-c:var(--s1)"></div>
     <div class="brquiet" id="brQuiet" hidden></div>
+    <div class="sechead" style="--sec-c:var(--s2)" data-i18n="brSecDay">2 · מה קרה ביממה האחרונה</div>
+    <div class="tiles" id="brTiles"></div>
     <div class="sechead" style="--sec-c:var(--s3)" data-i18n="brSecRun">3 · האם המכונה רצה בלילה</div>
     <div class="grid2">
       <section class="panel" style="opacity:1;transform:none">
-        <h2 data-i18n="brHealthT">שרת וקרונים</h2>
-        <div class="sub" data-i18n="brHealthS">כלב השמירה, קריאות הקרון לפונקציות, הסיכום היומי והטאטוא הלילי</div>
+        <h2 data-i18n="brHealthT">שרת ומשימות מתוזמנות</h2>
+        <div class="sub" data-i18n="brHealthS">בדיקות התקינות, המשימות המתוזמנות, הסיכום היומי והטאטוא הלילי</div>
         <div id="brHealth"></div>
       </section>
       <section class="panel" style="opacity:1;transform:none">
         <h2 data-i18n="brPushT">התראות וגרסאות</h2>
-        <div class="sub" data-i18n="brPushS">מסירת הדחיפות ביממה, טוקנים שמתו, ועל איזו גרסה המשתמשים הפעילים</div>
+        <div class="sub" data-i18n="brPushS">מסירת ההתראות ביממה, טלפונים שהפסיקו לקבל התראות, ועל איזו גרסה המשתמשים הפעילים</div>
         <div id="brPush"></div>
       </section>
     </div>
@@ -1461,7 +1494,7 @@
     <div class="grid2">
       <section class="panel" style="opacity:1;transform:none">
         <h2 data-i18n="brAdsT">קמפיינים אתמול</h2>
-        <div class="sub" data-i18n="brAdsS">הוצאה מול הרשמות אמיתיות ביום הישראלי האחרון שנסגר · המספרים המלאים בלשונית קמפיינים</div>
+        <div class="sub" data-i18n="brAdsS">הוצאה מול כל ההרשמות (ממודעות ואורגני) ביום הישראלי האחרון שנסגר · המספרים המלאים בלשונית קמפיינים</div>
         <div id="brAds"></div>
       </section>
       <section class="panel" style="opacity:1;transform:none">
@@ -2363,67 +2396,75 @@
       brGreet:function(h){ return h<12? "בוקר טוב, ניר" : h<18? "צהריים טובים, ניר" : "ערב טוב, ניר"; },
       brSub:function(d,ago){ return d+" · הנתונים חושבו "+ago+" · כל המספרים על משתמשים אמיתיים בלבד"; },
       brEmpty:"הבריף לא הגיע מהשרת - רענון יעזור, ואם לא, get_morning_brief נכשל (יומן admin-dashboard).",
-      brSecDay:"1 · מה קרה ביממה האחרונה", brSecWait:"2 · מי מחכה למישהו", brSecRun:"3 · האם המכונה רצה בלילה", brSecMoney:"4 · קמפיינים ועל השולחן",
+      brSecWait:"1 · מי מחכה למישהו", brSecDay:"2 · מה קרה ביממה האחרונה", brSecRun:"3 · האם המכונה רצה בלילה", brSecMoney:"4 · קמפיינים ועל השולחן",
       brSupportT:"כתבו לצוות Helpy ולא נענו", brSupportS:"משתמשים שההודעה האחרונה שלהם בשרשור Helpy קיבלה רק את האישור האוטומטי",
       brPendingT:"פניות שמחכות להחלטה", brPendingS:"שכן/ה החליק/ה על בקשה לפני יותר מיממה, ובעל/ת הבקשה עדיין לא אישר/ה ולא דחה/תה",
-      brNoOfferT:"בקשות בלי אף פנייה", brNoOfferS:"בקשות פעילות בנות יום עד שבוע שאף אחד לא החליק עליהן",
+      brNoOfferT:"בקשות חדשות (יום עד שבוע) שעוד לא קיבלו פנייה", brNoOfferS:"בקשות פעילות בנות יום עד שבוע שאף אחד לא החליק עליהן",
       brStuckT:"שיחות שנתקעו", brStuckS:"שיחות פתוחות שההודעה האחרונה בהן היא בת 3 עד 14 ימים",
-      brHealthT:"שרת וקרונים", brHealthS:"כלב השמירה, קריאות הקרון לפונקציות, הסיכום היומי והטאטוא הלילי",
-      brPushT:"התראות וגרסאות", brPushS:"מסירת הדחיפות ביממה, טוקנים שמתו, ועל איזו גרסה המשתמשים הפעילים",
-      brAdsT:"קמפיינים אתמול", brAdsS:"הוצאה מול הרשמות אמיתיות ביום הישראלי האחרון שנסגר · המספרים המלאים בלשונית קמפיינים",
+      brHealthT:"שרת ומשימות מתוזמנות", brHealthS:"בדיקות התקינות, המשימות המתוזמנות, הסיכום היומי והטאטוא הלילי",
+      brPushT:"התראות וגרסאות", brPushS:"מסירת ההתראות ביממה, טלפונים שהפסיקו לקבל התראות, ועל איזו גרסה המשתמשים הפעילים",
+      brAdsT:"קמפיינים אתמול", brAdsS:"הוצאה מול כל ההרשמות (ממודעות ואורגני) ביום הישראלי האחרון שנסגר · המספרים המלאים בלשונית קמפיינים",
       partialFailed:"שאר הנתונים לא נטענו. לחצו על רענון למעלה.",
       brDeskT:"על השולחן", brDeskS:"כרטיסי הבקלוג במצב «עכשיו» ו«רוכב על הבילד הבא»",
       brTSignups:"הרשמות", brTSeen:"פתחו את האפליקציה", brTPosts:"פוסטים חדשים", brTSwipes:"סווייפים", brTMsgs:"הודעות בצ'אט",
       brTDone:"עזרות שהושלמו", brTGone:"מחיקות", brTSafety:"בטיחות",
-      brVsYest:"מול היממה שלפני", brReqOff:function(r,o){ return r+" בקשות · "+o+" הצעות"; },
-      brAccepted:function(n){ return n+" אושרו"; }, brSenders:function(p,r){ return p+" אנשים · "+r+" שיחות"; },
-      brNorth:"מדד הצפון · מקבל/ת העזרה סימן/ה שהושלם", brGoneSub:function(a,p){ return a+" חשבונות · "+p+" פוסטים"; },
-      brSafetySub:function(r,b){ return r+" דיווחים · "+b+" חסימות"; },
+      brVsYest:"מול היממה שלפני", brReqOff:function(r,o){ return (r==="1"? "בקשה אחת" : r+" בקשות")+" · "+(o==="1"? "הצעה אחת" : o+" הצעות"); },
+      brAccepted:function(n){ return n==="1"? "אחד אושר" : n+" אושרו"; }, brSenders:function(p,r){ return (p==="1"? "אדם אחד" : p+" אנשים")+" · "+(r==="1"? "שיחה אחת" : r+" שיחות"); },
+      brNorth:"מדד הצפון · מקבל/ת העזרה סימן/ה שהושלם", brGoneSub:function(a,p){ return (a==="1"? "חשבון אחד" : a+" חשבונות")+" · "+(p==="1"? "פוסט אחד" : p+" פוסטים"); },
+      brDone7:function(n,m){ return "7 ימים: "+n+(m!=null? " · שבוע קודם: "+m : ""); },
+      brSafetySub:function(r,b){ return (r==="1"? "דיווח אחד" : r+" דיווחים")+" · "+(b==="1"? "חסימה אחת" : b+" חסימות"); },
       brNone:"אין - כולם נענו", brNoneShort:"אין",
-      brQuietLine:function(list){ return "אף אחד לא מחכה ב: "+list; }, brAgo:function(h){ return h<48? "לפני "+h+" שעות" : "לפני "+Math.round(h/24)+" ימים"; },
-      brReply:"לענות", brWroteAt:"כתב/ה", brSwiped:function(h,r){ return iso(h)+" החליק/ה על הבקשה של "+iso(r); },
-      brPendMore:function(n){ return "ועוד "+n+" פניות ממתינות"; }, brNoOffMore:function(n){ return "ועוד "+n+" בקשות בלי פנייה"; },
-      brStuckLine:function(t,o){ return "<b>"+t+"</b> שיחות שקטות 3-14 יום, מהן <b>"+o+"</b> חד-צדדיות - צד אחד כתב והשני מעולם לא ענה. אלה השיחות שהשאלה «מה קרה?» מיועדת להן."; },
-      brStuckQ:function(asked,ans){ return "השאלה נשלחה ל-<b>"+asked+"</b> אנשים · <b>"+ans+"</b> ענו"; },
+      brQuietLine:function(list){ return "אף אחד לא מחכה ב: "+list; }, brAgo:function(h){ return h===1? "לפני שעה" : h<48? "לפני "+h+" שעות" : "לפני "+Math.round(h/24)+" ימים"; },
+      brReply:"לענות", brNoReply:"לא צריך לענות", brNoReplyTip:"הסתרה במכשיר הזה, עד שיכתבו שוב",
+      brOpenCard:"לכרטיס", brMsgOwner:"הודעה לבעל/ת הבקשה", brStuckGo:"להצגת השיחות בלי מענה",
+      brWroteAt:"כתב/ה", brSwiped:function(h,r){ return iso(h)+" החליק/ה על הבקשה של "+iso(r); },
+      brPendMore:function(n){ return n==="1"? "ועוד פנייה אחת ממתינה" : "ועוד "+n+" פניות ממתינות"; }, brNoOffMore:function(n){ return n==="1"? "ועוד בקשה אחת בלי פנייה" : "ועוד "+n+" בקשות בלי פנייה"; },
+      brStuckLine:function(t,o){ return (t==="1"? "<b>שיחה אחת</b> שקטה 3-14 יום, ומתוכן" : "<b>"+t+"</b> שיחות שקטות 3-14 יום, מהן")+" <b>"+o+"</b> חד-צדדיות - צד אחד כתב והשני מעולם לא ענה. אלה השיחות שהשאלה «מה קרה?» מיועדת להן."; },
+      brStuckQ:function(asked,ans){ return (asked==="1"? "השאלה נשלחה ל<b>אדם אחד</b>" : "השאלה נשלחה ל-<b>"+asked+"</b> אנשים")+" · "+(ans==="1"? "<b>אחד/ת</b> ענה/תה" : "<b>"+ans+"</b> ענו"); },
       brStuckQNone:"השאלה «מה קרה?» עדיין לא נשלחה לאף אחד - הסבב הראשון מחכה ל-GO.",
-      brWatchdog:"כלב השמירה", brUp:"תקין", brDown:"נפול", brInconc:"לא חד-משמעי", brSince:"מאז",
+      brWatchdog:"בדיקות תקינות", brUp:"תקין", brDown:"נכשל", brInconc:"לא ברור", brSince:"מאז",
       // the pill reads in Hebrew; the raw check_name stays in the tooltip
-      brChecks:{ push_auth:"דחיפות", founder_alerts:"התראות למייסד", moderate_post:"מודרציית תוכן",
-                 cron_delivery:"קריאות קרון", cron_jobs:"פקודות קרון", outbox:"תור ה-webhook",
-                 push_tickets:"כרטיסי פוש", daily_digest:"הסיכום היומי" },
+      brChecks:{ push_auth:"התראות", founder_alerts:"התראות למייסד", moderate_post:"מודרציית תוכן",
+                 cron_delivery:"מסירת משימות", cron_jobs:"משימות מתוזמנות", outbox:"תור הניסיונות החוזרים",
+                 push_tickets:"אישורי התראות", daily_digest:"הסיכום היומי" },
       brCheck:function(x){ return (this.brChecks && this.brChecks[x]) || String(x||"").replace(/_/g," "); },
-      brCron:"קריאות קרון → פונקציה", brCronLine:function(ok,to,dns,from,to2){ return "<b>"+ok+"</b> הצליחו · <b>"+to+"</b> נגמר הזמן (5 שניות) · <b>"+dns+"</b> מהן לא יצאו כלל (DNS) · חלון "+from+"–"+to2; },
-      brCronNote:"קריאה שנגמר זמנה בדרך כלל עדיין מריצה את הפונקציה - הקרון רק לא חיכה לתשובה. תקיעת DNS היא קריאה שמעולם לא יצאה.",
-      brDigest:"הסיכום של 09:00", brDigestOk:function(t){ return "נשלח היום ב-"+t; }, brDigestMissing:"לא נשלח היום - לבדוק את daily-metrics",
-      brSweepL:"הטאטוא הלילי", brSweep:function(n){ return "סגר <b>"+n+"</b> התאמות"; },
-      brStoreL:"App Store", brStore:function(a,c){ return "<b>"+a+"</b> ("+c+" דירוגים)"; },
-      brPushL:"דחיפות ביממה", brPushLine:function(s,d,f,o){ return "<b>"+s+"</b> נשלחו · <b>"+d+"</b> נמסרו · <b>"+f+"</b> נכשלו · <b>"+o+"</b> נפתחו"; },
-      brDeadL:"טוקנים שמתו", brDead:function(d,tot,g){ return "<b>"+d+"</b> ביממה · <b>"+tot+"</b> פתוחים · ~"+g+" חשודים שעוד לא נסרקו"; },
+      brCron:"משימות מתוזמנות שהגיעו לשרת", brCronLine:function(ok,to,dns,from,to2){ return "<b>"+ok+"</b> עברו · <b>"+to+"</b> איטיות (אין תשובה תוך 5 שניות) · <b>"+dns+"</b> אבדו לפני שיצאו · "+from+"-"+to2; },
+      brCronNote:"קריאה איטית בדרך כלל עדיין מריצה את המשימה - השרת רק הפסיק לחכות לתשובה. קריאה שאבדה לפני שיצאה מעולם לא עזבה את השרת.",
+      brDigest:"הסיכום של 09:00", brDigestOk:function(t){ return "נשלח היום ב-"+t; }, brDigestMissing:"עוד לא נשלח היום (היה אמור לצאת ב-09:00)", brDigestDue:"יוצא ב-09:00",
+      brDigestHint:"אם עדיין לא יצא, לבדוק את היומן של הפונקציה \u2068daily-metrics\u2069",
+      brSweepL:"הטאטוא הלילי", brSweep:function(n){ return n==="1"? "סגר <b>התאמה אחת</b>" : "סגר <b>"+n+"</b> התאמות"; },
+      brStoreL:"App Store", brStore:function(a,c){ return "<b>"+a+"</b> ("+(c==="1"? "דירוג אחד" : c+" דירוגים")+")"; },
+      brPushL:"התראות ביממה", brPushLine:function(s,d,f,o){ return "<b>"+s+"</b> נשלחו · <b>"+d+"</b> נמסרו · <b>"+f+"</b> נכשלו · <b>"+o+"</b> נפתחו"; },
+      brDeadL:"טלפונים שהפסיקו לקבל התראות", brDead:function(d,tot,g){ return "<b>"+d+"</b> "+(d==="1"? "חדש" : "חדשים")+" ביממה · <b>"+tot+"</b> בסך הכול · כ-"+g+" עוד לא נבדקו"; },
       brVerLine:function(on,tot){ return "<b>"+on+"</b> מתוך "+tot+" שנראו השבוע כבר עליה"; },
-      brVerNote:"app_version מדווח על הפתיחה האחרונה, לא על מה שמותקן - מי שלא פתח מאז העדכון עדיין נספר על הישנה.",
+      brVerNote:"נספר לפי הגרסה שכל אחד/ת פתח/ה לאחרונה - מי שעדכן/ה ועוד לא פתח/ה את האפליקציה עדיין נספר/ת על הישנה.",
       brAdsDay:function(d){ return "היום הישראלי האחרון שנסגר · "+d; },
-      brAdsSpend:"הוצאה", brAdsSignups:"הרשמות אמיתיות", brAdsCost:"להרשמה",
-      brAds7:function(spend,su,cost){ return "7 ימים מלאים: ₪"+spend+" · "+su+" הרשמות · "+(cost!=null? "₪"+cost+" להרשמה" : "-"); },
+      brAdsSpend:"הוצאה", brAdsSignups:"הרשמות (מכל המקורות)", brAdsCost:"הוצאה לכל הרשמה",
+      brAds7:function(spend,su,cost){ return "7 ימים מלאים: ₪"+spend+" · "+(su==="1"? "הרשמה אחת" : su+" הרשמות")+" · "+(cost!=null? "₪"+cost+" להרשמה" : "-"); },
       brAdsNone:"נתוני Meta לא נטענו בטעינה הזו - הלשונית קמפיינים תמשוך אותם ברענון.",
       brDeskNone:"אין כרטיסים במצב «עכשיו» או «בילד הבא».", brDeskGo:"לבקלוג", brDue:"יעד",
       brStNow:"עכשיו", brStBuild:"הבילד הבא",
       brInsSupport:function(n){ return n==="1"? "<b>אדם אחד</b> כתב/ה לצוות Helpy ולא קיבל/ה תשובה אנושית" : "<b>"+n+"</b> אנשים כתבו לצוות Helpy ולא קיבלו תשובה אנושית"; },
-      brInsPending:function(n){ return "<b>"+n+"</b> פניות מחכות להחלטה של בעל/ת הבקשה יותר מיממה"; },
-      brInsNoOffer:function(n){ return "<b>"+n+"</b> בקשות פעילות עדיין בלי אף פנייה"; },
-      brInsCronBad:function(p){ return "<b>"+p+"%</b> מקריאות הקרון לפונקציות נגמר זמנן בחלון האחרון - הפלטפורמה איטית, לא בהכרח שבורה"; },
-      brInsCronOk:"קריאות הקרון לפונקציות תקינות",
+      brInsPending:function(n){ return n==="1"? "<b>פנייה אחת</b> מחכה להחלטה של בעל/ת הבקשה יותר מיממה" : "<b>"+n+"</b> פניות מחכות להחלטה של בעל/ת הבקשה יותר מיממה"; },
+      brInsNoOffer:function(n){ return n==="1"? "<b>בקשה אחת</b> מהשבוע האחרון עדיין בלי אף פנייה" : "<b>"+n+"</b> בקשות מהשבוע האחרון עדיין בלי אף פנייה"; },
+      brInsCronBad:function(p,from,to){ return "<b>"+p+"%</b> מהמשימות המתוזמנות לא קיבלו תשובה תוך 5 שניות ("+from+"-"+to+") - הפלטפורמה איטית, לא בהכרח שבורה"; },
+      brInsCronOk:function(from,to){ return "המשימות המתוזמנות רצות כרגיל ("+from+"-"+to+")"; },
       brInsWatchBad:function(n){ return n==1
-        ? "כלב השמירה מדווח על <b>בדיקה אחת</b> שאינה תקינה"
-        : "כלב השמירה מדווח על <b>"+n+"</b> בדיקות שאינן תקינות"; },
-      brInsWatchOk:function(n){ return n==1? "כלב השמירה: הבדיקה תקינה"
-                                           : "כלב השמירה: כל "+n+" הבדיקות תקינות"; },
-      brInsDigest:"הסיכום של 09:00 לא נשלח היום",
-      brInsPushFail:function(n){ return "<b>"+n+"</b> דחיפות נכשלו ביממה"; },
+        ? "<b>בדיקת תקינות אחת</b> מדווחת על בעיה"
+        : "<b>"+n+"</b> מבדיקות התקינות מדווחות על בעיה"; },
+      brInsWatchOk:function(n){ return n==1? "בדיקות התקינות: הבדיקה היחידה תקינה"
+                                           : "בדיקות התקינות: כל "+n+" תקינות"; },
+      brInsDigest:"הסיכום היומי עוד לא יצא היום (היה אמור לצאת ב-09:00)",
+      brInsDigestDue:"הסיכום היומי יוצא ב-09:00",
+      brInsPushFail:function(n){ return n==="1"? "<b>התראה אחת</b> נכשלה ביממה" : "<b>"+n+"</b> התראות נכשלו ביממה"; },
       brInsVer:function(p){ return "<b>"+p+"%</b> מהמשתמשים שנראו השבוע על הגרסה האחרונה"; },
       brInsQuiet:"יממה שקטה: אף פוסט, סווייף או הודעה",
-      brInsSign:function(n,d){ return "<b>"+n+"</b> הרשמות ביממה ("+(d>=0?"+":"")+d+" מול היממה שלפני)"; },
-      brInsDone:function(n){ return "<b>"+n+"</b> עזרות הושלמו ביממה 🎉"; },
-      liveStale:"הרענון האוטומטי נכשל", themeBtn:{light:"כהה", dark:"בהיר"}, langBtn:"English"
+      brInsSign:function(n,d){ return (n==="1"? "<b>הרשמה אחת</b>" : "<b>"+n+"</b> הרשמות")+" ביממה ("+(d>=0?"+":"")+d+" מול היממה שלפני)"; },
+      brInsDone:function(n){ return n==="1"? "<b>עזרה אחת</b> הושלמה ביממה" : "<b>"+n+"</b> עזרות הושלמו ביממה"; },
+      brInsAllClear:"כרגע שום דבר לא דורש את תשומת לבך",
+      brCalmMore:function(n){ return "כל השאר תקין ("+n+")"; }, brCalmLess:"הסתרת השאר",
+      liveStale:"הרענון האוטומטי נכשל", themeBtn:{light:"כהה", dark:"בהיר"}, langBtn:"English",
+      themeTip:{light:"מעבר למצב כהה", dark:"מעבר למצב בהיר"}, langTip:"מעבר לאנגלית (\u2068English\u2069)"
     },
     en: {
       tabMetrics:"Metrics", tabChat:"Chat", live:"Live · 1 min", refresh:"Refresh", logout:"Sign out",
@@ -2969,66 +3010,74 @@
       brGreet:function(h){ return h<12? "Good morning, Nir" : h<18? "Good afternoon, Nir" : "Good evening, Nir"; },
       brSub:function(d,ago){ return d+" · computed "+ago+" · every number is real users only"; },
       brEmpty:"The brief did not arrive - refresh; if it persists, get_morning_brief failed (admin-dashboard log).",
-      brSecDay:"1 · The last 24 hours", brSecWait:"2 · Who is waiting on someone", brSecRun:"3 · Did the machine run overnight", brSecMoney:"4 · Campaigns and the desk",
+      brSecWait:"1 · Who is waiting on someone", brSecDay:"2 · The last 24 hours", brSecRun:"3 · Did the machine run overnight", brSecMoney:"4 · Campaigns and the desk",
       brSupportT:"Wrote to the Helpy team, no reply", brSupportS:"Users whose latest Helpy-thread message got only the automatic acknowledgement",
       brPendingT:"Offers awaiting a decision", brPendingS:"A neighbour swiped on a request over a day ago and the owner has neither accepted nor declined",
-      brNoOfferT:"Requests with no offer at all", brNoOfferS:"Active requests one to seven days old that nobody swiped on",
+      brNoOfferT:"New requests (1-7 days) with no offer yet", brNoOfferS:"Active requests one to seven days old that nobody swiped on",
       brStuckT:"Stuck chats", brStuckS:"Open rooms whose last message is 3 to 14 days old",
-      brHealthT:"Server and crons", brHealthS:"The watchdog, cron calls to functions, the daily digest and the nightly sweep",
-      brPushT:"Push and versions", brPushS:"Push delivery in 24h, dead tokens, and which version the active users are on",
-      brAdsT:"Campaigns yesterday", brAdsS:"Spend against real signups on the last closed Israeli day · full numbers on the Campaigns tab",
+      brHealthT:"Server and scheduled jobs", brHealthS:"Health checks, scheduled jobs, the daily digest and the nightly sweep",
+      brPushT:"Push and versions", brPushS:"Push delivery in 24h, phones that stopped getting push, and which version active users are on",
+      brAdsT:"Campaigns yesterday", brAdsS:"Spend against all signups (ads and organic) on the last closed Israeli day · full numbers on the Campaigns tab",
       partialFailed:"The rest of the data did not load. Press refresh above.",
       brDeskT:"On the desk", brDeskS:"Backlog cards in \"now\" and \"rides the next build\"",
       brTSignups:"Signups", brTSeen:"Opened the app", brTPosts:"New posts", brTSwipes:"Swipes", brTMsgs:"Chat messages",
       brTDone:"Helps completed", brTGone:"Deletions", brTSafety:"Safety",
-      brVsYest:"vs the day before", brReqOff:function(r,o){ return r+" requests · "+o+" offers"; },
-      brAccepted:function(n){ return n+" accepted"; }, brSenders:function(p,r){ return p+" people · "+r+" rooms"; },
-      brNorth:"North star · receiver marked it complete", brGoneSub:function(a,p){ return a+" accounts · "+p+" posts"; },
-      brSafetySub:function(r,b){ return r+" reports · "+b+" blocks"; },
+      brVsYest:"vs the day before", brReqOff:function(r,o){ return r+(r==="1"?" request":" requests")+" · "+o+(o==="1"?" offer":" offers"); },
+      brAccepted:function(n){ return n+" accepted"; }, brSenders:function(p,r){ return p+(p==="1"?" person":" people")+" · "+r+(r==="1"?" room":" rooms"); },
+      brNorth:"North star · receiver marked it complete", brGoneSub:function(a,p){ return a+(a==="1"?" account":" accounts")+" · "+p+(p==="1"?" post":" posts"); },
+      brDone7:function(n,m){ return "7 days: "+n+(m!=null? " · week before: "+m : ""); },
+      brSafetySub:function(r,b){ return r+(r==="1"?" report":" reports")+" · "+b+(b==="1"?" block":" blocks"); },
       brNone:"None - everyone answered", brNoneShort:"None",
-      brQuietLine:function(list){ return "Nobody waiting in: "+list; }, brAgo:function(h){ return h<48? h+" hours ago" : Math.round(h/24)+" days ago"; },
-      brReply:"Reply", brWroteAt:"wrote", brSwiped:function(h,r){ return iso(h)+" swiped on the request of "+iso(r); },
+      brQuietLine:function(list){ return "Nobody waiting in: "+list; }, brAgo:function(h){ return h===1? "1 hour ago" : h<48? h+" hours ago" : Math.round(h/24)+" days ago"; },
+      brReply:"Reply", brNoReply:"No reply needed", brNoReplyTip:"Hide on this device until they write again",
+      brOpenCard:"Open card", brMsgOwner:"Message the owner", brStuckGo:"Show unanswered rooms",
+      brWroteAt:"wrote", brSwiped:function(h,r){ return iso(h)+" swiped on the request of "+iso(r); },
       brPendMore:function(n){ return n+" more waiting"; }, brNoOffMore:function(n){ return n+" more without an offer"; },
-      brStuckLine:function(t,o){ return "<b>"+t+"</b> rooms quiet for 3-14 days, <b>"+o+"</b> of them one-sided - one side wrote, the other never answered. These are the rooms the \"what happened?\" question is for."; },
-      brStuckQ:function(asked,ans){ return "The question went to <b>"+asked+"</b> people · <b>"+ans+"</b> answered"; },
+      brStuckLine:function(t,o){ return "<b>"+t+"</b> "+(t==="1"?"room":"rooms")+" quiet for 3-14 days, <b>"+o+"</b> of them one-sided - one side wrote, the other never answered. These are the rooms the \"what happened?\" question is for."; },
+      brStuckQ:function(asked,ans){ return "The question went to <b>"+asked+"</b> "+(asked==="1"?"person":"people")+" · <b>"+ans+"</b> answered"; },
       brStuckQNone:"The \"what happened?\" question has not been sent to anyone yet - the first batch waits for a GO.",
-      brWatchdog:"Watchdog", brUp:"up", brDown:"down", brInconc:"inconclusive", brSince:"since",
+      brWatchdog:"Health checks", brUp:"OK", brDown:"failing", brInconc:"unclear", brSince:"since",
       brChecks:{ push_auth:"Push", founder_alerts:"Founder alerts", moderate_post:"Content moderation",
-                 cron_delivery:"Cron delivery", cron_jobs:"Cron jobs", outbox:"Webhook outbox",
-                 push_tickets:"Push tickets", daily_digest:"Daily digest" },
+                 cron_delivery:"Job delivery", cron_jobs:"Scheduled jobs", outbox:"Retry queue",
+                 push_tickets:"Push receipts", daily_digest:"Daily digest" },
       brCheck:function(x){ return (this.brChecks && this.brChecks[x]) || String(x||"").replace(/_/g," "); },
-      brCron:"Cron → function calls", brCronLine:function(ok,to,dns,from,to2){ return "<b>"+ok+"</b> succeeded · <b>"+to+"</b> timed out (5s) · <b>"+dns+"</b> of them never left (DNS) · window "+from+"–"+to2; },
-      brCronNote:"A timed-out call usually still runs the function - the cron just stopped waiting. A DNS stall is a call that never left.",
-      brDigest:"The 09:00 digest", brDigestOk:function(t){ return "sent today at "+t; }, brDigestMissing:"not sent today - check daily-metrics",
-      brSweepL:"Nightly sweep", brSweep:function(n){ return "closed <b>"+n+"</b> matches"; },
-      brStoreL:"App Store", brStore:function(a,c){ return "<b>"+a+"</b> ("+c+" ratings)"; },
+      brCron:"Scheduled jobs reaching the server", brCronLine:function(ok,to,dns,from,to2){ return "<b>"+ok+"</b> got through · <b>"+to+"</b> slow (no answer in 5s) · <b>"+dns+"</b> lost before sending · "+from+"-"+to2; },
+      brCronNote:"A slow call usually still runs the job - the server just stopped waiting for the answer. A call lost before sending never left the server.",
+      brDigest:"The 09:00 digest", brDigestOk:function(t){ return "sent today at "+t; }, brDigestMissing:"not sent yet today (due at 09:00)", brDigestDue:"goes out at 09:00",
+      brDigestHint:"If it still has not gone out, check the daily-metrics function log",
+      brSweepL:"Nightly sweep", brSweep:function(n){ return "closed <b>"+n+"</b> "+(n==="1"?"match":"matches"); },
+      brStoreL:"App Store", brStore:function(a,c){ return "<b>"+a+"</b> ("+c+(c==="1"?" rating":" ratings")+")"; },
       brPushL:"Push in 24h", brPushLine:function(s,d,f,o){ return "<b>"+s+"</b> sent · <b>"+d+"</b> delivered · <b>"+f+"</b> failed · <b>"+o+"</b> opened"; },
-      brDeadL:"Dead tokens", brDead:function(d,tot,g){ return "<b>"+d+"</b> in 24h · <b>"+tot+"</b> open · ~"+g+" suspects not yet scanned"; },
+      brDeadL:"Phones that stopped getting push", brDead:function(d,tot,g){ return "<b>"+d+"</b> new in 24h · <b>"+tot+"</b> in total · about "+g+" not checked yet"; },
       brVerLine:function(on,tot){ return "<b>"+on+"</b> of "+tot+" seen this week are on it"; },
-      brVerNote:"app_version reports the last OPEN, not what is installed - anyone who has not opened the app since updating still counts on the old one.",
+      brVerNote:"Counted by the version each person last opened - someone who updated but has not opened the app since still counts on the old one.",
       brAdsDay:function(d){ return "Last closed Israeli day · "+d; },
-      brAdsSpend:"Spend", brAdsSignups:"Real signups", brAdsCost:"Per signup",
-      brAds7:function(spend,su,cost){ return "7 full days: ₪"+spend+" · "+su+" signups · "+(cost!=null? "₪"+cost+" per signup" : "-"); },
+      brAdsSpend:"Spend", brAdsSignups:"Signups (all sources)", brAdsCost:"Spend per signup",
+      brAds7:function(spend,su,cost){ return "7 full days: ₪"+spend+" · "+su+(su==="1"?" signup":" signups")+" · "+(cost!=null? "₪"+cost+" per signup" : "-"); },
       brAdsNone:"Meta data was not pulled on this load - the Campaigns tab fetches it on refresh.",
       brDeskNone:"No cards in \"now\" or \"next build\".", brDeskGo:"To the backlog", brDue:"due",
       brStNow:"now", brStBuild:"next build",
       brInsSupport:function(n){ return n==="1"? "<b>One person</b> wrote to the Helpy team and got no human reply" : "<b>"+n+"</b> people wrote to the Helpy team and got no human reply"; },
-      brInsPending:function(n){ return "<b>"+n+"</b> offers have waited over a day for the request owner's decision"; },
-      brInsNoOffer:function(n){ return "<b>"+n+"</b> active requests still have no offer at all"; },
-      brInsCronBad:function(p){ return "<b>"+p+"%</b> of cron calls to functions timed out in the last window - the platform is slow, not necessarily broken"; },
-      brInsCronOk:"Cron calls to functions are healthy",
+      brInsPending:function(n){ return n==="1"? "<b>One offer</b> has waited over a day for the request owner's decision" : "<b>"+n+"</b> offers have waited over a day for the request owner's decision"; },
+      brInsNoOffer:function(n){ return n==="1"? "<b>One request</b> from the past week still has no offer" : "<b>"+n+"</b> requests from the past week still have no offer"; },
+      brInsCronBad:function(p,from,to){ return "<b>"+p+"%</b> of scheduled jobs got no answer within 5 seconds ("+from+"-"+to+") - the platform is slow, not necessarily broken"; },
+      brInsCronOk:function(from,to){ return "Scheduled jobs are running normally ("+from+"-"+to+")"; },
       brInsWatchBad:function(n){ return n==1
-        ? "The watchdog reports <b>one check</b> that is not up"
-        : "The watchdog reports <b>"+n+"</b> checks not up"; },
-      brInsWatchOk:function(n){ return n==1? "Watchdog: the only check is up"
-                                           : "Watchdog: all "+n+" checks up"; },
-      brInsDigest:"The 09:00 digest was not sent today",
-      brInsPushFail:function(n){ return "<b>"+n+"</b> pushes failed in 24h"; },
+        ? "<b>One health check</b> reports a problem"
+        : "<b>"+n+"</b> health checks report a problem"; },
+      brInsWatchOk:function(n){ return n==1? "Health checks: the only one is OK"
+                                           : "Health checks: all "+n+" OK"; },
+      brInsDigest:"The daily digest has not gone out yet today (due at 09:00)",
+      brInsDigestDue:"The daily digest goes out at 09:00",
+      brInsPushFail:function(n){ return n==="1"? "<b>One push</b> failed in 24h" : "<b>"+n+"</b> pushes failed in 24h"; },
       brInsVer:function(p){ return "<b>"+p+"%</b> of users seen this week are on the latest version"; },
       brInsQuiet:"A quiet day: no post, swipe or message",
-      brInsSign:function(n,d){ return "<b>"+n+"</b> signups in 24h ("+(d>=0?"+":"")+d+" vs the day before)"; },
-      brInsDone:function(n){ return "<b>"+n+"</b> helps completed in 24h 🎉"; },
-      liveStale:"auto refresh failed", themeBtn:{light:"Dark", dark:"Light"}, langBtn:"עברית"
+      brInsSign:function(n,d){ return "<b>"+n+"</b> "+(n==="1"?"signup":"signups")+" in 24h ("+(d>=0?"+":"")+d+" vs the day before)"; },
+      brInsDone:function(n){ return n==="1"? "<b>One help</b> completed in 24h" : "<b>"+n+"</b> helps completed in 24h"; },
+      brInsAllClear:"Nothing needs your attention right now",
+      brCalmMore:function(n){ return "Everything else is fine ("+n+")"; }, brCalmLess:"Hide the rest",
+      liveStale:"auto refresh failed", themeBtn:{light:"Dark", dark:"Light"}, langBtn:"עברית",
+      themeTip:{light:"Switch to dark mode", dark:"Switch to light mode"}, langTip:"Switch to Hebrew (\u2068עברית\u2069)"
     }
   };
   var LANG = localStorage.getItem("helpy_console_lang") || "he";
@@ -3082,14 +3131,17 @@
     });
     var ri=document.getElementById("refreshIcon");
     if(ri && !ri.querySelector(".ico")){ ri.textContent=""; ri.appendChild(icon("refresh",15)); }
-    function paint(id, ic, label, title){
+    // Icon-only at every width: three labelled utilities are what pushed the
+    // toolbar onto a second row on a 1728px laptop. The words move to the
+    // tooltip AND the accessible name, so nothing is lost to a screen reader.
+    function paint(id, ic, title){
       var b=document.getElementById(id); if(!b) return;
       b.innerHTML=""; b.appendChild(icon(ic,15));
-      b.appendChild(el("span",null,label));
-      b.title=title||label;
+      b.classList.add("iconly");
+      b.title=title; b.setAttribute("aria-label", title);
     }
-    paint("themeBtn", THEME==="dark"?"sun":"moon", S.themeBtn[THEME]);
-    paint("langBtn", "globe", S.langBtn);
+    paint("themeBtn", THEME==="dark"?"sun":"moon", S.themeTip[THEME]);
+    paint("langBtn", "globe", S.langTip);
     paint("logoutBtn", "logout", S.logout);
     // on a phone these controls are icon-only, so the label has to survive
     // somewhere reachable: the native tooltip / accessible name
@@ -5703,7 +5755,8 @@
     moon:["M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"],
     sun:["M12 2v2","M12 20v2","m4.9 4.9 1.4 1.4","m17.7 17.7 1.4 1.4","M2 12h2","M20 12h2","m6.3 17.7-1.4 1.4","m19.1 4.9-1.4 1.4"],
     globe:["M2 12h20","M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"],
-    logout:["M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4","m16 17 5-5-5-5","M21 12H9"]
+    logout:["M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4","m16 17 5-5-5-5","M21 12H9"],
+    arrowright:["M5 12h14","m12 5 7 7-7 7"]
   };
   var CIRCLES={ pin:[[12,10,3]], radio:[[12,12,2]], award:[[12,8,6]],
                 sun:[[12,12,4]], globe:[[12,12,10]] };
@@ -7439,8 +7492,59 @@
               if(opt.autoWhat) t.dir="auto";
               t.title=what;
               r.appendChild(t); }
-    if(act){ var b=el("button","act",act.label); b.type="button"; b.addEventListener("click",act.fn); r.appendChild(b); }
+    // one action or a list of them, always in ONE cell: the wide layout is a
+    // table whose last column has a fixed width, so a second button must not
+    // become a fifth grid item
+    var acts=act? [].concat(act) : [];
+    if(acts.length){
+      var box=el("span","acts");
+      acts.forEach(function(a){
+        var b=el("button","act"+(a.cls? " "+a.cls : ""),a.label); b.type="button";
+        if(a.title) b.title=a.title;
+        b.addEventListener("click",a.fn); box.appendChild(b);
+      });
+      r.appendChild(box);
+    }
     host.appendChild(r); return r;
+  }
+  // "No reply needed": a thank-you does not need an answer, but the server
+  // cannot tell it from a question, so the row stayed on top for weeks. The
+  // dismissal is per device and keyed on the message's own time - when the
+  // person writes again the time changes and they are back on the list.
+  var BR_SUP_KEY="helpy_console_support_done";
+  var brSupMem={};   // survives a blocked localStorage for this session
+  function brSupDone(){
+    var m={};
+    try{ m=JSON.parse(localStorage.getItem(BR_SUP_KEY)||"{}")||{}; }catch(e){ m={}; }
+    Object.keys(brSupMem).forEach(function(k){ m[k]=brSupMem[k]; });
+    return m;
+  }
+  function brSupDismiss(u, live){
+    brSupMem[u.user_id]=u.at;
+    var m=brSupDone(); m[u.user_id]=u.at;
+    // keep only people still on the server's list, so the key never grows
+    var keep={}; (live||[]).forEach(function(x){ if(m[x.user_id]) keep[x.user_id]=m[x.user_id]; });
+    try{ localStorage.setItem(BR_SUP_KEY, JSON.stringify(keep)); }catch(e){}
+  }
+  // the Cards tab has no "show one card" filter, so a waiting row opens it
+  // with every filter cleared and the title in the search box - the same box
+  // a person would type into
+  function brToCard(title){
+    PS_TYPE="all"; PS_STATUS="all"; PS_RESP="all"; PS_Q=String(title||"");
+    switchTab("posts");
+  }
+  function brPostById(id){
+    var P=(DATA && DATA.posts && DATA.posts.posts) || [];
+    for(var i=0;i<P.length;i++) if(P[i].id===id) return P[i];
+    return null;
+  }
+  // a link that carries an arrow ICON, turned to point the way the page reads
+  function brGoBtn(label, fn){
+    var go=el("button","brgo"); go.type="button";
+    go.appendChild(el("span",null,label));
+    var ic=icon("arrowright",14); ic.classList.add("ar"); go.appendChild(ic);
+    go.addEventListener("click",fn);
+    return go;
   }
   // The server cuts a support message at 90 characters (morning_brief_console.sql,
   // left(content, 90)), mid-word and with no mark - it read as a sentence ending in
@@ -7464,6 +7568,7 @@
     var b=el("div","brbar"); var i=el("i",cls||""); i.style.width=Math.round(100*Math.max(0,Math.min(1,frac)))+"%";
     b.appendChild(i); host.appendChild(b); return b;
   }
+  var brCalmOpen=false;   // the folded "everything else is fine" lines
   function renderBrief(){
     var host=$("brInsights"); if(!host) return;
     var B=DATA && DATA.brief;
@@ -7482,7 +7587,11 @@
 
     // ---- what needs attention: verdicts first, quietest last -------------
     var ins=[];
-    var supN=(W.support||[]).length;
+    // dismissed thank-yous leave BEFORE anything is counted, or the count and
+    // the attention line would still name a person the list no longer shows
+    var supDone=brSupDone();
+    var support=(W.support||[]).filter(function(u){ return supDone[u.user_id]!==u.at; });
+    var supN=support.length;
     if(supN) ins.push(["warn", S.brInsSupport(fmt(supN)), "brSupport"]);
     if(W.pending_offers_n) ins.push(["warn", S.brInsPending(fmt(W.pending_offers_n)), "brPending"]);
     var wdBad=wd.filter(function(w){ return w.status!=="up"; }).length;
@@ -7490,11 +7599,20 @@
                   : ["good", S.brInsWatchOk(wd.length), "brHealth"]);
     var calls=(http.ok||0)+(http.timeouts||0)+(http.other_fail||0);
     var toPct=calls? Math.round(100*(http.timeouts||0)/calls) : 0;
-    if(calls) ins.push([toPct>=25? "bad" : toPct>=10? "warn" : "good", toPct>=10? S.brInsCronBad(toPct) : S.brInsCronOk, "brHealth"]);
+    // the window is the one the server measured, never a word like "overnight"
+    var hWin=calls? [brHM(http.w_from), brHM(http.w_to)] : null;
+    if(calls) ins.push([toPct>=25? "bad" : toPct>=10? "warn" : "good",
+                        toPct>=10? S.brInsCronBad(toPct, hWin[0], hWin[1]) : S.brInsCronOk(hWin[0], hWin[1]), "brHealth"]);
     var todayIL=brIL(Date.now());
-    if(dg.date!==todayIL) ins.push(["warn", S.brInsDigest, "brHealth"]);
+    // The digest goes out at 09:00 IL. Before 09:20 "not sent today" is not a
+    // failure, it is the time of day - it alarmed every morning read at 08:30.
+    var ilMin=ilHour*60+parseInt(now.toLocaleTimeString("en-GB",{minute:"2-digit",timeZone:"Asia/Jerusalem"}),10);
+    var digestSent=dg.date===todayIL, digestLate=!digestSent && ilMin>=9*60+20;
+    if(digestLate) ins.push(["warn", S.brInsDigest, "brHealth"]);
+    else if(!digestSent) ins.push(["info", S.brInsDigestDue, "brHealth"]);
     if(push.failed) ins.push(["warn", S.brInsPushFail(fmt(push.failed)), "brPush"]);
-    if(W.requests_no_offer_n) ins.push(["info", S.brInsNoOffer(fmt(W.requests_no_offer_n)), "brNoOffer"]);
+    // a request nobody answered is work (it has actions now), not a fact
+    if(W.requests_no_offer_n) ins.push(["warn", S.brInsNoOffer(fmt(W.requests_no_offer_n)), "brNoOffer"]);
     if(D.completed) ins.push(["good", S.brInsDone(fmt(D.completed)), "brTiles"]);
     ins.push(["info", S.brInsSign(fmt(D.signups||0), (D.signups||0)-(P.signups||0)), "brTiles"]);
     var seen7=(V.seen_7d||[]).reduce(function(a,r){ return a+(r.n||0); },0);
@@ -7510,13 +7628,27 @@
     // the original order (the order the morning is worked in) survives.
     var rank={bad:0,warn:1,good:2,info:3};
     ins.sort(function(a,b){ return rank[a[0]]-rank[b[0]]; });
-    var calmSeen=false;
-    ins.forEach(function(x,i){
-      var calm=rank[x[0]]>=2, top=calm&&!calmSeen;
-      if(calm) calmSeen=true;
-      host.appendChild(insight((i===0?"lead ":"")+x[0]+(calm?" rest":"")+(top?" calmtop":""),
-                               x[1], function(){ flashTo(x[2]); }));
+    // Only work is up front. "All 8 checks OK" at the same weight as "3 people
+    // are waiting for a reply" made the reader scan nine lines to find two;
+    // the calm lines sit one click behind, the way every other tab folds.
+    var work=ins.filter(function(x){ return rank[x[0]]<2; });
+    var calmRows=ins.filter(function(x){ return rank[x[0]]>=2; });
+    if(!work.length) host.appendChild(insight("lead good", S.brInsAllClear));
+    work.forEach(function(x,i){
+      host.appendChild(insight((i===0?"lead ":"")+x[0], x[1], function(){ flashTo(x[2]); }));
     });
+    calmRows.forEach(function(x,i){
+      var row=insight(x[0]+" rest"+(i===0?" calmtop":""), x[1], function(){ flashTo(x[2]); });
+      if(!brCalmOpen) row.classList.add("hidden");
+      host.appendChild(row);
+    });
+    if(calmRows.length){
+      var more=el("button","linklike brcalm", brCalmOpen? S.brCalmLess : S.brCalmMore(fmt(calmRows.length)));
+      more.type="button";
+      more.setAttribute("aria-expanded", brCalmOpen? "true" : "false");
+      more.addEventListener("click",function(){ brCalmOpen=!brCalmOpen; renderBrief(); });
+      host.appendChild(more);
+    }
 
     // ---- the day in eight tiles ------------------------------------------
     var T=$("brTiles");
@@ -7541,6 +7673,17 @@
       T.appendChild(x);
     }
     t(S.brTDone, D.completed, S.brNorth, true);
+    // A 24h count of completions is 0 on most days, so the hero tile said
+    // nothing. The full payload's matches_by_day counts completions by the day
+    // they were completed (real users only) - the same series the metrics hero
+    // reads. Brief-only first paint has no such series: nothing extra then.
+    var MD=(!DATA.partial && DATA.matches_by_day) || [];
+    if(MD.length>=7){
+      var wsum=function(a){ return a.reduce(function(x,r){ return x+(+r.completed||0); },0); };
+      var cur=wsum(MD.slice(-7)), prv=MD.length>=14? wsum(MD.slice(-14,-7)) : null;
+      var hero=T.lastChild;
+      if(hero) hero.appendChild(el("div","sub brweek", S.brDone7(fmt(cur), prv==null? null : fmt(prv))));
+    }
     t(S.brTSignups, D.signups, "iOS "+fmt(D.signups_ios)+" · Android "+fmt(D.signups_android), false, delta(D.signups,P.signups));
     t(S.brTSeen, D.seen, "", false, delta(D.seen,P.seen));
     t(S.brTPosts, (D.new_requests||0)+(D.new_offers||0), S.brReqOff(fmt(D.new_requests),fmt(D.new_offers)), false, delta((D.new_requests||0)+(D.new_offers||0),P.posts));
@@ -7552,31 +7695,52 @@
     // ---- who is waiting ------------------------------------------------------
     var sh=$("brSupport");
     if(!supN) sh.appendChild(el("div","brmore",S.brNone));
-    (W.support||[]).forEach(function(u){
-      var r=brRow(sh, u.name||"?", brAgoIso(u.at), brSnippet(u.snippet), {label:S.brReply, fn:function(){
+    support.forEach(function(u){
+      var r=brRow(sh, u.name||"?", brAgoIso(u.at), brSnippet(u.snippet), [{label:S.brReply, fn:function(){
         // the card-list composer, opened without a card: owner_lang picks the
         // default template language, the thread loads inside it
         openMsg({owner:u.name||"", owner_id:u.user_id, owner_lang:u.lang});
-      }}, {autoWhat:true});
+      }}, {label:S.brNoReply, cls:"sec", title:S.brNoReplyTip, fn:function(){
+        brSupDismiss(u, W.support); renderBrief();
+      }}], {autoWhat:true});
       if(u.snippet) r.querySelector(".what").title=u.snippet; // the hover shows what the server sent, uncut
     });
     var ph=$("brPending");
     if(!(W.pending_offers||[]).length) ph.appendChild(el("div","brmore",S.brNoneShort));
+    // the row carries the MATCH id, not the post id, so the card is found by
+    // its title; the Cards tab needs the full payload, so no button before it
     (W.pending_offers||[]).forEach(function(p){
-      brRow(ph, p.title||"", S.brAgo(p.hours||0), S.brSwiped(p.helper||"?", p.requester||"?"));
+      brRow(ph, p.title||"", S.brAgo(p.hours||0), S.brSwiped(p.helper||"?", p.requester||"?"),
+            DATA.partial || !p.title? null : {label:S.brOpenCard, fn:function(){ brToCard(p.title); }});
     });
     if((W.pending_offers_n||0)>(W.pending_offers||[]).length)
       ph.appendChild(el("div","brmore",S.brPendMore(fmt(W.pending_offers_n-(W.pending_offers||[]).length))));
     var nh=$("brNoOffer");
     if(!(W.requests_no_offer||[]).length) nh.appendChild(el("div","brmore",S.brNoneShort));
     (W.requests_no_offer||[]).forEach(function(r){
-      brRow(nh, r.title||"", S.brAgo(r.hours||0), iso(r.owner||"?")+(r.city? " · "+iso(r.city) : ""));
+      var acts=[];
+      if(!DATA.partial && r.title) acts.push({label:S.brOpenCard, fn:function(){ brToCard(r.title); }});
+      // the composer needs the owner's id and language, which only the Cards
+      // payload carries - matched on the post id the brief row does carry
+      var post=DATA.partial? null : brPostById(r.id);
+      if(post && post.owner_id) acts.push({label:S.brMsgOwner, cls:"sec", fn:function(){ openMsg(post); }});
+      brRow(nh, r.title||"", S.brAgo(r.hours||0), iso(r.owner||"?")+(r.city? " · "+iso(r.city) : ""),
+            acts.length? acts : null);
     });
     if((W.requests_no_offer_n||0)>(W.requests_no_offer||[]).length)
       nh.appendChild(el("div","brmore",S.brNoOffMore(fmt(W.requests_no_offer_n-(W.requests_no_offer||[]).length))));
     var st=$("brStuck"), SK=W.stuck||{};
     var sl=el("div");
     sl.innerHTML=S.brStuckLine(fmt(SK.total||0), fmt(SK.one_sided||0)); st.appendChild(sl);
+    // the chat tab's "unanswered only" filter is the same idea (one side never
+    // wrote); the label says unanswered, not "these", because the chat tab does
+    // not limit itself to 3-14 days of quiet
+    if(!DATA.partial && SK.one_sided && $("onlyOneWay")){
+      st.appendChild(brGoBtn(S.brStuckGo, function(){
+        $("onlyOneWay").checked=true;
+        drillToChat({});
+      }));
+    }
     var q=W.stuck_question||[];
     var qn=el("div","brnote");
     if(q.length){
@@ -7618,7 +7782,8 @@
       var cr=brKV(hh, S.brCron, S.brCronLine(fmt(http.ok||0), fmt(http.timeouts||0), fmt(http.dns_stalls||0), brHM(http.w_from), brHM(http.w_to)));
       brBar(cr, (http.ok||0)/calls, toPct>=25?"bad":toPct>=10?"warn":"");
     }
-    brKV(hh, S.brDigest, dg.date===todayIL? S.brDigestOk(brHM(dg.at)) : S.brDigestMissing);
+    var dgRow=brKV(hh, S.brDigest, digestSent? S.brDigestOk(brHM(dg.at)) : digestLate? S.brDigestMissing : S.brDigestDue);
+    if(digestLate) dgRow.title=S.brDigestHint;
     if(dg.sweep!=null) brKV(hh, S.brSweepL, S.brSweep(fmt(dg.sweep)));
     if(dg.store_count!=null) brKV(hh, S.brStoreL, S.brStore(dg.store_avg!=null? Number(dg.store_avg).toFixed(1) : "-", fmt(dg.store_count)));
     hh.appendChild(el("div","brnote",S.brCronNote));
@@ -7669,14 +7834,7 @@
       if(c.due){ var late=c.due<todayIL; r.appendChild(el("span","due"+(late?" late":""), S.brDue+" "+fmtDay(c.due))); }
       dh.appendChild(r);
     });
-    var go=el("button","brgo"); go.type="button";
-    go.appendChild(el("span",null,S.brDeskGo));
-    go.appendChild(el("i","ar", LANG==="he"? "\u2190" : "\u2192"));
-    go.addEventListener("click",function(){
-      document.querySelectorAll("#tabs button").forEach(function(b){ b.classList.toggle("on", b.getAttribute("data-v")==="backlog"); });
-      switchTab("backlog");
-    });
-    dh.appendChild(go);
+    dh.appendChild(brGoBtn(S.brDeskGo, function(){ switchTab("backlog"); }));
   }
 
   function renderPush(){
