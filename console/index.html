@@ -723,6 +723,9 @@
            background:var(--good-text); margin-inline-end:6px; vertical-align:middle; }
   #psList .plain td { vertical-align:middle; }
   .pstags { display:inline-flex; gap:4px; margin-inline-start:6px; vertical-align:middle; }
+  /* in the cards table the tags get their own line: inline after a long
+     Hebrew title they landed between its two lines */
+  .pstitle .pstags { display:flex; margin-inline-start:0; margin-top:3px; }
   table.plain { border-collapse:collapse; width:100%; font-size:13px; }
   .plain th, .plain td { padding:9px 10px; text-align:start;
                          border-bottom:1px solid var(--grid); }
@@ -2354,8 +2357,8 @@
                (dead==="0" ? "כל "+total+" השולחים מביאים תוצאה כלשהי."
                            : dead+" מתוך "+total+" השולחים מתחת ל-10%.");
       },
-      pnTileSent:"התראות שנשלחו אי פעם", pnTileRate:"שיעור הצלחה · כל הזמן",
-      pnTileBest:"השולח הכי חזק · תוך 7 ימים", pnTileDead:"מתחת ל-10% - מועמדים לכיבוי",
+      pnTileSent:"התראות שנשלחו אי פעם", pnTileRate:"שיעור הצלחה\u00a0· כל הזמן",
+      pnTileBest:"השולח הכי חזק\u00a0· תוך 7 ימים", pnTileDead:"מתחת ל-10% - מועמדים לכיבוי",
       pnTileDeadNone:"אין - כל השולחים ב-10% ומעלה",
       pnBandWorks:"עובד · 40% ומעלה", pnBandWeak:"חלש · 15%-39%", pnBandDead:"לא עובד · מתחת ל-15%",
       pnEffTitle:"האם ההתראות עובדות",
@@ -2980,8 +2983,8 @@
                (dead==="0" ? "All "+total+" senders bring some result."
                            : dead+" of "+total+" senders are under 10%.");
       },
-      pnTileSent:"Notifications ever sent", pnTileRate:"Success rate · all time",
-      pnTileBest:"Strongest sender · within 7 days", pnTileDead:"Under 10% - candidates to switch off",
+      pnTileSent:"Notifications ever sent", pnTileRate:"Success rate\u00a0· all time",
+      pnTileBest:"Strongest sender\u00a0· within 7 days", pnTileDead:"Under 10% - candidates to switch off",
       pnTileDeadNone:"none - every sender is at 10% or more",
       pnBandWorks:"Works · 40% and up", pnBandWeak:"Weak · 15%-39%", pnBandDead:"Not working · under 15%",
       pnEffTitle:"Are the notifications working",
