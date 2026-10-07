@@ -656,9 +656,11 @@
   .msgtoastbox { background:var(--surface); border:1px solid var(--grid); border-radius:12px;
       padding:12px 18px; font-size:13px; font-weight:600; color:var(--ink);
       box-shadow:0 16px 40px rgba(8,6,22,.28); max-width:380px; }
+  /* a name is a button, not a glossary term - so no dotted .term underline */
   .psowner { background:none; border:0; font:inherit; color:var(--ink); cursor:pointer;
-             padding:0; text-align:start; border-bottom:1px dotted var(--muted); }
-  .psowner:hover { color:var(--s1); border-bottom-color:var(--s1); }
+             padding:0; text-align:start; }
+  .psowner:hover { color:var(--s1); text-decoration:underline; }
+  #psList td.pscityfb { color:var(--muted); }
   .pssearch { margin:2px 0 14px; }
   .pssearch input { width:100%; box-sizing:border-box; padding:9px 12px; font:inherit;
     font-size:13.5px; color:var(--ink); background:var(--plane); border:1px solid var(--grid);
@@ -671,6 +673,8 @@
      filler sentence anyway. The full text is one hover away. */
   .pstitle { display:flex; flex-direction:column; gap:1px; max-width:330px; min-width:180px; }
   .pstitle b { font-weight:600; white-space:normal; line-height:1.3; }
+  .pstitle b, .pstitle > span { text-align:left; }
+  html[dir="rtl"] .pstitle b, html[dir="rtl"] .pstitle > span { text-align:right; }
   .pstitle > span { font-size:11.5px; color:var(--muted); font-weight:400;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
   /* a closed card recedes as a whole row rather than announcing itself in a
@@ -711,7 +715,7 @@
   .av { width:34px; height:34px; border-radius:50%; background:var(--wash1); color:var(--s1);
         display:flex; align-items:center; justify-content:center; font-weight:600; font-size:14px;
         border:2px solid var(--surface); }
-  .av+.av { margin-inline-start:-10px; }
+  .av+.av { margin-inline-start:-6px; }
   .cmain { flex:1; min-width:0; }
   .cnames { font-weight:600; font-size:14px; }
   .cmeta { font-size:12px; color:var(--muted); display:flex; gap:8px; flex-wrap:wrap; margin-top:2px; }
@@ -722,6 +726,15 @@
   .tag.phone { color:var(--s1); border-color:var(--s1); font-weight:600; }
   .tag.good { color:var(--good-text); border-color:var(--good-text); }
   .tag.new { color:#fff; background:var(--s1); border-color:var(--s1); font-weight:700; }
+  /* chat list badges: one anatomy (tinted fill, no border) so a colour means a
+     state, not a different kind of object */
+  .cmeta .tag { border-color:transparent; background:var(--wash-hover); padding:1px 7px; }
+  .cmeta .tag.new, .cmeta .tag.phone { color:var(--s1); background:var(--wash1); font-weight:700; }
+  .cmeta .tag.good { color:var(--good-text); background:rgba(21,128,61,.10); }
+  .cmeta .tag.oneway { color:var(--bad-text); background:rgba(220,38,38,.10); }
+  .cmeta .tag.mock { color:var(--warning); background:rgba(217,119,6,.10); }
+  html[data-theme="dark"] .cmeta .tag.good { background:rgba(74,222,128,.12); }
+  html[data-theme="dark"] .cmeta .tag.oneway { background:rgba(248,113,113,.13); }
   .tabbadge { display:inline-block; margin-inline-start:6px; min-width:18px; padding:0 5px;
     border-radius:9px; background:var(--s1); color:#fff; font-size:11px; font-weight:700;
     line-height:18px; text-align:center; }
@@ -1267,8 +1280,9 @@
   .platcard.dim:hover { opacity:1; }
   html[data-theme="dark"] .platcard:hover { box-shadow:0 8px 22px rgba(0,0,0,.42); }
   .platcard .ph { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+  /* no text-transform: uppercase turned "iOS" into "IOS" */
   .platcard .pname { font-family:"Orbitron","Heebo",sans-serif; font-size:11.5px;
-              letter-spacing:.09em; text-transform:uppercase; font-weight:600;
+              letter-spacing:.09em; font-weight:600;
               color:var(--ink2); }
   .platcard .chip { margin-inline-start:auto; }
   .chip { font-size:11px; font-weight:700; padding:2px 9px; border-radius:999px;
@@ -1294,7 +1308,9 @@
   /* the spend column carries its own bar: a column of numbers hides the shape */
   .plain td.barcell { min-width:132px; }
   .cellbar { display:flex; align-items:center; gap:9px; }
-  .cellbar .cbv { flex-shrink:0; font-weight:600; }
+  /* fixed width so every bar starts at the same x whatever the amount */
+  .cellbar .cbv { flex-shrink:0; font-weight:600; min-width:4.5ch; text-align:end;
+                  font-variant-numeric:tabular-nums; }
   .cellbar .cbt { flex:1; min-width:26px; height:6px; border-radius:3px;
                   background:var(--grid); overflow:hidden; }
   .cellbar .cbt i { display:block; height:100%; border-radius:3px;
@@ -1328,7 +1344,7 @@
   .pnrate b { font-variant-numeric:tabular-nums; min-width:38px; text-align:end; }
   /* the rate and the ratio it came from, as one block */
   .pnratio { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
-  .pnratio .pnkey { direction:rtl; text-align:end; }
+  .pnratio .pnkey { direction:inherit; text-align:end; }
   /* the window chips scope the LOG panels, not this one - a control that
      appears to govern a panel it cannot touch is worse than no control */
   .pntag { display:inline-block; font-size:10px; padding:2px 8px; border-radius:99px;
@@ -1337,6 +1353,11 @@
   /* amber when the log covers LESS than the window asked for: the chip is then
      a correction, not a caption, and must not read as chrome */
   .pntag.warn { border-color:var(--s4,#d97706); color:var(--s4,#d97706); font-weight:700; }
+  /* the window chip lives under the header of the section it governs (the log),
+     not at the top of the tab where it read as scoping the all-time tiles */
+  .pnwinbar { margin:-4px 2px 12px; }
+  /* the "why not yet" rows break down one of the answers above - indent them */
+  #pnReasons .hrow { padding-inline-start:16px; }
   /* band headers: 12 flat rows is a list, three bands is a judgement */
   .pnband td { padding-top:16px; padding-bottom:4px; font-size:11px; font-weight:700;
                letter-spacing:.04em; color:var(--muted); border-bottom:none; }
@@ -1665,7 +1686,7 @@
     </section>
     <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="maTitle">קמפיינים · Meta</h2>
-      <div class="sub" data-i18n="maSub">הוצאה והתקנות מהקמפיינים מול הרשמות אמיתיות במסד · נמשך חי מ-Meta בכל רענון של הדף</div>
+      <div class="sub" data-i18n="maSub">הוצאה והתקנות מהקמפיינים מול כל ההרשמות במסד (מודעות + אורגני) · נמשך חי מ-Meta בכל רענון של הדף</div>
       <div id="metaAdsSummary"></div>
     </section>
     <section class="panel wide" style="opacity:1;transform:none">
@@ -1707,15 +1728,6 @@
   </div>
 
   <div id="pushView" class="hidden">
-    <div class="filters">
-      <span class="blfgrp"><span class="cap" data-i18n="pnWinL">חלון</span>
-        <span class="seg" id="pnWinSeg">
-          <button data-d="7" class="on" data-i18n="r7">שבוע</button>
-          <button data-d="14" data-i18n="r14">שבועיים</button>
-          <button data-d="30" data-i18n="r30">30 יום</button>
-          <button data-d="90" data-i18n="r90">90 יום</button>
-        </span></span>
-    </div>
     <section class="panel" id="pnInsightsPanel" style="opacity:1;transform:none">
       <h2 data-i18n="pnInsTitle">מה דורש תשומת לב בהתראות</h2>
       <div class="sub" data-i18n="pnInsSub"></div>
@@ -1731,6 +1743,15 @@
       <div id="pnEff"></div>
     </section>
     <div class="sechead" style="--sec-c:var(--s3)" data-i18n="pnSecDelivery">2 · האם הן בכלל הגיעו</div>
+    <div class="filters pnwinbar">
+      <span class="blfgrp"><span class="cap" data-i18n="pnWinL">חלון</span>
+        <span class="seg" id="pnWinSeg">
+          <button data-d="7" class="on" data-i18n="r7">שבוע</button>
+          <button data-d="14" data-i18n="r14">שבועיים</button>
+          <button data-d="30" data-i18n="r30">30 יום</button>
+          <button data-d="90" data-i18n="r90">90 יום</button>
+        </span></span>
+    </div>
     <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="pnTitle">מסירה, פתיחה ותשובה</h2>
       <span class="pntag" id="pnWinTag1"></span>
@@ -1748,6 +1769,7 @@
       <h2 data-i18n="pnQTitle">השאלה ששאלנו</h2>
       <div class="sub" data-i18n="pnQSub"></div>
       <div id="pnQuestion"></div>
+      <div id="pnReasonsNote"></div>
       <div id="pnReasons"></div>
     </section>
     <section class="panel wide" style="opacity:1;transform:none">
@@ -1845,36 +1867,37 @@
       sfFresh:function(iosD,andD){ return "טריות הנתונים: iOS עד "+iosD+" · Android עד "+andD+" · המספרים נמשכים ידנית מדוחות החנויות"; },
       emptyStore:"נתוני החנויות עדיין לא נטענו",
       tabAds:"קמפיינים",
-      maTitle:"קמפיינים · Meta", maSub:"הוצאה והתקנות מהקמפיינים מול הרשמות אמיתיות במסד · נמשך חי מ-Meta בכל רענון של הדף",
+      maTitle:"קמפיינים · Meta", maSub:"הוצאה והתקנות מהקמפיינים מול כל ההרשמות במסד (מודעות + אורגני) · נמשך חי מ-Meta בכל רענון של הדף",
       maDailyTitle:"יום אחר יום", maDailySub:"מה הוצאנו בכל יום, כמה התקנות Meta ייחסה לעצמה, וכמה אנשים באמת נרשמו באותו יום",
       maChartTitle:"הוצאה מול הרשמות",
       maChartSub:"עמודות = מה הוצאנו באותו יום · קו = כמה אנשים באמת נרשמו · הקו המקווקו = כמה עלתה כל הרשמה",
-      maSeriesSpend:"הוצאה", maSeriesSignups:"הרשמות אמיתיות", maSeriesCost:"עלות להרשמה",
+      maSeriesSpend:"הוצאה", maSeriesSignups:"כל ההרשמות", maSeriesCost:"עלות להרשמה",
       maFilterOn:function(p){ return "מסונן ל-"+p+" · לחיצה חוזרת על הכרטיס מבטלת"; },
       maFilterHint:"לחיצה על כרטיס פלטפורמה מסננת את הגרף ואת הטבלה",
       maNoSplit:"⚠️ ההרשמות בתצוגה המסוננת הן של כל החשבון - פילוח לפי פלטפורמה עדיין לא זמין בשרת",
       maWinDays:function(n){ return n+" ימים"; },
       maToday:"היום עד עכשיו",
-      maTodayNote:function(inst,su){ return inst+" התקנות (Meta) · "+su+" הרשמות בפועל"; },
+      maTodayNote:function(inst,su){ return inst+" התקנות (Meta) · "+su+" הרשמות (כולן)"; },
       maTileSpend:"הוצאה · {maw}",
       maAvgDay:function(x){ return "ממוצע "+x+" ליום"; },
-      maTileSignups:"הרשמות אמיתיות · {maw}",
+      maTileSignups:"כל ההרשמות (מודעות + אורגני) · {maw}",
       maTileSignupsNote:function(inst){ return "מטא ייחסה לעצמה "+inst+" התקנות בלבד"; },
       maCostTarget:"היעד: מתחת ל-₪25 להרשמה",
       maPaceTitle:"קצב הוצאה יומי",
       maPaceVs:function(b){ return "מול תקציב של "+b+" ליום"; },
       maPlatSpendLbl:"הוצאה · {maw}",
       maPlatCtr:"CTR", maPlatCpc:"עלות לקליק", maPlatInst:"התקנות (Meta)",
-      maCtrStrong:"קריאייטיב חזק", maCtrOk:"סביר", maCtrWeak:"קריאייטיב חלש",
-      maCost:"עלות להרשמה · {maw}",
-      maCostTip:"כל ההוצאה בימים המלאים שבטווח שנבחר חלקי כל ההרשמות האמיתיות באותם ימים. כולל הרשמות אורגניות, ולכן זו עלות מעורבת - אבל זה המדד הכן ביותר שיש, כי מטא מפספסת התקנות (פרטיות של אפל + ייחוס שבור באנדרואיד)",
+      maCtrStrong:"קריאייטיב חזק", maCtrOk:"קריאייטיב סביר", maCtrWeak:"קריאייטיב חלש",
+      maCtrBands:function(hi,lo){ return "לפי \u2068CTR\u2069: מ-"+hi+"% ומעלה חזק · "+lo+"% עד "+hi+"% סביר · מתחת ל-"+lo+"% חלש"; },
+      maCost:"עלות משוקללת להרשמה · {maw}",
+      maCostTip:"כל ההוצאה בימים המלאים שבטווח שנבחר חלקי כל ההרשמות באותם ימים. כולל הרשמות אורגניות, ולכן זו עלות מעורבת - אבל זה המדד הכן ביותר שיש, כי מטא מפספסת התקנות (פרטיות של אפל + ייחוס שבור באנדרואיד)",
       maCtrTip:"CTR = כמה מתוך מי שראו את המודעה הקליקו עליה (מתחת ל-1% = קריאייטיב חלש) · קליק = כמה עולה בממוצע כל הקלקה",
-      maColDay:"יום", maSpend:"הוצאה", maInstalls:"התקנות (Meta)", maSignups:"הרשמות בפועל",
+      maColDay:"יום", maSpend:"הוצאה", maInstalls:"התקנות (Meta)", maSignups:"כל ההרשמות",
       maInstallsTip:"התקנות שמטא מצליחה לייחס לקמפיין. באייפון אפל מסתירה חלק (מנגנון SKAN) ובאנדרואיד הייחוס אצלנו שבור - המספר תמיד נמוך מהאמת. את הנפח האמיתי מודדים בעמודת ההרשמות",
       maPartial:"חלקי",
       maFresh:function(at){ var t=new Date(at); return "נמשך מ-Meta ברגע טעינת הדף ("+t.toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Jerusalem"})+") · מתעדכן בכל רענון"; },
       maTzFallback:"⚠️ ההרשמות מוצגות לפי ימי UTC ולא לפי שעון ישראל, כך שהרשמות מאוחרות בערב עשויות להופיע ביום הקודם",
-      rdMeta:function(win,sp,su,cost,inst){ return win+": הוצאה של <b>"+sp+"</b>, <b>"+su+"</b> הרשמות אמיתיות = <b>"+cost+"</b> להרשמה. מטא מייחסת לעצמה רק "+inst+" התקנות - תת-ספירה מובנית, שופטים לפי ההרשמות. מתחת ל-₪25 להרשמה אפשר לשקול הגדלת תקציב; מעל ₪35 - לבדוק קריאייטיב וטירגוט."; },
+      rdMeta:function(win,sp,su,cost,inst){ return win+": הוצאה של <b>"+sp+"</b>, <b>"+su+"</b> הרשמות (מודעות + אורגני) = <b>"+cost+"</b> להרשמה. מטא מייחסת לעצמה רק "+inst+" התקנות - תת-ספירה מובנית, שופטים לפי ההרשמות. מתחת ל-₪25 להרשמה אפשר לשקול הגדלת תקציב; מעל ₪35 - לבדוק קריאייטיב וטירגוט."; },
       emptyMeta:"נתוני Meta לא נטענו הפעם - הקמפיינים עצמם לא נעצרו, רק המשיכה לדשבורד נכשלה (אם זה חוזר: לבדוק את תוקף הטוקן)",
       postsTitle:"פוסטים", postsSub:"בקשות עזרה מול הצעות עזרה",
       matchesTitle:"התאמות והשלמות", matchesSub:"התאמות חדשות מול עזרות שסומנו כהושלמו",
@@ -1991,8 +2014,8 @@
       drillCat:function(c){ return "קטגוריה: "+c; },
       chatShowing:function(a,b){ return "מציג "+a+" מתוך "+b+" שיחות בטווח"; },
       noConvos:"אין שיחות בטווח או בסינון הנוכחי",
-      msgsCount:function(n){ return n+" הודעות"; },
-      tagOffer:"הצעה", tagRequest:"בקשה", tagOneway:"ללא מענה", tagMock:"בדיקה", tagNew:"חדש",
+      msgsCount:function(n){ return String(n)==="1"? "הודעה אחת" : n+" הודעות"; },
+      tagOffer:"הצעה", tagRequest:"בקשה", tagOneway:"ללא מענה", tagOnewayOld:"ללא מענה · ישן", tagMock:"בדיקה", tagNew:"חדש",
       tagPhone:function(d){ return d? "טלפון הוחלף · "+d : "טלפון הוחלף"; },
       tagStatus:{pending:"ממתינה", accepted:"פעילה", completed:"הושלמה", not_completed:"לא יצא לפועל", expired:"פגה", declined:"נדחתה"},
       tagAskedNoAns:"נשאלו אם הושלם · לא ענו", tagAnsGot:"ענו: קיבלו עזרה", tagAnsNotYet:"ענו: עוד לא",
@@ -2154,7 +2177,9 @@
       maInsTitle:"מה דורש תשומת לב בקמפיינים",
       blInsTitle:"מה דורש תשומת לב בבקלוג",
       psInsSilent:function(n,live,p,oldest){
-        return "<b>"+n+"</b> מתוך "+live+" הכרטיסים החיים ("+p+") לא קיבלו ולו הצעה אחת. הוותיק שבהם בן <b>"+oldest+" ימים</b>."; },
+        return "<b>"+n+"</b> מתוך "+live+" הבקשות החיות ("+p+") לא קיבלו ולו הצעה אחת. הוותיקה שבהן בת <b>"+oldest+" ימים</b>."; },
+      psInsUntouched:function(n,live){
+        return "<b>"+n+"</b> מתוך "+live+" הצעות העזרה החיות הן כרטיסים שאף אחד לא פנה אליהם."; },
       psInsMix:function(x,req,off){
         return "ההיצע גדול פי <b>"+x+"</b> מהביקוש בכרטיסים החיים ("+off+" הצעות מול "+req+" בקשות). המחסור הוא בבקשות, לא בעוזרים."; },
       psInsMute:function(n){
@@ -2169,9 +2194,9 @@
         return "<b>"+p+"</b> מהפניות על הצעות נענו ("+a+" מתוך "+all+")."; },
       clInsSenders:function(n){ return "<b>"+n+"</b> אנשים שונים כתבו הודעה בחלון הזה."; },
       maInsCost:function(c,su,spend){
-        return "עלות להרשמה אמיתית: <b>"+c+"</b> ("+su+" הרשמות על "+spend+"). מחושב על הרשמות במסד, לא על ההתקנות שמטא מייחסת."; },
+        return "עלות משוקללת להרשמה: <b>"+c+"</b> ("+su+" הרשמות, מודעות + אורגני, על "+spend+"). מחושב על הרשמות במסד, לא על ההתקנות שמטא מייחסת."; },
       maInsAttrib:function(inst,su){
-        return "מטא ייחסה <b>"+inst+"</b> התקנות מול <b>"+su+"</b> הרשמות אמיתיות - הפער הזה הוא הסיבה שהוורדיקט לא נשען על המספרים שלה."; },
+        return "מטא ייחסה <b>"+inst+"</b> התקנות מול <b>"+su+"</b> הרשמות במסד - הפער הזה הוא הסיבה שהוורדיקט לא נשען על המספרים שלה."; },
       blInsOverdue:function(n,names){ return "<b>"+n+"</b> פריטים עברו את התאריך שנקבע להם: "+names+"."; },
       blInsDue:function(n,d){ return "<b>"+n+"</b> פריטים עם תאריך יעד; הקרוב ביותר ב-"+fmtDay(d)+"."; },
       blInsNow:function(n,all){ return "<b>"+n+"</b> מתוך "+all+" הפריטים הפתוחים מסומנים \"לעשות עכשיו\"."; },
@@ -2188,14 +2213,15 @@
       pnInsActivation:function(sent,opened,acted){
         return "הדחיפה של יום אחרי ההרשמה: <b>"+sent+"</b> נשלחו, <b>"+opened+"</b> טענו את הפיד, <b>"+acted+"</b> עשה משהו. הפידים שלהם לא היו ריקים."; },
       pnInsQuestion:function(asked,answered){
-        return "<b>"+asked+"</b> נשאלו \"איך הלך עם העזרה?\" ו-<b>"+answered+"</b> ענו. הכפתורים לענות עולים בבילד הבא - עד אז אין דרך לענות מההתראה."; },
+        return "<b>"+asked+"</b> נשאלו \"איך הלך עם העזרה?\" ו-<b>"+answered+"</b> ענו. אפשר לענות מהכפתורים שבהתראה או מהכרטיס באפליקציה."; },
       pnInsDelivery:function(p,d,s2){
         return "<b>"+p+"</b> מההתראות בחלון הזה באמת הגיעו למכשיר ("+d+" מתוך "+s2+"), לפי ה-receipt של Expo."; },
       pnInsNoOpens:"\"נפתחו\" ו\"נענו\" נחתמים על ידי האפליקציה - החצי הזה עולה בבילד הבא, ועד אז הם אפס מבנית.",
       pnInsLogNew:"היומן נולד ב-4.9.2026. פאנלי המסירה יתמלאו ככל שיֵצאו התראות; פאנל האפקטיביות מעליהם כבר קורא חודשים אחורה.",
       pnInsDead:function(n,names){
         return "<b>"+n+"</b> שולחים מתחת ל-10% המרה עם נפח משמעותי: "+names+"."; },
-      pnEverShort:function(n){ return "אי פעם: "+n; },
+      pnEverShort:function(n){ return "בלי הגבלת זמן: "+n; },
+      pnSomeone:"מישהו/י",
       pnInfluenced:function(n,p,min){
         return "פתיחות מושפעות: ב-"+n+" מהמקרים ("+p+") האפליקציה נפתחה תוך "+min+" דקות מהפוש, בלי להקיש עליו. זו רצפה - last_seen_at נדרסת, אז מי שפתח וגם חזר מאוחר יותר לא נספר."; },
       pnInsInfluenced:function(n,all,p){
@@ -2226,7 +2252,7 @@
       arInsHoldout:function(n){ return "קבוצת ביקורת פעילה על <b>"+n+"</b> שולחים שיווקיים - 10% מהקהל שלהם לא מקבל את ההודעה, כדי שאפשר יהיה למדוד אם היא בכלל עוזרת."; },
       pnNoErrLine:function(d){ return "אף התראה לא נכשלה בחלון הזה. כל <b>"+d+"</b> שנמסרו הגיעו ליעדן."; },
       pnColPending:"(מהבילד הבא)",
-      pnQNoneLine:function(n){ return "<b>"+n+"</b> אנשים נשאלו \"איך הלך עם העזרה?\" ואף אחד לא ענה. אין לזה דרך לקרות כרגע: הכפתורים לענות והכרטיס באפליקציה עולים בבילד הבא."; },
+      pnQNoneLine:function(n){ return "<b>"+n+"</b> אנשים נשאלו \"איך הלך עם העזרה?\" ואף אחד לא ענה, למרות שאפשר לענות מהכפתורים שבהתראה או מהכרטיס באפליקציה."; },
       pnHoFrac:function(x,n,p){ return x+" מתוך "+n+" · "+p+"%"; },
       clFilterL:"הצגה",
       pnEffRateCol:"הצלחה · תוך 7 ימים",
@@ -2240,9 +2266,9 @@
                (dead==="0" ? "כל "+total+" השולחים מביאים תוצאה כלשהי."
                            : dead+" מתוך "+total+" השולחים מתחת ל-10%.");
       },
-      pnTileSent:"התראות שנשלחו אי פעם", pnTileRate:"שיעור הצלחה משוקלל",
-      pnTileBest:"השולח הכי חזק", pnTileDead:"שולחים בלי תוצאה",
-      pnTileDeadNone:"אין - כולם מביאים משהו",
+      pnTileSent:"התראות שנשלחו אי פעם", pnTileRate:"שיעור הצלחה · כל הזמן",
+      pnTileBest:"השולח הכי חזק · תוך 7 ימים", pnTileDead:"מתחת ל-10% - מועמדים לכיבוי",
+      pnTileDeadNone:"אין - כל השולחים ב-10% ומעלה",
       pnBandWorks:"עובד · 40% ומעלה", pnBandWeak:"חלש · 15%-39%", pnBandDead:"לא עובד · מתחת ל-15%",
       pnEffTitle:"האם ההתראות עובדות",
       pnEffSub:"כמה מההתראות גרמו למה שרצינו, לא כמה נשלחו. לכל שורה כתוב מה בדיוק נחשב הצלחה אצלה, והשורה האפורה מתחת לשיעור היא המספר הרחב יותר, בלי חלון.",
@@ -2325,11 +2351,12 @@
       psSearch:"חיפוש בכותרת, בתיאור, בשם או בעיר",
       psColTitle:"כרטיס", psColType:"סוג", psColCat:"קטגוריה", psColOwner:"מפרסם/ת",
       psColCity:"עיר", psColAge:"גיל", psColOffers:"הצעות", psColChat:"שיחה", psColState:"מצב",
-      psSumTotal:"סה״כ", psSumLive:"חיים", psSumClosed:"סגורים", psSumSilent:"בלי אף הצעה", psSumMock:"מוקים",
+      psSumTotal:"סה״כ", psSumLive:"חיים", psSumClosed:"סגורים", psSumSilent:"בלי פנייה (פעילים וסגורים)", psSumMock:"מוקים",
       psNone:"אין כרטיסים שעונים לסינון",
       psShowing:"מוצגים {n} מתוך {t} כרטיסים",
       psTwoTip:"שני הצדדים כתבו לפחות הודעה אחת – הסימן הזול היחיד לכך שהתחילה שיחה אמיתית, ולא צד אחד שמדבר לחלל",
       psMockTip:"פוסט בדיקה. מוצג כאן בכוונה: זה המסך היחיד שאמור להראות הכל, והסתרה כאן הייתה שקר לגבי מה שקיים במסד",
+      psSumSilentTip:"כרטיס שאף אחד לא פנה אליו: בקשה שאיש לא הציע לה עזרה, או הצעה שאיש לא ביקש. נספרים כרטיסים פעילים וגם סגורים.",
       psSilentTip:"פוסט חי שאיש לא הציע עליו עזרה. זה הכישלון המרכזי של המוצר – לא באג, אלא היעדר צפיפות שכנים בטווח",
       psModTip:"עבר בשכבת המודרציה · content_flagged = סומן אוטומטית, admin_content_removed = הוסר ידנית, content_approved = נבדק ואושר",
       psAgeTip:"כמה זמן עבר מאז הפרסום. פוסט חי בן חודשיים הוא בדרך כלל פוסט שנשכח, לא ביקוש פתוח",
@@ -2342,7 +2369,7 @@
       blUpd:"עודכן ידנית", blUpdToday:"היום", blUpdYday:"אתמול",
       blUpdAgo:"לפני {n} ימים", blUpdStale:"ייתכן שאינו מעודכן",
       blUpdTip:"הבקלוג נכתב ביד ולא נמשך מהמסד – בניגוד למטריקות, לצ׳אט ולקמפיינים. התאריך הזה נועד לכך שרשימה מיושנת תכריז על עצמה במקום להיראות עדכנית",
-      blStatusL:"מצב", blSortL:"סדר", blAll:"הכל",
+      blStatusL:"מצב", blSortL:"סדר", blAll:"הכל", blOpen:"לביצוע", blPastDue:"עבר את התאריך",
       blTitle:"מה בונים, ולמה דווקא את זה",
       blSub:"כל שורה אומרת מה הפריט, למה הוא חשוב – עם המספר שמאחוריו – וכמה הוא עולה · ריחוף על RICE או על שער מסביר את המונח",
       blSortPri:"לפי עדיפות", blSortRice:"לפי RICE", blSortEff:"לפי מאמץ", blSortCat:"לפי תחום",
@@ -2453,36 +2480,37 @@
       sfFresh:function(iosD,andD){ return "Data freshness: iOS through "+iosD+" · Android through "+andD+" · figures are pulled manually from the stores' reports"; },
       emptyStore:"Store data not loaded yet",
       tabAds:"Campaigns",
-      maTitle:"Meta campaigns", maSub:"Campaign spend and installs against real database signups · pulled live from Meta on every page refresh",
+      maTitle:"Meta campaigns", maSub:"Campaign spend and installs against all database signups (ads + organic) · pulled live from Meta on every page refresh",
       maDailyTitle:"Day by day", maDailySub:"What we spent each day, how many installs Meta attributed to itself, and how many people actually signed up that day",
       maChartTitle:"Spend against signups",
       maChartSub:"Bars = what we spent that day · line = how many people actually signed up · dashed = what each signup cost",
-      maSeriesSpend:"Spend", maSeriesSignups:"Real signups", maSeriesCost:"Cost per signup",
+      maSeriesSpend:"Spend", maSeriesSignups:"All signups", maSeriesCost:"Cost per signup",
       maFilterOn:function(p){ return "filtered to "+p+" · click the card again to clear"; },
       maFilterHint:"click a platform card to filter the chart and the table",
       maNoSplit:"⚠️ signups in the filtered view are account-wide - the per-platform split is not live on the server yet",
       maWinDays:function(n){ return n+" days"; },
       maToday:"Today so far",
-      maTodayNote:function(inst,su){ return inst+" Meta installs · "+su+" real signups"; },
+      maTodayNote:function(inst,su){ return inst+" Meta installs · "+su+" signups (all)"; },
       maTileSpend:"Spend · {maw}",
       maAvgDay:function(x){ return "avg "+x+"/day"; },
-      maTileSignups:"Real signups · {maw}",
+      maTileSignups:"All signups (ads + organic) · {maw}",
       maTileSignupsNote:function(inst){ return "Meta claimed only "+inst+" installs"; },
       maCostTarget:"target: under ₪25 per signup",
       maPaceTitle:"Daily spend pace",
       maPaceVs:function(b){ return "against a "+b+"/day budget"; },
       maPlatSpendLbl:"Spend · {maw}",
       maPlatCtr:"CTR", maPlatCpc:"Cost per click", maPlatInst:"Meta installs",
-      maCtrStrong:"Strong creative", maCtrOk:"Acceptable", maCtrWeak:"Weak creative",
-      maCost:"Cost per signup · {maw}",
-      maCostTip:"All spend over the full days in the selected range divided by all real signups in those days. Organic signups included, so it's a blended cost - but it's the honest number, because Meta misses installs (Apple privacy + our broken Android attribution)",
+      maCtrStrong:"Strong creative", maCtrOk:"Acceptable creative", maCtrWeak:"Weak creative",
+      maCtrBands:function(hi,lo){ return "By CTR: "+hi+"% and up strong · "+lo+"-"+hi+"% acceptable · under "+lo+"% weak"; },
+      maCost:"Blended cost per signup · {maw}",
+      maCostTip:"All spend over the full days in the selected range divided by all signups in those days. Organic signups included, so it's a blended cost - but it's the honest number, because Meta misses installs (Apple privacy + our broken Android attribution)",
       maCtrTip:"CTR = share of people who clicked after seeing the ad (under 1% = weak creative) · click = average cost per click",
-      maColDay:"Day", maSpend:"Spend", maInstalls:"Meta installs", maSignups:"Real signups",
+      maColDay:"Day", maSpend:"Spend", maInstalls:"Meta installs", maSignups:"All signups",
       maInstallsTip:"Installs Meta manages to attribute to the campaign. Apple hides part of them (SKAN) and our Android attribution is broken - always an undercount. Real volume lives in the signups column",
       maPartial:"partial",
       maFresh:function(at){ var t=new Date(at); return "Pulled from Meta at page load ("+t.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Jerusalem"})+") · refreshes with every reload"; },
       maTzFallback:"⚠️ Signups are bucketed by UTC days rather than Israel time, so late-evening signups may show on the previous day",
-      rdMeta:function(win,sp,su,cost,inst){ return "Over "+win+": <b>"+sp+"</b> spent, <b>"+su+"</b> real signups = <b>"+cost+"</b> per signup. Meta attributes only "+inst+" installs to itself - a built-in undercount, judge by signups. Under ₪25 per signup a budget raise is on the table; over ₪35, review creative and targeting."; },
+      rdMeta:function(win,sp,su,cost,inst){ return "Over "+win+": <b>"+sp+"</b> spent, <b>"+su+"</b> signups (ads + organic) = <b>"+cost+"</b> per signup. Meta attributes only "+inst+" installs to itself - a built-in undercount, judge by signups. Under ₪25 per signup a budget raise is on the table; over ₪35, review creative and targeting."; },
       emptyMeta:"Meta data didn't load this time - the campaigns themselves are untouched, only the dashboard pull failed (if it repeats, check the token's validity)",
       postsTitle:"Posts", postsSub:"Help requests vs. help offers",
       matchesTitle:"Matches & completions", matchesSub:"New matches vs. helps marked completed",
@@ -2598,8 +2626,8 @@
       drillCat:function(c){ return "Category: "+c; },
       chatShowing:function(a,b){ return "Showing "+a+" of "+b+" conversations in range"; },
       noConvos:"No conversations in this range or filter",
-      msgsCount:function(n){ return n+" messages"; },
-      tagOffer:"offer", tagRequest:"request", tagOneway:"unanswered", tagMock:"test", tagNew:"new",
+      msgsCount:function(n){ return String(n)==="1"? "1 message" : n+" messages"; },
+      tagOffer:"offer", tagRequest:"request", tagOneway:"unanswered", tagOnewayOld:"unanswered · old", tagMock:"test", tagNew:"new",
       tagPhone:function(d){ return d? "phone shared · "+d : "phone shared"; },
       tagStatus:{pending:"pending", accepted:"active", completed:"completed", not_completed:"fell through", expired:"expired", declined:"declined"},
       tagAskedNoAns:"asked if it happened · no answer", tagAnsGot:"answered: got help", tagAnsNotYet:"answered: not yet",
@@ -2761,7 +2789,9 @@
       maInsTitle:"What needs attention in the campaigns",
       blInsTitle:"What needs attention in the backlog",
       psInsSilent:function(n,live,p,oldest){
-        return "<b>"+n+"</b> of "+live+" live cards ("+p+") have never had a single offer. The oldest is <b>"+oldest+" days</b> old."; },
+        return "<b>"+n+"</b> of "+live+" live requests ("+p+") have never had a single offer. The oldest is <b>"+oldest+" days</b> old."; },
+      psInsUntouched:function(n,live){
+        return "<b>"+n+"</b> of "+live+" live help offers are cards no one has approached."; },
       psInsMix:function(x,req,off){
         return "Supply outnumbers demand <b>"+x+"x</b> among live cards ("+off+" offers vs "+req+" requests). The shortage is requests, not helpers."; },
       psInsMute:function(n){
@@ -2776,9 +2806,9 @@
         return "<b>"+p+"</b> of approaches on offers were answered ("+a+" of "+all+")."; },
       clInsSenders:function(n){ return "<b>"+n+"</b> distinct people wrote a message in this window."; },
       maInsCost:function(c,su,spend){
-        return "Cost per REAL signup: <b>"+c+"</b> ("+su+" signups on "+spend+"). Computed on database signups, not on Meta-attributed installs."; },
+        return "Blended cost per signup: <b>"+c+"</b> ("+su+" signups, ads + organic, on "+spend+"). Computed on database signups, not on Meta-attributed installs."; },
       maInsAttrib:function(inst,su){
-        return "Meta attributed <b>"+inst+"</b> installs against <b>"+su+"</b> real signups - that gap is why the verdict does not lean on Meta's numbers."; },
+        return "Meta attributed <b>"+inst+"</b> installs against <b>"+su+"</b> signups in the database - that gap is why the verdict does not lean on Meta's numbers."; },
       blInsOverdue:function(n,names){ return "<b>"+n+"</b> items are past their own date: "+names+"."; },
       blInsDue:function(n,d){ return "<b>"+n+"</b> items carry a due date; the nearest is "+fmtDay(d)+"."; },
       blInsNow:function(n,all){ return "<b>"+n+"</b> of "+all+" open items are marked \"do now\"."; },
@@ -2794,14 +2824,15 @@
       pnInsActivation:function(sent,opened,acted){
         return "The day-after-signup nudge: <b>"+sent+"</b> sent, <b>"+opened+"</b> loaded the feed, <b>"+acted+"</b> acted. Their feeds were not empty."; },
       pnInsQuestion:function(asked,answered){
-        return "<b>"+asked+"</b> were asked \"how did the help go?\" and <b>"+answered+"</b> answered. The answer buttons ship with the next build - until then there is no way to answer from the notification."; },
+        return "<b>"+asked+"</b> were asked \"how did the help go?\" and <b>"+answered+"</b> answered. People can answer from the buttons on the notification or from the card in the app."; },
       pnInsDelivery:function(p,d,s2){
         return "<b>"+p+"</b> of this window's notifications actually reached a device ("+d+" of "+s2+"), per Expo's receipt."; },
       pnInsNoOpens:"\"Opened\" and \"answered\" are stamped by the app - that half ships with the next build, so until then they are structurally zero.",
       pnInsLogNew:"The log was born on 4 Sep 2026. The delivery panels fill as notifications go out; the effectiveness panel above them already reads months back.",
       pnInsDead:function(n,names){
         return "<b>"+n+"</b> senders convert under 10% at meaningful volume: "+names+"."; },
-      pnEverShort:function(n){ return "ever: "+n; },
+      pnEverShort:function(n){ return "with no time limit: "+n; },
+      pnSomeone:"Someone",
       pnInfluenced:function(n,p,min){
         return "Influenced opens: in "+n+" cases ("+p+") the app was opened within "+min+" minutes of the push, without the banner being tapped. A floor, not a rate - last_seen_at is overwritten, so anyone who opened and came back later is not counted."; },
       pnInsInfluenced:function(n,all,p){
@@ -2831,7 +2862,7 @@
       arInsHoldout:function(n){ return "<b>"+n+"</b> marketing senders have a live control group - 10% of their audience does not get the message, so we can measure whether it helps at all."; },
       pnNoErrLine:function(d){ return "No notification failed in this window. All <b>"+d+"</b> that were delivered reached their destination."; },
       pnColPending:"(next build)",
-      pnQNoneLine:function(n){ return "<b>"+n+"</b> people were asked \"how did the help go?\" and none answered. There is currently no way for that to happen: the answer buttons and the in-app card ship with the next build."; },
+      pnQNoneLine:function(n){ return "<b>"+n+"</b> people were asked \"how did the help go?\" and none answered, even though they can answer from the buttons on the notification or from the card in the app."; },
       pnHoFrac:function(x,n,p){ return x+" of "+n+" · "+p+"%"; },
       clFilterL:"Show",
       pnEffRateCol:"Success · within 7 days",
@@ -2846,9 +2877,9 @@
                (dead==="0" ? "All "+total+" senders bring some result."
                            : dead+" of "+total+" senders are under 10%.");
       },
-      pnTileSent:"Notifications ever sent", pnTileRate:"Weighted success rate",
-      pnTileBest:"Strongest sender", pnTileDead:"Senders with no result",
-      pnTileDeadNone:"none - they all bring something",
+      pnTileSent:"Notifications ever sent", pnTileRate:"Success rate · all time",
+      pnTileBest:"Strongest sender · within 7 days", pnTileDead:"Under 10% - candidates to switch off",
+      pnTileDeadNone:"none - every sender is at 10% or more",
       pnBandWorks:"Works · 40% and up", pnBandWeak:"Weak · 15%-39%", pnBandDead:"Not working · under 15%",
       pnEffTitle:"Are the notifications working",
       pnEffSub:"How many notifications CAUSED what we wanted, not how many went out. Each row names what counts as success for that sender, and the grey line under a rate is the wider all-time number.",
@@ -2931,11 +2962,12 @@
       psSearch:"Search title, description, name or city",
       psColTitle:"Card", psColType:"Type", psColCat:"Category", psColOwner:"Posted by",
       psColCity:"City", psColAge:"Age", psColOffers:"Offers", psColChat:"Chat", psColState:"State",
-      psSumTotal:"Total", psSumLive:"Live", psSumClosed:"Closed", psSumSilent:"No offer", psSumMock:"Mock",
+      psSumTotal:"Total", psSumLive:"Live", psSumClosed:"Closed", psSumSilent:"No offer (live and closed)", psSumMock:"Mock",
       psNone:"No card matches this filter",
       psShowing:"Showing {n} of {t} cards",
       psTwoTip:"Both sides wrote at least one message \u2013 the only cheap signal that a real exchange started, rather than one side talking into the void",
       psMockTip:"A test post. Shown here on purpose: this is the one screen meant to show everything, and hiding it here would misstate what exists in the database",
+      psSumSilentTip:"A card nobody approached: a request no one offered to help with, or an offer no one asked for. Counts live and closed cards.",
       psSilentTip:"A live post nobody offered to help with. This is the product's central failure \u2013 not a bug, but the absence of neighbour density in range",
       psModTip:"Passed through the moderation layer \u00b7 content_flagged = auto-flagged, admin_content_removed = removed by hand, content_approved = reviewed and cleared",
       psAgeTip:"How long since it was posted. A live post two months old is usually a forgotten post, not open demand",
@@ -2948,7 +2980,7 @@
       blUpd:"Updated by hand", blUpdToday:"today", blUpdYday:"yesterday",
       blUpdAgo:"{n} days ago", blUpdStale:"may be out of date",
       blUpdTip:"The backlog is written by hand and is not pulled from the database \u2013 unlike metrics, chat and campaigns. This date exists so a stale list announces itself instead of looking current",
-      blStatusL:"Status", blSortL:"Order", blAll:"All",
+      blStatusL:"Status", blSortL:"Order", blAll:"All", blOpen:"To do", blPastDue:"Past its date",
       blTitle:"What we build next, and why this",
       blSub:"Every row says what the item is, why it matters \u2013 with the measurement behind it \u2013 and what it costs \u00b7 hover RICE or Gate for the term in plain words",
       blSortPri:"By priority", blSortRice:"By RICE", blSortEff:"By effort", blSortCat:"By area",
@@ -4649,9 +4681,13 @@
       head.appendChild(el("span","pname",plat));
       if(ctr!=null){
         // the tooltip's own line: under 1% is a weak creative
-        var q=ctr>=2? "good" : (ctr>=1? "warn" : "bad");
-        head.appendChild(el("span","chip "+q,
-          q==="good"? S.maCtrStrong : q==="warn"? S.maCtrOk : S.maCtrWeak));
+        var CTR_HI=2, CTR_LO=1;
+        var q=ctr>=CTR_HI? "good" : (ctr>=CTR_LO? "warn" : "bad");
+        var qc=el("span","chip "+q,
+          q==="good"? S.maCtrStrong : q==="warn"? S.maCtrOk : S.maCtrWeak);
+        // the verdict is a CTR band, not a cost one - the hover says which lines
+        qc.title=S.maCtrBands(CTR_HI, CTR_LO);
+        head.appendChild(qc);
       }
       card.appendChild(head);
       card.appendChild(el("div","pbig",ils(c.spend)));
@@ -5544,6 +5580,8 @@
   // ---- chat view -----------------------------------------------------------
   function initials(name){
     var parts=(name||"?").trim().split(/\s+/);
+    // two Hebrew letters side by side read as a word, not as initials
+    if(/[\u0590-\u05FF]/.test(parts[0]||"")) return (parts[0]||"?").charAt(0);
     return (parts[0]||"?").charAt(0)+((parts[1]||"").charAt(0)||"");
   }
   var PHONE_RE=/(0\d[\d -]{7,11}\d|\+972[\d -]{8,12}\d)/;
@@ -5621,9 +5659,15 @@
       });
       btn.appendChild(avs);
       var main=el("div","cmain");
-      main.appendChild(el("div","cnames",c.helper.name+" ↔ "+c.requester.name));
+      // each name in its own <bdi>: a Hebrew and an English name in one plain
+      // string let the bidi algorithm swap which side is the helper
+      var cn=el("div","cnames");
+      cn.appendChild(el("bdi",null,c.helper.name));
+      cn.appendChild(document.createTextNode(" \u2194 "));
+      cn.appendChild(el("bdi",null,c.requester.name));
+      main.appendChild(cn);
       var meta=el("div","cmeta");
-      meta.appendChild(el("span",null,c.post_title));
+      var pt=el("span"); pt.appendChild(el("bdi",null,c.post_title)); meta.appendChild(pt);
       meta.appendChild(el("span",null,S.msgsCount(fmt(c.msg_count))));
       meta.appendChild(el("span","tag",c.post_type==="offer"?S.tagOffer:S.tagRequest));
       var lastMs=new Date(c.messages[c.messages.length-1].at).getTime();
@@ -5634,7 +5678,9 @@
         // shouting red, so none were heard)
         var lastAt=new Date(c.messages[c.messages.length-1].at).getTime();
         var stale=(Date.now()-lastAt) > 7*86400000;
-        meta.appendChild(el("span", stale? "tag" : "tag oneway", S.tagOneway));
+        // one look for both - the staleness is said in words, not by a colour
+        // change the reader has to decode
+        meta.appendChild(el("span","tag oneway", stale? S.tagOnewayOld : S.tagOneway));
       }
       // phone exchange: when, how the match ended, and what they answered
       // when we asked - the WhatsApp exit is where completions go missing
@@ -5801,12 +5847,20 @@
     (function(){
       var rows=[], live=R.filter(function(p){return p.is_active;});
       if(live.length){
-        var silent=live.filter(function(p){return !p.offers;});
-        var sp=Math.round(100*silent.length/live.length);
-        var oldest=silent.reduce(function(a,p){ return Math.max(a, p.age_days||0); },0);
-        rows.push([sp>=40?"bad":sp>=20?"warn":"good",
-          S.psInsSilent(fmt(silent.length), fmt(live.length), sp+"%", String(oldest))]);
-        var req=live.filter(function(p){return p.type==="request";}).length;
+        // "no offer" is a failure only for a REQUEST - an offer card cannot get
+        // an offer, so it is counted on its own line as "no one approached it"
+        var liveReq=live.filter(function(p){return p.type==="request";});
+        var liveOff=live.filter(function(p){return p.type!=="request";});
+        if(liveReq.length){
+          var silent=liveReq.filter(function(p){return !p.offers;});
+          var sp=Math.round(100*silent.length/liveReq.length);
+          var oldest=silent.reduce(function(a,p){ return Math.max(a, p.age_days||0); },0);
+          rows.push([sp>=40?"bad":sp>=20?"warn":"good",
+            S.psInsSilent(fmt(silent.length), fmt(liveReq.length), sp+"%", String(oldest))]);
+        }
+        var untouched=liveOff.filter(function(p){return !p.offers;}).length;
+        if(untouched) rows.push(["info", S.psInsUntouched(fmt(untouched), fmt(liveOff.length))]);
+        var req=liveReq.length;
         var off=live.length-req;
         if(req>0 && off>=req*1.5)
           rows.push(["warn", S.psInsMix((off/req).toFixed(1), fmt(req), fmt(off))]);
@@ -5835,7 +5889,7 @@
     [[S.psSumTotal,R.length,null],
      [S.psSumLive,R.filter(function(p){return p.is_active;}).length,null],
      [S.psSumClosed,R.filter(function(p){return !p.is_active;}).length,null],
-     [S.psSumSilent,R.filter(function(p){return !p.offers;}).length,S.psSilentTip]]
+     [S.psSumSilent,R.filter(function(p){return !p.offers;}).length,S.psSumSilentTip]]
       .forEach(function(t){
         var cell=el("div","pscell"+(t[2]?" accent":""));
         cell.appendChild(el("b",null,fmt(t[1])));
@@ -5936,7 +5990,9 @@
       // reads it. Both are public content already, so nothing new is exposed.
       var td=el("td");
       var box=el("div","pstitle");
-      var b=el("b",null,p.title||"-");
+      // user text takes its own direction (dir=auto) so a Hebrew title in the
+      // English UI keeps its punctuation in place; the alignment stays the column's
+      var b=el("b",null,p.title||"-"); b.dir="auto";
       var tags=el("span","pstags");
       if(p.images) tags.appendChild(el("span","tagpill",
         p.images===1? S.psImg1 : S.psImgN.split("{n}").join(String(p.images))));
@@ -5955,7 +6011,7 @@
       }
       if(tags.childNodes.length) b.appendChild(tags);
       box.appendChild(b);
-      if(p.description) box.appendChild(el("span",null,p.description));
+      if(p.description){ var dsc=el("span",null,p.description); dsc.dir="auto"; box.appendChild(dsc); }
       td.appendChild(box);
       tr.appendChild(td);
 
@@ -5971,7 +6027,13 @@
         oTd2.appendChild(ob);
       } else { oTd2.textContent=p.owner||"-"; }
       tr.appendChild(oTd2);
-      tr.appendChild(el("td",null,(LANG==="he"? p.city : (p.city_en||p.city))||"-"));
+      // English UI with no Latin name: the Hebrew fallback keeps its own
+      // direction and is muted, so the column does not read as mixed scripts
+      var cityTd;
+      if(LANG!=="he" && !p.city_en && p.city){
+        cityTd=el("td","pscityfb"); var cs2=el("span",null,p.city); cs2.dir="auto"; cityTd.appendChild(cs2);
+      } else cityTd=el("td",null,(LANG==="he"? p.city : (p.city_en||p.city))||"-");
+      tr.appendChild(cityTd);
       tr.appendChild(el("td",null,psAge(p.age_days)));
 
       // offers: zero on a LIVE post is the product failing, and says so
@@ -6371,7 +6433,20 @@
   var BL_UPDATED = null;   // set from the payload
   var BACKLOG = [];        // set from the payload
 
-  var BL_FILTER = "all", BL_SORT = "pri";
+  // opens on the work still to do: the full list (done + dropped) is ~22,000px
+  // of scroll, and the dated items were buried under it
+  var BL_FILTER = "open", BL_SORT = "pri";
+  // calendar days between two dates as Israel reads them - a millisecond
+  // difference from noon called a list written yesterday "today" before 12:00
+  function ilYmd(d){ return d.toLocaleDateString("sv-SE",{timeZone:"Asia/Jerusalem"}); }
+  function ymdDiff(a,b){
+    var pa=a.split("-"), pb=b.split("-");
+    return Math.round((Date.UTC(+pb[0],pb[1]-1,+pb[2])-Date.UTC(+pa[0],pa[1]-1,+pa[2]))/86400000);
+  }
+  // a queued item past its own date belongs with "act now", whatever bucket
+  // it was filed in - otherwise the overdue work sits deep in the queue
+  function blPastDue(it){ return it.st==="next" && !!it.due && it.due < ilYmd(new Date()); }
+  function blSt(it){ return blPastDue(it) ? "now" : it.st; }
   function blStatus(id){
     for(var i=0;i<BL_STATUS.length;i++) if(BL_STATUS[i].id===id) return BL_STATUS[i];
     return BL_STATUS[0];
@@ -6388,7 +6463,7 @@
   function blDue(iso){
     var p=iso.split("-");
     var d=parseInt(p[2],10)+"."+parseInt(p[1],10);
-    var days=Math.round((new Date(iso+"T12:00:00")-new Date())/86400000);
+    var days=ymdDiff(ilYmd(new Date()), iso);
     var soon = days<=14;
     if(LANG==="he") return (soon && days>=0 ? (days===0?"היום · ":days===1?"מחר · ":"בעוד "+days+" ימים · ") : "עד ")+d;
     return (soon && days>=0 ? (days===0?"today · ":days===1?"tomorrow · ":"in "+days+" days · ") : "by ")+d;
@@ -6401,18 +6476,19 @@
 
     // ---- what needs attention: dated items that have gone past their date --
     (function(){
-      var rows=[], today=localYmd(new Date());
-      var open=BACKLOG.filter(function(b){ return b.st!=="done"; });
+      var rows=[], today=ilYmd(new Date());
+      // "open" = not done AND not dropped: a dropped idea is not work to do
+      var open=BACKLOG.filter(function(b){ return b.st!=="done" && b.st!=="kill"; });
       var overdue=open.filter(function(b){ return b.due && b.due < today; });
       var soon=open.filter(function(b){ return b.due && b.due >= today; });
       if(overdue.length) rows.push(["bad", S.blInsOverdue(String(overdue.length),
         overdue.map(function(b){ return LANG==="he"? b.tH : b.tE; }).join(" · "))]);
       if(soon.length) rows.push(["warn", S.blInsDue(String(soon.length),
         soon.sort(function(a,b){return a.due<b.due?-1:1;})[0].due)]);
-      var now=open.filter(function(b){ return b.st==="now"; });
+      var now=open.filter(function(b){ return blSt(b)==="now"; });
       if(now.length) rows.push(["warn", S.blInsNow(String(now.length), String(open.length))]);
       // the list is hand-written, so its own age is a finding
-      var age=Math.round((Date.now()-new Date(BL_UPDATED+"T12:00:00").getTime())/86400000);
+      var age=ymdDiff(BL_UPDATED, ilYmd(new Date()));
       rows.push([age>30?"bad":age>14?"warn":"info", S.blInsAge(String(age), BL_UPDATED)]);
       insightsInto("blInsights", rows);
     })();
@@ -6424,7 +6500,7 @@
     if(uh){
       uh.innerHTML="";
       var d=new Date(BL_UPDATED+"T12:00:00");
-      var days=Math.floor((Date.now()-d.getTime())/86400000);
+      var days=ymdDiff(BL_UPDATED, ilYmd(new Date()));
       var ago = days<=0 ? S.blUpdToday
               : days===1 ? S.blUpdYday
               : S.blUpdAgo.split("{n}").join(String(days));
@@ -6449,7 +6525,7 @@
     [["now",S.blSumNow],["build",S.blSumBuild],["next",S.blSumNext],["done",S.blSumDone]]
       .forEach(function(pair){
         var st=blStatus(pair[0]);
-        var n=BACKLOG.filter(function(it){ return it.st===pair[0]; }).length;
+        var n=BACKLOG.filter(function(it){ return blSt(it)===pair[0]; }).length;
         var cell=el("div","blcell");
         var bar=el("i"); bar.style.background=st.c; cell.appendChild(bar);
         cell.appendChild(el("b",null,String(n)));
@@ -6460,12 +6536,14 @@
     // the status filter carries its own counts, so picking one is an informed
     // choice rather than a guess at what is behind the chip
     var fh=$("blFilters"); fh.innerHTML="";
-    var opts=[{id:"all",label:S.blAll}].concat(BL_STATUS.map(function(st){
+    var opts=[{id:"open",label:S.blOpen},{id:"all",label:S.blAll}].concat(BL_STATUS.map(function(st){
       return {id:st.id,label:T(st)};
     }));
+    function blIn(it, f){
+      return f==="all" || (f==="open"? (blSt(it)==="now"||blSt(it)==="next") : blSt(it)===f);
+    }
     opts.forEach(function(o){
-      var n = o.id==="all" ? BACKLOG.length
-            : BACKLOG.filter(function(it){ return it.st===o.id; }).length;
+      var n = BACKLOG.filter(function(it){ return blIn(it, o.id); }).length;
       var b=el("button",BL_FILTER===o.id?"on":null,o.label+" · "+n);
       b.onclick=function(){ BL_FILTER=o.id; renderBacklog(); };
       fh.appendChild(b);
@@ -6478,23 +6556,23 @@
         sh.appendChild(b);
       });
 
-    var rows=BACKLOG.filter(function(it){
-      return BL_FILTER==="all" || it.st===BL_FILTER;
-    });
+    var rows=BACKLOG.filter(function(it){ return blIn(it, BL_FILTER); });
     var order={}; BL_STATUS.forEach(function(st,i){ order[st.id]=i; });
     var catOrder={}; Object.keys(BL_CAT).forEach(function(k,i){ catOrder[k]=i; });
     // an unscored gate must not sort as a zero - it would bury security work
     // under every feature; it sorts to the end of its own group instead
     function riceKey(it){ return it.rice==null ? -1 : it.rice; }
     rows.sort(function(a,b){
-      if(BL_SORT==="rice") return riceKey(b)-riceKey(a) || order[a.st]-order[b.st];
-      if(BL_SORT==="eff")  return a.eff-b.eff || order[a.st]-order[b.st];
+      if(BL_SORT==="rice") return riceKey(b)-riceKey(a) || order[blSt(a)]-order[blSt(b)];
+      if(BL_SORT==="eff")  return a.eff-b.eff || order[blSt(a)]-order[blSt(b)];
       // areas keep the order BL_CAT declares - growth first, design last -
       // rather than alphabetical, which would differ per language and put the
       // smallest concern at the top in one of them
       if(BL_SORT==="cat")  return catOrder[a.cat]-catOrder[b.cat]
-                                  || order[a.st]-order[b.st] || riceKey(b)-riceKey(a);
-      return order[a.st]-order[b.st] || riceKey(b)-riceKey(a) || a.eff-b.eff;
+                                  || order[blSt(a)]-order[blSt(b)] || riceKey(b)-riceKey(a);
+      // within "act now", the items that are past their date come first
+      return order[blSt(a)]-order[blSt(b)] || (blPastDue(b)?1:0)-(blPastDue(a)?1:0)
+             || riceKey(b)-riceKey(a) || a.eff-b.eff;
     });
 
     if(!rows.length){ host.appendChild(el("p","blempty",S.blNone)); return; }
@@ -6504,17 +6582,17 @@
       // headings only where they mean something: by priority the groups are
       // the status buckets, by area they are the areas. A RICE or effort sort
       // is one ranked list on purpose - a heading would break the ranking.
-      var gk = BL_SORT==="pri" ? it.st : BL_SORT==="cat" ? it.cat : null;
+      var gk = BL_SORT==="pri" ? blSt(it) : BL_SORT==="cat" ? it.cat : null;
       if(gk && gk!==lastGroup){
         lastGroup=gk; rank=0;
         var head=el("div","blgrouphead");
         var dot=el("i");
-        dot.style.background = BL_SORT==="pri" ? blStatus(it.st).c : "var(--s1)";
+        dot.style.background = BL_SORT==="pri" ? blStatus(blSt(it)).c : "var(--s1)";
         head.appendChild(dot);
         head.appendChild(document.createTextNode(
-          BL_SORT==="pri" ? T(blStatus(it.st)) : T(BL_CAT[it.cat])));
+          BL_SORT==="pri" ? T(blStatus(blSt(it))) : T(BL_CAT[it.cat])));
         if(BL_SORT==="pri"){
-          var st=blStatus(it.st);
+          var st=blStatus(blSt(it));
           head.appendChild(el("em",null,"· "+(LANG==="he"? st.dH : st.dE)));
         }
         host.appendChild(head);
@@ -6522,7 +6600,7 @@
       rank++;
 
       var card=el("article","blitem");
-      card.style.borderInlineStartColor=blStatus(it.st).c;
+      card.style.borderInlineStartColor=blStatus(blSt(it)).c;
       card.appendChild(el("span","blrank",String(rank)));
 
       var main=el("div","blmain");
@@ -6531,8 +6609,9 @@
       var chips=el("div","blchips");
       // the status chip is redundant under its own heading, so it appears only
       // where the list is not grouped by status
-      if(BL_SORT!=="pri") chips.appendChild(el("span",null,T(blStatus(it.st))));
+      if(BL_SORT!=="pri") chips.appendChild(el("span",null,T(blStatus(blSt(it)))));
       if(BL_SORT!=="cat") chips.appendChild(el("span",null,T(BL_CAT[it.cat])));
+      if(blPastDue(it)) chips.appendChild(el("span","due",S.blPastDue));
       if(it.due) chips.appendChild(el("span","due",blDue(it.due)));
       if(chips.childNodes.length) main.appendChild(chips);
       card.appendChild(main);
@@ -6556,7 +6635,7 @@
       // code is already merged, "no code" would read as "this was free" when
       // in fact it is written and waiting on store review - which the group
       // heading already says.
-      if(it.st==="now" || it.st==="next"){
+      if(blSt(it)==="now" || blSt(it)==="next"){
         meta.appendChild(el("div", meta.childNodes.length ? "bleff" : "bleff alone",
                             blEffort(it.eff)));
       }
@@ -7247,8 +7326,10 @@
         });
       });
     });
-    // the Hebrew catalogue titles carry a leading "!" for RTL rendering
-    return out ? out.replace(/^!+|!+$/g,"") : k;
+    // the Hebrew catalogue titles carry a leading "!" for RTL rendering.
+    // A row label is not a template: the catalogue quotes the real push text
+    // verbatim (so its casing stays), but a raw "{name}" reads as a bug here.
+    return out ? out.replace(/^!+|!+$/g,"").replace(/\{(name|שם)\}/g, S.pnSomeone) : k;
   }
 
   function pushTable(host, cols, rows, rowHook){
@@ -7717,7 +7798,7 @@
           { note: S.pnTileSentNote(eff.length) }));
         tileHost.appendChild(tile(S.pnTileRate, pct(sActed,sSent),
           { note: S.pnTileRateNote(fmt(sActed), fmt(sSent)) }));
-        tileHost.appendChild(tile(S.pnTileBest, best? pct(best.acted,best.sent) : "-",
+        tileHost.appendChild(tile(S.pnTileBest, best? pct(actedWin(best),best.sent) : "-",
           { note: best? pushTitleFor(best.type) : "-" }));
         tileHost.appendChild(tile(S.pnTileDead, String(dead.length),
           { note: dead.length? dead.map(function(r){return pushTitleFor(r.type);}).join(" · ") : S.pnTileDeadNone }));
@@ -7971,16 +8052,23 @@
     // failure shows up as a number rather than as silence
     // its OWN host: hbars() clears whatever it is given, so rendering these into
     // qh silently erased the four answer bars above them
-    var rh=$("pnReasons");
+    var rh=$("pnReasons"), rn=$("pnReasonsNote");
     if(rh) rh.innerHTML="";
+    if(rn) rn.innerHTML="";
     if(rh && ((Q.not_yet||0) > 0 || (Q.reason_owed||0) > 0)){
-      rh.appendChild(el("div","note",S.pnQReasons));
-      hbars(rh,[
+      // the sub-heading has its own host: hbars() clears its host, so a note
+      // appended into #pnReasons was wiped the moment the bars drew
+      if(rn) rn.appendChild(el("div","note",S.pnQReasons));
+      var reasons=[
         {label:S.pnQStill,  v1:Q.still_coordinating||0, c1:ramp[2]},
         {label:S.pnQNoResp, v1:Q.no_response||0,        c1:tok("--s8")},
         {label:S.pnQNoNeed, v1:Q.no_longer_needed||0,   c1:ramp[1]},
         {label:S.pnQOwed,   v1:Q.reason_owed||0,        c1:tok("--muted")}
-      ]);
+      ];
+      // same scale as the "asked" bars above, so 2 never draws wider than 54
+      // (hbars() honours items.max where supported; harmless where it is not)
+      if(Q.asked) reasons.max=Q.asked;
+      hbars(rh,reasons);
       Array.prototype.forEach.call(rh.querySelectorAll(".hrow"),function(r){ r.classList.add("wrap"); });
     }
 
@@ -8109,7 +8197,7 @@
      pages:[
       ["prd.html","מסמך דרישות (PRD)","PRD","2026-03-15"],
       ["roadmap.html","מפת דרכים","Roadmap","2026-03-15"],
-      ["backlog.html","בקלוג (הישן)","Backlog (the old one)","2026-03-15"],
+      ["backlog.html","בקלוג ישן (בארכיון)","Old backlog (archived)","2026-03-15"],
       ["okrs.html","יעדים (OKRs)","OKR tracker","2026-03-15"],
       ["sprint.html","תכנון ספרינט","Sprint planning","2026-03-15"],
       ["retro.html","רטרוספקטיבה","Sprint retro","2026-03-15"],
