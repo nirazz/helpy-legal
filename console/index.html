@@ -194,6 +194,9 @@
   .brrow .who  { grid-column:1; min-width:0; }
   .brrow .when { grid-column:2; }
   .brrow .acts { grid-column:3; display:inline-flex; gap:14px; justify-self:end; }
+  /* on a phone two buttons would size column 3 for every row and squeeze the
+     title to a word per line - they get a row of their own */
+  @media (max-width:640px){ .brrow .acts { grid-column:1 / -1; justify-self:start; } }
   .brrow .what { grid-column:1 / -1; }
   .brrow:last-child { border-bottom:0; }
   /* a cell takes its TEXT's direction (dir=auto) but lines up with the
@@ -1423,7 +1426,9 @@
      appears to govern a panel it cannot touch is worse than no control */
   .pntag { display:inline-block; font-size:10px; padding:2px 8px; border-radius:99px;
            border:1px solid var(--hairline); color:var(--muted); vertical-align:middle;
-           margin-inline-start:8px; }
+           margin-inline-start:8px; font-weight:500; }
+  /* the senders table is wider than a phone - it scrolls inside its panel */
+  #pnEff { overflow-x:auto; }
   /* amber when the log covers LESS than the window asked for: the chip is then
      a correction, not a caption, and must not read as chrome */
   .pntag.warn { border-color:var(--s4,#d97706); color:var(--s4,#d97706); font-weight:700; }
@@ -1814,8 +1819,7 @@
 
     <div class="sechead" style="--sec-c:var(--s1)" data-i18n="pnSecWorks">1 · האם ההתראות משיגות משהו</div>
     <section class="panel wide" style="opacity:1;transform:none">
-      <h2 data-i18n="pnEffTitle">האם ההתראות עובדות</h2>
-      <span class="pntag" data-i18n="pnAllTime">כל הזמן</span>
+      <h2><span data-i18n="pnEffTitle">האם ההתראות עובדות</span> <span class="pntag" data-i18n="pnAllTime">כל הזמן</span></h2>
       <div class="sub" data-i18n="pnEffSub"></div>
       <div id="pnEff"></div>
     </section>
@@ -2019,7 +2023,7 @@
       rdDep:function(name,share,days){ return "<b>"+name+"</b> מחזיק/ה "+share+"% משיחות העזרה ולא נראה/תה כבר <b>"+days+" ימים</b>. זו לא שורה בטבלה - זו שיחת טלפון אישית ששווה לעשות השבוע."; },
       rdDepOk:"אין תלות מסוכנת בעוזר אחד, ואף עוזר מוביל לא נעלם. להמשיך לעקוב.",
       rdDepQuiet:function(n,t){ return "אין עוזר אחד שהשוק תלוי בו, אבל <b>"+n+"</b> מתוך "+t+" המובילים לא נראו יותר משבועיים."; },
-      topUsersShow:"כל המשתמשים הפעילים ›", topUsersHide:"‹ להסתיר את הטבלה",
+      topUsersShow:"כל המשתמשים הפעילים", topUsersHide:"להסתיר את הטבלה",
       citiesTitle:"ערים מובילות · {win}", citiesSub:"לפי עיר הפוסט",
       msgsTitle:"שיחות צ'אט", msgsSub:"הודעות שנשלחו (בטווח ארוך - סכום שבועי)",
       chatHealthTitle:"בריאות הצ'אט · {win}", chatHealthSub:"האם פניות מקבלות מענה, ובאיזו מהירות",
@@ -2041,7 +2045,7 @@
       errNoAuth:"שירות ההתחברות לא נטען, רעננו את הדף",
       errExpired:"ההתחברות פגה - התחברו שוב",
       errTimeout:"השרת לא הגיב תוך 25 שניות - נסו שוב",
-      updatedAgo:function(s){ return s<10? "עודכן כרגע" : s<60? "עודכן לפני "+s+" שניות" : "עודכן לפני "+Math.round(s/60)+" דקות"; },
+      updatedAgo:function(s){ return s<10? "עודכן כרגע" : s<60? "עודכן לפני "+s+" שניות" : (Math.round(s/60)===1? "עודכן לפני דקה" : "עודכן לפני "+Math.round(s/60)+" דקות"); },
       tileHero:"עזרות שהושלמו · {win}",
       tileHeroTip:"המדד הצפוני של Helpy: עזרות שמקבל/ת העזרה סימנו שבוצעו בפועל",
       tileSignups:"הרשמות · {win}",
@@ -2135,7 +2139,7 @@
         var word = dir==="up" ? "עלייה" : "ירידה";
         return word+" של <b>"+p+"%</b> לעומת התקופה הקודמת (<b>"+cur+"</b> מול "+prev+" "+unit+").";
       },
-      vNoBase:function(cur,unit){ return "<b>"+cur+"</b> "+unit+" בטווח הנבחר · אין תקופה קודמת להשוואה."; },
+      vNoBase:function(cur,unit){ return "<b>"+cur+"</b> "+unit+" בטווח הנבחר."; },
       vPeak:function(v,d){ return "השיא: <b>"+v+"</b> ב-"+d+"."; },
       vPeakW:function(v,d){ return "שבוע השיא: <b>"+v+"</b> בשבוע שמתחיל ב-"+d+"."; },
       uPerDay:function(u){ return u+" בממוצע ליום"; },
@@ -2198,7 +2202,7 @@
       fgSetup:"הרשאות והגדרה · קורות במקביל, בכל סדר",
       fgJourney:"המסע לעזרה · שלב אחרי שלב",
       fOfPrev:function(p){ return p+" מהשלב הקודם"; },
-      insGo:"קפיצה לנתונים ←",
+      insGo:"קפיצה לנתונים",
       mlogTitle:"יומן מרקטפלייס · שבוע אחר שבוע",
       mlogSub:"ביקוש מול היצע בכל שבוע, וכמה מזה הבשיל",
       mlRequests:function(n){ return n==="1"? "בקשה אחת" : n+" בקשות"; },
@@ -2233,8 +2237,8 @@
       evAfter:function(d){ return "אחרי "+d; },
       evBetween:function(a,b){ return a+" ↔ "+b; },
       feedEmpty:"לא קרה כלום בטווח הזה",
-      feedMore:function(n){ return "עוד "+n+" אירועים ›"; }, feedLess:"‹ להציג פחות",
-      wlMore:function(n){ return "עוד "+n+" שבועות קודמים ›"; }, wlLess:"‹ רק השבועות האחרונים",
+      feedMore:function(n){ return "עוד "+n+" אירועים"; }, feedLess:"להציג פחות",
+      wlMore:function(n){ return "עוד "+n+" שבועות קודמים"; }, wlLess:"רק השבועות האחרונים",
       rdFeed:function(d,n,dp){ return "מתוך <b>"+n+"</b> האירועים בטווח, <b>"+d+"</b> הם הצעות שנדחו או שלא יצאו לפועל (<b>"+dp+"</b>). זה מה שהשכנים חווים בפועל - לא כישלון טכני אלא הבטחה שלא הבשילה, וכל אחת מהן היא מישהו שכנראה לא ינסה שוב."; },
       intelTitle:"מה הביקוש באמת מבקש · {win}",
       intelSub:"אשכולות מתוך הטקסט של הבקשות עצמן, לא לפי הקטגוריה שנבחרה - כך מתגלה קטגוריה שחסרה",
@@ -2537,7 +2541,7 @@
       brInsPushFail:function(n){ return n==="1"? "<b>התראה אחת</b> נכשלה ביממה" : "<b>"+n+"</b> התראות נכשלו ביממה"; },
       brInsVer:function(p){ return "<b>"+p+"%</b> מהמשתמשים שנראו השבוע על הגרסה האחרונה"; },
       brInsQuiet:"יממה שקטה: אף פוסט, סווייף או הודעה",
-      brInsSign:function(n,d){ return (n==="1"? "<b>הרשמה אחת</b>" : "<b>"+n+"</b> הרשמות")+" ביממה ("+(d>=0?"+":"")+d+" מול היממה שלפני)"; },
+      brInsSign:function(n,d){ return (n==="1"? "<b>הרשמה אחת</b>" : "<b>"+n+"</b> הרשמות")+" ביממה ("+(d>0? "עלייה של "+d : d<0? "ירידה של "+(-d) : "ללא שינוי")+" מול היממה שלפני)"; },
       brInsDone:function(n){ return n==="1"? "<b>עזרה אחת</b> הושלמה ביממה" : "<b>"+n+"</b> עזרות הושלמו ביממה"; },
       brInsAllClear:"כרגע שום דבר לא דורש את תשומת לבך",
       brCalmMore:function(n){ return "כל השאר תקין ("+n+")"; }, brCalmLess:"הסתרת השאר",
@@ -2630,8 +2634,8 @@
       dirN:"north", dirS:"south", dirE:"east", dirW:"west",
       nbhdReqs:"{r} · {a} answered in 24h", nbhdReqOne:"one request", nbhdReqN:"{r} requests", nbhdNoCity:"unnamed area",
       rdNbhd:function(t,total,best,gap){ return t>0
-        ? "<b>"+t+"</b> of "+total+" areas "+(t===1?"is":"are")+" already above the 60 line. Next closest: <b>"+best+"</b> - <b>"+gap+"</b> users short. That is where every ad shekel buys the most."
-        : "No area has crossed the 60 line yet. Closest: <b>"+best+"</b> ("+gap+" short). Concentrating the budget there beats spreading it."; },
+        ? "<b>"+t+"</b> of "+total+" areas "+(t===1?"is":"are")+" already above the 60 line. Next closest: <b><bdi>"+best+"</bdi></b> - <b>"+gap+"</b> users short. That is where every ad shekel buys the most."
+        : "No area has crossed the 60 line yet. Closest: <b><bdi>"+best+"</bdi></b> ("+gap+" short). Concentrating the budget there beats spreading it."; },
       nudgeTitle:"The nudge machine",
       nudgeGo:"Which notifications work is judged on the Notifications tab",
       depTitle:"Who carries the marketplace · {win}",
@@ -2646,7 +2650,7 @@
       rdDep:function(name,share,days){ return "<b>"+name+"</b> carries "+share+"% of helping conversations and has not been seen for <b>"+days+" days</b>. That is not a table row - it is a personal phone call worth making this week."; },
       rdDepOk:"No dangerous dependence on a single helper, and no top helper has gone quiet. Keep watching.",
       rdDepQuiet:function(n,t){ return "No single helper carries the market, but <b>"+n+"</b> of the top "+t+" have not been seen for over two weeks."; },
-      topUsersShow:"All active users ›", topUsersHide:"‹ Hide the table",
+      topUsersShow:"All active users", topUsersHide:"Hide the table",
       citiesTitle:"Top cities · {win}", citiesSub:"By post city",
       msgsTitle:"Chat activity", msgsSub:"Messages sent (weekly sums on long ranges)",
       chatHealthTitle:"Chat health · {win}", chatHealthSub:"Do openers get answered, and how fast",
@@ -2668,7 +2672,7 @@
       errNoAuth:"Sign-in service failed to load - refresh the page",
       errExpired:"Your session expired - sign in again",
       errTimeout:"The server did not answer within 25 seconds - try again",
-      updatedAgo:function(s){ return s<10? "updated just now" : s<60? "updated "+s+" seconds ago" : "updated "+Math.round(s/60)+" minutes ago"; },
+      updatedAgo:function(s){ return s<10? "updated just now" : s<60? "updated "+s+" seconds ago" : (Math.round(s/60)===1? "updated 1 minute ago" : "updated "+Math.round(s/60)+" minutes ago"); },
       tileHero:"Helps completed · {win}",
       tileHeroTip:"Helpy's north star: helps the receiver marked as actually done",
       tileSignups:"Signups · {win}",
@@ -2762,7 +2766,7 @@
         var word = dir==="up" ? "Up" : "Down";
         return word+" <b>"+p+"%</b> vs the previous period (<b>"+cur+"</b> vs "+prev+" "+unit+").";
       },
-      vNoBase:function(cur,unit){ return "<b>"+cur+"</b> "+unit+" in range · no previous period to compare."; },
+      vNoBase:function(cur,unit){ return "<b>"+cur+"</b> "+unit+" in range."; },
       vPeak:function(v,d){ return "Peak: <b>"+v+"</b> on "+d+"."; },
       vPeakW:function(v,d){ return "Best week: <b>"+v+"</b> in the week starting "+d+"."; },
       uPerDay:function(u){ return u+" on an average day"; },
@@ -2825,7 +2829,7 @@
       fgSetup:"Permissions & setup · happen in parallel, in any order",
       fgJourney:"The journey to help · step after step",
       fOfPrev:function(p){ return p+" of the step before"; },
-      insGo:"Jump to the data →",
+      insGo:"Jump to the data",
       mlogTitle:"Marketplace log · week by week",
       mlogSub:"Demand against supply each week, and how much of it matured",
       mlRequests:function(n){ return n==="1"? "1 request" : n+" requests"; },
@@ -2860,8 +2864,8 @@
       evAfter:function(d){ return "after "+d; },
       evBetween:function(a,b){ return a+" ↔ "+b; },
       feedEmpty:"Nothing happened in this range",
-      feedMore:function(n){ return n+" more events ›"; }, feedLess:"‹ Show fewer",
-      wlMore:function(n){ return n+" earlier weeks ›"; }, wlLess:"‹ Latest weeks only",
+      feedMore:function(n){ return n+" more events"; }, feedLess:"Show fewer",
+      wlMore:function(n){ return n+" earlier weeks"; }, wlLess:"Latest weeks only",
       rdFeed:function(d,n,dp){ return "Of <b>"+n+"</b> events in range, <b>"+d+"</b> are offers declined or fallen through (<b>"+dp+"</b>). That is what neighbours actually experience - not a technical failure but a promise that did not mature, and each one is somebody who probably will not try again."; },
       intelTitle:"What demand is really asking for · {win}",
       intelSub:"Clusters read from the text of the requests themselves, not the category chosen - this is how a missing category shows up",
@@ -4388,7 +4392,7 @@
       row.addEventListener("click",onClick);
       var go=el("span","go");
       go.appendChild(el("span","lb",S.insGo));
-      go.appendChild(el("i","ar", LANG==="he"? "\u2190" : "\u2192"));
+      var ar=el("i","ar"); ar.appendChild(icon(LANG==="he"? "arrowl" : "arrowr",14)); go.appendChild(ar);
       go.title=S.insGo;
       row.appendChild(go);
     }
@@ -4583,7 +4587,9 @@
       xAxis:{ type:"category", data:["D1","D7","D30"],
         axisLine:{ lineStyle:{ color:tok("--baseline") } }, axisTick:{ show:false },
         axisLabel:{ color:muted, fontSize:11 } },
-      yAxis:{ type:"value", position:"right", max:30,
+      // 30 frames the benchmarks, but a cohort above it (D1 33%) must not
+      // leave the plot - grow to the next 5 with room for the label
+      yAxis:{ type:"value", position:"right", max:function(v){ return Math.max(30, Math.ceil((v.max+4)/5)*5); },
         splitLine:{ lineStyle:{ color:grid } },
         axisLabel:{ color:muted, fontSize:10, formatter:"{value}%" } },
       series:[
@@ -7882,13 +7888,17 @@
     var T=$("brTiles");
     // the delta is a signed number inside RTL prose - without isolation
     // "-8" renders as "8-" on the phone; it travels as its own LTR span
-    var delta=function(a,b){ var d=(a||0)-(b||0); return (d>=0?"+":"")+fmt(d); };
+    // Hebrew says the change in words: a leading "+" lands after the number in an RTL line
+    var delta=function(a,b){ var d=(a||0)-(b||0);
+      if(LANG==="he") return d>0? "עלייה של "+fmt(d) : d<0? "ירידה של "+fmt(-d) : "ללא שינוי";
+      return (d>=0?"+":"")+fmt(d); };
     function t(label,val,sub,hero,dl){
       var x=tile(label, fmt(val)); if(hero) x.classList.add("hero");
       var s=x.querySelector(".sub");
       if(s){
         s.textContent="";
-        if(sub) s.appendChild(document.createTextNode(sub+(dl!=null? " · " : "")));
+        // the sub is a flex row with its own gap - a trailing space doubled it
+        if(sub) s.appendChild(document.createTextNode(sub+(dl!=null? " ·" : "")));
         if(dl!=null){
           // number + phrase travel as ONE flex item, so a wrap never splits them
           var wrap=el("span"); wrap.style.whiteSpace="nowrap";
@@ -8097,7 +8107,9 @@
       var sSent=strong.reduce(function(a,r){return a+r.sent;},0);
       var sActed=strong.reduce(function(a,r){return a+actedWin(r);},0);
       var best=byRate.filter(function(r){ return !r.weak && r.sent>=10; })[0];
-      var dead=eff.filter(function(r){ return !r.weak && rate(r)<0.10; });
+      // every sender the table shows under 10%, weak measures included and
+      // tagged - leaving them out made "none" a false sentence
+      var dead=eff.filter(function(r){ return rate(r)<0.10; });
       if(tileHost){
         tileHost.appendChild(tile(S.pnTileSent, fmt(totSent),
           { note: S.pnTileSentNote(eff.length) }));
@@ -8106,7 +8118,7 @@
         tileHost.appendChild(tile(S.pnTileBest, best? pct(actedWin(best),best.sent) : "-",
           { note: best? pushTitleFor(best.type) : "-" }));
         tileHost.appendChild(tile(S.pnTileDead, String(dead.length),
-          { note: dead.length? dead.map(function(r){return pushTitleFor(r.type);}).join(" · ") : S.pnTileDeadNone }));
+          { note: dead.length? dead.map(function(r){return pushTitleFor(r.type)+(r.weak? " ("+S.pnEffWeak+")" : "");}).join(" · ") : S.pnTileDeadNone }));
       }
       // three bands, because "which of these should exist" is the question
       var bands=[
@@ -8286,7 +8298,7 @@
         var verdict = r.significant ? S.pnHoSig(String(r.z))
                     : S.pnHoNotYet(String(r.sent_n + r.held_n));
         var liftCell = r.significant && r.lift_pp!=null
-                     ? {v:(r.lift_pp>0?"+":"")+r.lift_pp+"pp", cls:"num "+(r.lift_pp>0?"":"bad")}
+                     ? {v: LANG==="he" ? Math.abs(r.lift_pp)+" נק׳ "+(r.lift_pp>0?"יותר":"פחות") : (r.lift_pp>0?"+":"")+r.lift_pp+"pp", cls:"num "+(r.lift_pp>0?"":"bad")}
                      : {v:"-", cls:"num dim"};
         // "1 / 2" reverses visually in an RTL row - the words do not.
         // And 0 people held back is not "0%", it is nothing measured yet.
@@ -8332,7 +8344,8 @@
         who.appendChild(el("div","pnkey",(r.sender_name||"-")+(r.pushed?"":" · "+S.pnStuckNoPush)));
         var ans=r.answer ? String(r.answer) : "";
         if(ans.length>120) ans=ans.slice(0,119)+"…";
-        return [ dd(r.asked_at), {node:who}, String(r.post_title||"").slice(0,40), {v:status, cls:cls}, ans||"-" ];
+        var about=el("span",null,String(r.post_title||"").slice(0,40)); about.dir="auto";
+        return [ dd(r.asked_at), {node:who}, {node:about, cls:"dim"}, {v:status, cls:cls}, ans||"-" ];
       }));
     })();
 
