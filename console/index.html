@@ -2191,7 +2191,7 @@
         fill24:"היעד הזה נקבע על ידי, לא מתוך מקור: מחקרי מרקטפלייס שירותים מדברים על 80% מילוי תוך 48 שעות. 50% תוך 24 שעות הוא יעד ביניים ריאלי לשלב הנוכחי, ולא סטנדרט תעשייה.",
         util:"הספרות מצטטת 30% כקו הנטישה של ספקי שירות; הרף כאן הועלה ל-40% בהחלטת המייסד (22.8) כדי שהאזעקה תידלק מוקדם יותר.",
         stick:"מקור חיצוני, עם התאמה: 40-50% WAU/MAU הוא שאיפה סבירה לאפליקציה אפיזודית. הכרטיס הזה הציג בעבר DAU/MAU מול רף של 20% - רף שמגיע מאפליקציות לשימוש יומי והשווה את Helpy למבחן שלא נועדה לעבור.",
-        density:"נמדד מהנתונים שלך, לא ממקור חיצוני: מתוך הבקשות ב-90 הימים האחרונים, אף בקשה עם פחות מ-10 שכנים בטווח לא קיבלה מענה באותו יום, מול 90% מענה בבקשות עם 60+ שכנים.",
+        density:"נמדד מהנתונים שלנו, לא ממקור חיצוני: לכל בקשה סופרים כמה שכנים פעילים היו בטווח שלה, ובודקים אם קיבלה פנייה. הטבלה מראה את התוצאה לפי מספר השכנים.",
         cluster:"הסף נקבע על ידי: אשכול שמחזיק 25% מהביקוש הוא גדול מספיק כדי להצדיק קטגוריה משלו. זו הערכה מוצרית ולא מספר מהספרות."
       },
       intelEmerging:function(words,n){ return "<b>"+n+"</b> בקשות אינן נופלות לאף אשכול מוכר, והמילים שחוזרות בהן הן: <b>"+words+"</b>. אלה מועמדות לקטגוריה שעוד לא הגדרת - הרשימה מחושבת מהטקסט עצמו, כך שביקוש מסוג חדש יופיע כאן מעצמו בלי שאגע בקוד."; },
@@ -2280,7 +2280,8 @@
         return "עלות משוקללת להרשמה: <b>"+c+"</b> ("+su+" הרשמות, מודעות + אורגני, על "+spend+"). מחושב על הרשמות במסד, לא על ההתקנות שמטא מייחסת."; },
       maInsAttrib:function(inst,su){
         return "מטא ייחסה <b>"+inst+"</b> התקנות מול <b>"+su+"</b> הרשמות במסד - הפער הזה הוא הסיבה שהוורדיקט לא נשען על המספרים שלה."; },
-      blInsOverdue:function(n,names){ return "<b>"+n+"</b> פריטים עברו את התאריך שנקבע להם: "+names+"."; },
+      blInsOverdue:function(n,names){ return n==="1" ? "פריט <b>אחד</b> עבר את התאריך שנקבע לו: "+names+"." : "<b>"+n+"</b> פריטים עברו את התאריך שנקבע להם: "+names+"."; },
+      hbarDrill:"לחיצה לפירוט",
       blInsDue:function(n,d){ return "<b>"+n+"</b> פריטים עם תאריך יעד; הקרוב ביותר ב-"+fmtDay(d)+"."; },
       blInsNow:function(n,all){ return "<b>"+n+"</b> מתוך "+all+" הפריטים הפתוחים מסומנים \"לעשות עכשיו\"."; },
       blInsAge:function(age,d){
@@ -2817,7 +2818,7 @@
         fill24:"This target is mine, not from a source: services-marketplace research cites 80% filled within 48 hours. 50% within 24 hours is a realistic interim target for this stage, not an industry standard.",
         util:"The literature cites 30% as the provider-churn line; the bar here was raised to 40% by founder decision (Aug 22) so the alarm fires earlier.",
         stick:"External source, adjusted: 40-50% WAU/MAU is a sane aspiration for an episodic app. This tile previously showed DAU/MAU against a 20% bar - a bar borrowed from daily-use apps that graded Helpy against a test it was never built to pass.",
-        density:"Measured from your own data, not an external source: among requests in the last 90 days, not one with fewer than 10 neighbours in range was answered same-day, against 90% answered where there were 60+.",
+        density:"Measured from our own data, not an external source: for each request we count the active neighbours in its range and check whether it got an offer. The table shows the result by number of neighbours.",
         cluster:"The threshold is mine: a cluster holding 25% of demand is large enough to justify its own category. A product judgement, not a figure from the literature."
       },
       intelEmerging:function(words,n){ return "<b>"+n+"</b> requests fit no known cluster, and the words recurring in them are: <b>"+words+"</b>. These are candidates for a category you have not defined - the list is computed from the text itself, so a new kind of demand will appear here on its own without me touching the code."; },
@@ -2906,7 +2907,8 @@
         return "Blended cost per signup: <b>"+c+"</b> ("+su+" signups, ads + organic, on "+spend+"). Computed on database signups, not on Meta-attributed installs."; },
       maInsAttrib:function(inst,su){
         return "Meta attributed <b>"+inst+"</b> installs against <b>"+su+"</b> signups in the database - that gap is why the verdict does not lean on Meta's numbers."; },
-      blInsOverdue:function(n,names){ return "<b>"+n+"</b> items are past their own date: "+names+"."; },
+      blInsOverdue:function(n,names){ return n==="1" ? "<b>One</b> item is past its own date: "+names+"." : "<b>"+n+"</b> items are past their own date: "+names+"."; },
+      hbarDrill:"Click to drill in",
       blInsDue:function(n,d){ return "<b>"+n+"</b> items carry a due date; the nearest is "+fmtDay(d)+"."; },
       blInsNow:function(n,all){ return "<b>"+n+"</b> of "+all+" open items are marked \"do now\"."; },
       blInsAge:function(age,d){
@@ -3682,7 +3684,7 @@
       if(it.onClick){
         row.classList.add("clickable");
         row.addEventListener("click",it.onClick);
-        row.title=(it.title? it.title+" · ":"")+"לחיצה לצלילה פנימה";
+        row.title=(it.title? it.title+" · ":"")+S.hbarDrill;
       }
       host.appendChild(row);
       if(row._meta) host.appendChild(row._meta);
