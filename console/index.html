@@ -726,6 +726,11 @@
   /* in the cards table the tags get their own line: inline after a long
      Hebrew title they landed between its two lines */
   .pstitle .pstags { display:flex; margin-inline-start:0; margin-top:3px; }
+  /* the tags are OUR words inside a title that takes the user's direction
+     (dir=auto) - they follow the UI, or a Hebrew title flips them to the far
+     side and reverses "1 photo" */
+  .pstitle .pstags { direction:ltr; }
+  html[dir="rtl"] .pstitle .pstags { direction:rtl; }
   table.plain { border-collapse:collapse; width:100%; font-size:13px; }
   .plain th, .plain td { padding:9px 10px; text-align:start;
                          border-bottom:1px solid var(--grid); }
