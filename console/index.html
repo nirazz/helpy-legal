@@ -108,17 +108,27 @@
            padding:5px 14px; cursor:pointer; color:var(--ink2); font-size:13px; }
   .ghost:hover { background:var(--wash-hover); }
 
-  main { max-width:1120px; margin:0 auto; padding:20px 24px 48px; }
+  main { max-width:1280px; margin:0 auto; padding:20px 24px 48px; }
   .filters { display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
   .filters .cap { color:var(--muted); font-size:12px; }
   /* the groups carry their own edges now, so the divider between them is noise */
   .filters .fsep { display:none; }
 
   /* Stripe-pattern: jobs-based side rail (scrollspy-highlighted) */
-  #rail { position:fixed; top:78px; inset-inline-start:20px; width:130px; z-index:15;
+  /* the rail parks beside the 1280px column, not at the window edge: at
+     1728 it used to float 300px away from the content it navigates */
+  #rail { position:fixed; top:78px; width:160px; z-index:15;
+          inset-inline-start:max(20px, calc(50vw - 640px - 180px));
           display:flex; flex-direction:column; gap:2px; }
   #rail a { padding:6px 10px; border-radius:8px; font-size:13px; color:var(--ink2);
-            cursor:pointer; user-select:none; }
+            cursor:pointer; user-select:none; white-space:nowrap; }
+  /* between the horizontal-rail breakpoint and the width where a 1280px
+     column plus a 180px rail fit side by side, the column gives way to the
+     rail instead of sliding under it (metrics tab only - the rail is hidden
+     on every other tab, so they keep the full width) */
+  @media (min-width:1401px) and (max-width:1679px){
+    #rail:not(.hidden) ~ main { max-width:calc(100vw - 400px); }
+  }
   #rail a:hover { background:var(--wash-hover); }
   #rail a.on { background:var(--wash1); color:var(--ink); font-weight:600; }
   @media (max-width:1400px){
@@ -126,7 +136,7 @@
        the header wraps to two rows on a phone, so a hard-coded 50px parked the
        rail UNDERNEATH it and the section chips were invisible while scrolling */
     #rail { position:sticky; top:var(--hdr-h,50px); inset-inline:0; width:auto;
-            max-width:1120px; margin:0 auto 10px; flex-direction:row; gap:6px;
+            max-width:1280px; margin:0 auto 10px; flex-direction:row; gap:6px;
             overflow-x:auto; padding:8px 24px; background:var(--plane);
             z-index:16; scrollbar-width:none; }
     #rail::-webkit-scrollbar { display:none; }
@@ -157,7 +167,11 @@
   html[data-theme="dark"] .verdict.warn { background:rgba(250,178,25,0.12); }
   html[data-theme="dark"] .verdict.bad  { background:rgba(248,113,113,0.12); }
   .verdict b { font-variant-numeric:tabular-nums; }
-  .verdict .vi { flex-shrink:0; font-size:14px; line-height:1.3; }
+  /* the tone icon: one Lucide stroke per tone, coloured by the tone itself */
+  .verdict .vi { flex-shrink:0; display:flex; margin-top:1px; color:var(--s1); }
+  .verdict.good .vi { color:var(--good-text); }
+  .verdict.warn .vi { color:var(--warning); }
+  .verdict.bad  .vi { color:var(--bad-text); }
 
   /* ---- line breaks, console-wide ----
      Running text never ends on one stranded word (pretty). Titles, labels,
@@ -331,6 +345,8 @@
   .secbrief b { color:var(--ink); font-variant-numeric:tabular-nums; }
   .sechead::before { content:""; width:9px; height:9px; border-radius:3px;
                      background:var(--sec-c, var(--s1)); }
+  /* a header that carries its Lucide icon needs no colour square as well */
+  .sechead.withico::before { display:none; }
   .panel.vis { opacity:1; transform:none; }
   @media (prefers-reduced-motion: reduce){ .panel{ opacity:1; transform:none; } }
   .clickable { cursor:pointer; }
@@ -386,15 +402,18 @@
   .ins { display:flex; gap:10px; align-items:flex-start; padding:7px 0;
          font-size:13.5px; border-bottom:1px solid var(--grid); }
   .ins:last-child { border-bottom:0; }
-  .ins .dot { width:9px; height:9px; border-radius:50%; margin-top:5px; flex-shrink:0; }
-  .ins.good .dot { background:var(--good-text); }
-  .ins.warn .dot { background:var(--warning); }
-  .ins.bad  .dot { background:var(--bad-text); }
-  .ins.info .dot { background:var(--baseline); }
+  /* tone icon slot: good = trend, warn/bad = alert, info = an empty slot of
+     the same width, so every sentence in a list starts on the same edge */
+  .ins .dot { width:16px; height:16px; margin-top:2px; flex-shrink:0; display:flex; }
+  .ins.good .dot { color:var(--good-text); }
+  .ins.warn .dot { color:var(--warning); }
+  .ins.bad  .dot { color:var(--bad-text); }
   .ins b { font-variant-numeric:tabular-nums; }
   /* a full-width row of right-aligned text leaves most of the panel empty;
      cap the measure and give a clickable insight a visible affordance */
   .ins > span:nth-child(2) { flex:1; max-width:88ch; }
+  /* inside a panel the hairlines run full width, so the sentence may too */
+  .panel .ins > span:nth-child(2) { max-width:110ch; }
   .ins .go { flex-shrink:0; color:var(--s1); font-size:12.5px; font-weight:600;
              opacity:0; transition:opacity .18s ease; white-space:nowrap; }
   .ins .go .ar { display:none; font-style:normal; font-size:15px; line-height:1.1; }
@@ -408,7 +427,7 @@
     .ins .go .ar { display:inline; }
   }
   .ins.lead { font-size:14.5px; font-weight:500; padding:10px 0; }
-  .ins.lead .dot { width:11px; height:11px; }
+  .ins.lead .dot { margin-top:3px; }
   .ins.rest { font-size:13px; color:var(--ink2); }
   /* the first line that needs nothing done about it: a breath, not a rule */
   .ins.calmtop { margin-top:9px; }
@@ -463,9 +482,10 @@
 
   /* A healthy reading should not shout as loudly as a broken one: only warn
      and bad keep the filled callout, the rest become quiet prose. */
-  .verdict.read:not(.warn):not(.bad) { background:none; border-inline-start-color:var(--grid);
+  .verdict.read:not(.warn):not(.bad),
+  .verdict.calm:not(.warn):not(.bad) { background:none; border-inline-start-color:var(--grid);
       color:var(--ink2); font-size:13px; padding-inline:11px; }
-  .verdict.read:not(.warn):not(.bad) .vi { color:var(--muted); }
+  .verdict.read.good .vi, .verdict.calm.good .vi { color:var(--good-text); }
 
   /* an empty panel should say why it is empty, not just that it is */
   .empty { display:flex; flex-direction:column; align-items:center; gap:7px;
@@ -547,9 +567,11 @@
   .grouphead { font-size:11.5px; font-weight:700; letter-spacing:.06em;
                color:var(--muted); margin:4px 0 7px; }
   .grouphead + div + .grouphead { margin-top:16px; }
-  .hrow { display:grid; grid-template-columns:130px 1fr minmax(46px,auto); gap:10px;
+  /* the label column grows to 190px and wraps - a fixed 130px cut "Got an
+     offer within 24h" and "Offer utilization (90 days)" mid-word */
+  .hrow { display:grid; grid-template-columns:minmax(130px,190px) 1fr minmax(46px,auto); gap:10px;
           align-items:center; margin-bottom:7px; font-size:13px; }
-  .hrow .hl { color:var(--ink2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .hrow .hl { color:var(--ink2); line-height:1.35; overflow-wrap:anywhere; }
   /* long-label variant (nudge machine): wider label column, wraps instead of "..." */
   .hrow.wrap { grid-template-columns:190px 1fr minmax(46px,auto); }
   .hrow.wrap .hl { white-space:normal; overflow:visible; text-overflow:clip; line-height:1.35; }
@@ -568,9 +590,12 @@
     background:var(--ink2); border-radius:1px; }
   /* collapsible sections: header + brief = the summary strip */
   .sechead.toggle { cursor:pointer; user-select:none; }
-  .sechead.toggle::after { content:"\25BE"; margin-inline-start:auto;
-    color:var(--muted); font-size:12px; transition:transform .18s; }
-  .sechead.toggle.closed::after { transform:rotate(-90deg); }
+  /* the collapse affordance is a chevron icon, painted by JS (.secchev) */
+  .sechead .secchev { margin-inline-start:auto; color:var(--ink2); display:flex;
+    transition:transform .18s; }
+  .sechead .secchev .ico { color:var(--ink2); }
+  .sechead.closed .secchev { transform:rotate(90deg); }
+  html[dir="ltr"] .sechead.closed .secchev { transform:rotate(-90deg); }
   .seccollapsed { display:none !important; }
   .secdot { width:8px; height:8px; border-radius:50%; display:inline-block;
     margin-inline-start:8px; flex-shrink:0; }
@@ -584,7 +609,7 @@
   .nsline b { font-variant-numeric:tabular-nums; }
   /* conclusion-first panels: the verdict is the headline, the topic the eyebrow */
   .panel.concl > h2 { font-size:11.5px; color:var(--muted); letter-spacing:.03em; }
-  .panel.concl .verdict:not(.read) { font-size:14.5px; font-weight:600; line-height:1.5; }
+  .panel.concl .verdict:not(.read):not(.calm) { font-size:14.5px; font-weight:600; line-height:1.5; }
 
   /* cohort heatmap */
   table.cohort { border-collapse:separate; border-spacing:3px; font-size:12px; width:100%; }
@@ -1109,6 +1134,22 @@
                 overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .evrow .evw { color:var(--muted); font-size:11.5px; white-space:nowrap;
                 flex-shrink:0; font-variant-numeric:tabular-nums; }
+  /* week logs: the direction is an outline icon on a quiet tint - a filled
+     brown square per down week read as an alarm on every ordinary dip.
+     Only a complete week down 20% or more takes the bad colour. */
+  .evrow .evi.wl { background:var(--wash1); color:var(--ink2); }
+  .evrow .evi.wl.peak { color:var(--s1); }
+  .evrow .evi.wl.bad { background:rgba(220,38,38,0.10); color:var(--bad-text); }
+  html[data-theme="dark"] .evrow .evi.wl.bad { background:rgba(248,113,113,0.13); }
+  /* store data is a manual snapshot - the panel says how old it is */
+  .panel h2 .stale { font-size:11px; font-weight:600; letter-spacing:0; color:var(--warning);
+    background:rgba(217,119,6,0.10); border-radius:999px; padding:2px 9px; }
+  /* a panel whose whole job is to send the reader to another tab */
+  .golink { all:unset; cursor:pointer; display:inline-flex; align-items:center; gap:7px;
+    color:var(--s1); font-weight:600; font-size:13.5px; }
+  .golink:hover { text-decoration:underline; }
+  .golink:focus-visible { outline:2px solid var(--s1); outline-offset:2px; border-radius:4px; }
+  .evrow .evs bdi { unicode-bidi:isolate; }
 
   /* ---- header controls: a toolbar, not a row of text links ----------------
      The tabs and the utility buttons used to share one flat 13px ghost style,
@@ -1535,6 +1576,8 @@
       <div id="insightsBody"></div>
     </section>
     <div class="tiles" id="tiles"></div>
+    <!-- the north star's own breakdown sits right under the north-star tile -->
+    <section class="panel"><h2 data-i18n="dtreeTitle">איפה העזרות נתקעות בדרך · {win}</h2><div class="sub" data-i18n="dtreeSub">עזרות שהושלמו, מפורקות לגורמים שאפשר להזיז: בקשות × מילוי × קבלה × השלמה</div><div id="driverTree"></div></section>
 
     <div class="sechead" id="secGrowth" style="--sec-c:var(--s1)" data-i18n="secGrowthT">צמיחה והפעלה</div>
     <div class="grid2">
@@ -1548,14 +1591,15 @@
         <span class="seg mini" id="funnelSeg"><button data-d="14" class="on" data-i18n="d14">14 יום</button><button data-d="30" data-i18n="d30">30 יום</button></span></h2>
         <div class="sub" data-i18n="funnelSub">מה עושה משתמש חדש אחרי ההרשמה</div><div id="funnel"></div></section>
       <section class="panel"><h2 data-i18n="lifecycleTitle">מאזן משתמשים</h2><div class="sub" data-i18n="lifecycleSub">חתך חי של כל המשתמשים הרשומים</div><div id="lifecycle"></div></section>
-      <section class="panel wide"><h2 data-i18n="sfTitle">מהחנות ועד פעילות</h2><div class="sub" data-i18n="sfSub">המשפך המלא: כמה הורידו, כמה עדיין מחזיקים באפליקציה, כמה נרשמו וכמה באמת פעילים · נתוני ההורדות וההסרות מגיעים מדוחות החנויות עצמן, לא מהמסד שלנו</div><div id="storeFunnel"></div></section>
-      <section class="panel wide"><h2 data-i18n="nudgeTitle">מכונת הדחיפות · {win}</h2><div class="sub" data-i18n="nudgeSub">כל שולח פוש נמדד: כמה נשלחו, וכמה מהמקבלים עשו את הפעולה תוך 48 שעות. זה הפאנל שמחליט איזה שולח נשאר</div><div id="nudgeEff"></div></section>
       <section class="panel wide"><h2 data-i18n="glogTitle">יומן צמיחה · שבוע אחר שבוע</h2><div class="sub" data-i18n="glogSub">מה קרה בכל שבוע, מה השתנה, ומה גרם לזה</div><div id="growthLog"></div></section>
+      <!-- the push senders are judged in ONE place, the Notifications tab -->
+      <section class="panel wide"><h2 data-i18n="nudgeTitle">מכונת הדחיפות</h2><div id="nudgeEff"></div></section>
+      <!-- a manual store snapshot, weeks old: last in the section, and dated -->
+      <section class="panel wide"><h2 data-i18n="sfTitle">מהחנות ועד פעילות</h2><div class="sub" data-i18n="sfSub">המשפך המלא: כמה הורידו, כמה עדיין מחזיקים באפליקציה, כמה נרשמו וכמה באמת פעילים · נתוני ההורדות וההסרות מגיעים מדוחות החנויות עצמן, לא מהמסד שלנו</div><div id="storeFunnel"></div></section>
     </div>
 
     <div class="sechead" id="secMarket" style="--sec-c:var(--s2)" data-i18n="secMarketT">מרקטפלייס</div>
     <div class="grid2">
-      <section class="panel wide"><h2 data-i18n="dtreeTitle">מה מזיז את מדד הצפון · {win}</h2><div class="sub" data-i18n="dtreeSub">עזרות שהושלמו, מפורקות לגורמים שאפשר להזיז: בקשות × מילוי × קבלה × השלמה</div><div id="driverTree"></div></section>
       <section class="panel wide"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="matchesTitle">התאמות והשלמות</span>
         <span class="seg mini" id="segMatches"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="created" data-i18n="segCreated">התאמות</button><button data-k="completed" data-i18n="segCompleted">השלמות</button></span></h2>
         <div class="sub" data-i18n="matchesSub">התאמות חדשות מול עזרות שסומנו כהושלמו</div><div id="chMatches"></div></section>
@@ -1563,7 +1607,7 @@
         <span class="seg mini" id="segPosts"><button data-k="all" class="on" data-i18n="segAll">הכל</button><button data-k="requests" data-i18n="segRequests">בקשות</button><button data-k="offers" data-i18n="segOffers">הצעות</button></span></h2>
         <div class="sub" data-i18n="postsSub">בקשות עזרה מול הצעות עזרה</div><div id="chPosts"></div></section>
       <section class="panel"><h2 data-i18n-html="liqTitle"></h2><div class="sub" data-i18n="liqSub">כמה מהר בקשה פוגשת עוזר/ת</div><div id="liquidity"></div></section>
-      <section class="panel wide"><h2 data-i18n="nbhdTitle">סולם השכונות מול קו ה-60</h2><div class="sub" data-i18n="nbhdSub">מהמדידה שלנו: מתחת ל-10 שכנים פעילים בקשה מתה, מעל 60 - 90% נענות. כמה חסר לכל אזור כדי להידלק</div><div id="nbhd"></div></section>
+      <section class="panel wide"><h2 data-i18n="nbhdTitle">סולם השכונות מול קו ה-60</h2><div class="sub" data-i18n="nbhdSub">ככל שיש יותר שכנים פעילים ליד בקשה, כך גדל הסיכוי שתקבל פנייה - הטבלה למטה מראה בכמה. כמה חסר לכל אזור כדי להגיע ל-60</div><div id="nbhd"></div></section>
       <section class="panel wide"><h2 data-i18n="densTitle">צפיפות שכנים סביב בקשה</h2><div class="sub" data-i18n="densSub">כמה שכנים היו יכולים באמת לראות את הבקשה, מול הסיכוי שהיא נענתה</div><div id="density"></div></section>
       <section class="panel"><h2 data-i18n="noOfferTitle">בקשות בלי אף הצעה</h2><div class="sub" data-i18n="noOfferSub">פעילות עכשיו בפיד וממתינות - הזדמנות לדחיפה</div><div id="noOffer"></div></section>
       <section class="panel"><h2 style="display:flex;align-items:center;gap:10px"><span data-i18n="catsTitle">קטגוריות מובילות · {win}</span>
@@ -1867,7 +1911,9 @@
       lifecycleTitle:"מאזן משתמשים", lifecycleSub:"חתך חי של כל המשתמשים הרשומים",
       sfTitle:"מהחנות ועד פעילות", sfSub:"המשפך המלא: כמה הורידו, כמה עדיין מחזיקים באפליקציה, כמה נרשמו וכמה באמת פעילים · נתוני ההורדות וההסרות מגיעים מדוחות החנויות עצמן, לא מהמסד שלנו",
       sfDownloads:"הורדות מהחנויות", sfRemoved:"הסירו את האפליקציה", sfHolding:"מחזיקים באפליקציה כעת", sfEver:"נרשמו אי-פעם", sfAccounts:"חשבונות חיים כעת", sfAlive30:"פעילים בחודש האחרון", sfAlive7:"פעילים בשבוע האחרון",
-      sfMetaEver:function(e,d,gap){ return e+" חשבונות נוצרו מאז ההשקה · הפער של ~"+gap+" מול ההורדות = מי שהוריד ולא עבר את מסך ההתחברות · "+d+" מהם מחקו את החשבון מאז"; },
+      sfMetaEver:function(e,d,gap){ return e+" חשבונות נוצרו מאז ההשקה · הפער של כ-"+gap+" מול ההורדות = מי שהוריד ולא עבר את מסך ההתחברות · "+d+" מהם מחקו את החשבון מאז"; },
+      sfMetaEverOver:function(e,date,d){ return e+" חשבונות נוצרו מאז ההשקה - יותר מההורדות למעלה, כי דוחות החנויות נעצרו ב-"+date+" ואפל סופרת רק מכשירים שהסכימו לשתף · "+d+" מהם מחקו את החשבון מאז"; },
+      sfStale:function(d){ return "נתוני חנות מ-"+d; },
       sfMetaDl:function(i,a){ return "iOS "+i+" · Android "+a+" · המקור: דוחות ההתקנה של אפל וגוגל. אפל סופרת רק מכשירים שאישרו שיתוף נתונים, אז צד ה-iOS הוא רצפה - המספר האמיתי גבוה יותר"; },
       sfMetaRm:function(i,a,ap){ return "iOS "+i+" · Android "+a+" ("+ap+" מההתקנות) · אנדרואיד נמדד במלואו; ההסרות ב-iOS מדווחות רק ממכשירי opt-in, אז היחס האמיתי שם כנראה גבוה מהנראה"; },
       sfMetaHold:function(i,a){ return "iOS ~"+i+" (הערכה: התקנות פחות הסרות) · Android "+a+" (בסיס מכשירים שנמדד ישירות אצל גוגל)"; },
@@ -1915,7 +1961,7 @@
       liqSub:"כמה מהר בקשה פוגשת עוזר/ת",
       noOfferTitle:"בקשות בלי אף הצעה", noOfferSub:"פעילות עכשיו בפיד וממתינות - הזדמנות לדחיפה",
       catsTitle:"קטגוריות מובילות · {win}", catsSub:"פוסטים לפי קטגוריה",
-      dtreeTitle:"מה מזיז את מדד הצפון · {win}",
+      dtreeTitle:"איפה העזרות נתקעות בדרך · {win}",
       dtreeSub:"עזרות שהושלמו, מפורקות לגורמים שאפשר להזיז: בקשות × מילוי × קבלה × השלמה",
       dtSteps:{requests:"בקשות שפורסמו", filled:"קיבלו לפחות הצעה אחת", accepted:"הגיעו לשיחה פתוחה", completed:"הושלמו בפועל"},
       dtOffers:"ועוד {n} השלמות שנולדו מהצעות עזרה",
@@ -1929,21 +1975,15 @@
       rdDtree:function(step,a,b){ return "הצוואר כרגע הוא <b>"+step+"</b>: "+a+" מתוך "+b+" עוברים את השלב. זה הגורם שהזזה שלו תזיז הכי הרבה את מדד הצפון."; },
       rdDtreeZero:"אפס השלמות בטווח. לפני שמתקנים שלבים באמצע - זה המספר שצריך לדבר עליו.",
       nbhdTitle:"סולם השכונות מול קו ה-60",
-      nbhdSub:"מהמדידה שלנו: מתחת ל-10 שכנים פעילים בקשה מתה, מעל 60 - 90% נענות. כמה חסר לכל אזור כדי להידלק",
-      nbhdUsers:"{n} פעילים", nbhdGap:"חסרים {n} לקו ה-60", nbhdTipped:"מעל הקו ✓",
+      nbhdSub:"ככל שיש יותר שכנים פעילים ליד בקשה, כך גדל הסיכוי שתקבל פנייה - הטבלה למטה מראה בכמה. כמה חסר לכל אזור כדי להגיע ל-60",
+      nbhdUsers:"{n} שכנים פעילים", nbhdGap:"חסרים {n} לקו ה-60", nbhdTipped:"מעל הקו",
       dirN:"צפון", dirS:"דרום", dirE:"מזרח", dirW:"מערב",
       nbhdReqs:"{r} · {a} נענו ב-24ש׳", nbhdReqOne:"בקשה אחת", nbhdReqN:"{r} בקשות", nbhdNoCity:"אזור ללא שם",
       rdNbhd:function(t,total,best,gap){ return t>0
         ? "<b>"+t+"</b> מתוך "+total+" אזורים כבר מעל קו ה-60. הקרוב הבא: <b>"+best+"</b> - חסרים לו <b>"+gap+"</b> משתמשים. שם כל שקל פרסום שווה הכי הרבה."
         : "אף אזור עוד לא חצה את קו ה-60. הקרוב ביותר: <b>"+best+"</b> (חסרים "+gap+"). ריכוז התקציב שם עדיף על פיזור."; },
-      nudgeTitle:"מכונת הדחיפות · {win}",
-      nudgeSub:"כל שולח פוש נמדד: כמה נשלחו, וכמה מהמקבלים עשו את הפעולה תוך 48 שעות. זה הפאנל שמחליט איזה שולח נשאר",
-      nudgeNames:{silent_room:"שיחה שקטה - תגיד/י שלום", unanswered:"הודעה שלא נענתה", completion:"סיום ודירוג",
-        phone_check:"נפגשתם? (אחרי החלפת טלפון)", rating:"תזכורת דירוג", reengagement:"חזרה לאפליקציה (שיווקי)",
-        digest:"סיכום שבועי", activation:"פעולה ראשונה (D+1)", offer_owner:"בעל/ת הצעה - מחכים לך"},
-      nudgeMeta:function(s,a){ return "נשלחו "+s+" · מתוכם "+a+" עשו את הפעולה תוך 48 שעות"; },
-      nudgeAndroidNote:"הערת מדידה: פוש באנדרואיד היה מת עד 21.8 - חלק מהשליחות בטווח מעולם לא הגיעו למכשיר, כך שהאחוזים כאן הם רצפה, לא תקרה.",
-      rdNudges:function(worstName,worstSent,bestName,bestPct){ return "רוב השולחים לא מזיזים כמעט כלום - <b>"+worstName+"</b> שלח "+worstSent+" פושים כמעט בלי תגובה. הכי אפקטיבי: <b>"+bestName+"</b> ("+bestPct+"). שולח שלא ממיר אחרי חלון מדידה נקי - מכבים."; },
+      nudgeTitle:"מכונת הדחיפות",
+      nudgeGo:"איזה התראות עובדות - נמדד בלשונית ההתראות",
       depTitle:"מי נושא את השוק · {win}",
       depSub:'אחוז <span class="term" data-tip="שיחת עזרה = צ\'אט שבו גם העוזר/ת וגם המבקש/ת כתבו בפועל. נמדד כך ולא לפי השלמות מסומנות, כי הרבה זוגות עוברים לוואטסאפ ולא מסמנים כלום - והשיחה הדו-כיוונית קרתה אצלנו עוד קודם">שיחות העזרה</span> שנשען על העוזרים המובילים - ומי מהם כבר לא מגיע',
       depShare:"משיחות העזרה", depInactive:"לא נראה/תה {n} ימים", depActive:"פעיל/ה",
@@ -1955,6 +1995,7 @@
       depConvs:function(n){ return n==="1"? "שיחת עזרה אחת" : n+" שיחות עזרה"; },
       rdDep:function(name,share,days){ return "<b>"+name+"</b> מחזיק/ה "+share+"% משיחות העזרה ולא נראה/תה כבר <b>"+days+" ימים</b>. זו לא שורה בטבלה - זו שיחת טלפון אישית ששווה לעשות השבוע."; },
       rdDepOk:"אין תלות מסוכנת בעוזר אחד, ואף עוזר מוביל לא נעלם. להמשיך לעקוב.",
+      rdDepQuiet:function(n,t){ return "אין עוזר אחד שהשוק תלוי בו, אבל <b>"+n+"</b> מתוך "+t+" המובילים לא נראו יותר משבועיים."; },
       topUsersShow:"כל המשתמשים הפעילים ›", topUsersHide:"‹ להסתיר את הטבלה",
       citiesTitle:"ערים מובילות · {win}", citiesSub:"לפי עיר הפוסט",
       msgsTitle:"שיחות צ'אט", msgsSub:"הודעות שנשלחו (בטווח ארוך - סכום שבועי)",
@@ -1978,7 +2019,7 @@
       errExpired:"ההתחברות פגה - התחברו שוב",
       errTimeout:"השרת לא הגיב תוך 25 שניות - נסו שוב",
       updatedAgo:function(s){ return s<10? "עודכן כרגע" : s<60? "עודכן לפני "+s+" שניות" : "עודכן לפני "+Math.round(s/60)+" דקות"; },
-      tileHero:"עזרות שהושלמו · {win} ⭐",
+      tileHero:"עזרות שהושלמו · {win}",
       tileHeroTip:"המדד הצפוני של Helpy: עזרות שמקבל/ת העזרה סימנו שבוצעו בפועל",
       tileSignups:"הרשמות · {win}",
       tileActive:"פעילים היום · עכשיו",
@@ -1996,14 +2037,15 @@
       serDau:"DAU", serWau:"WAU", serRequests:"בקשות", serOffers:"הצעות",
       serMsgs:"הודעות", serSenders:"שולחים", serCreated:"התאמות", serCompleted:"השלמות",
       serPrev:"התקופה הקודמת",
-      cmpNoPrev:"אין נתוני תקופה קודמת להשוואה", cmpPrevLabel:"התקופה הקודמת",
+      cmpPrevLabel:"התקופה הקודמת",
       cmpDauPrev:"ממוצע DAU בתקופה הקודמת",
       f1:"נרשמו", f2:"שיתפו מיקום", f3:"אישרו התראות", f4:"אימתו טלפון",
       f5:"פרסמו פוסט", f6:"הגיעו להתאמה", f7:"שלחו הודעה",
       lf1:"חדשים (עד 7 ימים)", lf2:"פעילים בשבוע האחרון", lf3:"רדומים (30+ יום בלי כניסה)", lf4:"סה״כ משתמשים חיים",
+      lf2New:function(n){ return "פעילים השבוע, מתוכם חדשים "+n; }, lfRest:"כל השאר",
       liq1:"בקשות חדשות", liq2:"קיבלו הצעה תוך יממה", liq3:"קיבלו הצעה בסוף", liq4:"חציון זמן להצעה ראשונה",
       liqMedianTip:"הערך האמצעי: מחצית מהבקשות קיבלו הצעה מהר מזה. עמיד לחריגים, בניגוד לממוצע",
-      minutes:"דקות", hours:"שעות",
+      minutes:"דקות", hours:"שעות", minuteOne:"דקה אחת", hourOne:"שעה אחת", dayOne:"יום אחד",
       ch1:"שיחות שנפתחו", ch2:"נענו (דו-כיווניות)",
       ch2Tip:"שיחות שבהן שני הצדדים כתבו לפחות הודעה אחת - פנייה שנענתה באמת",
       ch3:"פניות לבעלי הצעות שנענו", ch4:"פניות לבעלי בקשות שנענו", ch5:"חציון זמן לתשובה ראשונה",
@@ -2062,8 +2104,8 @@
       repeatTitle:"חזרה לבקש שוב", repeatSub:"בקשה שנייה תוך 90 יום - עדות ה-PMF החזקה ביותר במרקטפלייס",
       repRequesters:"מבקשים ייחודיים אי-פעם", repRepeat:"חזרו לבקש תוך 90 יום", repRate:"שיעור החזרה, מול יעד 35%",
       repTip:"אחוז מהמבקשים שפרסמו בקשה שנייה תוך 90 יום מהראשונה. 35% הוא הרף שמצוטט כשער להתרחבות",
-      happyTitle:"עזרות מאושרות", happyRated:"מתוכן דורגו", happy45:"דורגו 4-5 כוכבים",
-      happyTip:"Happy GMV: לא כל השלמה שווה - זו שדורגה גבוה היא זו שבנתה אמון",
+      happyTitle:"עזרות שהושלמו · מאז ההשקה", happy45:"מתוכן דורגו 4-5 כוכבים",
+      happyTip:"כל העזרות שסומנו כהושלמו מאז ההשקה, לא רק בטווח הנבחר - ולכן הוא יכול להיות גבוה מהכרטיס \"עזרות שהושלמו\" שבראש העמוד. לא כל השלמה שווה: זו שדורגה גבוה היא זו שבנתה אמון",
       uItems:"", uUsers:"משתמשים", uPosts:"פוסטים", uMsgs:"הודעות", uMatches:"התאמות", uSignups:"הרשמות",
       vChange:function(dir,p,cur,prev,unit){
         if(dir==="flat") return "ללא שינוי: <b>"+cur+"</b> "+unit+", בדיוק כמו בתקופה הקודמת.";
@@ -2085,6 +2127,9 @@
       rdCats:function(cat,n){ return "<b>"+cat+"</b> היא הקטגוריה הגדולה ביותר עם <b>"+n+"</b> פוסטים. כמעט בכל קטגוריה יש יותר הצעות מבקשות, וזה מחזק את המסקנה שהמחסור הוא בביקוש ולא בהיצע."; },
       rdNoOffer:function(n,oldest){ return "<b>"+n+"</b> בקשות פתוחות ללא ולו הצעה אחת, הוותיקה שבהן בת <b>"+oldest+"</b>. בקשה שלא נענתה תוך שבוע כבר לא רלוונטית למבקש - כדאי לסגור או לרענן אותן."; },
       rdRet:function(d1,d7,d30){ return "אחרי יום אחד חוזרים <b>"+d1+"%</b>, מתחת לבנצ׳מרק של "+bm("25%","d1")+". לעומת זאת אחרי שבוע חוזרים <b>"+d7+"%</b> ואחרי חודש <b>"+d30+"%</b> - שניהם מעל הבנצ׳מרק. כלומר מי שצולח את היום הראשון נשאר, והבעיה כולה ביום הראשון עצמו."; },
+      rdRetAbove:function(d1,d7,d30){ return "אחרי יום אחד חוזרים <b>"+d1+"%</b>, מעל הבנצ׳מרק של "+bm("25%","d1")+", וגם אחרי שבוע (<b>"+d7+"%</b>) ואחרי חודש (<b>"+d30+"%</b>) המספרים מעל הבנצ׳מרק שלהם."; },
+      rdRetD1:function(d1,a1){ return "אחרי יום אחד חוזרים <b>"+d1+"%</b>, "+(a1?"מעל הבנצ׳מרק של ":"מתחת לבנצ׳מרק של ")+bm("25%","d1")+". לשבוע ולחודש עוד אין קוהורטות בשלות."; },
+      rdRetMixed:function(d1,d7,d30,a1){ return "אחרי יום אחד חוזרים <b>"+d1+"%</b>, "+(a1?"מעל הבנצ׳מרק של ":"מתחת לבנצ׳מרק של ")+bm("25%","d1")+". אחרי שבוע חוזרים <b>"+d7+"%</b> (הבנצ׳מרק: 10%) ואחרי חודש <b>"+d30+"%</b> (הבנצ׳מרק: 5%)."; },
       rdFunnel:function(a,b){ return "רק <b>"+b+"</b> מתוך <b>"+a+"</b> הנרשמים שלחו הודעה. הנפילה הגדולה היא בכניסה למסע - מהרשמה לפרסום פוסט ראשון; מי שכבר פרסם ממשיך הלאה בשיעורים גבוהים בהרבה."; },
       rdSafety:function(r,bl,dl){ return "<b>"+dl+"</b> "+(dl==="1"?"מחיקת חשבון":"מחיקות חשבון")+" מול <b>"+r+"</b> "+(r==="1"?"דיווח":"דיווחים")+" ו-<b>"+bl+"</b> "+(bl==="1"?"חסימה":"חסימות")+". נטישה שקטה, לא בעיית בטיחות - אנשים לא נפגעים, הם פשוט לא מוצאים ערך."; },
       rdTopUsers:function(name,share){ return "<b>"+name+"</b> לבד אחראי/ת ל-<b>"+share+"</b> מפעילות המשתמשים הבולטים. ריכוז כזה אומר שהמדדים רגישים מאוד לאדם בודד - אם הוא עוזב, הגרפים ייפלו."; },
@@ -2095,7 +2140,12 @@
       sbGrowth:function(n,up,d,act,sign,msg){ return "נרשמו <b>"+n+"</b> שכנים חדשים בשבוע ("+(up?"עלייה":"ירידה")+" של "+d+" מול השבוע שעבר), אבל רק <b>"+act+"%</b> מהנרשמים החדשים מגיעים לשיחה עם שכן ("+msg+" מתוך "+sign+" בשבועיים האחרונים). המסקנה: הרכישה עובדת, ההפעלה לא - כל שקל שיושקע בפרסום לפני שהמספר הזה עולה קונה נטישה."; },
       sbMarket:function(rq,of,ratio,fill,ans,sil,thin){ return "בטווח הנבחר פורסמו <b>"+rq+"</b> בקשות מול <b>"+of+"</b> הצעות (פי "+ratio+" היצע), ורק <b>"+fill+"%</b> מהבקשות נענו תוך יממה. הצפיפות מסבירה את הפער: בקשה שנענתה הייתה מוקפת <b>"+ans+"</b> שכנים בטווח, בקשה ששתקה <b>"+sil+"</b> בלבד. יש כרגע <b>"+thin+"</b> בקשות חיות באזור דליל - אלה אנשים שסטטיסטית לא יקבלו מענה. הצעד הנכון אינו לגייס עוד עוזרים אלא לרכז ביקוש היכן שכבר יש צפיפות."; },
       sbChat:function(n,tw,med){ return "נפתחו <b>"+n+"</b> שיחות, וב-<b>"+tw+"%</b> מהן שני הצדדים באמת כתבו. התשובה הראשונה מגיעה תוך <b>"+med+"</b> בחציון. מי שעונה עונה מהר מאוד, ולכן זו אינה בעיית זמינות אלא בעיית תשומת לב - כמעט מחצית מהפניות פשוט לא נקראות בזמן."; },
-      sbRetention:function(d1,newshare,dorm,dormp){ return "אחרי יום אחד חוזרים <b>"+d1+"%</b> בלבד, מתחת לבנצ׳מרק של אפליקציות חברתיות, אבל אחרי שבוע וחודש המספרים דווקא גבוהים ממנו - מי שצולח את היום הראשון נשאר. כרגע <b>"+newshare+"</b> מהפעילים הם נרשמים חדשים ו-<b>"+dorm+"</b> משתמשים ("+dormp+") רדומים מעל חודש. זהו קהל שכבר שילמת עליו, והוא גדול פי כמה מהקהל הפעיל."; },
+      sbRetention:function(d1,a1,later,newshare,dorm,dormp){ return (
+        a1 && later ? "השימור מעל הבנצ׳מרק של אפליקציות חברתיות בכל שלב - <b>"+d1+"%</b> חוזרים אחרי יום אחד, וגם אחרי שבוע וחודש המספרים מעליו."
+        : !a1 && later ? "אחרי יום אחד חוזרים <b>"+d1+"%</b> בלבד, מתחת לבנצ׳מרק של אפליקציות חברתיות, אבל אחרי שבוע וחודש המספרים דווקא גבוהים ממנו - מי שצולח את היום הראשון נשאר."
+        : later===null ? "אחרי יום אחד חוזרים <b>"+d1+"%</b>, "+(a1?"מעל הבנצ׳מרק":"מתחת לבנצ׳מרק")+" של אפליקציות חברתיות."
+        : "אחרי יום אחד חוזרים <b>"+d1+"%</b>, "+(a1?"מעל הבנצ׳מרק":"מתחת לבנצ׳מרק")+" של אפליקציות חברתיות, אבל אחרי שבוע או חודש השימור לא עובר את הבנצ׳מרק שלו - הפירוט בעקומת השימור."
+        )+" כרגע <b>"+newshare+"</b> מהפעילים הם נרשמים חדשים ו-<b>"+dorm+"</b> משתמשים ("+dormp+") רדומים מעל חודש. זהו קהל שכבר שילמת עליו, והוא גדול פי כמה מהקהל הפעיל."; },
       sbUsers:function(name,share,n){ return "<b>"+name+"</b> לבד מייצר/ת <b>"+share+"</b> מהפעילות של "+n+" המשתמשים הבולטים. ריכוז כזה אומר שהגרפים שאתה קורא רגישים לאדם אחד - שווה לדעת מי הם ולשמור עליהם, אבל מסוכן להסיק מהם על כלל המשתמשים."; },
       sbSafety:function(r,b,d){ return "<b>"+r+"</b> "+(r==="1"?"דיווח":"דיווחים")+" ו-<b>"+b+"</b> "+(b==="1"?"חסימה":"חסימות")+" מול <b>"+d+"</b> "+(d==="1"?"מחיקת חשבון":"מחיקות חשבון")+". היחס הזה אומר שהמשתמשים אינם עוזבים בגלל חוויה רעה עם שכן אלא בגלל היעדר חוויה בכלל - זו בעיית ערך, לא בעיית בטיחות, ולכן היא לא תיפתר במודרציה."; },
       emptyBars:"אין עדיין מספיק פוסטים בטווח הזה · נסה טווח רחב יותר",
@@ -2125,7 +2175,6 @@
       fgSetup:"הרשאות והגדרה · קורות במקביל, בכל סדר",
       fgJourney:"המסע לעזרה · שלב אחרי שלב",
       fOfPrev:function(p){ return p+" מהשלב הקודם"; },
-      tileNoBase:"אין תקופה קודמת להשוואה",
       insGo:"קפיצה לנתונים ←",
       mlogTitle:"יומן מרקטפלייס · שבוע אחר שבוע",
       mlogSub:"ביקוש מול היצע בכל שבוע, וכמה מזה הבשיל",
@@ -2143,8 +2192,9 @@
       glogSub:"מה קרה בכל שבוע, מה השתנה, ומה גרם לזה",
       glWeek:function(d){ return "שבוע "+d; },
       glSignups:function(n){ return n==="1"? "נרשם אחד" : n+" נרשמים"; },
-      glChange:function(up,p){ return (up?"▲ ":"▼ ")+p+"% מהשבוע שלפניו"; },
-      glFlat:"ללא שינוי מהותי", glVsSmall:function(p){ return "מול "+p+" בשבוע שלפניו"; }, wlPartial:"שבוע בעיצומו",
+      glChange:function(up,p){ return (up?"עלייה של ":"ירידה של ")+p+"% מהשבוע שלפניו"; },
+      glFlat:"ללא שינוי מהותי", glVsSmall:function(p){ return "מול "+p+" בשבוע שלפניו"; },
+      wlSoFar:function(n){ return "עד עכשיו, יום "+n+" מתוך 7"; },
       glFirst:"השבוע הראשון בטווח - אין מול מה להשוות",
       glPeak:"השבוע החזק ביותר בטווח",
       glLow:"השבוע החלש ביותר בטווח",
@@ -2483,7 +2533,9 @@
       lifecycleTitle:"User balance", lifecycleSub:"A live cut of all registered users",
       sfTitle:"Store to active", sfSub:"The full funnel: downloads, who still holds the app, who signed up, and who is genuinely active · install and uninstall figures come from the stores' own reports, not from our database",
       sfDownloads:"Store downloads", sfRemoved:"Uninstalled the app", sfHolding:"Currently holding the app", sfEver:"Ever signed up", sfAccounts:"Live accounts now", sfAlive30:"Active in the last month", sfAlive7:"Active in the last week",
-      sfMetaEver:function(e,d,gap){ return e+" accounts created since launch · the ~"+gap+" gap vs downloads = people who installed but never got past sign-in · "+d+" of them have since deleted their account"; },
+      sfMetaEver:function(e,d,gap){ return e+" accounts created since launch · the gap of about "+gap+" vs downloads = people who installed but never got past sign-in · "+d+" of them have since deleted their account"; },
+      sfMetaEverOver:function(e,date,d){ return e+" accounts created since launch - more than the downloads above, because the store reports stop at "+date+" and Apple counts opt-in devices only · "+d+" have since deleted their account"; },
+      sfStale:function(d){ return "Store data from "+d; },
       sfMetaDl:function(i,a){ return "iOS "+i+" · Android "+a+" · source: Apple and Google install reports. Apple only counts devices that opted into data sharing, so the iOS side is a floor - the true number is higher"; },
       sfMetaRm:function(i,a,ap){ return "iOS "+i+" · Android "+a+" ("+ap+" of installs) · Android is fully measured; iOS deletions are reported from opt-in devices only, so the true iOS rate is likely higher than shown"; },
       sfMetaHold:function(i,a){ return "iOS ~"+i+" (estimate: installs minus uninstalls) · Android "+a+" (device base measured directly by Google)"; },
@@ -2531,7 +2583,7 @@
       liqSub:"How fast a request meets a helper",
       noOfferTitle:"Requests with zero offers", noOfferSub:"Live in the feed and waiting - a push opportunity",
       catsTitle:"Top categories · {win}", catsSub:"Posts by category",
-      dtreeTitle:"What moves the north star · {win}",
+      dtreeTitle:"Where completed helps are lost · {win}",
       dtreeSub:"Completed helps, decomposed into the factors you can actually move: requests × fill × accept × complete",
       dtSteps:{requests:"Requests posted", filled:"Got at least one offer", accepted:"Reached an open chat", completed:"Actually completed"},
       dtOffers:"plus {n} completions born from help offers",
@@ -2544,21 +2596,15 @@
       rdDtree:function(step,a,b){ return "The bottleneck right now is <b>"+step+"</b>: "+a+" of "+b+" pass that stage. Moving it moves the north star more than anything else."; },
       rdDtreeZero:"Zero completions in range. Before fixing middle stages - this is the number to talk about.",
       nbhdTitle:"The neighborhood ladder vs the 60 line",
-      nbhdSub:"From our own measurement: under 10 active neighbors a request dies, above 60 - 90% get answered. How far each area is from tipping",
-      nbhdUsers:"{n} active", nbhdGap:"{n} short of tipping", nbhdTipped:"above the line ✓",
+      nbhdSub:"The more active neighbours near a request, the likelier it gets an offer - the table below shows by how much. How far each area is from 60",
+      nbhdUsers:"{n} active neighbours", nbhdGap:"{n} short of tipping", nbhdTipped:"above the line",
       dirN:"north", dirS:"south", dirE:"east", dirW:"west",
       nbhdReqs:"{r} · {a} answered in 24h", nbhdReqOne:"one request", nbhdReqN:"{r} requests", nbhdNoCity:"unnamed area",
       rdNbhd:function(t,total,best,gap){ return t>0
-        ? "<b>"+t+"</b> of "+total+" areas are already above the 60 line. Next closest: <b>"+best+"</b> - <b>"+gap+"</b> users short. That is where every ad shekel buys the most."
+        ? "<b>"+t+"</b> of "+total+" areas "+(t===1?"is":"are")+" already above the 60 line. Next closest: <b>"+best+"</b> - <b>"+gap+"</b> users short. That is where every ad shekel buys the most."
         : "No area has crossed the 60 line yet. Closest: <b>"+best+"</b> ("+gap+" short). Concentrating the budget there beats spreading it."; },
-      nudgeTitle:"The nudge machine · {win}",
-      nudgeSub:"Every push sender measured: how many sent, and how many recipients did the nudged action within 48 hours. This panel decides which senders live",
-      nudgeNames:{silent_room:"Silent room - say hello", unanswered:"Unanswered message", completion:"Mark done and rate",
-        phone_check:"Did you meet? (after phone exchange)", rating:"Rating reminder", reengagement:"Come back (marketing)",
-        digest:"Weekly digest", activation:"First action (D+1)", offer_owner:"Offer owner - someone is waiting"},
-      nudgeMeta:function(s,a){ return s+" sent · "+a+" of them acted within 48 hours"; },
-      nudgeAndroidNote:"Measurement note: Android push was dead until Aug 21 - some sends in range never reached a device, so these rates are a floor, not a ceiling.",
-      rdNudges:function(worstName,worstSent,bestName,bestPct){ return "Most senders barely move anything - <b>"+worstName+"</b> sent "+worstSent+" pushes to almost no response. Most effective: <b>"+bestName+"</b> ("+bestPct+"). A sender that still does not convert after a clean measurement window gets turned off."; },
+      nudgeTitle:"The nudge machine",
+      nudgeGo:"Which notifications work is judged on the Notifications tab",
       depTitle:"Who carries the marketplace · {win}",
       depSub:'The share of <span class="term" data-tip="helping conversation = a chat where BOTH the helper and the asker actually wrote. Measured this way rather than by marked completions because many pairs move to WhatsApp and never mark anything - the two-way chat happened here first">helping conversations</span> resting on the top helpers - and which of them has stopped showing up',
       depShare:"of helping conversations", depInactive:"not seen for {n} days", depActive:"active",
@@ -2570,6 +2616,7 @@
       depConvs:function(n){ return n==="1"? "one helping conversation" : n+" helping conversations"; },
       rdDep:function(name,share,days){ return "<b>"+name+"</b> carries "+share+"% of helping conversations and has not been seen for <b>"+days+" days</b>. That is not a table row - it is a personal phone call worth making this week."; },
       rdDepOk:"No dangerous dependence on a single helper, and no top helper has gone quiet. Keep watching.",
+      rdDepQuiet:function(n,t){ return "No single helper carries the market, but <b>"+n+"</b> of the top "+t+" have not been seen for over two weeks."; },
       topUsersShow:"All active users ›", topUsersHide:"‹ Hide the table",
       citiesTitle:"Top cities · {win}", citiesSub:"By post city",
       msgsTitle:"Chat activity", msgsSub:"Messages sent (weekly sums on long ranges)",
@@ -2593,7 +2640,7 @@
       errExpired:"Your session expired - sign in again",
       errTimeout:"The server did not answer within 25 seconds - try again",
       updatedAgo:function(s){ return s<10? "updated just now" : s<60? "updated "+s+" seconds ago" : "updated "+Math.round(s/60)+" minutes ago"; },
-      tileHero:"Helps completed · {win} ⭐",
+      tileHero:"Helps completed · {win}",
       tileHeroTip:"Helpy's north star: helps the receiver marked as actually done",
       tileSignups:"Signups · {win}",
       tileActive:"Active today · now",
@@ -2611,14 +2658,15 @@
       serDau:"DAU", serWau:"WAU", serRequests:"Requests", serOffers:"Offers",
       serMsgs:"Messages", serSenders:"Senders", serCreated:"Matches", serCompleted:"Completions",
       serPrev:"Previous period",
-      cmpNoPrev:"No previous-period data to compare", cmpPrevLabel:"previous period",
+      cmpPrevLabel:"previous period",
       cmpDauPrev:"avg DAU previous period",
       f1:"Signed up", f2:"Shared location", f3:"Allowed push", f4:"Verified phone",
       f5:"Posted", f6:"Got matched", f7:"Sent a message",
       lf1:"New (up to 7 days)", lf2:"Active this week", lf3:"Dormant (30+ days)", lf4:"Total live users",
+      lf2New:function(n){ return "Active this week, of them new "+n; }, lfRest:"Everyone else",
       liq1:"New requests", liq2:"Got an offer within 24h", liq3:"Got an offer eventually", liq4:"Median time to first offer",
       liqMedianTip:"The middle value: half the requests got an offer faster. Robust to outliers, unlike the mean",
-      minutes:"min", hours:"hours",
+      minutes:"min", hours:"hours", minuteOne:"1 min", hourOne:"1 hour", dayOne:"1 day",
       ch1:"Conversations opened", ch2:"Answered (two-way)",
       ch2Tip:"Conversations where both sides wrote at least one message - a truly answered opener",
       ch3:"Openers to offer owners answered", ch4:"Openers to request owners answered", ch5:"Median time to first reply",
@@ -2677,8 +2725,8 @@
       repeatTitle:"Came back to ask again", repeatSub:"A second request within 90 days - the strongest PMF evidence in a marketplace",
       repRequesters:"Distinct requesters ever", repRepeat:"Asked again within 90 days", repRate:"Repeat rate, vs the 35% gate",
       repTip:"Share of requesters who posted a second request within 90 days of their first. 35% is the cited expansion gate",
-      happyTitle:"Happy completions", happyRated:"of them rated", happy45:"rated 4-5 stars",
-      happyTip:"Happy GMV: not every completion is equal - the highly-rated one is what built trust",
+      happyTitle:"Completed helps · all time", happy45:"of them rated 4-5 stars",
+      happyTip:"Every help marked completed since launch, not only in the selected range - which is why it can be higher than the \"Helps completed\" tile at the top. Not every completion is equal: the highly-rated one is what built trust",
       uItems:"", uUsers:"users", uPosts:"posts", uMsgs:"messages", uMatches:"matches", uSignups:"signups",
       vChange:function(dir,p,cur,prev,unit){
         if(dir==="flat") return "Held <b>flat</b> at <b>"+cur+"</b> "+unit+" - same as the previous period.";
@@ -2699,7 +2747,10 @@
       rdChat:function(tw,med){ return "<b>"+tw+"</b> of conversations got a two-way reply, at a median of <b>"+med+"</b>. Those who answer, answer fast; the problem is not speed but how many openers get no answer at all."; },
       rdCats:function(cat,n){ return "<b>"+cat+"</b> is the largest category (<b>"+n+"</b> posts). Offers outnumber requests in every category - the mix confirms the shortage is demand, not supply."; },
       rdNoOffer:function(n,oldest){ return "<b>"+n+"</b> open requests have not a single offer, the oldest <b>"+oldest+"</b> old. A request unanswered for a week is no longer relevant to its asker - close or refresh them."; },
-      rdRet:function(d1,d7,d30){ return "Day one is <b>"+d1+"%</b> (below the "+bm("25%","d1")+" benchmark), but week <b>"+d7+"%</b> and month <b>"+d30+"%</b> are above it. Whoever stays sticks harder than average - the problem is concentrated in day one, not in long-term retention."; },
+      rdRet:function(d1,d7,d30){ return "Day one is <b>"+d1+"%</b> (below the "+bm("25%","d1")+" benchmark), but week <b>"+d7+"%</b> and month <b>"+d30+"%</b> are above theirs. Whoever stays sticks harder than average - the problem is concentrated in day one, not in long-term retention."; },
+      rdRetAbove:function(d1,d7,d30){ return "Day one is <b>"+d1+"%</b>, above the "+bm("25%","d1")+" benchmark, and week <b>"+d7+"%</b> and month <b>"+d30+"%</b> are above their benchmarks too."; },
+      rdRetD1:function(d1,a1){ return "Day one is <b>"+d1+"%</b>, "+(a1?"above":"below")+" the "+bm("25%","d1")+" benchmark. Week and month have no mature cohorts yet."; },
+      rdRetMixed:function(d1,d7,d30,a1){ return "Day one is <b>"+d1+"%</b>, "+(a1?"above":"below")+" the "+bm("25%","d1")+" benchmark. Week is <b>"+d7+"%</b> against a 10% benchmark, and month <b>"+d30+"%</b> against 5%."; },
       rdFunnel:function(a,b){ return "Of <b>"+a+"</b> signups only <b>"+b+"</b> sent a message. The big drop is at the journey\u0027s entrance - from signing up to a first post; whoever posts continues onward at far higher rates."; },
       rdSafety:function(r,bl,dl){ return "<b>"+dl+"</b> account deletions against <b>"+r+"</b> reports and <b>"+bl+"</b> blocks. This is quiet churn, not a safety problem - people are not getting hurt, they are just not finding value."; },
       rdTopUsers:function(name,share){ return "<b>"+name+"</b> alone accounts for <b>"+share+"</b> of top-user activity. That concentration makes the metrics hostage to one person - if they leave, the charts fall."; },
@@ -2710,7 +2761,12 @@
       sbGrowth:function(n,up,d,act,sign,msg){ return "<b>"+n+"</b> new neighbours signed up this week ("+(up?"up":"down")+" "+d+" on last week), but only <b>"+act+"%</b> of new signups reach a conversation with a neighbour ("+msg+" of "+sign+" in the last two weeks). Acquisition works, activation does not - every shekel spent on ads before that number moves is buying churn."; },
       sbMarket:function(rq,of,ratio,fill,ans,sil,thin){ return "In the selected range <b>"+rq+"</b> requests were posted against <b>"+of+"</b> offers ("+ratio+"x supply), and only <b>"+fill+"%</b> of requests were answered within a day. Density explains the gap: an answered request sat among <b>"+ans+"</b> neighbours in range, a silent one among just <b>"+sil+"</b>. <b>"+thin+"</b> live requests are in thin areas right now - statistically, those people will get nothing. The move is not recruiting more helpers but concentrating demand where density already exists."; },
       sbChat:function(n,tw,med){ return "<b>"+n+"</b> conversations opened and <b>"+tw+"%</b> became a real exchange, at a median reply of <b>"+med+"</b>. Those who answer answer very fast, so this is not an availability problem but an attention one - nearly half of openers are simply not read in time."; },
-      sbRetention:function(d1,newshare,dorm,dormp){ return "Day-one retention is <b>"+d1+"%</b>, below the social-app benchmark, while week and month retention sit above it - whoever survives day one sticks. Right now <b>"+newshare+"</b> of actives are brand-new signups and <b>"+dorm+"</b> users ("+dormp+") have been dormant over a month. That is an audience you already paid for, several times larger than the active one."; },
+      sbRetention:function(d1,a1,later,newshare,dorm,dormp){ return (
+        a1 && later ? "Retention beats the social-app benchmark at every step - <b>"+d1+"%</b> come back after one day, and week and month sit above their benchmarks too."
+        : !a1 && later ? "Day-one retention is <b>"+d1+"%</b>, below the social-app benchmark, while week and month retention sit above it - whoever survives day one sticks."
+        : later===null ? "Day-one retention is <b>"+d1+"%</b>, "+(a1?"above":"below")+" the social-app benchmark."
+        : "Day-one retention is <b>"+d1+"%</b>, "+(a1?"above":"below")+" the social-app benchmark, but week or month retention does not clear its own benchmark - the retention curve has the detail."
+        )+" Right now <b>"+newshare+"</b> of actives are brand-new signups and <b>"+dorm+"</b> users ("+dormp+") have been dormant over a month. That is an audience you already paid for, several times larger than the active one."; },
       sbUsers:function(name,share,n){ return "<b>"+name+"</b> alone produces <b>"+share+"</b> of the activity of these "+n+" top users. That concentration means the charts you read are sensitive to one person - worth knowing who they are and looking after them, but dangerous to generalise from."; },
       sbSafety:function(r,b,d){ return "<b>"+r+"</b> reports and <b>"+b+"</b> blocks against <b>"+d+"</b> account deletions. That ratio says people are not leaving because of a bad experience with a neighbour but because of no experience at all - a value problem, not a safety one, and moderation will not fix it."; },
       emptyBars:"Not enough posts in this range yet · try a wider one",
@@ -2740,26 +2796,26 @@
       fgSetup:"Permissions & setup · happen in parallel, in any order",
       fgJourney:"The journey to help · step after step",
       fOfPrev:function(p){ return p+" of the step before"; },
-      tileNoBase:"no earlier period to compare",
       insGo:"Jump to the data →",
       mlogTitle:"Marketplace log · week by week",
       mlogSub:"Demand against supply each week, and how much of it matured",
-      mlRequests:function(n){ return n+" requests"; },
+      mlRequests:function(n){ return n==="1"? "1 request" : n+" requests"; },
       mlOffers:function(n){ return n+" offers"; },
       mlRatio:function(r){ return r+"x supply ratio"; },
       mlMatches:function(m,c){ return m+" matches · "+c+" completed"; },
       rdMlog:function(r,o,c,dry,tot){ return "Across the range <b>"+r+"</b> requests were posted against <b>"+o+"</b> offers, and only <b>"+c+"</b> helps were completed. In <b>"+dry+"</b> of "+tot+" weeks two requests or fewer were posted - in most weeks there simply is not enough demand for the marketplace to work, and supply keeps accumulating into a vacuum."; },
       clogTitle:"Conversation log · week by week",
       clogSub:"How much was written, by how many people, and how intensely",
-      clMsgs:function(n){ return n+" messages"; },
+      clMsgs:function(n){ return n==="1"? "1 message" : n+" messages"; },
       clAvgSenders:function(n){ return "an average of "+n+" writers a day"; },
       rdClog:function(m,s2,r,tw){ return "<b>"+m+"</b> messages were written by <b>"+s2+"</b> people - <b>"+r+"</b> each - and <b>"+tw+"</b> of conversations were two-way. A small number of writers writing a lot means the conversations that do happen run deep; the problem is not conversation quality but how few conversations start at all."; },
       glogTitle:"Growth log · week by week",
       glogSub:"What happened each week, what changed, and what caused it",
       glWeek:function(d){ return "Week of "+d; },
-      glSignups:function(n){ return n+" signups"; },
-      glChange:function(up,p){ return (up?"▲ ":"▼ ")+p+"% on the week before"; },
-      glFlat:"No meaningful change", glVsSmall:function(p){ return "vs "+p+" the week before"; }, wlPartial:"week in progress",
+      glSignups:function(n){ return n==="1"? "1 signup" : n+" signups"; },
+      glChange:function(up,p){ return (up?"up ":"down ")+p+"% on the week before"; },
+      glFlat:"No meaningful change", glVsSmall:function(p){ return "vs "+p+" the week before"; },
+      wlSoFar:function(n){ return "so far, day "+n+" of 7"; },
       glFirst:"First week in range - nothing to compare against",
       glPeak:"Strongest week in range",
       glLow:"Weakest week in range",
@@ -3446,7 +3502,9 @@
       ] : undefined,
       series: series.map(function(s){
         if(s.type === "line"){
-          return { name: s.name, type: "line", smooth: true,
+          // light, monotone smoothing: smooth:true overshot a run of zeros
+          // into negative counts between two points
+          return { name: s.name, type: "line", smooth: 0.3, smoothMonotone: "x",
             yAxisIndex: opts.axis2 ? (s.axis || 0) : undefined,
             // a null in the data is a real "no signups that day", not a zero -
             // connectNulls would draw a cost line straight through it
@@ -3482,7 +3540,7 @@
               ? { value: v, itemStyle: { opacity: 0.45 } } : v;
           }) };
       }).concat(prevData ? [{
-        name: S.serPrev, type: "line", smooth: true, showSymbol: false, z: 1,
+        name: S.serPrev, type: "line", smooth: 0.3, smoothMonotone: "x", showSymbol: false, z: 1,
         lineStyle: { width: 1.5, type: "dashed", color: tok("--muted") },
         itemStyle: { color: tok("--muted") }, emphasis: { disabled: true },
         data: prevData
@@ -3569,8 +3627,11 @@
     if(!host) return;
     host.innerHTML="";
     if(!items||!items.length){ emptyState(host,S.emptyBars,"layers"); return; }
+    // items.max (optional) puts several lists on ONE scale: scaled to its
+    // own max, a list of 2 drew a bar wider than a list of 54 beside it
     var max=1;
     items.forEach(function(it){ max=Math.max(max,(it.v1||0)+(it.v2||0)); });
+    if(items.max>0) max=Math.max(max, items.max);
     items.forEach(function(it){
       var row=el("div","hrow");
       row.appendChild(el("span","hl",it.label));
@@ -3746,11 +3807,9 @@
       sub.appendChild(span);
       sub.appendChild(el("span","vs",S.prevWeek(fmt(opts.prev))));
     } else if(opts.note){ sub.appendChild(el("span","vs",opts.note)); }
-    else if(opts.delta!=null){
-      // a suppressed comparison should say so, not leave a blank where a
-      // number used to be
-      sub.appendChild(el("span","vs",S.tileNoBase));
-    }
+    // no baseline: the line stays empty. "no earlier period to compare",
+    // repeated on six tiles, was noise that drowned the one real comparison
+
     t.appendChild(sub);
     if(opts.spark){ var s=sparkline(opts.spark); if(s) t.appendChild(s); }
     return t;
@@ -3825,10 +3884,9 @@
     if(!c){ c=el("div","cmp"); panel.insertBefore(c,host); }
     c.innerHTML="";
     c.appendChild(el("b",null,fmt(cur)));
-    if(prev==null){
-      c.appendChild(el("span","vs",S.cmpNoPrev));
-      return;
-    }
+    // no baseline: the total stands alone - the verdict below already says
+    // there is nothing to compare with, once is enough
+    if(prev==null) return;
     var d=cur-prev;
     var cls=d>0?"up":d<0?"down":"";
     var txt=prev>0? Math.round(100*Math.abs(d)/prev)+"%" : fmt(Math.abs(d));
@@ -3873,17 +3931,23 @@
     // read as "81 signups in one day" (Nir caught it; the real 02.08 was 15)
     if(peak && peak.v>0 && (rows||[]).length>2)
       txt+=" "+(opts.weekly? S.vPeakW(fmt(peak.v), fmtDay(peak.d)) : S.vPeak(fmt(peak.v), fmtDay(peak.d)));
-    if(cls) v.classList.add(cls);
-    v.appendChild(el("span","vi", cls==="good"?"\u25B2":cls==="bad"?"\u25BC":cls==="warn"?"\u2192":"\u2022"));
+    // an unjudged reading ("950 signups, no previous period") is a fact, not
+    // an alarm - it takes the quiet prose style, not the filled indigo box
+    v.classList.add(cls || "calm");
+    var vi=toneIcon(cls);
+    if(vi){ var vs=el("span","vi"); vs.appendChild(vi); v.appendChild(vs); }
     var body=el("span"); body.innerHTML=txt; // trusted: our own dictionary + numbers
     v.appendChild(body);
   }
 
+  // a count with its unit, singular when it is one ("1 days" / "1 ימים")
+  function nUnit(n, one, many){ return n===1? one : fmt(n)+" "+many; }
+  function nDays(n){ return nUnit(n, S.dayOne, S.daysUnit); }
   function humanMin(m){
     if(m==null) return "-";
-    if(m<120) return fmt(m)+" "+S.minutes;
-    if(m<48*60) return fmt(Math.round(m/60))+" "+S.hours;
-    return fmt(Math.round(m/1440))+" "+S.daysUnit;
+    if(m<120) return nUnit(m, S.minuteOne, S.minutes);
+    if(m<48*60) return nUnit(Math.round(m/60), S.hourOne, S.hours);
+    return nDays(Math.round(m/1440));
   }
   // An empty panel should explain itself, not just report emptiness.
   function emptyState(host, msg, ic){
@@ -3931,16 +3995,24 @@
       if(!wlOpen[hostId] && ri>=WCAP) return;
       var n=+r[primaryKey]||0, prev=idx>0? (+rows[idx-1][primaryKey]||0) : null;
       var row=el("div","evrow");
-      var up = prev!=null && n>prev, down = prev!=null && n<prev;
-      var ic=el("div","evi", n===peak? "\u2605" : (up? "\u2191" : (down? "\u2193" : "\u2022")));
-      ic.style.background="var("+(n===peak?"--s3":(down?"--s2":"--s1"))+")";
+      // the running week is compared with nothing: day 2 of 7 against a full
+      // week read "down 67%" every Monday
+      var partial = idx===rows.length-1 && isPartialWeek(r.d);
+      var up = !partial && prev!=null && n>prev, down = !partial && prev!=null && n<prev;
+      var steep = down && prev>0 && (prev-n)/prev>=0.2;
+      var ic=el("div","evi wl"+(n===peak?" peak":"")+(steep?" bad":""));
+      ic.appendChild(icon(n===peak? "star" : up? "arrowup" : down? "arrowdown" : "minus", 14));
       row.appendChild(ic);
       var body=el("div","evb");
       var d=describe(r,prev,{peak:n===peak, low:n===low, n:n});
       body.appendChild(el("div","evt", S.glWeek(fmtDay(r.d))+" · "+d.title));
       var bits=[];
-      if(idx===rows.length-1 && isPartialWeek(r.d)) bits.push(S.wlPartial);
-      if(prev==null) bits.push(S.glFirst);
+      if(partial){
+        var d0=new Date(String(r.d).slice(0,10)+"T00:00:00");
+        var dayN=Math.min(7, Math.max(1, Math.floor((Date.now()-d0.getTime())/86400000)+1));
+        bits.push(S.wlSoFar(dayN));
+      }
+      else if(prev==null) bits.push(S.glFirst);
       else if(prev===0) bits.push(S.glFlat);
       else if(prev<10){
         // a % change off a single-digit base reads as drama ("▲900%" from 2)
@@ -3951,7 +4023,7 @@
       }
       bits=bits.concat(d.bits||[]);
       if(n===peak) bits.push(S.glPeak);
-      else if(n===low) bits.push(S.glLow);
+      else if(n===low && !partial) bits.push(S.glLow); // an unfinished week is not a low
       var ev=eventsFor(r.d);
       if(ev.length) bits.push("\u2691 "+ev.join(" · "));
       var sub=el("div","evs",bits.join(" · "));
@@ -4045,18 +4117,19 @@
   // ---- event feed ----------------------------------------------------------
   // The readable counterpart of the Telegram alert stream. Same events, but
   // scannable, filterable, and with durations in words rather than raw seconds.
-  var EV_COLOR={declined:"--s8", completed:"--s3", not_completed:"--s2",
+  var EV_COLOR={declined:"--s8", completed:"--s3", not_completed:"--warning",
                 expired:"--baseline", report:"--s8", block:"--s8", deleted:"--muted"};
-  var EV_MARK={declined:"\u2715", completed:"\u2713", not_completed:"!", expired:"\u22EF",
-               report:"\u2691", block:"\u2298", deleted:"\u2013"};
+  // Lucide icons, never text glyphs (a "!" and a "\u22EF" sat in the same column)
+  var EV_MARK={declined:"x", completed:"check", not_completed:"alertc", expired:"more",
+               report:"flag", block:"ban", deleted:"minus"};
   var feedFilter="all";
   var feedAll=false;
   function humanDur(sec){
     if(sec==null) return "";
     var m=Math.round(sec/60);
-    if(m<60) return m+" "+S.minutes;
-    if(m<48*60) return Math.round(m/60)+" "+S.hours;
-    return Math.round(m/1440)+" "+S.daysUnit;
+    if(m<60) return nUnit(m, S.minuteOne, S.minutes);
+    if(m<48*60) return nUnit(Math.round(m/60), S.hourOne, S.hours);
+    return nDays(Math.round(m/1440));
   }
   function renderFeed(){
     var host=$("eventFeed"); if(!host) return;
@@ -4087,20 +4160,29 @@
     var shown = feedAll ? list : list.slice(0, CAP);
     shown.forEach(function(e){
       var row=el("div","evrow");
-      var ic=el("div","evi",EV_MARK[e.kind]||"\u2022");
+      var ic=el("div","evi");
+      ic.appendChild(icon(EV_MARK[e.kind]||"minus",14));
       ic.style.background="var("+(EV_COLOR[e.kind]||"--baseline")+")";
       row.appendChild(ic);
       var body=el("div","evb");
       var title=(S.evK[e.kind]||e.kind);
       if(e.via && S.evVia[e.via]) title+=" · "+S.evVia[e.via];
       body.appendChild(el("div","evt",title));
-      var parts=[];
-      if(e.a && e.b) parts.push(S.evBetween(e.a,e.b));
-      else if(e.a) parts.push(e.a);
-      if(e.subject) parts.push(e.subject);
-      if(e.took_s!=null) parts.push(S.evAfter(humanDur(e.took_s)));
-      var sub=el("div","evs",parts.join(" · "));
-      sub.title=parts.join(" · ");
+      // Every name and title is user text in either direction. Isolated in
+      // <bdi>, "A \u2194 B" keeps its sides and a Hebrew title's full stop
+      // stays at its end instead of jumping to the next part.
+      var sub=el("div","evs"), plain=[];
+      function part(nodes, txt){
+        if(sub.childNodes.length) sub.appendChild(document.createTextNode(" · "));
+        nodes.forEach(function(nd){ sub.appendChild(nd); });
+        plain.push(txt);
+      }
+      function iso(t){ return el("bdi",null,t); }
+      if(e.a && e.b) part([iso(e.a), document.createTextNode(" \u2194 "), iso(e.b)], S.evBetween(e.a,e.b));
+      else if(e.a) part([iso(e.a)], e.a);
+      if(e.subject) part([iso(e.subject)], e.subject);
+      if(e.took_s!=null){ var af=S.evAfter(humanDur(e.took_s)); part([document.createTextNode(af)], af); }
+      sub.title=plain.join(" · ");
       body.appendChild(sub);
       row.appendChild(body);
       row.appendChild(el("span","evw",fmtTime(e.at)));
@@ -4166,9 +4248,19 @@
     }
     v.className="verdict read"+(cls?" "+cls:"");
     v.innerHTML="";
-    v.appendChild(el("span","vi", cls==="good"?"\u25B2":cls==="bad"?"\u25BC":cls==="warn"?"\u2192":"\u25CF"));
+    var vi=toneIcon(cls);
+    if(vi){ var vs=el("span","vi"); vs.appendChild(vi); v.appendChild(vs); }
     var body=el("span"); body.innerHTML=html; // trusted: our dictionary + numbers
     v.appendChild(body);
+  }
+  // ONE tone vocabulary for every reading on every tab. There used to be five
+  // text glyphs for the same idea (bullet, arrow, two triangles, a dot);
+  // now: good = trend icon, warn = alert, bad = alert in the bad colour,
+  // a neutral reading carries no icon at all.
+  function toneIcon(cls){
+    if(cls==="good") return icon("trend",15);
+    if(cls==="warn" || cls==="bad") return icon("alert",15);
+    return null;
   }
 
   // per-chart segment picker: reads the .on button's data-k ("all" or a series key)
@@ -4249,7 +4341,10 @@
 
   function insight(cls, html, onClick){ // html is built from trusted labels + numbers only
     var row=el("div","ins "+cls);
-    row.appendChild(el("span","dot"));
+    // the slot stays even when empty (info), so the sentences line up
+    var dot=el("span","dot"), ti=toneIcon(cls);
+    if(ti) dot.appendChild(ti);
+    row.appendChild(dot);
     var span=el("span"); span.innerHTML=html;
     row.appendChild(span);
     if(onClick){
@@ -4320,12 +4415,11 @@
       humanMin(C.median_first_reply_minutes)));
 
     // RETENTION: do they come back, and who is dormant
-    var CO=DATA.cohorts||[];
-    var s1=0,n1=0; CO.forEach(function(c){ if(c.size){ s1+=(+c.d1||0); n1+=c.size; } });
-    var d1=n1? Math.round(100*s1/n1):0;
+    var rb=retBlend(), rbv=retVerdict(rb);
+    var d1=rb[0]==null? 0 : rb[0];
     var ST=R.user_states||{};
     var totU=(ST.new_u||0)+(ST.current_u||0)+(ST.reactivated_u||0)+(ST.resurrected_u||0);
-    secBrief("secRetention", S.sbRetention(d1,
+    secBrief("secRetention", S.sbRetention(d1, rbv.a1, rbv.later,
       totU? pct(ST.new_u,totU):"-", fmt(lf.dormant_30d), pct(lf.dormant_30d,k.live_users)));
 
     // USERS: how concentrated is the activity
@@ -4409,17 +4503,30 @@
 
   // blended retention curve (mature cohorts only) vs the social-app benchmark -
   // the curve is the exec view; the triangle table sits one click behind it
-  function retentionCurve(){
-    var host=$("chRetention"); if(!host) return;
-    var C=DATA.cohorts||[];
+  // social-app benchmark for D1 / D7 / D30 - the dashed line and every
+  // "above / below" sentence read the same three numbers
+  var RET_BM=[25,10,5];
+  // blended retention over mature cohorts: [d1, d7, d30] in %, null = no data
+  function retBlend(){
     var s1=0,n1=0,s7=0,n7=0,s30=0,n30=0;
-    C.forEach(function(c){
+    (DATA.cohorts||[]).forEach(function(c){
       if(!c.size) return;
       s1+=(+c.d1||0); n1+=c.size;
       if(c.d7_mature){ s7+=(+c.d7||0); n7+=c.size; }
       if(c.d30_mature){ s30+=(+c.d30||0); n30+=c.size; }
     });
-    var ours=[n1?Math.round(100*s1/n1):null, n7?Math.round(100*s7/n7):null, n30?Math.round(100*s30/n30):null];
+    return [n1?Math.round(100*s1/n1):null, n7?Math.round(100*s7/n7):null, n30?Math.round(100*s30/n30):null];
+  }
+  // above = at or over the benchmark; "later" holds only when BOTH week and
+  // month have data and clear theirs - a missing number never earns a claim
+  function retVerdict(ours){
+    return { a1: ours[0]!=null && ours[0]>=RET_BM[0],
+             later: (ours[1]==null || ours[2]==null) ? null
+                    : (ours[1]>=RET_BM[1] && ours[2]>=RET_BM[2]) };
+  }
+  function retentionCurve(){
+    var host=$("chRetention"); if(!host) return;
+    var ours=retBlend();
     if(!ECH){ host.textContent=""; return; }
     var inst=einsts["chRetention"];
     if(!inst){
@@ -4450,15 +4557,22 @@
           symbol:"circle", symbolSize:9,
           label:{ show:true, formatter:function(p){ return p.value==null? "" : p.value+"%"; },
                   color:ink, fontSize:11, fontWeight:600, position:"top" } },
-        { name:S.retBench, type:"line", data:[25,10,5],
+        { name:S.retBench, type:"line", data:RET_BM,
           lineStyle:{ width:1.5, type:"dashed", color:muted },
           itemStyle:{ color:muted }, symbol:"none" }
       ]
     }, { replaceMerge:["series"] });
     if(ours[0]!=null){
-      var retRead=S.rdRet(ours[0], ours[1]==null?"-":ours[1], ours[2]==null?"-":ours[2]);
-      if(ours[0]<25) retRead+=S.recRet;
-      panelRead("chRetention", ours[0]<25?"warn":"good", retRead);
+      var rv=retVerdict(ours);
+      var r7=ours[1]==null?"-":ours[1], r30=ours[2]==null?"-":ours[2];
+      // no mature week/month cohort yet: say day one only, claim nothing else
+      var retRead = rv.later===null ? S.rdRetD1(ours[0], rv.a1)
+                  : rv.a1 && rv.later ? S.rdRetAbove(ours[0], r7, r30)
+                  : !rv.a1 && rv.later ? S.rdRet(ours[0], r7, r30)
+                  : S.rdRetMixed(ours[0], r7, r30, rv.a1);
+      // the "fix day one" advice only follows a day one that is actually weak
+      if(!rv.a1 && rv.later) retRead+=S.recRet;
+      panelRead("chRetention", !rv.a1? "warn" : rv.later===true? "good" : "", retRead);
     }
   }
   // ---- research metrics (RPC v4: repeat, supply, states, per-city) ---------
@@ -4491,6 +4605,13 @@
                 : Math.max(0,(and.installs||0)-(and.uninstalls||0));
     var hold=iosHold+andHold;
     var ramp=[tok("--seq250"),tok("--seq400"),tok("--seq550"),tok("--seq700")];
+    // Downloads are a frozen manual snapshot, accounts are live: once the
+    // accounts outgrow it, "123% of downloads" and "a gap of 0" are artefacts
+    // of the two clocks, so those rows lose the percentage and say why.
+    var ever=(A.live||0)+(A.deleted||0);
+    var lastStore=[ios.data_through, and.data_through].filter(Boolean).sort().pop();
+    var storeDay=lastStore? fmtDay(lastStore) : "-";
+    function ofDl(v){ return v>dl ? "" : " · "+pct(v,dl); }
     hbars(host,[
       {label:S.sfDownloads, v1:dl, c1:ramp[0], suffix:" · 100%",
        meta:S.sfMetaDl(fmt(ios.installs),fmt(and.installs))},
@@ -4498,21 +4619,27 @@
        meta:S.sfMetaRm(fmt(ios.uninstalls),fmt(and.uninstalls),pct(and.uninstalls,and.installs))},
       {label:S.sfHolding, v1:hold, c1:ramp[1], suffix:" · "+pct(hold,dl),
        meta:S.sfMetaHold(fmt(iosHold),fmt(andHold))},
-      {label:S.sfEver, v1:(A.live||0)+(A.deleted||0), c1:ramp[2],
-       suffix:" · "+pct((A.live||0)+(A.deleted||0),dl),
-       meta:S.sfMetaEver(fmt((A.live||0)+(A.deleted||0)), fmt(A.deleted||0),
-                         fmt(Math.max(0, dl-((A.live||0)+(A.deleted||0)))))},
-      {label:S.sfAccounts, v1:A.live||0, c1:ramp[2], suffix:" · "+pct(A.live,dl),
+      {label:S.sfEver, v1:ever, c1:ramp[2], suffix:ofDl(ever),
+       meta: ever>dl ? S.sfMetaEverOver(fmt(ever), storeDay, fmt(A.deleted||0))
+                     : S.sfMetaEver(fmt(ever), fmt(A.deleted||0), fmt(dl-ever))},
+      {label:S.sfAccounts, v1:A.live||0, c1:ramp[2], suffix:ofDl(A.live||0),
        meta:S.sfMetaAcc(fmt(A.ios),fmt(A.android),fmt(A.unknown))},
-      {label:S.sfAlive30, v1:L.seen_30d||0, c1:ramp[3], suffix:" · "+pct(L.seen_30d,dl),
+      {label:S.sfAlive30, v1:L.seen_30d||0, c1:ramp[3], suffix:ofDl(L.seen_30d||0),
        meta:S.sfMetaAlive30(fmt(L.seen_30d_ios),fmt(L.seen_30d_android))},
-      {label:S.sfAlive7, v1:L.seen_7d||0, c1:ramp[3], suffix:" · "+pct(L.seen_7d,dl),
+      {label:S.sfAlive7, v1:L.seen_7d||0, c1:ramp[3], suffix:ofDl(L.seen_7d||0),
        meta:S.sfMetaAlive7(fmt(L.seen_7d_ios),fmt(L.seen_7d_android))}
     ]);
     // the funnel labels are long Hebrew phrases - the default 130px label
     // column clipped "מחזיקים באפליקציה כעת" to "..."
     Array.prototype.forEach.call(host.querySelectorAll(".hrow"),function(r){ r.classList.add("wrap"); });
     host.appendChild(el("div","note",S.sfFresh(fmtDay(ios.data_through),fmtDay(and.data_through))));
+    // the age of the snapshot belongs in the title, where it is read first
+    var h2=host.closest("section.panel") && host.closest("section.panel").querySelector("h2");
+    if(h2 && lastStore){
+      var stale=h2.querySelector(".stale");
+      if(!stale){ stale=el("span","stale"); h2.appendChild(stale); }
+      stale.textContent=S.sfStale(storeDay);
+    }
     panelRead("storeFunnel","",
       S.rdStore(fmt(dl),fmt(hold),fmt((A.live||0)+(A.deleted||0)),fmt(A.live||0),
                 fmt(L.seen_30d||0),fmt(L.seen_7d||0),pct(L.seen_30d,dl)));
@@ -4878,14 +5005,14 @@
     var st=el("table","plain");
     statRow(st,S.supNewHelpers,fmt(TT.new_helpers));
     statRow(st,S.supMatched,TT.new_helpers? pct(TT.matched,TT.new_helpers)+" ("+fmt(TT.matched)+")":"-");
-    statRow(st,S.supTtfm,TT.median_days==null?"-":TT.median_days+" "+S.daysUnit,S.supTtfmTip);
+    statRow(st,S.supTtfm,TT.median_days==null?"-":nDays(TT.median_days),S.supTtfmTip);
     var H=R.happy||{};
     statRow(st,S.happyTitle,fmt(H.completed),S.happyTip);
     statRow(st,S.happy45,H.completed? fmt(H.rated_45)+" / "+fmt(H.completed):"-");
     sh.appendChild(st);
     var idleN=SU.active_offers-SU.engaged_30d;
     var supRead=S.rdSupply(util, fmt(idleN),
-      TT.median_days==null?"-":TT.median_days+" "+S.daysUnit);
+      TT.median_days==null?"-":nDays(TT.median_days));
     if(idleN>=20) supRead+=S.recSupply(fmt(idleN));
     panelRead("supplyHealth", util<40?"bad":"warn", supRead);
 
@@ -4998,6 +5125,19 @@
     ["driverTree","nbhd","nudgeEff","helperDep"].forEach(function(id){
       var h=$(id); if(h) h.innerHTML="";
     });
+
+    // nudge machine: the push senders used to be scored here AND on the
+    // Notifications tab, with different names, windows and numbers. That tab
+    // is the one judge now; this panel only points to it.
+    var ngh=$("nudgeEff");
+    if(ngh){
+      var go=el("button","golink",S.nudgeGo);
+      go.type="button";
+      go.appendChild(icon(LANG==="he"? "arrowl" : "arrowr",15));
+      go.addEventListener("click",function(){ switchTab("push"); window.scrollTo(0,0); });
+      ngh.appendChild(go);
+    }
+
     if(!D) return;
 
     // driver tree: the north star decomposed into stages you can move
@@ -5105,7 +5245,8 @@
           row.appendChild(el("span","hval",fmt(cell.users)));
           nb.appendChild(row);
           var status=cell.users>=60? S.nbhdTipped : S.nbhdGap.replace("{n}",fmt(cell.gap));
-          var meta=status;
+          // the bare number in the value slot has no unit - the meta names it
+          var meta=S.nbhdUsers.replace("{n}",fmt(cell.users))+" · "+status;
           if((cell.requests||0)>0)
             meta+=" · "+S.nbhdReqs
               .replace("{r}", cell.requests===1? S.nbhdReqOne : S.nbhdReqN.replace("{r}",fmt(cell.requests)))
@@ -5117,41 +5258,6 @@
                    .sort(function(a,b){ return a.gap-b.gap; })[0];
         if(next) panelRead("nbhd", tipped?"":"warn",
           S.rdNbhd(tipped, NB.length, next.city||S.nbhdNoCity, fmt(next.gap)));
-      }
-    }
-
-    // nudge machine: every sender's sends vs 48h actions
-    var NG=D.nudges||[], ngh=$("nudgeEff");
-    if(ngh){
-      if(!NG.length){ emptyState(ngh,S.emptyBars,"alert"); }
-      else{
-        NG.forEach(function(n){
-          var rate=n.sent? Math.round(100*n.acted/n.sent):0;
-          var row=el("div","hrow wrap");
-          row.appendChild(el("span","hl",S.nudgeNames[n.k]||n.k));
-          var track=el("div","htrack");
-          var seg=el("div","hseg");
-          seg.style.width=Math.max(2,rate)+"%";
-          seg.style.background= n.sent<5? "var(--baseline)"
-            : rate<5? "var(--bad-text)" : rate<15? "var(--warning)" : "var(--good-text)";
-          track.appendChild(seg);
-          row.appendChild(track);
-          row.appendChild(el("span","hval",rate+"%"));
-          ngh.appendChild(row);
-          ngh.appendChild(el("div","hmeta",S.nudgeMeta(fmt(n.sent),fmt(n.acted))));
-        });
-        // the caveat ages out once the window no longer touches the dead-Android era
-        if(Date.now()-spanDays()*86400000 < Date.parse("2026-08-21"))
-          ngh.appendChild(el("div","note",S.nudgeAndroidNote));
-        var big=NG.filter(function(n){ return n.sent>=5; });
-        if(big.length>=2){
-          var byRate=big.slice().sort(function(a,b){ return (a.acted/a.sent)-(b.acted/b.sent); });
-          var worstN=byRate[0], bestN=byRate[byRate.length-1];
-          if(worstN.acted/worstN.sent<0.05)
-            panelRead("nudgeEff","warn",S.rdNudges(
-              S.nudgeNames[worstN.k]||worstN.k, fmt(worstN.sent),
-              S.nudgeNames[bestN.k]||bestN.k, Math.round(100*bestN.acted/bestN.sent)+"%"));
-        }
       }
     }
 
@@ -5176,11 +5282,16 @@
           row.appendChild(el("span","hval",h.share+"%"));
           hd.appendChild(row);
           var status=h.days_inactive>14? S.depInactive.replace("{n}",fmt(h.days_inactive)) : S.depActive;
-          hd.appendChild(el("div","hmeta",
-            S.depConvs(fmt(h.completions))+" · "+status+(risk?" \u26A0":"")));
+          var hm=el("div","hmeta",S.depConvs(fmt(h.completions))+" · "+status);
+          if(risk){ var ri=icon("alert",13); ri.style.cssText="color:var(--bad-text);vertical-align:-2px;margin-inline-start:5px"; hm.appendChild(ri); }
+          hd.appendChild(hm);
         });
         var riskH=(HD.helpers||[]).filter(function(h){ return h.share>30 && h.days_inactive>14; })[0];
+        // "nobody has gone quiet" has to be checked against the SAME field the
+        // rows print - it once sat under three "not seen for 20+ days" rows
+        var quietN=(HD.helpers||[]).filter(function(h){ return h.days_inactive>14; }).length;
         if(riskH) panelRead("helperDep","bad",S.rdDep(riskH.name, riskH.share, fmt(riskH.days_inactive)));
+        else if(quietN) panelRead("helperDep","warn",S.rdDepQuiet(fmt(quietN), fmt((HD.helpers||[]).length)));
         else panelRead("helperDep","good",S.rdDepOk);
       }
     }
@@ -5201,9 +5312,17 @@
       var pr=prevRows(series); return pr.length? sumRows(pr,keys):null;
     }
 
-    var hero=tile(S.tileHero, fmt(winSum(DATA.matches_by_day,["completed"])),
-      {delta:winSum(DATA.matches_by_day,["completed"]),
-       prev:prevSum(DATA.matches_by_day,["completed"]),
+    // The hero reads the SAME numbers as the north-star sentence above it
+    // (the server's driver tree for this window): the tile said "no earlier
+    // period" right under "5 helps, vs 2 the period before".
+    var DTc=((DATA.decisions||{}).driver_tree||{}).cur, DTp=((DATA.decisions||{}).driver_tree||{}).prev;
+    var heroCur = (DTc && DTc.completions!=null)? +DTc.completions : winSum(DATA.matches_by_day,["completed"]);
+    var heroPrev = (DTc && DTc.completions!=null)
+      ? ((DTp && DTp.completions!=null)? +DTp.completions : null)
+      : prevSum(DATA.matches_by_day,["completed"]);
+    var hero=tile(S.tileHero, fmt(heroCur),
+      {delta:heroCur,
+       prev:heroPrev,
        tip:S.tileHeroTip,
        spark:tail(DATA.matches_by_day,"completed"), target:"chMatches"});
     hero.classList.add("hero");
@@ -5236,14 +5355,17 @@
       {delta:winSum(DATA.posts_by_day,["requests","offers"]),
        prev:prevSum(DATA.posts_by_day,["requests","offers"]),
        spark:tail(DATA.posts_by_day,"requests"), dot:tok("--s2"), target:"chPosts"}));
-    host.appendChild(tile(S.tileFeed, fmt(k.active_requests)+" / "+fmt(k.active_offers),
+    // one number: "47 / 178" read as "47 out of 178"; the split is the note
+    host.appendChild(tile(S.tileFeed, fmt((k.active_requests||0)+(k.active_offers||0)),
       {note:S.tileFeedNote(fmt(k.active_requests), fmt(k.active_offers)), dot:S5, target:"noOffer"}));
     // staggered entrance
     Array.prototype.forEach.call(host.children,function(tl,i){
       tl.style.animationDelay=(i*55)+"ms";
     });
 
-    var S1=tok("--s1"), S2=tok("--s2");
+    // Series colours: brown (--s2) sits next to the warning amber, so no
+    // metrics chart series uses it - Android, offers and WAU take the teal slot
+    var S1=tok("--s1");
     // each chart carries its own segment picker (data-analyst dimension filter);
     // the previous-period overlay and the header total follow the selected segment
     function segChart(chartId, segId, source, defs, sumKeys, opts){
@@ -5281,15 +5403,15 @@
     }
     segChart("chSignups","segSignups",DATA.signups_by_day,[
       {key:"ios",name:"iOS",color:S1,type:"bar"},
-      {key:"android",name:"Android",color:S2,type:"bar"}],
+      {key:"android",name:"Android",color:S3,type:"bar"}],
       ["total"],{zoom:true, annot:true, unit:S.uSignups});
     segChart("chDau","segDau",DATA.dau_by_day,[
       {key:"dau",name:S.serDau,color:S1,type:"line",area:true},
-      {key:"wau",name:S.serWau,color:S2,type:"line"}],
+      {key:"wau",name:S.serWau,color:S3,type:"line"}],
       ["dau"],{zoom:false, avg:true, avgLabel:S.cmpDauPrev, unit:S.uUsers});
     segChart("chPosts","segPosts",DATA.posts_by_day,[
       {key:"requests",name:S.serRequests,color:S1,type:"bar"},
-      {key:"offers",name:S.serOffers,color:S2,type:"bar"}],
+      {key:"offers",name:S.serOffers,color:S3,type:"bar"}],
       ["requests","offers"],{zoom:true, unit:S.uPosts});
     segChart("chMsgs","segMsgs",DATA.messages_by_day,[
       {key:"msgs",name:S.serMsgs,color:S1,type:"bar"},
@@ -5302,10 +5424,19 @@
 
     var lf=DATA.lifecycle||{};
     var lt0=el("table","plain");
-    [[S.lf1,fmt(lf.new_7d)],
-     [S.lf2,fmt(lf.active_7d)],
-     [S.lf3,fmt(lf.dormant_30d)],
-     [S.lf4,fmt(k.live_users)]].forEach(function(r){
+    // The rows must add up to the total. "New" sits INSIDE "active" (a
+    // signup opens the app), so it is said as part of that row, and the
+    // remainder gets its own row. The server's buckets are not a complete
+    // partition (seen 8-30 days ago AND accounts younger than 30 days that
+    // never opened), so the remainder is named for what it is: everyone else.
+    var lfA=+lf.active_7d||0, lfN=+lf.new_7d||0, lfD=+lf.dormant_30d||0, lfT=+k.live_users||0;
+    var lfRows = lfN<=lfA
+      ? [[S.lf2New(fmt(lfN)),fmt(lfA)]]
+      : [[S.lf1,fmt(lfN)],[S.lf2,fmt(lfA)]];
+    lfRows.push([S.lf3,fmt(lfD)]);
+    if(lfT-lfA-lfD>0) lfRows.push([S.lfRest,fmt(lfT-lfA-lfD)]);
+    lfRows.push([S.lf4,fmt(lfT)]);
+    lfRows.forEach(function(r){
       var tr=el("tr"); tr.appendChild(el("th",null,r[0])); tr.appendChild(el("td",null,r[1]));
       lt0.appendChild(tr);
     });
@@ -5353,7 +5484,7 @@
       .map(function(c){
         return {label:catLabel(c.category),
                 v1:catSel==="offers"? 0 : c.requests, c1:S1,
-                v2:catSel==="requests"? 0 : c.offers, c2:S2,
+                v2:catSel==="requests"? 0 : c.offers, c2:S3,
                 title:"בקשות "+c.requests+" · הצעות "+c.offers,
                 onClick:function(){ drillToChat({category:c.category}); }};
       }));
@@ -5470,8 +5601,8 @@
     var lt=el("table","plain");
     [[S.liq1,fmt(L.requests_30d)],
      [S.liq4,L.median_minutes_to_first_offer==null?"-":
-        (L.median_minutes_to_first_offer<120? fmt(L.median_minutes_to_first_offer)+" "+S.minutes :
-         fmt(Math.round(L.median_minutes_to_first_offer/60))+" "+S.hours),
+        (L.median_minutes_to_first_offer<120? nUnit(L.median_minutes_to_first_offer, S.minuteOne, S.minutes) :
+         nUnit(Math.round(L.median_minutes_to_first_offer/60), S.hourOne, S.hours)),
       S.liqMedianTip]
     ].forEach(function(r){
       var tr=el("tr"), th=el("th");
@@ -5493,8 +5624,8 @@
      [S.ch3,C.offer_convos? pct(C.offer_answered,C.offer_convos)+" ("+fmt(C.offer_answered)+"/"+fmt(C.offer_convos)+")" : "-"],
      [S.ch4,C.request_convos? pct(C.request_answered,C.request_convos)+" ("+fmt(C.request_answered)+"/"+fmt(C.request_convos)+")" : "-"],
      [S.ch5,C.median_first_reply_minutes==null?"-":
-        (C.median_first_reply_minutes<120? fmt(C.median_first_reply_minutes)+" "+S.minutes :
-         fmt(Math.round(C.median_first_reply_minutes/60))+" "+S.hours),
+        (C.median_first_reply_minutes<120? nUnit(C.median_first_reply_minutes, S.minuteOne, S.minutes) :
+         nUnit(Math.round(C.median_first_reply_minutes/60), S.hourOne, S.hours)),
       S.ch5Tip]
     ].forEach(function(r){
       var tr=el("tr"), th=el("th");
@@ -5523,7 +5654,7 @@
         var tr=el("tr");
         tr.appendChild(el("td",null,it.title));
         tr.appendChild(el("td",null,it.city||"-"));
-        tr.appendChild(el("td",null,it.days===0?S.today:fmt(it.days)+" "+S.daysUnit));
+        tr.appendChild(el("td",null,it.days===0?S.today:nDays(it.days)));
         nt.appendChild(tr);
       });
       noHost.appendChild(nt);
@@ -5531,7 +5662,7 @@
       // full-set field (the reduce said 48 days while the true oldest was 82)
       var oldest=(NO.oldest_days!=null)? NO.oldest_days
         : (NO.items||[]).reduce(function(a,it){ return Math.max(a,it.days||0); },0);
-      var noRead=S.rdNoOffer(fmt(NO.count), oldest? fmt(oldest)+" "+S.daysUnit : S.today);
+      var noRead=S.rdNoOffer(fmt(NO.count), oldest? nDays(oldest) : S.today);
       if(NO.count>5) noRead+=S.recNoOffer(fmt(NO.count));
       panelRead("noOffer", NO.count>5?"warn":"", noRead);
     }
@@ -5554,7 +5685,9 @@
         tr.appendChild(el("td",null,fmt(u.posts)));
         tr.appendChild(el("td",null,fmt(u.matches)));
         tr.appendChild(el("td",null,fmt(u.msgs)));
-        tr.appendChild(el("td",null,u.verified?"✓":"-"));
+        var vtd=el("td",null,u.verified?null:"-");
+        if(u.verified){ var vc=icon("check",14); vc.style.color="var(--good-text)"; vtd.appendChild(vc); }
+        tr.appendChild(vtd);
         tr.appendChild(el("td",null,u.last_seen? fmtTime(u.last_seen):"-"));
         ut.appendChild(tr);
       });
@@ -5756,10 +5889,18 @@
     sun:["M12 2v2","M12 20v2","m4.9 4.9 1.4 1.4","m17.7 17.7 1.4 1.4","M2 12h2","M20 12h2","m6.3 17.7-1.4 1.4","m19.1 4.9-1.4 1.4"],
     globe:["M2 12h20","M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"],
     logout:["M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4","m16 17 5-5-5-5","M21 12H9"],
-    arrowright:["M5 12h14","m12 5 7 7-7 7"]
+    arrowright:["M5 12h14","m12 5 7 7-7 7"],
+    chevdown:["m6 9 6 6 6-6"],
+    arrowr:["M5 12h14","m12 5 7 7-7 7"], arrowl:["M19 12H5","m12 19-7-7 7-7"],
+    arrowup:["M12 19V5","m5 12 7-7 7 7"], arrowdown:["M12 5v14","m19 12-7 7-7-7"],
+    minus:["M5 12h14"], check:["M20 6 9 17l-5-5"], x:["M18 6 6 18","m6 6 12 12"],
+    star:["M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"],
+    flag:["M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z","M4 22v-7"],
+    ban:["m4.9 4.9 14.2 14.2"], alertc:["M12 8v4","M12 16h.01"], more:[]
   };
   var CIRCLES={ pin:[[12,10,3]], radio:[[12,12,2]], award:[[12,8,6]],
-                sun:[[12,12,4]], globe:[[12,12,10]] };
+                sun:[[12,12,4]], globe:[[12,12,10]], ban:[[12,12,10]], alertc:[[12,12,10]],
+                more:[[12,12,1],[19,12,1],[5,12,1]] };
   function icon(name,size){
     var sz=size||16;
     var svg=sv("svg",{viewBox:"0 0 24 24",width:sz,height:sz,fill:"none",
@@ -5779,10 +5920,11 @@
     chRetention:"trend", userStates:"refresh", repeatRate:"repeat",
     topUsers:"award", safety:"shield", metaAdsSummary:"radio", metaAdsDaily:"file",
     blList:"box", psList:"file",
-    driverTree:"trend", nbhd:"map", nudgeEff:"alert", helperDep:"award"
+    driverTree:"trend", nbhd:"map", nudgeEff:"bell", helperDep:"award"
   };
   var SEC_ICON={ secGrowth:"trend", secMarket:"layers", secChat:"msg",
-                 secRetention:"refresh", secUsers:"award", secSafety:"shield" };
+                 secRetention:"refresh", secUsers:"award", secEvents:"activity",
+                 secSafety:"shield" };
   function paintIcons(){
     Object.keys(PANEL_ICON).forEach(function(id){
       var host=$(id); if(!host) return;
@@ -5792,8 +5934,9 @@
       h2.classList.add("withico");
     });
     Object.keys(SEC_ICON).forEach(function(id){
-      var sec=$(id); if(!sec || sec.querySelector(".ico")) return;
+      var sec=$(id); if(!sec || sec.querySelector(".ico:not(.chev)")) return;
       sec.insertBefore(icon(SEC_ICON[id],15), sec.firstChild);
+      sec.classList.add("withico"); // the icon replaces the colour square
     });
   }
 
@@ -8648,9 +8791,17 @@
   function persistSec(){
     try{ localStorage.setItem("helpy_console_secopen",JSON.stringify(secOpen)); }catch(e){}
   }
+  // the collapse affordance: a chevron icon, always the header's last child
+  // (a language flip rewrites the header text, so it is re-added each render)
+  function secChevron(h){
+    var c=h.querySelector(".secchev");
+    if(!c){ c=el("span","secchev"); var ic=icon("chevdown",16); ic.classList.add("chev"); c.appendChild(ic); }
+    h.appendChild(c);
+  }
   SEC_IDS.forEach(function(id){
     var h=$(id); if(!h) return;
     h.classList.add("toggle");
+    secChevron(h);
     h.addEventListener("click",function(){
       secOpen[id]=!isSecOpen(id); persistSec(); applySec(id);
     });
@@ -8674,6 +8825,7 @@
         var d=h.querySelector(".secdot");
         if(!d){ d=el("span","secdot"); h.appendChild(d); }
         d.className=cls;
+        secChevron(h);
       }
       var a=document.querySelector('#rail a[data-t="'+id+'"]');
       if(a){
