@@ -4292,8 +4292,10 @@
   // now: good = trend icon, warn = alert, bad = alert in the bad colour,
   // a neutral reading carries no icon at all.
   function toneIcon(cls){
-    if(cls==="good") return icon("trend",15);
-    if(cls==="warn" || cls==="bad") return icon("alert",15);
+    // cls can carry more than the tone ("lead warn"), so test the word, not the string
+    var t=" "+cls+" ";
+    if(t.indexOf(" good ")>=0) return icon("trend",15);
+    if(t.indexOf(" warn ")>=0 || t.indexOf(" bad ")>=0) return icon("alert",15);
     return null;
   }
 
