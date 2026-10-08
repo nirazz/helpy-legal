@@ -356,6 +356,11 @@
   }
   .footer-links a { font-size: 14px; color: #64748b; text-decoration: none; transition: color 0.2s; }
   .footer-links a:hover { color: #c4b5fd; }
+  .social-row { display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 36px; }
+  .social-row .social-label { font-size: 14px; color: #94a3b8; }
+  .social-row a { width: 44px; height: 44px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #c4b5fd; background: rgba(196,181,253,0.08); border: 1px solid rgba(196,181,253,0.25); transition: background 0.2s, color 0.2s; }
+  .social-row a:hover { background: rgba(196,181,253,0.2); color: #fff; }
+  .social-row svg { width: 20px; height: 20px; }
   .footer .copyright { font-size: 13px; color: #334155; }
 
   /* ── Responsive ── */
@@ -431,6 +436,9 @@
     .feature-list li { gap: 0; }
   </style>
 </noscript>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":"Helpy","url":"https://help-y.com/","logo":"https://help-y.com/app-icon-512.png","sameAs":["https://www.facebook.com/profile.php?id=61588709264545","https://www.instagram.com/helpy.community/"]}
+</script>
 </head>
 <body>
 
@@ -728,6 +736,12 @@
   <p class="footer-meta">
     מעדיפים את ערוץ הבטא? <a href="https://testflight.apple.com/join/P6uAfJsQ">הצטרפו ל-TestFlight (iOS)</a>
   </p>
+
+  <div class="social-row">
+    <span class="social-label">עקבו אחרינו</span>
+    <a href="https://www.facebook.com/profile.php?id=61588709264545" target="_blank" rel="noopener" aria-label="Helpy בפייסבוק"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+    <a href="https://www.instagram.com/helpy.community/" target="_blank" rel="noopener" aria-label="Helpy באינסטגרם"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+  </div>
 
   <div class="footer-links">
     <a href="/privacy-he.html">מדיניות פרטיות</a>
