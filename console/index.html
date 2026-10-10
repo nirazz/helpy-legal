@@ -803,15 +803,16 @@
   /* first paint: only the brief has arrived (see loadBriefFirst). Every other
      tab is a quiet spinner until the full payload lands, never a half-drawn
      page of empty panels. */
-  /* the server tab is exempt: it never reads the dashboard payload (its own
-     call, see loadInfra), so it has nothing to wait for */
-  body.partial #app > div:not(#briefView):not(#infraView) > * { display:none; }
-  body.partial #app > div:not(#briefView):not(#infraView)::before { content:""; display:block;
+  /* the server and expenses tabs are exempt: neither reads the dashboard
+     payload (their own calls, see loadInfra / loadExpenses), so they have
+     nothing to wait for */
+  body.partial #app > div:not(#briefView):not(#infraView):not(#expensesView) > * { display:none; }
+  body.partial #app > div:not(#briefView):not(#infraView):not(#expensesView)::before { content:""; display:block;
     width:28px; height:28px; margin:56px auto; border-radius:50%;
     border:2.5px solid var(--hairline); border-top-color:var(--s1);
     animation:spin 1.1s linear infinite; }
   body.partial #rail { display:none; }
-  body.partial.partial-failed #app > div:not(#briefView):not(#infraView)::before {
+  body.partial.partial-failed #app > div:not(#briefView):not(#infraView):not(#expensesView)::before {
     content:attr(data-wait); width:auto; height:auto; border:none; animation:none;
     margin:56px 16px; text-align:center; color:var(--muted); font-size:14px; }
   .brwait { height:14px; width:62%; margin:6px 0; border-radius:7px;
@@ -1481,6 +1482,93 @@
     .ifexp span { padding-top:2px; }
   }
   .ifbottom { margin:12px 0 0; }
+
+  /* ---- expenses tab ----
+     Same tile grid as the server tab (4 here, so the base .tiles grid), a
+     window segment, one stacked chart, one month table, the ledger. The
+     table is wider than a phone - it scrolls inside its panel, never the page. */
+  .exbar { display:flex; gap:10px 16px; align-items:center; flex-wrap:wrap; margin:0 2px 14px; }
+  .exrate { font-size:12.5px; color:var(--ink2); display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .exrate b { font-variant-numeric:tabular-nums; color:var(--ink); }
+  .exrate .ghost, .exacts .ghost { padding:3px 10px; font-size:12px; }
+  .exrate input { width:76px; }
+  .extiles .tile .sub { flex-wrap:wrap; row-gap:4px; align-items:center; }
+  .extiles .tile .brpill { font-size:10.5px; padding:1px 8px; }
+  .extiles .tile .exnote2 { margin:2px 0 4px; font-size:11px; line-height:1.45; }
+  .exst-over .bullet .bval { background:var(--bad-text); }
+  #exHead .verdict { margin-bottom:10px; }
+  #exHead .empty { padding:40px 10px; font-size:13.5px; }
+  .exapprox { margin:2px 2px 14px; }
+  .exlegend { display:flex; flex-wrap:wrap; gap:6px 14px; margin:0 0 8px; font-size:12px; color:var(--ink2); }
+  .exlegend span { display:inline-flex; align-items:center; gap:6px; }
+  .exlegend i { width:10px; height:10px; border-radius:3px; display:inline-block; }
+  .extblwrap { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:0 -4px; padding:0 4px; }
+  table.extbl { min-width:100%; width:max-content; }
+  .extbl th { white-space:nowrap; font-size:12px; }
+  .extbl th small { display:block; color:var(--muted); font-weight:400; font-size:10.5px; }
+  .extbl td { white-space:nowrap; vertical-align:top; }
+  .extbl td.exv { position:sticky; inset-inline-start:0; background:var(--surface); z-index:1;
+                  font-weight:600; color:var(--ink); max-width:220px; white-space:normal; }
+  .extbl td.exv small { display:block; font-weight:400; color:var(--muted); font-size:11px; }
+  .extbl td small.exorig { display:block; color:var(--muted); font-size:11px; font-weight:400; }
+  .extbl td.exnil { color:var(--muted); }
+  .extbl tr.extot td { font-weight:700; border-top:2px solid var(--baseline); }
+  .exmiss { display:flex; gap:8px; align-items:flex-start; font-size:12.5px; color:var(--ink2);
+            margin:0 0 12px; padding:8px 12px; border-radius:10px; background:var(--wash1); line-height:1.5; }
+  .exmiss .ico { flex-shrink:0; color:var(--s1); margin-top:2px; }
+  .exledhead { display:flex; justify-content:flex-end; margin:-4px 0 10px; }
+  .exaddbtn { font:inherit; font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:6px;
+              padding:7px 14px; border-radius:9px; border:1px solid var(--s1);
+              background:transparent; color:var(--s1); cursor:pointer; }
+  .exaddbtn:hover { background:var(--wash1); }
+  .exrow { display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.2fr) auto;
+           gap:4px 16px; align-items:center; padding:10px 2px; border-bottom:1px solid var(--grid); font-size:13px; }
+  .exrow:last-child { border-bottom:0; }
+  .exrow .exvn { font-weight:700; color:var(--ink); }
+  .exrow .exvn .tagpill { margin-inline-start:6px; font-weight:600; }
+  .exrow .exnote { display:block; font-size:12px; color:var(--muted); margin-top:2px; white-space:pre-wrap; word-break:break-word; }
+  .exrow .examt { font-variant-numeric:tabular-nums; font-weight:600; }
+  .exrow .examt small, .exrow .exdates { color:var(--ink2); font-size:12px; font-weight:400; }
+  .exacts { display:flex; gap:6px; }
+  .exacts .ghost { display:inline-flex; align-items:center; gap:5px; }
+  .exacts .ghost.danger { color:var(--bad-text); }
+  .exconfirm { grid-column:1 / -1; display:flex; flex-wrap:wrap; gap:8px 12px; align-items:center;
+               padding:9px 12px; border-radius:10px; background:rgba(220,38,38,0.08);
+               border-inline-start:3px solid var(--bad-text); font-size:13px; }
+  html[data-theme="dark"] .exconfirm { background:rgba(248,113,113,0.12); }
+  .exconfirm .exq { flex:1 1 240px; }
+  .exconfirm button { font:inherit; font-size:12.5px; font-weight:600; padding:6px 14px; border-radius:8px;
+                      border:1px solid var(--grid); background:transparent; color:var(--ink2); cursor:pointer; }
+  .exconfirm button.go { background:var(--bad-text); border-color:var(--bad-text); color:#fff; }
+  .exconfirm button:disabled { opacity:.5; cursor:default; }
+  .exform { border:1px solid var(--grid); border-radius:12px; padding:14px; margin:0 0 14px; background:var(--plane); }
+  .exform h3 { margin:0 0 10px; font-size:14.5px; font-weight:700; }
+  .exgrid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px 12px; }
+  .exgrid label { display:flex; flex-direction:column; gap:4px; font-size:12px; color:var(--ink2); min-width:0; }
+  .exgrid label.span2 { grid-column:span 2; }
+  .exgrid label.span4 { grid-column:1 / -1; }
+  .exform input, .exform select, .exrate input {
+    font:inherit; font-size:13.5px; color:var(--ink); background:var(--surface);
+    border:1px solid var(--grid); border-radius:8px; padding:7px 9px; min-height:36px; box-sizing:border-box; width:100%; }
+  .exform input:focus, .exform select:focus, .exrate input:focus { outline:none; border-color:var(--s1); }
+  .exratef { display:inline-flex; align-items:center; gap:6px; }
+  .exrate .exratef input { width:84px; min-height:32px; padding:5px 8px; }
+  .exgrid label.span3 { grid-column:span 3; }
+  .exform .msgacts { margin-top:12px; }
+  .exform .msgerr, .exrate .msgerr { margin:10px 0 0; }
+  .exrate .msgerr { margin:0; flex-basis:100%; }
+  @media (max-width:900px){
+    .exgrid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .exgrid label.span3 { grid-column:1 / -1; }
+    .exrow { grid-template-columns:minmax(0,1fr) auto; }
+    .exrow .exdates { grid-column:1 / 2; }
+    .exrow .exacts { grid-column:2; grid-row:1 / span 2; align-self:start; }
+  }
+  @media (max-width:420px){
+    .exgrid { grid-template-columns:minmax(0,1fr); }
+    .exgrid label.span2, .exgrid label.span3 { grid-column:auto; }
+    .exacts .ghost span { display:none; }
+  }
   /* the "why not yet" rows break down one of the answers above - indent them */
   #pnReasons .hrow { padding-inline-start:16px; }
   /* band headers: 12 flat rows is a list, three bands is a judgement */
@@ -1521,6 +1609,7 @@
 
          בוקר                 the morning brief: what happened, who is waiting, does it run. Default tab.
          מטריקות · קמפיינים   what the business did, and what we paid for it
+         הוצאות               what everything costs per month: the ledger + Meta (money, so beside campaigns)
          כרטיסים              what the users produced
          צ'אט · התראות        messages IN from them, messages OUT to them
          בקלוג                what we decided to do about all of the above
@@ -1533,6 +1622,7 @@
     <button data-v="brief" class="on" data-ic="zap"><span data-i18n="tabBrief">בוקר</span></button>
     <button data-v="metrics" data-ic="activity"><span data-i18n="tabMetrics">מטריקות</span></button>
     <button data-v="ads" data-ic="radio"><span data-i18n="tabAds">קמפיינים</span></button>
+    <button data-v="expenses" data-ic="wallet"><span data-i18n="tabExpenses">הוצאות</span></button>
     <button data-v="posts" data-ic="file"><span data-i18n="tabPosts">כרטיסים</span></button>
     <button data-v="chat" data-ic="msg"><span data-i18n="tabChat">צ'אט</span></button>
     <button data-v="push" data-ic="bell"><span data-i18n="tabPush">התראות</span></button>
@@ -1817,6 +1907,49 @@
       <section class="panel" style="opacity:1;transform:none">
         <h2 data-i18n="ifExTitle">איך לקרוא את המסך</h2>
         <div id="ifExplain"></div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Expenses tab: what Helpy costs per month. The ledger (fixed and one-time
+       costs Nir enters here) plus Meta ad spend, pulled live by admin-dashboard
+       (action "expenses"). Its own call, like the server tab - see loadExpenses.
+       Nothing here is hard-coded: this file is public. Deep link: #expenses -->
+  <div id="expensesView" class="hidden">
+    <div id="exHead"></div>
+    <div id="exBody" class="hidden">
+      <div class="exbar">
+        <span class="blfgrp"><span class="cap" data-i18n="exWinL">חלון</span>
+          <span class="seg" id="exWinSeg">
+            <button data-d="6" data-i18n="exW6">6 חודשים</button>
+            <button data-d="12" class="on" data-i18n="exW12">12 חודשים</button>
+            <button data-d="24" data-i18n="exW24">24 חודשים</button>
+          </span></span>
+        <span class="exrate" id="exRate"></span>
+      </div>
+      <div class="tiles extiles" id="exTiles"></div>
+      <p class="note warn exapprox hidden" id="exApprox"></p>
+
+      <div class="sechead" style="--sec-c:var(--s1)" data-i18n="exSecMoney">1 · לאן הכסף הולך</div>
+      <section class="panel" style="opacity:1;transform:none">
+        <h2 data-i18n="exChTitle">הוצאות לפי חודש</h2>
+        <div class="sub" data-i18n="exChSub"></div>
+        <div id="exLegend" class="exlegend"></div>
+        <div id="exChart"></div>
+      </section>
+      <section class="panel" style="opacity:1;transform:none">
+        <h2 data-i18n="exTblTitle">פירוט לפי חודש</h2>
+        <div class="sub" data-i18n="exTblSub"></div>
+        <div class="extblwrap" id="exTable"></div>
+      </section>
+
+      <div class="sechead" style="--sec-c:var(--s3)" data-i18n="exSecLedger">2 · מה הוזן</div>
+      <section class="panel" style="opacity:1;transform:none">
+        <h2 data-i18n="exLedTitle">ההוצאות הקבועות והחד-פעמיות שלי</h2>
+        <div class="sub" data-i18n="exLedSub"></div>
+        <div id="exMissing"></div>
+        <div id="exFormHost"></div>
+        <div id="exLedger"></div>
       </section>
     </div>
   </div>
@@ -2574,7 +2707,7 @@
       // server tab. Latin tokens (CPU, IO, swap) are isolated with U+2068/U+2069
       // so a number beside them can never be pulled into their run
       tabInfra:"שרת",
-      ifOk:"השרת בטווח התקין - כל ארבעת המדדים מתחת לסף ההתראה.",
+      ifOk:"השרת בטווח התקין - כל המדדים מתחת לסף ההתראה.",
       ifDown:function(list){ return "<b>חריגה:</b> "+list+". כשזה נמשך, זה הזמן לשדרג את המכונה."; },
       ifSince:function(t){ return "מאז "+t; },
       ifNoMon:"עוד אין מצב מהבדיקה האוטומטית - הוא יופיע אחרי הדגימות הראשונות.",
@@ -2628,6 +2761,74 @@
         ["⁨IO⁩","כמה הדיסק עסוק. גבוה לאורך זמן אומר שאילתות כבדות או זיכרון שלא מספיק."]
       ],
       ifExBottom:"<b>מתי לשדרג:</b> ⁨CPU⁩ מעל 80% לאורך זמן או חיבורים קרובים לתקרה = זמן לשדרג את המכונה. קפיצה של כמה דקות לא מצדיקה שדרוג, מגמה של כמה ימים כן.",
+      ifMonBudget:"גודל השרת ותקציב ⁦$25⁩",
+      // expenses tab. Every amount and Latin name is isolated (U+2066/U+2068
+      // ... U+2069) so a number can never pair with the wrong word
+      tabExpenses:"הוצאות",
+      exLoading:"טוען את ההוצאות...",
+      exErr:function(m){ return "לא הצלחנו לטעון את ההוצאות: ⁨"+m+"⁩"; },
+      exMetaNull:"⁨Meta⁩ לא ענה עכשיו, אז הוצאות הפרסום ב-⁨Meta⁩ חסרות בסכומים. זה לא אפס - רענון בעוד רגע ינסה שוב.",
+      exWinL:"חלון", exW6:"6 חודשים", exW12:"12 חודשים", exW24:"24 חודשים",
+      exTNow:"החודש עד עכשיו", exTPrev:"חודש שעבר", exTAvg:"ממוצע חודשי", exTSb:"⁨Supabase⁩ החודש",
+      exNowMeta:function(v){ return "מתוך זה ⁨Meta⁩: "+v; },
+      exNowNoMeta:"בלי ⁨Meta⁩ - לא ענה",
+      exAvgN:function(n){ return n===1? "על פני חודש אחד עם הוצאה" : "על פני "+n+" חודשים עם הוצאה"; },
+      exSbOk:"בתקציב", exSbOver:"חריגה",
+      exSbNone:"לא הוזן חיוב ⁨Supabase⁩ החודש",
+      exSbNote:"מגבלת הוצאות מופעלת. שרת גדול מ-⁨Micro⁩ יעלה מעבר לתקציב, ותגיע התראה בטלגרם.",
+      exSbLimit:function(v){ return "תקציב: "+v; },
+      exApprox:"הסכומים בקירוב: חלק מההוצאות בדולר או ביורו, והן מומרות לשקלים לפי השער שליד החלון.",
+      exRate:function(usd,eur){ return "שער המרה: דולר "+usd+" · יורו "+eur; },
+      exRateWhen:function(d){ return "(עודכן "+d+")"; },
+      exRateEdit:"עדכון שער", exRateUsd:"דולר", exRateEur:"יורו",
+      exRateBad:"שער צריך להיות מספר בין 1 ל-10.",
+      exSave:"שמירה", exSaving:"שומר...", exCancel:"ביטול",
+      exSecMoney:"1 · לאן הכסף הולך",
+      exChTitle:"הוצאות לפי חודש",
+      exChSub:"כל עמודה היא חודש, מחולקת לפי סוג ההוצאה. ריחוף מראה את הספקים. הפרסום כולל את ⁨Meta⁩, שנמשך אוטומטית.",
+      exChEmpty:"אין הוצאות בחלון הזה.",
+      exNoChart:"ספריית הגרפים לא נטענה - רענון יעזור.",
+      exTotal:"סה\"כ",
+      exTblTitle:"פירוט לפי חודש",
+      exTblSub:"כל שורה היא ספק, החודש האחרון ראשון. סכום שלא בשקלים מופיע גם במטבע המקורי.",
+      exColVendor:"ספק",
+      exMetaRow:"⁨Meta⁩ - פרסום (אוטומטי)",
+      exMetaTip:"⁨Meta⁩ (אוטומטי)",
+      exMetaUnknown:"⁨Meta⁩ לא ענה - הסכום לא ידוע",
+      exPartial:"עד עכשיו",
+      exSecLedger:"2 · מה הוזן",
+      exLedTitle:"ההוצאות הקבועות והחד-פעמיות שלי",
+      exLedSub:"כל מה שמוזן כאן נכנס לסכומים למעלה. ⁨Meta⁩ לא כאן - הוא נמשך לבד.",
+      exAdd:"הוסף הוצאה",
+      exLedEmpty:"עוד לא הוזנו הוצאות. אפשר להתחיל עם הכפתור \"הוסף הוצאה\".",
+      exMissing:function(list){ return "עוד לא הוזנו: "+list; },
+      exCad:{ one_time:"חד-פעמי", monthly:"חודשי", yearly:"שנתי" },
+      exCats:{ infra:"תשתית", ads:"פרסום", stores:"חנויות אפליקציה", domain:"דומיין",
+               ai:"בינה מלאכותית", sms:"⁨SMS⁩ ושיחות", tools:"כלים", other:"אחר" },
+      exOn:function(d){ return "ב-"+d; },
+      exFrom:function(d){ return "מ-"+d+" ואילך"; },
+      exFromTo:function(a,b){ return "מ-"+a+" עד "+b; },
+      exEdit:"עריכה", exDel:"מחיקה",
+      exDelQ:function(v){ return "למחוק את ההוצאה ⁨"+v+"⁩? הסכומים שלה ייעלמו מכל החודשים, ואי אפשר לבטל."; },
+      exDelYes:"כן, למחוק", exDeleting:"מוחק...",
+      exFormAdd:"הוצאה חדשה", exFormEdit:"עריכת הוצאה",
+      exFVendor:"ספק", exFVendorPh:"למשל ⁨Apple Developer⁩",
+      exFCat:"סוג", exFAmount:"סכום", exFCur:"מטבע", exFCad:"תדירות",
+      exFStart:"תאריך התחלה", exFStartOne:"תאריך החיוב",
+      exFEnd:"תאריך סיום (לא חובה)", exFNote:"הערה (לא חובה)",
+      exCur:{ ILS:"שקל", USD:"דולר", EUR:"יורו" },
+      exVVendor:"חסר שם ספק.",
+      exVAmount:"הסכום צריך להיות מספר גדול מאפס.",
+      exVStart:"חסר תאריך התחלה.",
+      exVEnd:"תאריך הסיום לפני תאריך ההתחלה.",
+      exVLong:"השם או ההערה ארוכים מדי.",
+      exESso:"שמירה דורשת כניסה עם ⁨Google⁩. בכניסה עם מפתח החירום אפשר רק לצפות.",
+      exETimeout:"השרת לא ענה בזמן. כדאי לנסות שוב.",
+      exEGeneric:function(m){ return "השמירה לא הצליחה: ⁨"+m+"⁩"; },
+      exEDel:function(m){ return "המחיקה לא הצליחה: ⁨"+m+"⁩"; },
+      exENotFound:"ההוצאה כבר לא קיימת - אולי נמחקה מחלון אחר.",
+      exMonths:["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"],
+      exMonthsShort:["ינו׳","פבר׳","מרץ","אפר׳","מאי","יוני","יולי","אוג׳","ספט׳","אוק׳","נוב׳","דצמ׳"],
       archTitle:"איך Helpy עובד",
       archSub:"כל רכיב, מה מחובר למה, ואיפה כל דבר מאוחסן · ריחוף על מונח מקוצר מסביר אותו",
       archPickFlow:"בחר/י זרימה למעלה כדי לראות איך בקשה עוברת במערכת, שלב אחר שלב",
@@ -3255,7 +3456,7 @@
       blNone:"Nothing in this status",
       tabArch:"Architecture",
       tabInfra:"Server",
-      ifOk:"The server is within its normal range - all four measures are below their alert line.",
+      ifOk:"The server is within its normal range - every measure is below its alert line.",
       ifDown:function(list){ return "<b>Over the line:</b> "+list+". If it keeps up, it is time to upgrade the machine."; },
       ifSince:function(t){ return "since "+t; },
       ifNoMon:"No status from the automatic check yet - it appears after the first samples.",
@@ -3309,6 +3510,73 @@
         ["IO","How busy the disk is. High for a long time means heavy queries or not enough memory."]
       ],
       ifExBottom:"<b>When to upgrade:</b> CPU above 80% for a long stretch, or connections near the ceiling = time to upgrade the machine. A few minutes of spike does not justify an upgrade, a trend over several days does.",
+      ifMonBudget:"Server size vs the $25 budget",
+      // expenses tab
+      tabExpenses:"Expenses",
+      exLoading:"Loading expenses...",
+      exErr:function(m){ return "Could not load expenses: "+m; },
+      exMetaNull:"Meta did not answer just now, so Meta ad spend is missing from the totals. That is not zero - a refresh in a moment will try again.",
+      exWinL:"Window", exW6:"6 months", exW12:"12 months", exW24:"24 months",
+      exTNow:"This month so far", exTPrev:"Last month", exTAvg:"Monthly average", exTSb:"Supabase this month",
+      exNowMeta:function(v){ return "of which Meta: "+v; },
+      exNowNoMeta:"without Meta - it did not answer",
+      exAvgN:function(n){ return n===1? "over 1 month with spend" : "over "+n+" months with spend"; },
+      exSbOk:"Within budget", exSbOver:"Over budget",
+      exSbNone:"No Supabase charge entered this month",
+      exSbNote:"The spend cap is on. A server larger than Micro would cost more than the budget, and a Telegram alert is sent.",
+      exSbLimit:function(v){ return "Budget: "+v; },
+      exApprox:"Totals are approximate: some costs are in dollars or euros and are converted to shekels at the rate next to the window.",
+      exRate:function(usd,eur){ return "Exchange rate: USD "+usd+" · EUR "+eur; },
+      exRateWhen:function(d){ return "(updated "+d+")"; },
+      exRateEdit:"Edit rate", exRateUsd:"USD", exRateEur:"EUR",
+      exRateBad:"A rate must be a number between 1 and 10.",
+      exSave:"Save", exSaving:"Saving...", exCancel:"Cancel",
+      exSecMoney:"1 · Where the money goes",
+      exChTitle:"Spend by month",
+      exChSub:"Each bar is a month, split by kind of cost. Hover to see the vendors. Advertising includes Meta, pulled automatically.",
+      exChEmpty:"No spend in this window.",
+      exNoChart:"The chart library did not load - a refresh will help.",
+      exTotal:"Total",
+      exTblTitle:"Month by month",
+      exTblSub:"One row per vendor, latest month first. Amounts not in shekels also show the original currency.",
+      exColVendor:"Vendor",
+      exMetaRow:"Meta - advertising (automatic)",
+      exMetaTip:"Meta (automatic)",
+      exMetaUnknown:"Meta did not answer - amount unknown",
+      exPartial:"so far",
+      exSecLedger:"2 · What is entered",
+      exLedTitle:"My recurring and one-time costs",
+      exLedSub:"Everything entered here goes into the totals above. Meta is not here - it is pulled on its own.",
+      exAdd:"Add expense",
+      exLedEmpty:"No costs entered yet. Start with the \"Add expense\" button.",
+      exMissing:function(list){ return "Not entered yet: "+list; },
+      exCad:{ one_time:"one-time", monthly:"monthly", yearly:"yearly" },
+      exCats:{ infra:"Infrastructure", ads:"Advertising", stores:"App stores", domain:"Domain",
+               ai:"AI", sms:"SMS and calls", tools:"Tools", other:"Other" },
+      exOn:function(d){ return "on "+d; },
+      exFrom:function(d){ return "from "+d+" on"; },
+      exFromTo:function(a,b){ return "from "+a+" to "+b; },
+      exEdit:"Edit", exDel:"Delete",
+      exDelQ:function(v){ return "Delete \""+v+"\"? Its amounts disappear from every month, and this cannot be undone."; },
+      exDelYes:"Yes, delete", exDeleting:"Deleting...",
+      exFormAdd:"New expense", exFormEdit:"Edit expense",
+      exFVendor:"Vendor", exFVendorPh:"e.g. Apple Developer",
+      exFCat:"Kind", exFAmount:"Amount", exFCur:"Currency", exFCad:"How often",
+      exFStart:"Start date", exFStartOne:"Charge date",
+      exFEnd:"End date (optional)", exFNote:"Note (optional)",
+      exCur:{ ILS:"Shekel", USD:"Dollar", EUR:"Euro" },
+      exVVendor:"The vendor name is missing.",
+      exVAmount:"The amount must be a number above zero.",
+      exVStart:"The start date is missing.",
+      exVEnd:"The end date is before the start date.",
+      exVLong:"The name or the note is too long.",
+      exESso:"Saving needs a Google sign-in. With the break-glass key the console is view-only.",
+      exETimeout:"The server did not answer in time. Try again.",
+      exEGeneric:function(m){ return "Could not save: "+m; },
+      exEDel:function(m){ return "Could not delete: "+m; },
+      exENotFound:"That expense no longer exists - it may have been deleted elsewhere.",
+      exMonths:["January","February","March","April","May","June","July","August","September","October","November","December"],
+      exMonthsShort:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
       archTitle:"How Helpy works",
       archSub:"Every component, what talks to what, and where things are stored · hover any abbreviation for an explanation",
       archPickFlow:"Pick a flow above to watch a request travel through the system, step by step",
@@ -3955,6 +4223,7 @@
     $("backlogView").classList.toggle("hidden",v!=="backlog");
     $("pushView").classList.toggle("hidden",v!=="push");
     $("infraView").classList.toggle("hidden",v!=="infra");
+    $("expensesView").classList.toggle("hidden",v!=="expenses");
     $("briefView").classList.toggle("hidden",v!=="brief");
     $("rail").classList.toggle("hidden",v!=="metrics");
     if(v==="chat"){
@@ -3976,6 +4245,8 @@
     // the server tab owns its data: draw what we have (after the view is
     // visible, so its charts measure a real width), then pull a fresh copy
     if(v==="infra"){ renderInfra(); loadInfra(); }
+    // the expenses tab owns its data the same way
+    if(v==="expenses"){ renderExpenses(); loadExpenses(); }
     // EVERY tab with a chart, not just metrics: a chart initialised while its
     // view was display:none measures zero width and stays a 100px sliver
     // forever. This guard was written when metrics owned the only charts; the
@@ -6163,6 +6434,11 @@
     // Lucide "server": two rounded racks + their status dots
     server:["M4 2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z","M4 14h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2z","M6 6h.01","M6 18h.01"],
     bell:["M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9","M10.3 21a1.9 1.9 0 0 0 3.4 0"],
+    // Lucide "wallet", "pencil", "trash-2", "plus" (expenses tab)
+    wallet:["M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1","M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"],
+    pencil:["M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z","m15 5 4 4"],
+    trash:["M3 6h18","M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6","M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2","M10 11v6","M14 11v6"],
+    plus:["M5 12h14","M12 5v14"],
     moon:["M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"],
     sun:["M12 2v2","M12 20v2","m4.9 4.9 1.4 1.4","m17.7 17.7 1.4 1.4","M2 12h2","M20 12h2","m6.3 17.7-1.4 1.4","m19.1 4.9-1.4 1.4"],
     globe:["M2 12h20","M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"],
@@ -6198,7 +6474,8 @@
     chRetention:"trend", userStates:"refresh", repeatRate:"repeat",
     topUsers:"award", safety:"shield", metaAdsSummary:"radio", metaAdsDaily:"file",
     blList:"box", psList:"file",
-    driverTree:"trend", nbhd:"map", nudgeEff:"bell", helperDep:"award"
+    driverTree:"trend", nbhd:"map", nudgeEff:"bell", helperDep:"award",
+    exChart:"trend", exTable:"file", exLedger:"wallet"
   };
   var SEC_ICON={ secGrowth:"trend", secMarket:"layers", secChat:"msg",
                  secRetention:"refresh", secUsers:"award", secEvents:"activity",
@@ -8967,7 +9244,8 @@
     // would be a claim nobody measured: the stale warning leads instead.
     var mons=INFRA.monitors||[];
     var NAMES={ infra_cpu:S.ifMonCpu, infra_memory:S.ifMonMem,
-                infra_disk:S.ifMonDisk, infra_connections:S.ifMonConn };
+                infra_disk:S.ifMonDisk, infra_connections:S.ifMonConn,
+                infra_compute_budget:S.ifMonBudget };
     var down=mons.filter(function(m){ return m && m.status==="down"; });
     if(down.length){
       ifVerdict(head, "lead bad", S.ifDown(down.map(function(m){
@@ -9157,6 +9435,557 @@
     }, { replaceMerge:["series"] });
   }
 
+  // ---- expenses tab ----------------------------------------------------------
+  // What Helpy costs, month by month: the ledger Nir keeps here (fixed and
+  // one-time costs) expanded per month by admin-dashboard, plus Meta ad spend
+  // pulled live from the Marketing API (action "expenses"). Its own call,
+  // like the server tab: pulled on entering the tab, on a window change, after
+  // every save/delete, and by the live ticker while on screen and idle.
+  // This file is PUBLIC - no amount, account or name lives here; the vendor
+  // suggestions below are generic product names only.
+  var EXP=null, EXP_ERR=null, EXP_SEQ=0, EXP_MONTHS=12;
+  var EX_FORM=null;   // the add/edit form's state, kept here so a re-render keeps what was typed
+  var EX_DEL=null;    // {id, busy, err}: the row whose delete is awaiting confirmation
+  var EX_RATE=null;   // {usd, eur, busy, err}: the exchange-rate editor
+  var EX_CATS=["infra","ads","stores","domain","ai","sms","tools","other"];
+  var EX_SB_LIMIT=25;  // USD - mirrored from the Supabase spend cap
+  // [name, category, currency, cadence] - a pick pre-fills the rest of a NEW form
+  var EX_SUGGEST=[
+    ["Supabase Pro","infra","USD","monthly"], ["Apple Developer","stores","USD","yearly"],
+    ["Google Play","stores","USD","one_time"], ["Twilio","sms","USD","monthly"],
+    ["Anthropic","ai","USD","monthly"], ["ChatGPT Ads","ads","ILS","monthly"],
+    ["Expo","tools","USD","monthly"], ["Sentry","tools","USD","monthly"],
+    ["PostHog","tools","USD","monthly"], ["דומיין help-y.com","domain","USD","yearly"],
+    ["GitHub","tools","USD","monthly"]
+  ];
+  function expensesOn(){ var v=$("expensesView"); return !!(v && !v.classList.contains("hidden")); }
+  function loadExpenses(){
+    if(!SESSION || !SESSION.access_token) return Promise.resolve();
+    var seq=++EXP_SEQ;
+    var body=$("exBody"); if(body && EXP) body.classList.add("loading");
+    return relayCall("expenses",{months:EXP_MONTHS}).then(function(d){
+      if(seq!==EXP_SEQ) return;
+      EXP=d||{}; EXP_ERR=null;
+    }).catch(function(e){
+      if(seq!==EXP_SEQ) return;
+      EXP_ERR=(e && e.message) || "error";
+    }).then(function(){
+      if(seq!==EXP_SEQ) return;
+      if(body) body.classList.remove("loading");
+      if(expensesOn()){ renderExpenses(); paintIcons(); }
+    });
+  }
+  // a Latin / numeric run kept whole inside a Hebrew line
+  function exIso(s){ return "⁦"+s+"⁩"; }
+  function exNum(v){ return (v===null || v===undefined || v==="" || isNaN(+v)) ? 0 : +v; }
+  var EX_SYM={ ILS:"₪", USD:"$", EUR:"€" };
+  // ₪ amounts the way the campaigns tab writes them (symbol first), with
+  // thousands separators; agorot only below 100
+  function exMoney(n, cur){
+    n=exNum(n);
+    var dec = Math.abs(n)<100 && Math.round(n)!==n ? 2 : 0;
+    var s=new Intl.NumberFormat("en-US",{minimumFractionDigits:dec, maximumFractionDigits:dec}).format(n);
+    return exIso((EX_SYM[cur||"ILS"]||"")+s);
+  }
+  function exMonthName(ym, short){
+    var p=String(ym||"").split("-"); var m=+p[1]-1;
+    if(isNaN(m) || m<0 || m>11) return String(ym||"");
+    return (short? S.exMonthsShort : S.exMonths)[m];
+  }
+  function exMonthLong(ym){ return exMonthName(ym)+" "+String(ym).slice(0,4); }
+  function exDate(iso){
+    if(!iso) return "";
+    var p=String(iso).slice(0,10).split("-");
+    if(p.length<3) return String(iso);
+    return exIso((+p[2])+"."+(+p[1])+"."+p[0]);
+  }
+  function exCatLabel(c){ return (S.exCats||{})[c] || (S.exCats||{}).other || c; }
+  function exEsc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function exErrText(e, fallback){
+    var m=(e && e.message) || String(e||"");
+    if(m==="sso_required" || m==="403") return S.exESso;
+    if(m==="timeout") return S.exETimeout;
+    if(m==="not_found" || m==="404") return S.exENotFound;
+    return fallback(m);
+  }
+  function exToday(){
+    var d=new Date();
+    return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  }
+
+  // ── the month model: one pass over the payload, shared by every panel
+  function exModel(E){
+    var M=(E.months||[]).slice();
+    var metaOk=Array.isArray(E.meta_monthly);
+    var metaBy={};
+    if(metaOk) E.meta_monthly.forEach(function(r){ if(r && r.month) metaBy[r.month]=exNum(r.spend); });
+    var tot={}, cat={}, vend={}, foreign=false, sbUsd={};
+    var rates=E.settings||{};
+    M.forEach(function(m){ tot[m]=0; cat[m]={}; sbUsd[m]=0; });
+    (E.charges||[]).forEach(function(c){
+      if(!c || !(c.month in tot)) return;
+      var k=EX_CATS.indexOf(c.category)>=0 ? c.category : "other";
+      var ils=exNum(c.amount_ils);
+      tot[c.month]+=ils;
+      cat[c.month][k]=(cat[c.month][k]||0)+ils;
+      var name=String(c.vendor||"-");
+      var v=vend[name] || (vend[name]={name:name, cat:k, sum:0, m:{}});
+      var cell=v.m[c.month] || (v.m[c.month]={ils:0, orig:{}});
+      cell.ils+=ils; v.sum+=ils;
+      var cur=c.currency||"ILS";
+      if(cur!=="ILS"){ foreign=true; cell.orig[cur]=(cell.orig[cur]||0)+exNum(c.amount); }
+      if(/^supabase/i.test(name.trim())){
+        sbUsd[c.month]+= cur==="USD" ? exNum(c.amount) : (exNum(rates.usd_ils) ? ils/exNum(rates.usd_ils) : 0);
+      }
+    });
+    if(metaOk) M.forEach(function(m){
+      var s=metaBy[m]||0;
+      tot[m]+=s; cat[m].ads=(cat[m].ads||0)+s;
+    });
+    return { M:M, tot:tot, cat:cat, vend:vend, metaOk:metaOk, metaBy:metaBy,
+             foreign:foreign, sbUsd:sbUsd, cur:M[M.length-1], prev:M[M.length-2] };
+  }
+
+  function renderExpenses(){
+    var head=$("exHead"), body=$("exBody");
+    if(!head || !body) return;
+    head.innerHTML="";
+    if(!EXP){
+      body.classList.add("hidden");
+      if(EXP_ERR) ifVerdict(head, "bad", null, S.exErr(EXP_ERR));
+      else emptyState(head, S.exLoading, "wallet");
+      return;
+    }
+    if(EXP_ERR) ifVerdict(head, "warn", null, S.exErr(EXP_ERR));
+    var D=exModel(EXP);
+    if(!D.metaOk) ifVerdict(head, "warn", null, S.exMetaNull);
+    var wasHidden=body.classList.contains("hidden");
+    body.classList.remove("hidden");
+
+    exRenderRate();
+    exRenderTiles(D);
+    var ap=$("exApprox");
+    ap.textContent=S.exApprox; ap.classList.toggle("hidden", !D.foreign);
+    exRenderChart(D);
+    exRenderTable(D);
+    exRenderMissing();
+    exRenderForm();
+    exRenderLedger();
+    if(wasHidden) resizeCharts();
+  }
+
+  function exRenderTiles(D){
+    var th=$("exTiles"); th.innerHTML="";
+    var nowV=D.cur ? D.tot[D.cur] : 0;
+    var nowNote = !D.metaOk ? S.exNowNoMeta : S.exNowMeta(exMoney(D.metaBy[D.cur]||0));
+    var t1=tile(S.exTNow, exMoney(nowV), {note:nowNote});
+    t1.classList.add("hero");
+    if(D.cur) t1.title=exMonthLong(D.cur)+" · "+S.exPartial;
+    th.appendChild(t1);
+    th.appendChild(tile(S.exTPrev, D.prev ? exMoney(D.tot[D.prev]) : "-",
+      {note: D.prev ? exMonthLong(D.prev) : ""}));
+    var spent=D.M.filter(function(m){ return D.tot[m]>0; });
+    var avg=spent.length ? spent.reduce(function(a,m){ return a+D.tot[m]; },0)/spent.length : null;
+    th.appendChild(tile(S.exTAvg, avg===null ? "-" : exMoney(avg), {note: spent.length ? S.exAvgN(spent.length) : ""}));
+    // Supabase vs the spend cap, in the currency the cap is set in
+    var sb=D.cur ? (D.sbUsd[D.cur]||0) : 0, over=sb>EX_SB_LIMIT+0.005;
+    var hasSb=Object.keys(D.vend).some(function(n){ return /^supabase/i.test(n.trim()) && D.vend[n].m[D.cur]; });
+    var t4=tile(S.exTSb, exMoney(sb,"USD"), {
+      note: hasSb ? S.exSbLimit(exMoney(EX_SB_LIMIT,"USD")) : S.exSbNone,
+      bullet:{ val:Math.min(sb, EX_SB_LIMIT*1.6), target:EX_SB_LIMIT, max:EX_SB_LIMIT*1.6, bands:[] } });
+    t4.classList.add(over ? "exst-over" : "exst-ok");
+    var sub=t4.querySelector(".sub");
+    if(sub) sub.insertBefore(el("span","brpill "+(over?"down":"up"), over ? S.exSbOver : S.exSbOk), sub.firstChild);
+    var tg=t4.querySelector(".btgt"); if(tg) tg.title=S.exSbLimit(exMoney(EX_SB_LIMIT,"USD"));
+    t4.appendChild(el("div","note exnote2",S.exSbNote));
+    th.appendChild(t4);
+  }
+
+  function exRenderRate(){
+    var host=$("exRate"); host.innerHTML="";
+    var st=(EXP && EXP.settings) || {};
+    if(!EX_RATE){
+      var line=el("span");
+      // a rate always shows its agorot: "₪4" read as a typo for 4.00
+      function rate(v){ return exIso("\u20AA"+exNum(v).toFixed(2)); }
+      line.innerHTML=S.exRate("<b>"+rate(st.usd_ils)+"</b>","<b>"+rate(st.eur_ils)+"</b>"); // trusted: dictionary + our own number format
+      host.appendChild(line);
+      if(st.updated_at) host.appendChild(el("span","note",S.exRateWhen(exDate(st.updated_at))));
+      var b=el("button","ghost"); b.type="button";
+      b.appendChild(icon("pencil",13)); b.appendChild(el("span",null," "+S.exRateEdit));
+      b.addEventListener("click",function(){
+        EX_RATE={usd:String(st.usd_ils||""), eur:String(st.eur_ils||""), busy:false, err:null};
+        exRenderRate();
+        var f=host.querySelector("input"); if(f) f.focus();
+      });
+      host.appendChild(b);
+      return;
+    }
+    function fld(lbl, key){
+      var l=el("label","exratef"); l.appendChild(el("span",null,lbl));
+      var i=el("input"); i.type="number"; i.step="0.01"; i.min="1"; i.max="10"; i.inputMode="decimal";
+      i.value=EX_RATE[key]; i.dir="ltr";
+      i.addEventListener("input",function(){ EX_RATE[key]=i.value; });
+      l.appendChild(i); host.appendChild(l);
+    }
+    fld(S.exRateUsd,"usd"); fld(S.exRateEur,"eur");
+    var acts=el("span","exacts");
+    var save=el("button","ghost",EX_RATE.busy ? S.exSaving : S.exSave); save.type="button"; save.disabled=EX_RATE.busy;
+    var cancel=el("button","ghost",S.exCancel); cancel.type="button";
+    cancel.addEventListener("click",function(){ EX_RATE=null; exRenderRate(); paintIcons(); });
+    save.addEventListener("click",function(){
+      var u=+EX_RATE.usd, e=+EX_RATE.eur;
+      if(!(u>=1 && u<=10) || !(e>=1 && e<=10)){ EX_RATE.err=S.exRateBad; exRenderRate(); return; }
+      EX_RATE.busy=true; EX_RATE.err=null; exRenderRate();
+      relayCall("expense_settings",{usd_ils:u, eur_ils:e}).then(function(){
+        EX_RATE=null; return loadExpenses();
+      }).catch(function(err){
+        if(!EX_RATE) return;
+        EX_RATE.busy=false; EX_RATE.err=exErrText(err, S.exEGeneric); exRenderRate();
+      });
+    });
+    acts.appendChild(save); acts.appendChild(cancel); host.appendChild(acts);
+    if(EX_RATE.err) host.appendChild(el("div","msgerr",EX_RATE.err));
+  }
+
+  function exRenderChart(D){
+    var host=$("exChart"), lg=$("exLegend");
+    lg.innerHTML="";
+    var used=EX_CATS.filter(function(c){ return D.M.some(function(m){ return (D.cat[m][c]||0)>0; }); });
+    if(!used.length){
+      if(einsts.exChart){ einsts.exChart.dispose(); delete einsts.exChart; }
+      host.innerHTML=""; emptyState(host, S.exChEmpty, "wallet"); return;
+    }
+    if(!ECH){ host.innerHTML=""; emptyState(host, S.exNoChart, "activity"); return; }
+    // colour follows the category's fixed slot, never its rank in this window
+    function col(c){ return pal(EX_CATS.indexOf(c)); }
+    if(used.length>1) used.forEach(function(c){
+      var s=el("span"), i=el("i"); i.style.background=col(c);
+      s.appendChild(i); s.appendChild(el("span",null,exCatLabel(c))); lg.appendChild(s);
+    });
+    var inst=einsts.exChart;
+    if(!inst || !host.querySelector(".echart")){
+      host.innerHTML="";
+      var box=el("div","echart"); host.appendChild(box);
+      inst=echarts.init(box); einsts.exChart=inst;
+      // same zero-width trap as the server tab's #infra deep link: follow the
+      // box's real size instead of guessing when the shell shows
+      if(window.ResizeObserver){
+        var ro=new ResizeObserver(function(){
+          var cur=einsts.exChart;
+          if(!cur || cur.getDom()!==box){ ro.disconnect(); return; }
+          if(box.clientWidth) cur.resize();
+        });
+        ro.observe(box);
+      }
+    }
+    var ink=tok("--ink"), muted=tok("--muted"), grid=tok("--grid"),
+        surface=tok("--surface"), base=tok("--baseline");
+    var dir=LANG==="he" ? "rtl" : "ltr";
+    // the top segment of each month gets the rounded end
+    var top={};
+    D.M.forEach(function(m){ used.forEach(function(c){ if((D.cat[m][c]||0)>0) top[m]=c; }); });
+    function plain(s){ return String(s).replace(/[⁦-⁩⁨]/g,""); }
+    // vendors per (month, category), for the tooltip
+    function vendorsOf(m, c){
+      var out=[];
+      Object.keys(D.vend).forEach(function(n){
+        var v=D.vend[n]; if(v.cat===c && v.m[m] && v.m[m].ils) out.push([n, v.m[m].ils]);
+      });
+      if(c==="ads" && D.metaOk && D.metaBy[m]) out.push([plain(S.exMetaTip), D.metaBy[m]]);
+      return out.sort(function(a,b){ return b[1]-a[1]; });
+    }
+    function money(n){ return "₪"+fmt(Math.round(n)); }
+    inst.setOption({
+      animationDuration:500, animationDurationUpdate:350,
+      textStyle:{ fontFamily:"Heebo, system-ui, sans-serif" },
+      grid:{ left:8, right:58, top:14, bottom:34 },
+      legend:{ show:false },
+      tooltip:{
+        trigger:"axis", axisPointer:{ type:"shadow" }, confine:true,
+        backgroundColor:surface, borderColor:grid, textStyle:{ color:ink, fontSize:12 },
+        formatter:function(ps){
+          if(!ps || !ps.length) return "";
+          var m=D.M[ps[0].dataIndex];
+          var h='<div dir="'+dir+'" style="min-width:180px"><div style="color:'+muted+';margin-bottom:4px">'+
+                exEsc(exMonthLong(m))+(m===D.cur? " · "+exEsc(S.exPartial) : "")+"</div>";
+          ps.slice().reverse().forEach(function(p){
+            var c=used[p.seriesIndex], v=+(p.value&&p.value.value!=null? p.value.value : p.value)||0;
+            if(!v) return;
+            h+='<div style="display:flex;justify-content:space-between;gap:16px;margin-top:3px"><span>'+p.marker+exEsc(plain(exCatLabel(c)))+
+               '</span><b dir="ltr" style="font-variant-numeric:tabular-nums">'+money(v)+"</b></div>";
+            vendorsOf(m,c).forEach(function(x){
+              h+='<div style="display:flex;justify-content:space-between;gap:16px;color:'+muted+';font-size:11.5px;padding-inline-start:14px"><span>'+
+                 exEsc(x[0])+'</span><span dir="ltr" style="font-variant-numeric:tabular-nums">'+money(x[1])+"</span></div>";
+            });
+          });
+          h+='<div style="display:flex;justify-content:space-between;gap:16px;margin-top:6px;padding-top:4px;border-top:1px solid '+grid+
+             '"><b>'+exEsc(S.exTotal)+'</b><b dir="ltr">'+money(D.tot[m])+"</b></div>";
+          if(!D.metaOk) h+='<div style="color:'+muted+';font-size:11px;margin-top:4px;max-width:240px;white-space:normal">'+exEsc(plain(S.exMetaUnknown))+"</div>";
+          return h+"</div>";
+        }
+      },
+      xAxis:{ type:"category", data:D.M,
+        axisLine:{ lineStyle:{ color:base } }, axisTick:{ show:false },
+        axisLabel:{ color:muted, fontSize:10.5, hideOverlap:true, interval:"auto",
+          formatter:function(v, i){
+            var mm=String(v).slice(5,7);
+            return exMonthName(v,true)+((i===0 || mm==="01") ? "\n"+String(v).slice(0,4) : "");
+          } } },
+      yAxis:{ type:"value", position:"right", min:0,
+        splitLine:{ lineStyle:{ color:grid } },
+        axisLabel:{ color:muted, fontSize:10, formatter:function(v){ return "₪"+fmt(v); } } },
+      series: used.map(function(c){
+        return { name:plain(exCatLabel(c)), type:"bar", stack:"total", barMaxWidth:46,
+          emphasis:{ focus:"series" },
+          itemStyle:{ color:col(c), borderColor:surface, borderWidth:1 },
+          data: D.M.map(function(m){
+            var v=Math.round((D.cat[m][c]||0)*100)/100;
+            return top[m]===c ? { value:v, itemStyle:{ borderRadius:[4,4,0,0] } } : v;
+          }) };
+      })
+    }, { replaceMerge:["series"] });
+  }
+
+  function exRenderTable(D){
+    var host=$("exTable"); host.innerHTML="";
+    var cols=D.M.slice().reverse();   // latest first, like the campaigns day table
+    var rows=Object.keys(D.vend).map(function(n){ return D.vend[n]; });
+    var metaSum=0; D.M.forEach(function(m){ metaSum+=D.metaBy[m]||0; });
+    rows.push({ name:S.exMetaRow, cat:"ads", meta:true, sum: D.metaOk ? metaSum : -1, m:{} });
+    rows.sort(function(a,b){ return b.sum-a.sum; });
+    var t=el("table","plain extbl");
+    var hr=el("tr");
+    hr.appendChild(el("th",null,S.exColVendor));
+    cols.forEach(function(m){
+      var th=el("th"); th.appendChild(document.createTextNode(exMonthName(m,true)));
+      th.appendChild(el("small",null, m===D.cur ? S.exPartial : String(m).slice(0,4)));
+      hr.appendChild(th);
+    });
+    t.appendChild(hr);
+    rows.forEach(function(v){
+      var tr=el("tr");
+      var nm=el("td","exv");
+      if(v.meta) nm.textContent=v.name; else nm.appendChild(document.createTextNode(v.name));
+      nm.appendChild(el("small",null,exCatLabel(v.cat)));
+      tr.appendChild(nm);
+      cols.forEach(function(m){
+        var td=el("td");
+        if(v.meta){
+          if(!D.metaOk){ td.textContent="?"; td.className="exnil"; td.title=S.exMetaUnknown; }
+          else if(D.metaBy[m]) td.textContent=exMoney(D.metaBy[m]);
+          else { td.textContent="-"; td.className="exnil"; }
+        } else {
+          var c=v.m[m];
+          if(!c || !c.ils){ td.textContent="-"; td.className="exnil"; }
+          else {
+            td.appendChild(document.createTextNode(exMoney(c.ils)));
+            var orig=Object.keys(c.orig).map(function(k){ return exMoney(c.orig[k],k); });
+            if(orig.length){
+              td.appendChild(el("small","exorig",orig.join(" · ")));
+              td.title=orig.join(" · ").replace(/[⁦-⁩]/g,"");
+            }
+          }
+        }
+        tr.appendChild(td);
+      });
+      t.appendChild(tr);
+    });
+    var tt=el("tr","extot");
+    var tl=el("td","exv",S.exTotal); tt.appendChild(tl);
+    cols.forEach(function(m){
+      var td=el("td",null,exMoney(D.tot[m]));
+      if(!D.metaOk) td.title=S.exMetaUnknown;
+      tt.appendChild(td);
+    });
+    t.appendChild(tt);
+    host.appendChild(t);
+  }
+
+  function exLedgerRows(){ return (EXP && EXP.ledger) || []; }
+  function exRenderMissing(){
+    var host=$("exMissing"); host.innerHTML="";
+    var have=exLedgerRows().map(function(r){ return String(r.vendor||"").trim().toLowerCase(); })
+      .filter(function(s){ return s.length>=3; });
+    var miss=EX_SUGGEST.filter(function(s){
+      var n=s[0].toLowerCase(), first=n.split(" ")[0];
+      return !have.some(function(h){
+        return h.indexOf(n)>=0 || n.indexOf(h)>=0 || (first.length>=4 && h.indexOf(first)===0) ||
+               (n.indexOf("help-y.com")>=0 && h.indexOf("help-y.com")>=0);
+      });
+    }).map(function(s){ return s[0]; });
+    if(!miss.length) return;
+    var box=el("div","exmiss");
+    box.appendChild(icon("alertc",15));
+    box.appendChild(el("span",null,S.exMissing(miss.map(exIso).join(", "))));
+    host.appendChild(box);
+  }
+
+  function exRenderLedger(){
+    var host=$("exLedger"); host.innerHTML="";
+    var rows=exLedgerRows().slice().sort(function(a,b){
+      return String(a.vendor||"").localeCompare(String(b.vendor||""));
+    });
+    if(!EX_FORM){
+      var hb=el("div","exledhead");
+      var add=el("button","exaddbtn"); add.type="button";
+      add.appendChild(icon("plus",15)); add.appendChild(el("span",null,S.exAdd));
+      add.addEventListener("click",function(){ exOpenForm(null); });
+      hb.appendChild(add); host.appendChild(hb);
+    }
+    if(!rows.length){ emptyState(host, S.exLedEmpty, "wallet"); return; }
+    rows.forEach(function(r){
+      var row=el("div","exrow");
+      var a=el("div");
+      var vn=el("div","exvn"); vn.appendChild(document.createTextNode(String(r.vendor||"-")));
+      vn.appendChild(el("span","tagpill",exCatLabel(r.category)));
+      a.appendChild(vn);
+      if(r.note) a.appendChild(el("span","exnote",String(r.note)));
+      row.appendChild(a);
+      var b=el("div","examt"); b.appendChild(document.createTextNode(exMoney(r.amount, r.currency)+" "));
+      b.appendChild(el("small",null,(S.exCad||{})[r.cadence] || String(r.cadence||"")));
+      row.appendChild(b);
+      var dts = r.cadence==="one_time" ? S.exOn(exDate(r.start_date))
+              : r.end_date ? S.exFromTo(exDate(r.start_date), exDate(r.end_date))
+              : S.exFrom(exDate(r.start_date));
+      row.appendChild(el("div","exdates",dts));
+      var acts=el("div","exacts");
+      var ed=el("button","ghost"); ed.type="button"; ed.title=S.exEdit; ed.setAttribute("aria-label",S.exEdit);
+      ed.appendChild(icon("pencil",13)); ed.appendChild(el("span",null,S.exEdit));
+      ed.addEventListener("click",function(){ exOpenForm(r); });
+      var dl=el("button","ghost danger"); dl.type="button"; dl.title=S.exDel; dl.setAttribute("aria-label",S.exDel);
+      dl.appendChild(icon("trash",13)); dl.appendChild(el("span",null,S.exDel));
+      dl.addEventListener("click",function(){ EX_DEL={id:r.id, busy:false, err:null}; exRenderLedger(); });
+      acts.appendChild(ed); acts.appendChild(dl);
+      row.appendChild(acts);
+      // destructive actions always confirm, in the page (never window.confirm)
+      if(EX_DEL && EX_DEL.id===r.id){
+        var cf=el("div","exconfirm");
+        cf.setAttribute("role","alertdialog");
+        cf.appendChild(el("span","exq", EX_DEL.err || S.exDelQ(String(r.vendor||""))));
+        var yes=el("button","go", EX_DEL.busy ? S.exDeleting : S.exDelYes); yes.type="button"; yes.disabled=EX_DEL.busy;
+        var no=el("button",null,S.exCancel); no.type="button"; no.disabled=EX_DEL.busy;
+        no.addEventListener("click",function(){ EX_DEL=null; exRenderLedger(); });
+        yes.addEventListener("click",function(){
+          EX_DEL.busy=true; EX_DEL.err=null; exRenderLedger();
+          relayCall("expense_delete",{id:r.id}).then(function(ok){
+            if(ok===false){ throw new Error("not_found"); }
+            EX_DEL=null;
+            if(EX_FORM && EX_FORM.id===r.id) EX_FORM=null;
+            return loadExpenses();
+          }).catch(function(err){
+            if(!EX_DEL) return;
+            EX_DEL.busy=false; EX_DEL.err=exErrText(err, S.exEDel); exRenderLedger();
+          });
+        });
+        cf.appendChild(yes); cf.appendChild(no);
+        row.appendChild(cf);
+        setTimeout(function(){ try{ no.focus({preventScroll:true}); }catch(e){} },0);
+      }
+      host.appendChild(row);
+    });
+    paintIcons();
+  }
+
+  function exOpenForm(r){
+    EX_DEL=null;
+    var first=exToday().slice(0,8)+"01";
+    EX_FORM = r ? { id:r.id, vendor:String(r.vendor||""), category:r.category||"other",
+                    amount:String(r.amount==null?"":r.amount), currency:r.currency||"ILS",
+                    cadence:r.cadence||"monthly", start_date:String(r.start_date||"").slice(0,10),
+                    end_date:String(r.end_date||"").slice(0,10), note:String(r.note||""), err:null, busy:false, touched:true }
+                : { vendor:"", category:"infra", amount:"", currency:"ILS", cadence:"monthly",
+                    start_date:first, end_date:"", note:"", err:null, busy:false, touched:false };
+    exRenderForm(); exRenderLedger();
+    var f=$("exFormHost").querySelector("input"); if(f) f.focus();
+    var h=$("exFormHost"); if(h && h.scrollIntoView) h.scrollIntoView({behavior:"smooth", block:"nearest"});
+  }
+  function exRenderForm(){
+    var host=$("exFormHost"); host.innerHTML="";
+    if(!EX_FORM) return;
+    var F=EX_FORM;
+    var box=el("div","exform");
+    box.appendChild(el("h3",null, F.id ? S.exFormEdit : S.exFormAdd));
+    var g=el("div","exgrid");
+    function lab(text, cls){ var l=el("label",cls); l.appendChild(el("span",null,text)); g.appendChild(l); return l; }
+    function inp(l, key, type, attrs){
+      var i=el("input"); i.type=type; i.value=F[key]||"";
+      for(var k in (attrs||{})) i.setAttribute(k, attrs[k]);
+      i.addEventListener("input",function(){ F[key]=i.value; if(key==="vendor") exSuggestFill(i.value); });
+      l.appendChild(i); return i;
+    }
+    function sel(l, key, opts){
+      var s=el("select");
+      opts.forEach(function(o){ var op=el("option",null,o[1]); op.value=o[0]; if(F[key]===o[0]) op.selected=true; s.appendChild(op); });
+      s.addEventListener("change",function(){
+        F[key]=s.value;
+        if(key==="category") F.touched=true;
+        if(key==="cadence") exRenderForm();   // one-time hides the end date
+      });
+      l.appendChild(s); return s;
+    }
+    var vi=inp(lab(S.exFVendor,"span2"),"vendor","text",{list:"exVendList", maxlength:"80", autocomplete:"off",
+      placeholder:S.exFVendorPh.replace(/[⁦-⁩]/g,"")});
+    vi.dir="auto";
+    var dlst=el("datalist"); dlst.id="exVendList";
+    EX_SUGGEST.forEach(function(s){ var o=el("option"); o.value=s[0]; dlst.appendChild(o); });
+    box.appendChild(dlst);
+    sel(lab(S.exFCat,"span2"),"category", EX_CATS.map(function(c){ return [c, exCatLabel(c).replace(/[⁦-⁩]/g,"")]; }));
+    var ai=inp(lab(S.exFAmount),"amount","number",{min:"0", step:"0.01", inputmode:"decimal"}); ai.dir="ltr";
+    sel(lab(S.exFCur),"currency", ["ILS","USD","EUR"].map(function(c){ return [c, EX_SYM[c]+" "+S.exCur[c]]; }));
+    sel(lab(S.exFCad),"cadence", ["monthly","yearly","one_time"].map(function(c){ return [c, S.exCad[c]]; }));
+    inp(lab(F.cadence==="one_time" ? S.exFStartOne : S.exFStart),"start_date","date");
+    if(F.cadence!=="one_time") inp(lab(S.exFEnd),"end_date","date");
+    var ni=inp(lab(S.exFNote, F.cadence==="one_time" ? "span4" : "span3"),"note","text",{maxlength:"300"}); ni.dir="auto";
+    box.appendChild(g);
+    if(F.err) box.appendChild(el("div","msgerr",F.err));
+    var acts=el("div","msgacts");
+    var cancel=el("button",null,S.exCancel); cancel.type="button"; cancel.disabled=F.busy;
+    cancel.addEventListener("click",function(){ EX_FORM=null; exRenderForm(); exRenderLedger(); });
+    var save=el("button","go", F.busy ? S.exSaving : S.exSave); save.type="button"; save.disabled=F.busy;
+    save.addEventListener("click",exSubmit);
+    acts.appendChild(cancel); acts.appendChild(save);
+    box.appendChild(acts);
+    box.addEventListener("keydown",function(e){ if(e.key==="Enter" && e.target.tagName==="INPUT"){ e.preventDefault(); exSubmit(); } });
+    host.appendChild(box);
+  }
+  // a suggestion picked into a NEW form fills what it implies, unless the
+  // category was already chosen by hand
+  function exSuggestFill(v){
+    if(!EX_FORM || EX_FORM.id || EX_FORM.touched) return;
+    var s=EX_SUGGEST.filter(function(x){ return x[0]===v; })[0];
+    if(!s) return;
+    EX_FORM.category=s[1]; EX_FORM.currency=s[2]; EX_FORM.cadence=s[3];
+    exRenderForm();
+    var i=$("exFormHost").querySelector('input[type="number"]'); if(i) i.focus();
+  }
+  function exSubmit(){
+    var F=EX_FORM; if(!F || F.busy) return;
+    var vendor=F.vendor.trim(), note=F.note.trim(), amount=+F.amount;
+    var err=null;
+    if(!vendor) err=S.exVVendor;
+    else if(vendor.length>80 || note.length>300) err=S.exVLong;
+    else if(!(F.amount!=="" && isFinite(amount) && amount>0)) err=S.exVAmount;
+    else if(!/^\d{4}-\d{2}-\d{2}$/.test(F.start_date||"")) err=S.exVStart;
+    else if(F.cadence!=="one_time" && F.end_date && F.end_date<F.start_date) err=S.exVEnd;
+    if(err){ F.err=err; exRenderForm(); return; }
+    var x={ vendor:vendor, category:EX_CATS.indexOf(F.category)>=0 ? F.category : "other",
+            amount:Math.round(amount*100)/100, currency:F.currency, cadence:F.cadence,
+            start_date:F.start_date,
+            end_date:(F.cadence!=="one_time" && F.end_date) ? F.end_date : null,
+            note:note || null };
+    if(F.id) x.id=F.id;
+    F.busy=true; F.err=null; exRenderForm();
+    relayCall("expense_save",{expense:x}).then(function(){
+      EX_FORM=null; exRenderForm();
+      return loadExpenses();
+    }).catch(function(e){
+      if(EX_FORM!==F) return;
+      F.busy=false; F.err=exErrText(e, S.exEGeneric); exRenderForm();
+    });
+  }
+
   // ---- data + auth ---------------------------------------------------------
   function segVal(id){
     var b=document.querySelector("#"+id+" button.on");
@@ -9286,6 +10115,9 @@
         load(true).catch(function(){ markStale(); });
         // the server tab rides the same tick, but only while it is on screen
         if(infraOn()) loadInfra();
+        // expenses too - but never under a form or a delete being answered:
+        // the re-render would not lose the typing, but it would move it
+        if(expensesOn() && !EX_FORM && !EX_DEL && !EX_RATE) loadExpenses();
       },60000);
     }
     else if(autoTimer){ clearInterval(autoTimer); autoTimer=null; markStale(true); }
@@ -9361,6 +10193,10 @@
   segWire("ifWinSeg",function(){
     INFRA_HOURS=segVal("ifWinSeg");
     loadInfra();
+  });
+  segWire("exWinSeg",function(){
+    EXP_MONTHS=segVal("exWinSeg");
+    loadExpenses();
   });
   segWire("chatTypeSeg",renderChat);
   segWire("funnelSeg",function(){ if(DATA) renderMetrics(); });
@@ -9493,6 +10329,7 @@
     // the server tab keeps its own payload; repaint it only where it is seen
     // (switchTab repaints it on the way in otherwise)
     if(infraOn()){ try{ renderInfra(); }catch(e){ console.error("renderInfra failed",e); } paintIcons(); }
+    if(expensesOn()){ try{ renderExpenses(); }catch(e){ console.error("renderExpenses failed",e); } paintIcons(); }
     syncChrome();  // English labels wrap the header differently than Hebrew
   }
   $("themeBtn").addEventListener("click",function(){
@@ -9559,6 +10396,7 @@
     function bootLoad(){
       // a #infra deep link landed before the session existed: fetch it now
       if(infraOn() && !INFRA) loadInfra();
+      if(expensesOn() && !EXP) loadExpenses();
       if(DATA || bootLoading) return;
       bootLoading=true;
       // brief FIRST, the full load after it: fired together, the brief's one
