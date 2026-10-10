@@ -9070,6 +9070,18 @@
       host.innerHTML="";
       var box=el("div","echart"); host.appendChild(box);
       inst=echarts.init(box); einsts[id]=inst;
+      // the #infra deep link (the Telegram alert's target) renders while the
+      // signed-in shell is still display:none - the view itself is not
+      // hidden, its ancestor is - so the chart measured ~60px and stayed a
+      // sliver. Follow the box's real size instead of guessing when it shows.
+      if(window.ResizeObserver){
+        var ro=new ResizeObserver(function(){
+          var cur=einsts[id];
+          if(!cur || cur.getDom()!==box){ ro.disconnect(); return; }  // disposed / rebuilt
+          if(box.clientWidth) cur.resize();
+        });
+        ro.observe(box);
+      }
     }
     var ink=tok("--ink"), ink2=tok("--ink2"), muted=tok("--muted"),
         grid=tok("--grid"), surface=tok("--surface"), base=tok("--baseline");
