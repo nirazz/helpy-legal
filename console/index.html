@@ -803,13 +803,15 @@
   /* first paint: only the brief has arrived (see loadBriefFirst). Every other
      tab is a quiet spinner until the full payload lands, never a half-drawn
      page of empty panels. */
-  body.partial #app > div:not(#briefView) > * { display:none; }
-  body.partial #app > div:not(#briefView)::before { content:""; display:block;
+  /* the server tab is exempt: it never reads the dashboard payload (its own
+     call, see loadInfra), so it has nothing to wait for */
+  body.partial #app > div:not(#briefView):not(#infraView) > * { display:none; }
+  body.partial #app > div:not(#briefView):not(#infraView)::before { content:""; display:block;
     width:28px; height:28px; margin:56px auto; border-radius:50%;
     border:2.5px solid var(--hairline); border-top-color:var(--s1);
     animation:spin 1.1s linear infinite; }
   body.partial #rail { display:none; }
-  body.partial.partial-failed #app > div:not(#briefView)::before {
+  body.partial.partial-failed #app > div:not(#briefView):not(#infraView)::before {
     content:attr(data-wait); width:auto; height:auto; border:none; animation:none;
     margin:56px 16px; text-align:center; color:var(--muted); font-size:14px; }
   .brwait { height:14px; width:62%; margin:6px 0; border-radius:7px;
@@ -1443,6 +1445,42 @@
   /* the window chip lives under the header of the section it governs (the log),
      not at the top of the tab where it read as scoping the all-time tiles */
   .pnwinbar { margin:-4px 2px 12px; }
+
+  /* ---- server (infra) tab ----
+     Five tiles, not four: on the 2-up layouts the odd one out takes the
+     whole row instead of leaving a hole beside it. The tile colour state is
+     the bullet's measure bar plus a pill - the same green / amber / red the
+     brief already uses (.brpill), so "near the line" reads the same here. */
+  .tiles.iftiles { grid-template-columns:repeat(5,minmax(0,1fr)); margin-bottom:6px; }
+  @media (max-width:900px){
+    .tiles.iftiles { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .tiles.iftiles > .tile:last-child:nth-child(odd) { grid-column:1 / -1; }
+  }
+  @media (max-width:359px){ .tiles.iftiles { grid-template-columns:1fr; } }
+  .iftiles .tile .sub { flex-wrap:wrap; row-gap:4px; align-items:center; }
+  .iftiles .tile .brpill { font-size:10.5px; padding:1px 8px; }
+  .iftiles .tile .ifextra { margin:2px 0 4px; font-size:11px; }
+  .ifst-near .bullet .bval { background:var(--warning); }
+  .ifst-over .bullet .bval { background:var(--bad-text); }
+  #ifHead .verdict { margin-bottom:8px; }
+  #ifHead .verdict.lead { font-size:14.5px; font-weight:600; }
+  #ifHead .empty { padding:40px 10px; font-size:13.5px; }
+  .ifage { margin:0 2px 12px; }
+  .ifwinbar { margin:-4px 2px 12px; }
+  #ifPeaks .brstat { gap:12px 34px; }
+  #ifPeaks .brstat > div[title] .cap { text-decoration:underline dotted; text-underline-offset:3px; cursor:help; }
+  .ifexp { display:grid; grid-template-columns:max-content minmax(0,1fr); gap:0 16px; }
+  .ifexp > div { display:contents; }
+  .ifexp b, .ifexp span { padding:7px 0; border-bottom:1px solid var(--grid); font-size:13.5px; }
+  .ifexp b { font-weight:700; white-space:nowrap; }
+  .ifexp span { color:var(--ink2); max-width:88ch; }
+  .ifexp > div:last-child b, .ifexp > div:last-child span { border-bottom:0; }
+  @media (max-width:520px){
+    .ifexp { grid-template-columns:minmax(0,1fr); }
+    .ifexp b { padding-bottom:0; border-bottom:0; }
+    .ifexp span { padding-top:2px; }
+  }
+  .ifbottom { margin:12px 0 0; }
   /* the "why not yet" rows break down one of the answers above - indent them */
   #pnReasons .hrow { padding-inline-start:16px; }
   /* band headers: 12 flat rows is a list, three bands is a judgement */
@@ -1486,6 +1524,7 @@
          כרטיסים              what the users produced
          צ'אט · התראות        messages IN from them, messages OUT to them
          בקלוג                what we decided to do about all of the above
+         שרת                  reference: is the machine big enough (CPU, memory, disk, connections)
          ארכיטקטורה           reference: how it is wired. Consulted rarely, so last.
 
        A NEW tab goes in its group, not on the end. Nothing depends on the
@@ -1498,6 +1537,7 @@
     <button data-v="chat" data-ic="msg"><span data-i18n="tabChat">צ'אט</span></button>
     <button data-v="push" data-ic="bell"><span data-i18n="tabPush">התראות</span></button>
     <button data-v="backlog" data-ic="box"><span data-i18n="tabBacklog">בקלוג</span></button>
+    <button data-v="infra" data-ic="server"><span data-i18n="tabInfra">שרת</span></button>
     <button data-v="arch" data-ic="layers"><span data-i18n="tabArch">ארכיטקטורה</span></button>
   </div>
   <div class="hactions">
@@ -1723,6 +1763,62 @@
     </div>
     <p class="note" style="margin-bottom:12px"><span id="chatCount"></span> · <span data-i18n="chatNote">מוצג לצורכי פיקוח ובטיחות בלבד · לקריאה בלבד · מספרי טלפון מודגשים</span></p>
     <div id="convoList"></div>
+  </div>
+
+  <!-- Server tab: the database machine's own vitals, sampled every 5 minutes by
+       a cron and handed over by admin-dashboard (action "infra"). Never part of
+       the main load - see loadInfra. Deep link: help-y.com/console/#infra (the
+       Telegram infra alert points here). -->
+  <div id="infraView" class="hidden">
+    <div id="ifHead"></div>
+    <div id="ifBody" class="hidden">
+      <p class="note ifage" id="ifAge"></p>
+      <div class="tiles iftiles" id="ifTiles"></div>
+
+      <div class="sechead" style="--sec-c:var(--s1)" data-i18n="ifSecLoad">1 · עומס לאורך זמן</div>
+      <div class="filters ifwinbar">
+        <span class="blfgrp"><span class="cap" data-i18n="ifWinL">חלון</span>
+          <span class="seg" id="ifWinSeg">
+            <button data-d="6" data-i18n="ifW6">6 שעות</button>
+            <button data-d="24" class="on" data-i18n="ifW24">24 שעות</button>
+            <button data-d="168" data-i18n="ifW7">7 ימים</button>
+            <button data-d="720" data-i18n="ifW30">30 יום</button>
+          </span></span>
+      </div>
+      <section class="panel" style="opacity:1;transform:none">
+        <h2><span data-i18n="ifPeaksTitle">שיאים בחלון</span> <span class="pntag" id="ifCover"></span></h2>
+        <div class="sub" data-i18n="ifPeaksSub"></div>
+        <div id="ifPeaks"></div>
+      </section>
+      <div class="grid2">
+        <section class="panel" style="opacity:1;transform:none">
+          <h2 data-i18n="ifChCpu">CPU</h2>
+          <div class="sub" data-i18n="ifChCpuSub"></div>
+          <div id="ifChCpu"></div>
+        </section>
+        <section class="panel" style="opacity:1;transform:none">
+          <h2 data-i18n="ifChMem">זיכרון</h2>
+          <div class="sub" data-i18n="ifChMemSub"></div>
+          <div id="ifChMem"></div>
+        </section>
+        <section class="panel" style="opacity:1;transform:none">
+          <h2 data-i18n="ifChConn">חיבורים למסד</h2>
+          <div class="sub" data-i18n="ifChConnSub"></div>
+          <div id="ifChConn"></div>
+        </section>
+        <section class="panel" style="opacity:1;transform:none">
+          <h2 data-i18n="ifChIo">עומס דיסק</h2>
+          <div class="sub" data-i18n="ifChIoSub"></div>
+          <div id="ifChIo"></div>
+        </section>
+      </div>
+
+      <div class="sechead" style="--sec-c:var(--s3)" data-i18n="ifSecExplain">2 · מה המספרים אומרים</div>
+      <section class="panel" style="opacity:1;transform:none">
+        <h2 data-i18n="ifExTitle">איך לקרוא את המסך</h2>
+        <div id="ifExplain"></div>
+      </section>
+    </div>
   </div>
 
   <div id="archView" class="hidden">
@@ -2475,6 +2571,63 @@
       blGateTip:"פריט אבטחה או תשתית. בכוונה בלי ציון – הוא תנאי לשחרור, לא תכונה שמתחרה על אותו מקום ברשימה",
       blNone:"אין פריטים במצב הזה",
       tabArch:"ארכיטקטורה",
+      // server tab. Latin tokens (CPU, IO, swap) are isolated with U+2068/U+2069
+      // so a number beside them can never be pulled into their run
+      tabInfra:"שרת",
+      ifOk:"השרת בטווח התקין - כל ארבעת המדדים מתחת לסף ההתראה.",
+      ifDown:function(list){ return "<b>חריגה:</b> "+list+". כשזה נמשך, זה הזמן לשדרג את המכונה."; },
+      ifSince:function(t){ return "מאז "+t; },
+      ifNoMon:"עוד אין מצב מהבדיקה האוטומטית - הוא יופיע אחרי הדגימות הראשונות.",
+      ifMonCpu:"⁨CPU⁩", ifMonMem:"זיכרון", ifMonDisk:"דיסק", ifMonConn:"חיבורים למסד",
+      ifAgo:function(m){ return m<1? "עכשיו" : m<2? "לפני דקה" : m<60? "לפני "+m+" דקות" :
+        m<120? "לפני שעה" : m<2880? "לפני "+Math.round(m/60)+" שעות" : "לפני "+Math.round(m/1440)+" ימים"; },
+      ifAge:function(ago){ return "דגימה אחרונה: "+ago; },
+      ifStale:function(ago){ return "הדגימה האחרונה הגיעה "+ago+". נראה שהדגימה האוטומטית נעצרה, אז המספרים כאן לא עדכניים."; },
+      ifEmpty:"עוד אין דגימות - הדגימה הראשונה תגיע תוך 5 דקות.",
+      ifLoading:"טוען את נתוני השרת...",
+      ifErr:function(m){ return "לא הצלחנו לטעון את נתוני השרת: ⁨"+m+"⁩"; },
+      ifTCpu:"⁨CPU⁩", ifTMem:"זיכרון", ifTDisk:"דיסק", ifTConn:"חיבורים למסד", ifTIo:"עומס דיסק ⁨(IO)⁩",
+      ifNCpu:"התראה מעל 80%, ברצף רבע שעה",
+      ifNMem:"התראה מעל 90%, ברצף רבע שעה",
+      ifNDisk:"התראה מעל 80%",
+      ifNConn:function(n){ return "התראה מ-"+n+" חיבורים, ברצף רבע שעה"; },
+      ifNIo:"לעיון - אין עליו התראה",
+      ifDb:function(b){ return "מסד הנתונים תופס ⁦"+b+"⁩"; },
+      ifSwap:function(p){ return "⁨swap⁩ בשימוש: "+p; },
+      ifSok:"תקין", ifSnear:"מתקרב לסף", ifSover:"מעל הסף",
+      ifThresh:function(v){ return "סף התראה: "+v; },
+      ifSecLoad:"1 · עומס לאורך זמן",
+      ifSecExplain:"2 · מה המספרים אומרים",
+      ifWinL:"חלון", ifW6:"6 שעות", ifW24:"24 שעות", ifW7:"7 ימים", ifW30:"30 יום",
+      ifPeaksTitle:"שיאים בחלון",
+      ifPeaksSub:"הרגע הכי עמוס בחלון שנבחר. קפיצה אחת לא מדאיגה - מגמה כן.",
+      ifSpan:function(h){ return h<2? "שעה אחרונה" : h<48? h+" שעות אחרונות" : Math.round(h/24)+" ימים אחרונים"; },
+      ifSpanShort:function(span){ return "בפועל: רק "+span; },
+      ifPkCpu:"שיא ⁨CPU⁩", ifPkP95:"⁨CPU⁩ בשגרה",
+      ifPkP95Tip:"ב-95% מהדגימות ה-⁨CPU⁩ היה מתחת למספר הזה",
+      ifPkMem:"שיא זיכרון", ifPkConn:"שיא חיבורים",
+      ifSamples:function(n){ return "מבוסס על "+n+" דגימות"; },
+      ifChCpu:"⁨CPU⁩",
+      ifChCpuSub:"כמה המעבד של מסד הנתונים עסוק. הקו המקווקו הוא סף ההתראה.",
+      ifChMem:"זיכרון",
+      ifChMemSub:"כמה מהזיכרון בשימוש, ולצידו ⁨swap⁩ - זיכרון על הדיסק שנכנס לפעולה כשהזיכרון נגמר.",
+      ifChConn:"חיבורים למסד",
+      ifChConnSub:"כמה חיבורים פתוחים. הקו העליון הוא התקרה - מעליה חיבורים חדשים נדחים.",
+      ifChIo:"עומס דיסק ⁨(IO)⁩",
+      ifChIoSub:"כמה מהזמן הדיסק עסוק בקריאה וכתיבה.",
+      ifSerAvg:"ממוצע", ifSerMax:"שיא", ifSerMem:"זיכרון", ifSerSwap:"swap",
+      ifSerConn:"חיבורים", ifSerIo:"עומס דיסק",
+      ifMkAlert:"סף התראה", ifMkCeil:"תקרה",
+      ifNoChart:"ספריית הגרפים לא נטענה - רענון יעזור.",
+      ifExTitle:"איך לקרוא את המסך",
+      ifEx:[
+        ["⁨CPU⁩","כמה המעבד של מסד הנתונים עסוק. קפיצות קצרות הן רגילות. מעל 80% ברצף רבע שעה נשלחת התראה."],
+        ["זיכרון","כמה מהזיכרון של המכונה בשימוש. מסד נתונים משתמש בזיכרון כדי להיות מהיר, אז מספר גבוה יחסית הוא תקין. אם ⁨swap⁩ מתחיל לעלות, הזיכרון כבר לא מספיק."],
+        ["דיסק","כמה מהנפח מלא. מעל 80% צריך להגדיל את הדיסק או לפנות מקום."],
+        ["חיבורים","כמה חיבורים פתוחים למסד מתוך התקרה. כשמגיעים לתקרה, בקשות חדשות נכשלות והמשתמשים רואים שגיאות."],
+        ["⁨IO⁩","כמה הדיסק עסוק. גבוה לאורך זמן אומר שאילתות כבדות או זיכרון שלא מספיק."]
+      ],
+      ifExBottom:"<b>מתי לשדרג:</b> ⁨CPU⁩ מעל 80% לאורך זמן או חיבורים קרובים לתקרה = זמן לשדרג את המכונה. קפיצה של כמה דקות לא מצדיקה שדרוג, מגמה של כמה ימים כן.",
       archTitle:"איך Helpy עובד",
       archSub:"כל רכיב, מה מחובר למה, ואיפה כל דבר מאוחסן · ריחוף על מונח מקוצר מסביר אותו",
       archPickFlow:"בחר/י זרימה למעלה כדי לראות איך בקשה עוברת במערכת, שלב אחר שלב",
@@ -3101,6 +3254,61 @@
       blGateTip:"A security or infrastructure item. Deliberately unscored \u2013 it is a condition for shipping, not a feature competing for the same slot in the list",
       blNone:"Nothing in this status",
       tabArch:"Architecture",
+      tabInfra:"Server",
+      ifOk:"The server is within its normal range - all four measures are below their alert line.",
+      ifDown:function(list){ return "<b>Over the line:</b> "+list+". If it keeps up, it is time to upgrade the machine."; },
+      ifSince:function(t){ return "since "+t; },
+      ifNoMon:"No status from the automatic check yet - it appears after the first samples.",
+      ifMonCpu:"CPU", ifMonMem:"memory", ifMonDisk:"disk", ifMonConn:"database connections",
+      ifAgo:function(m){ return m<1? "just now" : m<2? "1 minute ago" : m<60? m+" minutes ago" :
+        m<120? "1 hour ago" : m<2880? Math.round(m/60)+" hours ago" : Math.round(m/1440)+" days ago"; },
+      ifAge:function(ago){ return "Last sample: "+ago; },
+      ifStale:function(ago){ return "The last sample arrived "+ago+". Sampling seems to have stopped, so the numbers here are not current."; },
+      ifEmpty:"No samples yet - the first one arrives within 5 minutes.",
+      ifLoading:"Loading server data...",
+      ifErr:function(m){ return "Could not load server data: "+m; },
+      ifTCpu:"CPU", ifTMem:"Memory", ifTDisk:"Disk", ifTConn:"Database connections", ifTIo:"Disk load (IO)",
+      ifNCpu:"Alert above 80% for 15 minutes",
+      ifNMem:"Alert above 90% for 15 minutes",
+      ifNDisk:"Alert above 80%",
+      ifNConn:function(n){ return "Alert from "+n+" connections, for 15 minutes"; },
+      ifNIo:"For reference - no alert on it",
+      ifDb:function(b){ return "Database takes "+b; },
+      ifSwap:function(p){ return "Swap in use: "+p; },
+      ifSok:"OK", ifSnear:"Near the line", ifSover:"Over the line",
+      ifThresh:function(v){ return "Alert line: "+v; },
+      ifSecLoad:"1 · Load over time",
+      ifSecExplain:"2 · What the numbers mean",
+      ifWinL:"Window", ifW6:"6 hours", ifW24:"24 hours", ifW7:"7 days", ifW30:"30 days",
+      ifPeaksTitle:"Peaks in this window",
+      ifPeaksSub:"The busiest moment in the selected window. One spike is no worry - a trend is.",
+      ifSpan:function(h){ return h<2? "last hour" : h<48? "last "+h+" hours" : "last "+Math.round(h/24)+" days"; },
+      ifSpanShort:function(span){ return "Actually only the "+span; },
+      ifPkCpu:"CPU peak", ifPkP95:"CPU, typical high",
+      ifPkP95Tip:"95% of the samples had CPU below this number",
+      ifPkMem:"Memory peak", ifPkConn:"Connections peak",
+      ifSamples:function(n){ return "Based on "+n+" samples"; },
+      ifChCpu:"CPU",
+      ifChCpuSub:"How busy the database's processor is. The dashed line is the alert line.",
+      ifChMem:"Memory",
+      ifChMemSub:"How much memory is in use, and beside it swap - disk standing in for memory once memory runs out.",
+      ifChConn:"Database connections",
+      ifChConnSub:"How many connections are open. The top line is the ceiling - past it, new connections are refused.",
+      ifChIo:"Disk load (IO)",
+      ifChIoSub:"How much of the time the disk is busy reading and writing.",
+      ifSerAvg:"Average", ifSerMax:"Peak", ifSerMem:"Memory", ifSerSwap:"Swap",
+      ifSerConn:"Connections", ifSerIo:"Disk load",
+      ifMkAlert:"Alert line", ifMkCeil:"Ceiling",
+      ifNoChart:"The chart library did not load - a refresh should help.",
+      ifExTitle:"How to read this screen",
+      ifEx:[
+        ["CPU","How busy the database's processor is. Short spikes are normal. Above 80% for 15 minutes in a row sends an alert."],
+        ["Memory","How much of the machine's memory is in use. A database uses memory to stay fast, so a fairly high number is fine. If swap starts climbing, memory is no longer enough."],
+        ["Disk","How full the storage is. Above 80%, grow the disk or free up space."],
+        ["Connections","How many connections are open to the database, out of the ceiling. At the ceiling new requests fail and users see errors."],
+        ["IO","How busy the disk is. High for a long time means heavy queries or not enough memory."]
+      ],
+      ifExBottom:"<b>When to upgrade:</b> CPU above 80% for a long stretch, or connections near the ceiling = time to upgrade the machine. A few minutes of spike does not justify an upgrade, a trend over several days does.",
       archTitle:"How Helpy works",
       archSub:"Every component, what talks to what, and where things are stored · hover any abbreviation for an explanation",
       archPickFlow:"Pick a flow above to watch a request travel through the system, step by step",
@@ -3746,6 +3954,7 @@
     $("adsView").classList.toggle("hidden",v!=="ads");
     $("backlogView").classList.toggle("hidden",v!=="backlog");
     $("pushView").classList.toggle("hidden",v!=="push");
+    $("infraView").classList.toggle("hidden",v!=="infra");
     $("briefView").classList.toggle("hidden",v!=="brief");
     $("rail").classList.toggle("hidden",v!=="metrics");
     if(v==="chat"){
@@ -3764,6 +3973,9 @@
     if(v==="backlog" && !part) renderBacklog();
     if(v==="push" && !part) renderPush();
     if(v==="brief") renderBrief();
+    // the server tab owns its data: draw what we have (after the view is
+    // visible, so its charts measure a real width), then pull a fresh copy
+    if(v==="infra"){ renderInfra(); loadInfra(); }
     // EVERY tab with a chart, not just metrics: a chart initialised while its
     // view was display:none measures zero width and stays a 100px sliver
     // forever. This guard was written when metrics owned the only charts; the
@@ -5948,6 +6160,8 @@
     refresh:["M3 12a9 9 0 0 1 9-9 9.7 9.7 0 0 1 6.7 2.7L21 8","M21 3v5h-5","M21 12a9 9 0 0 1-9 9 9.7 9.7 0 0 1-6.7-2.7L3 16","M8 16H3v5"],
     filter:["M22 3H2l8 9.5V19l4 2v-8.5z"],
     layers:["m12 2 9 5-9 5-9-5z","m3 17 9 5 9-5","m3 12 9 5 9-5"],
+    // Lucide "server": two rounded racks + their status dots
+    server:["M4 2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z","M4 14h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2z","M6 6h.01","M6 18h.01"],
     bell:["M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9","M10.3 21a1.9 1.9 0 0 0 3.4 0"],
     moon:["M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"],
     sun:["M12 2v2","M12 20v2","m4.9 4.9 1.4 1.4","m17.7 17.7 1.4 1.4","M2 12h2","M20 12h2","m6.3 17.7-1.4 1.4","m19.1 4.9-1.4 1.4"],
@@ -8644,6 +8858,293 @@
     if(!$("archView").classList.contains("hidden")) drawWires();
   });
 
+  // ---- server (infra) tab ----------------------------------------------------
+  // The database machine's own vitals: CPU, memory, disk, connections, IO,
+  // sampled every 5 minutes by a cron, handed over by admin-dashboard
+  // (action "infra", same SSO bearer as every relayCall).
+  // Its OWN call, never part of load(): the full payload is the marketplace,
+  // this is the machine. Pulled on entering the tab, on a window change, and by
+  // the live ticker only while this tab is on screen.
+  var INFRA=null, INFRA_ERR=null, INFRA_SEQ=0, INFRA_HOURS=24;
+  // Mirrored from the backend monitors - change both together. conns is a
+  // share of max_conns, the rest are percents.
+  var IF_LIM={cpu:80, mem:90, disk:80, conns:80};
+  function infraOn(){ var v=$("infraView"); return !!(v && !v.classList.contains("hidden")); }
+  function loadInfra(){
+    // the #infra deep link switches tabs before the session is restored;
+    // bootLoad kicks this again once it is
+    if(!SESSION || !SESSION.access_token) return Promise.resolve();
+    var seq=++INFRA_SEQ;
+    var body=$("ifBody"); if(body && INFRA) body.classList.add("loading");
+    return relayCall("infra",{hours:INFRA_HOURS}).then(function(d){
+      if(seq!==INFRA_SEQ) return;          // a newer window was asked for
+      INFRA=d||{}; INFRA_ERR=null;
+    }).catch(function(e){
+      if(seq!==INFRA_SEQ) return;
+      INFRA_ERR=(e && e.message) || "error";
+    }).then(function(){
+      if(seq!==INFRA_SEQ) return;
+      if(body) body.classList.remove("loading");
+      if(infraOn()){ renderInfra(); paintIcons(); }
+    });
+  }
+  function ifNum(v){ return (v===null || v===undefined || v==="" || isNaN(+v)) ? null : +v; }
+  function ifPct(v){
+    v=ifNum(v); if(v===null) return "-";
+    return (v>0 && v<10 ? (Math.round(v*10)/10) : Math.round(v))+"%";
+  }
+  function ifBytes(b){
+    b=ifNum(b); if(b===null) return null;
+    var g=b/1073741824;
+    return g>=1 ? (Math.round(g*10)/10)+" GB" : Math.round(b/1048576)+" MB";
+  }
+  // a time as one LTR unit: "9.10 14:05" in a Hebrew line otherwise flips
+  // into "14:05 9.10"
+  function ifWhen(iso){
+    var d=new Date(iso); if(isNaN(d)) return "";
+    var hm=String(d.getHours()).padStart(2,"0")+":"+String(d.getMinutes()).padStart(2,"0");
+    var today=new Date().toDateString()===d.toDateString();
+    return "⁦"+(today? hm : d.getDate()+"."+(d.getMonth()+1)+" "+hm)+"⁩";
+  }
+  function ifState(v, lim){
+    if(v===null || lim==null) return null;
+    return v>=lim ? "over" : v>=0.7*lim ? "near" : "ok";
+  }
+  function ifVerdict(host, cls, html, text){
+    var v=el("div","verdict "+cls);
+    var vi=toneIcon(cls);
+    if(vi){ var vs=el("span","vi"); vs.appendChild(vi); v.appendChild(vs); }
+    var b=el("span");
+    if(html!=null) b.innerHTML=html;   // trusted: our dictionary + our own labels
+    else b.textContent=text;           // anything from the server goes in as text
+    v.appendChild(b);
+    host.appendChild(v);
+  }
+  function ifTile(label, valTxt, pctVal, lim, note, extra, title){
+    var t=tile(label, valTxt, { note:note,
+      bullet: pctVal===null ? null : { val:Math.max(0,Math.min(100,pctVal)), target:lim, max:100, bands:[] } });
+    var st=ifState(pctVal, lim);
+    if(st){
+      t.classList.add("ifst-"+st);
+      var sub=t.querySelector(".sub");
+      if(sub) sub.insertBefore(el("span","brpill "+({ok:"up",near:"mid",over:"down"})[st], S["ifS"+st]), sub.firstChild);
+      var tg=t.querySelector(".btgt"); if(tg) tg.title=S.ifThresh(lim+"%");
+    }
+    if(extra) t.appendChild(el("div","note ifextra",extra));
+    if(title) t.title=title;
+    return t;
+  }
+  function renderInfra(){
+    var head=$("ifHead"), body=$("ifBody");
+    if(!head || !body) return;
+    head.innerHTML="";
+    if(!INFRA){
+      body.classList.add("hidden");
+      if(INFRA_ERR) ifVerdict(head, "bad", null, S.ifErr(INFRA_ERR));
+      else emptyState(head, S.ifLoading, "server");
+      return;
+    }
+    // a failed refresh keeps the last good picture on screen, and says so
+    if(INFRA_ERR) ifVerdict(head, "warn", null, S.ifErr(INFRA_ERR));
+    var L=INFRA.latest;
+    if(!L){
+      body.classList.add("hidden");
+      emptyState(head, S.ifEmpty, "server");
+      return;
+    }
+    var wasHidden=body.classList.contains("hidden");
+    body.classList.remove("hidden");
+
+    // ── freshness: the cron writes every 5 minutes, so 15 is three missed runs
+    var ageMin=Math.max(0, Math.floor((Date.now()-new Date(L.sampled_at).getTime())/60000));
+    var ago=isNaN(ageMin) ? "-" : S.ifAgo(ageMin);
+    var stale=!(ageMin<=15);
+    $("ifAge").textContent=stale ? "" : S.ifAge(ago);
+    $("ifAge").classList.toggle("hidden", stale);
+
+    // ── headline: the four backend monitors, not our own reading of a sample.
+    // When sampling has stopped the monitors are frozen too, so "all is well"
+    // would be a claim nobody measured: the stale warning leads instead.
+    var mons=INFRA.monitors||[];
+    var NAMES={ infra_cpu:S.ifMonCpu, infra_memory:S.ifMonMem,
+                infra_disk:S.ifMonDisk, infra_connections:S.ifMonConn };
+    var down=mons.filter(function(m){ return m && m.status==="down"; });
+    if(down.length){
+      ifVerdict(head, "lead bad", S.ifDown(down.map(function(m){
+        // an unknown check name is shown, but only as escaped text
+        var nm=NAMES[m.check] || String(m.check||"").replace(/[<>&"]/g,"");
+        return "<b>"+nm+"</b>"+(m.since? " ("+S.ifSince(ifWhen(m.since))+")" : "");
+      }).join(", ")));
+    }
+    if(stale) ifVerdict(head, "lead warn", null, S.ifStale(ago));
+    else if(!down.length) ifVerdict(head, mons.length ? "lead good" : "lead", mons.length ? S.ifOk : S.ifNoMon);
+
+    // ── tiles: the latest sample
+    var th=$("ifTiles"); th.innerHTML="";
+    var cpu=ifNum(L.cpu_pct), mem=ifNum(L.mem_used_pct), swap=ifNum(L.swap_used_pct),
+        disk=ifNum(L.disk_used_pct), io=ifNum(L.disk_io_pct),
+        conns=ifNum(L.conns), maxc=ifNum(L.max_conns);
+    var connPct=(conns!==null && maxc) ? 100*conns/maxc : null;
+    var connVal=conns===null ? "-" : "⁦"+conns+(maxc? " / "+maxc : "")+"⁩";
+    var cpuTitle=(L.load1!=null && L.cpu_count!=null) ? "load "+L.load1+" · "+L.cpu_count+" vCPU" : "";
+    th.appendChild(ifTile(S.ifTCpu, ifPct(cpu), cpu, IF_LIM.cpu, S.ifNCpu, null, cpuTitle));
+    th.appendChild(ifTile(S.ifTMem, ifPct(mem), mem, IF_LIM.mem, S.ifNMem,
+      swap!==null ? S.ifSwap(ifPct(swap)) : null, ifBytes(L.mem_total_bytes)||""));
+    th.appendChild(ifTile(S.ifTDisk, ifPct(disk), disk, IF_LIM.disk, S.ifNDisk,
+      ifBytes(L.db_size_bytes) ? S.ifDb(ifBytes(L.db_size_bytes)) : null, ifBytes(L.disk_size_bytes)||""));
+    th.appendChild(ifTile(S.ifTConn, connVal, connPct, IF_LIM.conns,
+      maxc ? S.ifNConn(Math.round(maxc*IF_LIM.conns/100)) : "", null, ""));
+    th.appendChild(ifTile(S.ifTIo, ifPct(io), io, null, S.ifNIo, null, ""));
+
+    // ── window coverage: derived from the data, never from the button. The
+    // sampler is new, so "30 days" over two days of samples must say so.
+    var rows=INFRA.series||[];
+    var asked=+INFRA.hours || INFRA_HOURS;
+    var cov=$("ifCover");
+    var firstT=rows.length ? new Date(rows[0].t).getTime() : NaN;
+    var covH=isNaN(firstT) ? 0 : Math.max(1, Math.round((Date.now()-firstT)/3600000));
+    if(rows.length && covH < asked-1){
+      cov.textContent=S.ifSpanShort(S.ifSpan(covH)); cov.classList.add("warn");
+    } else {
+      cov.textContent=S.ifSpan(asked); cov.classList.remove("warn");
+    }
+
+    // ── peaks
+    var P=INFRA.peaks||{}, ph=$("ifPeaks"); ph.innerHTML="";
+    var st=el("div","brstat");
+    function peak(val, cap, tip){
+      var d=el("div"); d.appendChild(el("b",null,val)); d.appendChild(el("span","cap",cap));
+      if(tip) d.title=tip;
+      st.appendChild(d);
+    }
+    peak(ifPct(P.cpu_max), S.ifPkCpu);
+    peak(ifPct(P.cpu_p95), S.ifPkP95, S.ifPkP95Tip);
+    peak(ifPct(P.mem_max), S.ifPkMem);
+    var pc=ifNum(P.conns_max);
+    peak(pc===null ? "-" : "⁦"+pc+(maxc? " / "+maxc : "")+"⁩", S.ifPkConn);
+    ph.appendChild(st);
+    if(ifNum(P.samples)!==null) ph.appendChild(el("div","brnote",S.ifSamples(fmt(+P.samples))));
+
+    // ── charts. Drawn only once the body is visible (see the switchTab note on
+    // zero-width charts); a body that was just un-hidden is resized after.
+    var c1=tok("--s1"), c7=tok("--s7"), c3=tok("--s3"), c2=tok("--s2"),
+        warn=tok("--warning"), bad=tok("--bad-text");
+    // in the 5-minute grain max == avg; a second identical line is noise
+    function differs(a,b){ return rows.some(function(r){
+      return ifNum(r[a])!==null && ifNum(r[b])!==null && Math.abs(r[a]-r[b])>0.05; }); }
+    var cpuS=[{key:"cpu", name:S.ifSerAvg, color:c1, area:true}];
+    if(differs("cpu","cpu_max")) cpuS.push({key:"cpu_max", name:S.ifSerMax, color:c7, thin:true});
+    ifChart("ifChCpu", rows, cpuS, { pct:true, marks:[{y:IF_LIM.cpu, label:S.ifMkAlert, color:warn}] });
+    ifChart("ifChMem", rows, [
+      {key:"mem", name:S.ifSerMem, color:c1, area:true},
+      {key:"swap", name:S.ifSerSwap, color:c2, thin:true}
+    ], { pct:true, marks:[{y:IF_LIM.mem, label:S.ifMkAlert, color:warn}] });
+    var connS=[{key:"conns", name:S.ifSerConn, color:c3, area:true}];
+    if(differs("conns","conns_max")) connS.push({key:"conns_max", name:S.ifSerMax, color:c7, thin:true});
+    ifChart("ifChConn", rows, connS, { ceil:maxc, marks: maxc ? [
+      {y:maxc, label:S.ifMkCeil, color:bad},
+      {y:Math.round(maxc*IF_LIM.conns/100), label:S.ifMkAlert, color:warn}] : [] });
+    ifChart("ifChIo", rows, [{key:"io", name:S.ifSerIo, color:c3, area:true}], { pct:true });
+    if(wasHidden) resizeCharts();
+
+    // ── explainer (static text; repainted here so a language flip catches it)
+    var ex=$("ifExplain"); ex.innerHTML="";
+    var g=el("div","ifexp");
+    (S.ifEx||[]).forEach(function(r){
+      var row=el("div"); row.appendChild(el("b",null,r[0])); row.appendChild(el("span",null,r[1]));
+      g.appendChild(row);
+    });
+    ex.appendChild(g);
+    var bt=el("div","verdict ifbottom"); bt.innerHTML=S.ifExBottom; // trusted: our dictionary
+    ex.appendChild(bt);
+  }
+  // A time-axis line chart. timeChart() is built for DAILY category rows
+  // (fmtDay labels, release annotations); these are 5-minute samples. Same
+  // look, same einsts registry (so resize and the theme/language dispose
+  // cycle reach these too).
+  function ifChart(id, rows, series, o){
+    var host=$(id); if(!host) return;
+    if(!ECH){ host.innerHTML=""; emptyState(host, S.ifNoChart, "activity"); return; }
+    var inst=einsts[id];
+    if(!inst){
+      host.innerHTML="";
+      var box=el("div","echart"); host.appendChild(box);
+      inst=echarts.init(box); einsts[id]=inst;
+    }
+    var ink=tok("--ink"), ink2=tok("--ink2"), muted=tok("--muted"),
+        grid=tok("--grid"), surface=tok("--surface"), base=tok("--baseline");
+    // label grain from the span the DATA covers, not the button: "30 days"
+    // over 39 hours of samples printed "9.10 9.10 10.10 10.10"
+    var t0=rows && rows.length ? new Date(rows[0].t).getTime() : NaN,
+        t1=rows && rows.length ? new Date(rows[rows.length-1].t).getTime() : NaN;
+    var long=!isNaN(t0) && !isNaN(t1) && (t1-t0) > 48*3600000;
+    function two(n){ return String(n).padStart(2,"0"); }
+    function hm(d){ return two(d.getHours())+":"+two(d.getMinutes()); }
+    var dir=LANG==="he" ? "rtl" : "ltr";
+    function valTxt(v){
+      if(v===null || v===undefined || v==="-" || isNaN(+v)) return "-";
+      return o.pct ? ifPct(v) : fmt(Math.round(+v));
+    }
+    var marks=(o.marks||[]).filter(function(m){ return m.y!=null; });
+    inst.setOption({
+      animationDuration:500, animationDurationUpdate:350,
+      textStyle:{ fontFamily:"Heebo, system-ui, sans-serif" },
+      // left room for the first time label ("00:00" was clipped at 10)
+      grid:{ left:22, right:46, top: series.length>1 ? 36 : 18, bottom:26 },
+      legend:{ show: series.length>1, top:0, right:0, itemWidth:12, itemHeight:8,
+               textStyle:{ color:ink2, fontSize:12 } },
+      tooltip:{
+        trigger:"axis", backgroundColor:surface, borderColor:grid,
+        textStyle:{ color:ink, fontSize:12 },
+        // one name | value row per series, laid out in the page's direction:
+        // a Hebrew name and a number in one LTR run would swap sides
+        formatter:function(ps){
+          if(!ps || !ps.length) return "";
+          var d=new Date(ps[0].value[0]);
+          var h='<div dir="'+dir+'"><div dir="ltr" style="text-align:'+(dir==="rtl"?"right":"left")+
+                ';color:'+muted+';margin-bottom:3px">'+d.getDate()+"."+(d.getMonth()+1)+" "+hm(d)+"</div>";
+          ps.forEach(function(p){
+            h+='<div style="display:flex;justify-content:space-between;gap:16px"><span>'+p.marker+p.seriesName+
+               '</span><b style="font-variant-numeric:tabular-nums">'+valTxt(p.value[1])+"</b></div>";
+          });
+          return h+"</div>";
+        }
+      },
+      xAxis:{ type:"time",
+        axisLine:{ lineStyle:{ color:base } }, axisTick:{ show:false }, splitLine:{ show:false },
+        axisLabel:{ color:muted, fontSize:10, hideOverlap:true,
+          formatter:function(v){ var d=new Date(v); return long ? d.getDate()+"."+(d.getMonth()+1) : hm(d); } } },
+      yAxis:{ type:"value", position:"right", min:0,
+        max: o.pct ? 100 : function(e){
+          // connections: always leave the ceiling line in view
+          return Math.max(1, Math.ceil(Math.max(e.max||0, o.ceil||0)*1.08));
+        },
+        minInterval: o.pct ? undefined : 1,
+        splitLine:{ lineStyle:{ color:grid } },
+        axisLabel:{ color:muted, fontSize:10, formatter: o.pct ? "{value}%" : "{value}" } },
+      series: series.map(function(s, i){
+        var sr={ name:s.name, type:"line", showSymbol:false, symbol:"circle", symbolSize:6,
+          connectNulls:false, emphasis:{ focus:"series" },
+          lineStyle:{ width: s.thin ? 1.5 : 2, color:s.color },
+          itemStyle:{ color:s.color, borderColor:surface, borderWidth:2 },
+          areaStyle: s.area ? { color:new echarts.graphic.LinearGradient(0,0,0,1,[
+            { offset:0, color:s.color+"38" }, { offset:1, color:s.color+"00" }]) } : undefined,
+          data: (rows||[]).map(function(r){
+            var v=ifNum(r[s.key]);
+            return [new Date(r.t).getTime(), v===null ? null : v];
+          }) };
+        // the threshold lines ride on the first series. The label carries no
+        // number: canvas text in an LTR chart would put it on the wrong side
+        // of a Hebrew word - the axis says where the line is.
+        if(i===0 && marks.length) sr.markLine={ symbol:"none", silent:true, animation:false,
+          data: marks.map(function(m){ return { yAxis:m.y,
+            lineStyle:{ color:m.color, type:"dashed", width:1.2 },
+            label:{ formatter:m.label, color:m.color, fontSize:10, position:"insideStartTop" } }; }) };
+        return sr;
+      })
+    }, { replaceMerge:["series"] });
+  }
+
   // ---- data + auth ---------------------------------------------------------
   function segVal(id){
     var b=document.querySelector("#"+id+" button.on");
@@ -8771,6 +9272,8 @@
         // a swallowed rejection left the page showing stale numbers with no
         // tell at all - the only signal was the "updated N ago" ticker climbing
         load(true).catch(function(){ markStale(); });
+        // the server tab rides the same tick, but only while it is on screen
+        if(infraOn()) loadInfra();
       },60000);
     }
     else if(autoTimer){ clearInterval(autoTimer); autoTimer=null; markStale(true); }
@@ -8841,6 +9344,11 @@
   segWire("pnWinSeg",function(){
     NOTIF_DAYS=segVal("pnWinSeg");
     load().catch(function(){});
+  });
+  // the server window is its own call entirely - it never touches load()
+  segWire("ifWinSeg",function(){
+    INFRA_HOURS=segVal("ifWinSeg");
+    loadInfra();
   });
   segWire("chatTypeSeg",renderChat);
   segWire("funnelSeg",function(){ if(DATA) renderMetrics(); });
@@ -8970,6 +9478,9 @@
     // when no dashboard payload has arrived yet
     renderBacklog();
     try{ renderPublicPages(); }catch(e){ console.error("renderPublicPages failed",e); }
+    // the server tab keeps its own payload; repaint it only where it is seen
+    // (switchTab repaints it on the way in otherwise)
+    if(infraOn()){ try{ renderInfra(); }catch(e){ console.error("renderInfra failed",e); } paintIcons(); }
     syncChrome();  // English labels wrap the header differently than Hebrew
   }
   $("themeBtn").addEventListener("click",function(){
@@ -9034,6 +9545,8 @@
     // was opened. One boot load, whichever path gets there first.
     var bootLoading=false, bootSettled=false;
     function bootLoad(){
+      // a #infra deep link landed before the session existed: fetch it now
+      if(infraOn() && !INFRA) loadInfra();
       if(DATA || bootLoading) return;
       bootLoading=true;
       // brief FIRST, the full load after it: fired together, the brief's one
