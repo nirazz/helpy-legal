@@ -7,8 +7,11 @@
 <title>Helpy Console</title>
 <link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
-<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<!-- Exact versions + SRI: these scripts run with the founder's session, so a bad
+     release or a tampered CDN file must fail to load, not run (red-team 2026-10-11).
+     supabase-js pinned to what @2 resolved to on that day - no behaviour change. -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js" integrity="sha384-Mx5lkUEQPM1pOJCwFtUICyX45KNojXbkWdYhkKUKsbv391mavbfoAmONbzkgYPzR" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.min.js" integrity="sha384-dl/4LkSyQ4uEucc48NM6VDZLAjLLq9yMzZ5JLXumBq7Ld33XBof73hseOqPhO89+" crossorigin="anonymous"></script>
 <style>
   /* holographic-lab identity: airy light ground with soft colorful glows and a
      faint HUD grid, white frosted-glass panels, Orbitron numerals with an
@@ -3788,6 +3791,15 @@
     return (f<=1?1:f<=2?2:f<=5?5:10)*p;
   }
   // DOM builder - user strings only ever pass through textContent
+  // Any DATA string headed for a dictionary line that is written with innerHTML
+  // (secBrief / panelRead / line.innerHTML) goes through this first. A user's
+  // display name and an OSM city are user-controlled: unescaped, a name like
+  // <img onerror=...> ran in the founder's session (red-team 2026-10-11).
+  function escHtml(v){
+    return String(v==null?"":v).replace(/[&<>"']/g,function(c){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
   function el(tag, cls, text){
     var e=document.createElement(tag);
     if(cls) e.className=cls;
@@ -4958,7 +4970,7 @@
     if(TU.length){
       var sc=function(u){ return (u.posts||0)*2+(u.matches||0)*3+(u.msgs||0); };
       var tot=TU.reduce(function(a,u){ return a+sc(u); },0);
-      secBrief("secUsers", S.sbUsers(TU[0].name, tot? pct(sc(TU[0]),tot):"-", fmt(TU.length)));
+      secBrief("secUsers", S.sbUsers(escHtml(TU[0].name), tot? pct(sc(TU[0]),tot):"-", fmt(TU.length)));
     }
 
     // SAFETY: is anyone getting hurt, or just leaving
@@ -5520,9 +5532,9 @@
       var othersC=CL.slice(1).reduce(function(a,c){ return a+c.requests; },0);
       var totCity=(DATA.cities_30d||[]).reduce(function(a,c){ return a+c.posts; },0);
       var topShare=totCity? Math.round(100*(postsByCity[topC.city]||0)/totCity) : 0;
-      var cityRead=S.rdCities(topC.city, fmt(topC.requests), pct(topC.filled_24h,topC.requests), fmt(othersC));
-      if(topShare>=60) cityRead+=" "+S.rdCitiesTop(topC.city, topShare+"%", fmt((DATA.cities_30d||[]).length));
-      if(othersC < topC.requests/2) cityRead+=S.recCity(topC.city, pct(topC.filled_24h,topC.requests));
+      var cityRead=S.rdCities(escHtml(topC.city), fmt(topC.requests), pct(topC.filled_24h,topC.requests), fmt(othersC));
+      if(topShare>=60) cityRead+=" "+S.rdCitiesTop(escHtml(topC.city), topShare+"%", fmt((DATA.cities_30d||[]).length));
+      if(othersC < topC.requests/2) cityRead+=S.recCity(escHtml(topC.city), pct(topC.filled_24h,topC.requests));
       panelRead("cityLiq", othersC < topC.requests/2 ? "warn":"", cityRead);
     }
 
@@ -5794,7 +5806,7 @@
         var next=NB.filter(function(x){ return x.users<60; })
                    .sort(function(a,b){ return a.gap-b.gap; })[0];
         if(next) panelRead("nbhd", tipped?"":"warn",
-          S.rdNbhd(tipped, NB.length, next.city||S.nbhdNoCity, fmt(next.gap)));
+          S.rdNbhd(tipped, NB.length, next.city?escHtml(next.city):S.nbhdNoCity, fmt(next.gap)));
       }
     }
 
@@ -5827,7 +5839,7 @@
         // "nobody has gone quiet" has to be checked against the SAME field the
         // rows print - it once sat under three "not seen for 20+ days" rows
         var quietN=(HD.helpers||[]).filter(function(h){ return h.days_inactive>14; }).length;
-        if(riskH) panelRead("helperDep","bad",S.rdDep(riskH.name, riskH.share, fmt(riskH.days_inactive)));
+        if(riskH) panelRead("helperDep","bad",S.rdDep(escHtml(riskH.name), riskH.share, fmt(riskH.days_inactive)));
         else if(quietN) panelRead("helperDep","warn",S.rdDepQuiet(fmt(quietN), fmt((HD.helpers||[]).length)));
         else panelRead("helperDep","good",S.rdDepOk);
       }
@@ -6026,7 +6038,7 @@
                 onClick:function(){ drillToChat({category:c.category}); }};
       }));
     var CT=DATA.categories_30d||[];
-    if(CT.length) panelRead("chCats","",S.rdCats(catLabel(CT[0].category), fmt(CT[0].requests+CT[0].offers)));
+    if(CT.length) panelRead("chCats","",S.rdCats(escHtml(catLabel(CT[0].category)), fmt(CT[0].requests+CT[0].offers)));
     // Demand clusters read from the request TEXT: this is the panel that can
     // say "a category is missing", which a category breakdown never can.
     var ci=$("catIntel");
@@ -6232,7 +6244,7 @@
       var score=function(u){ return (u.posts||0)*2+(u.matches||0)*3+(u.msgs||0); };
       var tot=TU.reduce(function(a,u){ return a+score(u); },0);
       if(tot) panelRead("topUsers", score(TU[0])/tot>0.3?"warn":"",
-        S.rdTopUsers(TU[0].name, pct(score(TU[0]),tot)));
+        S.rdTopUsers(escHtml(TU[0].name), pct(score(TU[0]),tot)));
     }
 
     renderStoreFunnel();
