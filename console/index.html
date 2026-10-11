@@ -869,7 +869,7 @@
   #mfaBox .mfa-title { color:var(--ink); font-weight:700; font-size:15px; margin-bottom:6px; }
   #mfaQr { display:block; width:168px; height:168px; margin:14px auto 6px; background:#fff;
            border-radius:10px; padding:6px; }
-  #mfaQr.hidden, #mfaSecret.hidden, #mfaCode.hidden, #mfaBioBtn.hidden { display:none; }
+  #mfaQr.hidden, #mfaSecret.hidden, #mfaUri.hidden, #mfaCode.hidden, #mfaBioBtn.hidden { display:none; }
   #mfaSecret { display:block; font-size:11px; color:var(--muted); word-break:break-all; }
   #mfaCode { text-align:center; letter-spacing:6px; font-size:18px; }
   #mfaBox .mfa-note { font-size:11px; margin:14px 0 0; }
@@ -1702,6 +1702,7 @@
       <button class="gbtn" id="mfaBioBtn" type="button"><span id="mfaBioLbl"></span></button>
       <img id="mfaQr" class="hidden" alt="">
       <code id="mfaSecret" class="hidden" dir="ltr"></code>
+      <a id="mfaUri" class="linklike hidden" data-i18n="mfaOpenPw"></a>
       <input id="mfaCode" class="hidden" inputmode="numeric" autocomplete="one-time-code" maxlength="6" dir="ltr" placeholder="000000">
       <button class="linklike" id="mfaAltBtn" type="button"></button>
       <div class="err" id="mfaErr"></div>
@@ -2481,14 +2482,14 @@
       errNoAuth:"שירות ההתחברות לא נטען, רעננו את הדף",
       errExpired:"ההתחברות פגה - התחברו שוב",
       mfaTitle:"עוד צעד אחד", mfaSub:"אשרו שזה אתם עם Face ID או טביעת אצבע",
-      mfaSubCode:"הקלידו את הקוד בן 6 הספרות מאפליקציית האימות",
+      mfaSubCode:"הקלידו את הקוד בן 6 הספרות, או געו בשדה ובחרו אותו מהסיסמאות עם Face ID",
       mfaEnrollTitle:"הגדרה חד-פעמית", mfaEnrollSub:"חברו את Face ID או טביעת האצבע לקונסול. מעכשיו זה מה שיאשר את הכניסה",
-      mfaEnrollSubCode:"סרקו את הקוד באפליקציית אימות (1Password, Google Authenticator) והקלידו את 6 הספרות",
+      mfaEnrollSubCode:"סרקו את הקוד במצלמת האייפון ושמרו אותו באפליקציית הסיסמאות (או ב-1Password). מעכשיו הוא ימולא עם Face ID. אחרי השמירה הקלידו כאן את 6 הספרות",
       mfaBio:"אימות עם Face ID / טביעת אצבע", mfaBioEnroll:"הגדרת Face ID / טביעת אצבע",
       mfaUseCode:"שימוש בקוד מאפליקציית אימות", mfaUseBio:"חזרה ל-Face ID / טביעת אצבע",
       mfaBadCode:"הקוד לא נכון או שפג תוקפו - נסו את הקוד הבא",
       mfaBioFail:"האימות לא הושלם - נסו שוב, או השתמשו בקוד",
-      mfaNote:"במכשיר הזה לא תתבקשו שוב עד שתתנתקו", mfaOut:"התנתקות",
+      mfaNote:"במכשיר הזה לא תתבקשו שוב עד שתתנתקו", mfaOpenPw:"בטלפון? פתיחה ישירה באפליקציית הסיסמאות", mfaOut:"התנתקות",
       errTimeout:"השרת לא הגיב תוך 25 שניות - נסו שוב",
       updatedAgo:function(s){ return s<10? "עודכן כרגע" : s<60? "עודכן לפני "+s+" שניות" : (Math.round(s/60)===1? "עודכן לפני דקה" : "עודכן לפני "+Math.round(s/60)+" דקות"); },
       tileHero:"עזרות שהושלמו · {win}",
@@ -3332,14 +3333,14 @@
       errNoAuth:"Sign-in service failed to load - refresh the page",
       errExpired:"Your session expired - sign in again",
       mfaTitle:"One more step", mfaSub:"Confirm it's you with Face ID or your fingerprint",
-      mfaSubCode:"Enter the 6-digit code from your authenticator app",
+      mfaSubCode:"Enter the 6-digit code, or tap the field and pick it from Passwords with Face ID",
       mfaEnrollTitle:"One-time setup", mfaEnrollSub:"Link Face ID or your fingerprint to the console. From now on, that's what approves sign-in",
-      mfaEnrollSubCode:"Scan the code in an authenticator app (1Password, Google Authenticator) and enter the 6 digits",
+      mfaEnrollSubCode:"Scan the code with your iPhone camera and save it in the Passwords app (or 1Password). From then on it fills in with Face ID. Then enter the 6 digits here",
       mfaBio:"Verify with Face ID / fingerprint", mfaBioEnroll:"Set up Face ID / fingerprint",
       mfaUseCode:"Use a code from an authenticator app", mfaUseBio:"Back to Face ID / fingerprint",
       mfaBadCode:"That code is wrong or expired - try the next one",
       mfaBioFail:"Verification didn't complete - try again, or use a code",
-      mfaNote:"You won't be asked again on this device until you sign out", mfaOut:"Sign out",
+      mfaNote:"You won't be asked again on this device until you sign out", mfaOpenPw:"On your phone? Open it in Passwords directly", mfaOut:"Sign out",
       errTimeout:"The server did not answer within 25 seconds - try again",
       updatedAgo:function(s){ return s<10? "updated just now" : s<60? "updated "+s+" seconds ago" : (Math.round(s/60)===1? "updated 1 minute ago" : "updated "+Math.round(s/60)+" minutes ago"); },
       tileHero:"Helps completed · {win}",
@@ -11367,10 +11368,15 @@
       $("mfaQr").classList.toggle("hidden", !qr);
       $("mfaSecret").classList.toggle("hidden", !qr);
       if(qr){ $("mfaQr").src=MFA.totp.qr_code; $("mfaSecret").textContent=MFA.totp.secret; }
+      // on the phone itself there is no second screen to scan from: the
+      // otpauth:// link hands the code straight to Passwords / 1Password
+      var uri=qr && /^otpauth:\/\//.test(MFA.totp.uri||"");
+      $("mfaUri").classList.toggle("hidden", !uri);
+      if(uri) $("mfaUri").href=MFA.totp.uri;
       $("mfaCode").classList.toggle("hidden", bio);
       $("mfaCode").value="";
       // the fallback link exists only where there is a fallback to take
-      var alt=bio ? (MFA.enroll || MFA.codeFactor) : MFA.bioOk;
+      var alt=bio ? !!MFA.codeFactor : !!MFA.bioFactor;
       $("mfaAltBtn").classList.toggle("hidden", !alt);
       $("mfaAltBtn").textContent= bio? S.mfaUseCode : S.mfaUseBio;
       $("mfaErr").textContent="";
@@ -11420,9 +11426,14 @@
             var code=ok.filter(function(f){ return f.factor_type==="totp"; })[0];
             MFA.bioOk=!!window.PublicKeyCredential;
             MFA.codeFactor=code? code.id : null;
-            if(bio && MFA.bioOk){ MFA.factor=bio.id; MFA.kind="webauthn"; MFA.enroll=false; }
+            MFA.bioFactor= (bio && MFA.bioOk)? bio.id : null;
+            // Enrolment is always a TOTP code: Supabase does not offer WebAuthn as
+            // an MFA factor on this project (dashboard, 2026-10-11). The code is
+            // kept in Apple Passwords / 1Password, which fill it in after Face ID,
+            // so day to day it still feels like Face ID. A WebAuthn factor, if one
+            // ever exists, is used first.
+            if(MFA.bioFactor){ MFA.factor=bio.id; MFA.kind="webauthn"; MFA.enroll=false; }
             else if(code){ MFA.factor=code.id; MFA.kind="totp"; MFA.enroll=false; }
-            else if(MFA.bioOk){ MFA.factor=null; MFA.kind="webauthn"; MFA.enroll=true; }
             else return startTotpEnroll();
             mfaShow();
           });
@@ -11456,10 +11467,9 @@
     $("mfaAltBtn").addEventListener("click",function(){
       $("mfaErr").textContent="";
       if(MFA.kind==="webauthn"){
-        if(MFA.codeFactor){ MFA.factor=MFA.codeFactor; MFA.kind="totp"; MFA.enroll=false; mfaShow(); }
-        else startTotpEnroll().catch(function(e){ console.error(e); $("mfaErr").textContent=S.errServer; });
+        MFA.factor=MFA.codeFactor; MFA.kind="totp"; MFA.enroll=false; mfaShow();
       } else {
-        MFA.kind="webauthn"; gatePending=false; MFA.factor=null; gateThenBoot();
+        MFA.factor=MFA.bioFactor; MFA.kind="webauthn"; MFA.enroll=false; mfaShow();
       }
     });
     $("mfaCode").addEventListener("input",function(){
