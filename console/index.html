@@ -1718,6 +1718,79 @@
                letter-spacing:.04em; color:var(--muted); border-bottom:none; }
   .pnweak { font-size:10px; padding:1px 6px; border-radius:99px; border:1px solid var(--hairline);
             color:var(--muted); margin-inline-start:6px; white-space:nowrap; }
+
+  /* ==== attention layer (2026-10-11) =====================================
+     Motion only where something needs a decision, never on the data itself:
+     a ring that pings from a red/amber icon, a sheen across the north star,
+     a live dot on the healthy-checks line. prefers-reduced-motion (above)
+     switches every one of these off. */
+  .ins .dot { position:relative; }
+  .ins.lead.bad .dot::after, .ins.lead.warn .dot::after {
+    content:""; position:absolute; inset:-5px; border-radius:50%;
+    border:2px solid currentColor; opacity:0; pointer-events:none;
+    animation:ping 2.4s cubic-bezier(0,0,.2,1) infinite; }
+  .ins.lead.warn .dot::after { animation-iteration-count:3; }
+  @keyframes ping { 0%{ transform:scale(.6); opacity:.55; } 80%,100%{ transform:scale(1.5); opacity:0; } }
+  /* the brief's work rows: a tinted strip with an edge, so "what to do" is a
+     shape the eye finds before it reads a word */
+  #briefView #brInsights .ins.warn:not(.rest), #briefView #brInsights .ins.bad:not(.rest) {
+    border-radius:10px; padding-inline:12px; margin-block:3px; border-bottom:0;
+    border-inline-start:3px solid currentColor; }
+  #briefView #brInsights .ins.warn:not(.rest) { color:var(--ink);
+    background:linear-gradient(90deg, rgba(217,119,6,.10), rgba(217,119,6,.03));
+    border-inline-start-color:var(--warning); }
+  #briefView #brInsights .ins.bad:not(.rest) { color:var(--ink);
+    background:linear-gradient(90deg, rgba(220,38,38,.12), rgba(220,38,38,.03));
+    border-inline-start-color:var(--bad-text); }
+  html[dir="rtl"] #briefView #brInsights .ins.warn:not(.rest) {
+    background:linear-gradient(270deg, rgba(217,119,6,.10), rgba(217,119,6,.03)); }
+  html[dir="rtl"] #briefView #brInsights .ins.bad:not(.rest) {
+    background:linear-gradient(270deg, rgba(220,38,38,.12), rgba(220,38,38,.03)); }
+  #briefView #brInsights .ins.warn:not(.rest) b { color:var(--warning); font-size:1.12em; }
+  #briefView #brInsights .ins.bad:not(.rest) b { color:var(--bad-text); font-size:1.12em; }
+  #briefView #brInsights .ins.clickable:not(.rest):hover { filter:brightness(.98);
+    transform:translateX(0); box-shadow:0 2px 10px rgba(45,45,100,.08); }
+  /* tab badges: amber = something waits, red = something is broken */
+  .tabbadge.warn { background:var(--warning); }
+  .tabbadge.bad { background:var(--bad-text); animation:badgepulse 2s ease-in-out infinite; }
+  @keyframes badgepulse { 0%,100%{ box-shadow:0 0 0 0 rgba(220,38,38,.5); }
+                          50%{ box-shadow:0 0 0 5px rgba(220,38,38,0); } }
+  /* brief tiles: the change against yesterday is a coloured direction, not
+     a phrase to decode */
+  #briefView .tile .brbd { color:var(--ink2); }
+  .brdelta { display:inline-flex; align-items:center; gap:4px; white-space:nowrap;
+             font-weight:600; font-size:12px; margin-top:3px; }
+  .brdelta .ico { flex-shrink:0; }
+  .brdelta.up { color:var(--good-text); }
+  .brdelta.down { color:var(--bad-text); }
+  .brdelta.flat { color:var(--muted); font-weight:500; }
+  #briefView .tile .brweek.down { color:var(--bad-text); font-weight:700; }
+  #briefView .tile .brweek.up { color:var(--good-text); font-weight:700; }
+  /* the north star: a slow sheen runs along its top edge */
+  #briefView .tile.hero::after, #metricsView .tile.hero::after {
+    content:""; position:absolute; inset-inline:10px; top:-3px; height:3px; pointer-events:none;
+    background:linear-gradient(90deg, transparent 0%, rgba(255,255,255,.95) 50%, transparent 100%);
+    background-size:40% 100%; background-repeat:no-repeat;
+    animation:sheen 5.5s ease-in-out 1s infinite; }
+  @keyframes sheen { 0%{ background-position:-60% 0; } 55%,100%{ background-position:160% 0; } }
+  /* health checks: one calm line with a live dot; a failing check pulses */
+  .brpill.allup { display:inline-flex; align-items:center; gap:7px; }
+  .brpill .okdot { width:7px; height:7px; border-radius:50%; background:var(--good-text);
+                   animation:okbeat 2.6s ease-in-out infinite; }
+  @keyframes okbeat { 0%,100%{ box-shadow:0 0 0 0 rgba(21,128,61,.45); }
+                      50%{ box-shadow:0 0 0 5px rgba(21,128,61,0); } }
+  .brpill.down { animation:badgepulse 2s ease-in-out infinite; border-color:rgba(220,38,38,.35); }
+  #briefView .brchk { font-size:12px; align-self:center; }
+  #briefView .brwin { color:var(--muted); font-size:12px; }
+  /* header freshness */
+  #genAt.stale { color:var(--bad-text); font-weight:600; }
+  @media (min-width:1100px){ header .brand small { flex-shrink:0; } }
+  /* the wordmark only where the toolbar leaves room for it AND the time -
+     at 1728px it pushed "עודכן ב-20:38" out of the clipped brand box */
+  @media (min-width:1600px) and (max-width:1899px){ header .brand .bn { display:none; } }
+  /* a snapshot weeks old: the age chip turns red and breathes once */
+  .panel h2 .stale.old { color:#fff; background:var(--bad-text); border-color:transparent;
+                         animation:badgepulse 2s ease-in-out 3; cursor:help; }
 </style>
 </head>
 <body>
@@ -1824,8 +1897,8 @@
     <div class="sechead" style="--sec-c:var(--s1)" data-i18n="brSecWait">1 · מי מחכה למישהו</div>
     <div class="grid2" id="brWait">
       <section class="panel" style="opacity:1;transform:none">
-        <h2 data-i18n="brSupportT">כתבו לצוות Helpy ולא נענו</h2>
-        <div class="sub" data-i18n="brSupportS">משתמשים שההודעה האחרונה שלהם בשרשור Helpy קיבלה רק את האישור האוטומטי</div>
+        <h2 data-i18n="brSupportT">המילה האחרונה בשרשור Helpy היא שלהם</h2>
+        <div class="sub" data-i18n="brSupportS">אחרי התשובה האחרונה של הצוות הם כתבו שוב - לפעמים שאלה, לפעמים רק תודה</div>
         <div id="brSupport"></div>
       </section>
       <section class="panel" style="opacity:1;transform:none">
@@ -2455,6 +2528,7 @@
       sfMetaEver:function(e,d,gap){ return e+" חשבונות נוצרו מאז ההשקה · הפער של כ-"+gap+" מול ההורדות = מי שהוריד ולא עבר את מסך ההתחברות · "+d+" מהם מחקו את החשבון מאז"; },
       sfMetaEverOver:function(e,date,d){ return e+" חשבונות נוצרו מאז ההשקה - יותר מההורדות למעלה, כי דוחות החנויות נעצרו ב-"+date+" ואפל סופרת רק מכשירים שהסכימו לשתף · "+d+" מהם מחקו את החשבון מאז"; },
       sfStale:function(d){ return "נתוני חנות מ-"+d; },
+      sfOld:function(n){ return "הנתונים בני "+n+" ימים - ההורדות כאן ישנות מהחשבונות שלידן, אז היחסים בין השורות לא מדויקים עד המשיכה הבאה מדוחות החנויות"; },
       sfMetaDl:function(i,a){ return "iOS "+i+" · Android "+a+" · המקור: דוחות ההתקנה של אפל וגוגל. אפל סופרת רק מכשירים שאישרו שיתוף נתונים, אז צד ה-iOS הוא רצפה - המספר האמיתי גבוה יותר"; },
       sfMetaRm:function(i,a,ap){ return "iOS "+i+" · Android "+a+" ("+ap+" מההתקנות) · אנדרואיד נמדד במלואו; ההסרות ב-iOS מדווחות רק ממכשירי opt-in, אז היחס האמיתי שם כנראה גבוה מהנראה"; },
       sfMetaHold:function(i,a){ return "iOS ~"+i+" (הערכה: התקנות פחות הסרות) · Android "+a+" (בסיס מכשירים שנמדד ישירות אצל גוגל)"; },
@@ -2592,7 +2666,7 @@
       cmpPrevLabel:"התקופה הקודמת",
       cmpDauPrev:"ממוצע DAU בתקופה הקודמת",
       f1:"נרשמו", f2:"שיתפו מיקום", f3:"אישרו התראות", f4:"אימתו טלפון",
-      f5:"פרסמו פוסט", f6:"הגיעו להתאמה", f7:"שלחו הודעה",
+      f5:"פרסמו פוסט", f6:"שלחו או קיבלו פנייה", f7:"שלחו הודעה",
       lf1:"חדשים (עד 7 ימים)", lf2:"פעילים בשבוע האחרון", lf3:"רדומים (30+ יום בלי כניסה)", lf4:"סה״כ משתמשים חיים",
       lf2New:function(n){ return "פעילים השבוע, מתוכם חדשים "+n; }, lfRest:"כל השאר",
       liq1:"בקשות חדשות", liq2:"קיבלו הצעה תוך יממה", liq3:"קיבלו הצעה בסוף", liq4:"חציון זמן להצעה ראשונה",
@@ -2625,7 +2699,7 @@
       tagAskedNoAns:"נשאלו אם הושלם · לא ענו", tagAnsGot:"ענו: קיבלו עזרה", tagAnsNotYet:"ענו: עוד לא",
       tagAnsReason:{still_coordinating:"ענו: עדיין מתאמים", no_response:"ענו: לא קיבלו מענה", no_longer_needed:"ענו: כבר לא צריך"},
       noData:"אין נתונים", noDataRange:"אין נתונים בטווח",
-      insFunnel:function(p,a,b,w){ return "רק <b>"+p+"%</b> מהנרשמים מגיעים לשיחה עם שכן - זה צוואר הבקבוק המרכזי במשפך ("+a+" מתוך "+b+" ב-"+w+" יום)"; },
+      insFunnel:function(p,a,b,w){ return "רק <b>"+p+"%</b> מהנרשמים כותבים הודעה לשכן - זה צוואר הבקבוק המרכזי במשפך ("+a+" מתוך "+b+" ב-"+w+" יום)"; },
       insOfferAns:function(p,a,b,bad){ return "בעלי הצעות ענו ל-<b>"+p+"%</b> מהפניות אליהם ("+a+" מתוך "+b+")"+(bad?" - פנייה שנשארת באוויר מייאשת שכנים":""); },
       insLiq:function(p){ return "<b>"+p+"%</b> מהבקשות קיבלו הצעה תוך 24 שעות (יעד: "+bm("50%+","fill24")+")"; },
       insNoOffer:function(n){ return "<b>"+n+"</b> בקשות פעילות עדיין בלי אף הצעה - לחיצה קופצת לרשימה"; },
@@ -2689,7 +2763,7 @@
       insMore:function(n){ return "הצגת "+n+" תובנות נוספות"; },
       insLess:"הצגת המובילות בלבד",
       rdCitiesTop:function(city,share,n){ return "<b>"+share+"</b> מהפוסטים מגיעים מ<b>"+city+"</b> לבדה (מתוך "+n+" הערים המובילות בפוסטים). ריכוז כזה אינו חולשה - הוא בדיוק המקום שבו כדאי להעמיק, כי רשת שכנים נבנית בשכונה ולא בפיזור ארצי."; },
-      sbGrowth:function(n,up,d,act,sign,msg){ return "נרשמו <b>"+n+"</b> שכנים חדשים בשבוע ("+(up?"עלייה":"ירידה")+" של "+d+" מול השבוע שעבר), אבל רק <b>"+act+"%</b> מהנרשמים החדשים מגיעים לשיחה עם שכן ("+msg+" מתוך "+sign+" בשבועיים האחרונים). המסקנה: הרכישה עובדת, ההפעלה לא - כל שקל שיושקע בפרסום לפני שהמספר הזה עולה קונה נטישה."; },
+      sbGrowth:function(n,up,d,act,sign,msg){ return "ב-7 הימים האחרונים נרשמו <b>"+n+"</b> שכנים חדשים ("+(up?"עלייה":"ירידה")+" של "+d+" מול 7 הימים שלפניהם), אבל רק <b>"+act+"%</b> מהנרשמים החדשים כתבו הודעה לשכן ("+msg+" מתוך "+sign+" בשבועיים האחרונים). המסקנה: הרכישה עובדת, ההפעלה לא - כל שקל שיושקע בפרסום לפני שהמספר הזה עולה קונה נטישה."; },
       sbMarket:function(rq,of,ratio,fill,ans,sil,thin){ return "בטווח הנבחר פורסמו <b>"+rq+"</b> בקשות מול <b>"+of+"</b> הצעות (פי "+ratio+" היצע), ורק <b>"+fill+"%</b> מהבקשות נענו תוך יממה. הצפיפות מסבירה את הפער: בקשה שנענתה הייתה מוקפת <b>"+ans+"</b> שכנים בטווח, בקשה ששתקה <b>"+sil+"</b> בלבד. יש כרגע <b>"+thin+"</b> בקשות חיות באזור דליל - אלה אנשים שסטטיסטית לא יקבלו מענה. הצעד הנכון אינו לגייס עוד עוזרים אלא לרכז ביקוש היכן שכבר יש צפיפות."; },
       sbChat:function(n,tw,med){ return "נפתחו <b>"+n+"</b> שיחות, וב-<b>"+tw+"%</b> מהן שני הצדדים באמת כתבו. התשובה הראשונה מגיעה תוך <b>"+med+"</b> בחציון. מי שעונה עונה מהר מאוד, ולכן זו אינה בעיית זמינות אלא בעיית תשומת לב - כמעט מחצית מהפניות פשוט לא נקראות בזמן."; },
       sbRetention:function(d1,a1,later,newshare,dorm,dormp){ return (
@@ -2750,7 +2824,7 @@
       glFirst:"השבוע הראשון בטווח - אין מול מה להשוות",
       glPeak:"השבוע החזק ביותר בטווח",
       glLow:"השבוע החלש ביותר בטווח",
-      glSplit:function(i,a){ return i+" iOS · "+a+" אנדרואיד"; },
+      glSplit:function(i,a){ return "\u2066iOS "+i+"\u2069 · אנדרואיד "+a; },
       glogEmpty:"אין מספיק שבועות בטווח כדי לבנות יומן",
       rdGlog:function(best,bestN,drop){ return "השבוע החזק ביותר בטווח היה <b>"+best+"</b> עם <b>"+bestN+"</b> "+(bestN==="1"?"נרשם":"נרשמים")+(drop?", ומאז הקצב ירד ב-<b>"+drop+"%</b>":"")+". צמיחה שמגיעה בגלים סביב קמפיין ולא בקו עולה יציב מעידה שהערוץ נרכש ולא נצבר - ברגע שהתקציב נעצר, הגל נעצר איתו."; },
       secEventsT:"מה קרה לאחרונה", feedTitle:"יומן אירועים · {win}",
@@ -3138,7 +3212,7 @@
       scSecOtp:"1 · קודי אימות בטלפון",
       scChTitle:"קודים לפי יום",
       scChSub:"כל עמודה היא יום: למטה הקודים שנשלחו, מעליהם הקודים שנחסמו, לפי הסיבה.",
-      scSpan:function(d){ return d+" ימים אחרונים"; },
+      scSpan:function(d){ return d+" ימים אחרונים"; }, scSince:function(d){ return "מאז "+d+" (תחילת המדידה)"; },
       scChEmpty:"לא נשלח ולא נחסם אף קוד בחלון הזה.",
       scSerSent:"נשלחו", scSerRefused:"נחסמו", scSerOther:"נחסמו - סיבה לא ידועה",
       scReasons:{ global_brake:"בלם חירום (40 ב-10 דקות)", global_day:"תקרה יומית (60 ביום)",
@@ -3313,7 +3387,7 @@
       brSub:function(d,ago){ return d+" · הנתונים חושבו "+ago+" · כל המספרים על משתמשים אמיתיים בלבד"; },
       brEmpty:"הבריף לא הגיע מהשרת - רענון יעזור, ואם לא, get_morning_brief נכשל (יומן admin-dashboard).",
       brSecWait:"1 · מי מחכה למישהו", brSecDay:"2 · מה קרה ביממה האחרונה", brSecRun:"3 · האם המכונה רצה בלילה", brSecMoney:"4 · קמפיינים ועל השולחן",
-      brSupportT:"כתבו לצוות Helpy ולא נענו", brSupportS:"משתמשים שההודעה האחרונה שלהם בשרשור Helpy קיבלה רק את האישור האוטומטי",
+      brSupportT:"המילה האחרונה בשרשור Helpy היא שלהם", brSupportS:"אחרי התשובה האחרונה של הצוות הם כתבו שוב - לפעמים שאלה, לפעמים רק תודה",
       brPendingT:"פניות שמחכות להחלטה", brPendingS:"שכן/ה החליק/ה על בקשה לפני יותר מיממה, ובעל/ת הבקשה עדיין לא אישר/ה ולא דחה/תה",
       brNoOfferT:"בקשות חדשות (יום עד שבוע) שעוד לא קיבלו פנייה", brNoOfferS:"בקשות פעילות בנות יום עד שבוע שאף אחד לא החליק עליהן",
       brStuckT:"שיחות שנתקעו", brStuckS:"שיחות פתוחות שההודעה האחרונה בהן היא בת 3 עד 14 ימים",
@@ -3342,9 +3416,15 @@
       // the pill reads in Hebrew; the raw check_name stays in the tooltip
       brChecks:{ push_auth:"התראות", founder_alerts:"התראות למייסד", moderate_post:"מודרציית תוכן",
                  cron_delivery:"מסירת משימות", cron_jobs:"משימות מתוזמנות", outbox:"תור הניסיונות החוזרים",
-                 push_tickets:"אישורי התראות", daily_digest:"הסיכום היומי" },
+                 push_tickets:"אישורי התראות", daily_digest:"הסיכום היומי",
+                 abuse_volume:"הצפה בפעולות", data_retention:"מחיקת נתונים ישנים",
+                 infra_compute_budget:"גודל השרת ותקציב", infra_connections:"חיבורים למסד",
+                 infra_cpu:"מעבד", infra_disk:"דיסק", infra_memory:"זיכרון",
+                 offsite_backup:"גיבוי חיצוני" },
+      brTabBadge:function(n){ return n==="1"? "דבר אחד מחכה לך בבוקר" : n+" דברים מחכים לך בבוקר"; },
+      brAllUp:function(n){ return "כל "+n+" הבדיקות תקינות"; }, brRestUp:function(n){ return "עוד "+n+" תקינות"; }, brShowChecks:"הצגת כולן", brHideChecks:"הסתרה",
       brCheck:function(x){ return (this.brChecks && this.brChecks[x]) || String(x||"").replace(/_/g," "); },
-      brCron:"משימות מתוזמנות שהגיעו לשרת", brCronLine:function(ok,to,dns,from,to2){ return "<b>"+ok+"</b> עברו · <b>"+to+"</b> איטיות (אין תשובה תוך 5 שניות) · <b>"+dns+"</b> אבדו לפני שיצאו · "+from+"-"+to2; },
+      brCron:"משימות מתוזמנות שהגיעו לשרת", brCronLine:function(ok,to,dns,from,to2){ return "<b>"+ok+"</b> עברו · <b>"+to+"</b> איטיות (אין תשובה תוך 5 שניות) · <b>"+dns+"</b> אבדו לפני שיצאו<br><span class=\"brwin\">בין "+from+" ל-"+to2+"</span>"; },
       brCronNote:"קריאה איטית בדרך כלל עדיין מריצה את המשימה - השרת רק הפסיק לחכות לתשובה. קריאה שאבדה לפני שיצאה מעולם לא עזבה את השרת.",
       brDigest:"הסיכום של 09:00", brDigestOk:function(t){ return "נשלח היום ב-"+t; }, brDigestMissing:"עוד לא נשלח היום (היה אמור לצאת ב-09:00)", brDigestDue:"יוצא ב-09:00",
       brDigestHint:"אם עדיין לא יצא, לבדוק את היומן של הפונקציה \u2068daily-metrics\u2069",
@@ -3360,7 +3440,7 @@
       brAdsNone:"נתוני Meta לא נטענו בטעינה הזו - הלשונית קמפיינים תמשוך אותם ברענון.",
       brDeskNone:"אין כרטיסים במצב «עכשיו» או «בילד הבא».", brDeskGo:"לבקלוג", brDue:"יעד",
       brStNow:"עכשיו", brStBuild:"הבילד הבא",
-      brInsSupport:function(n){ return n==="1"? "<b>אדם אחד</b> כתב/ה לצוות Helpy ולא קיבל/ה תשובה אנושית" : "<b>"+n+"</b> אנשים כתבו לצוות Helpy ולא קיבלו תשובה אנושית"; },
+      brInsSupport:function(n){ return n==="1"? "<b>אדם אחד</b> כתב/ה לצוות Helpy אחרי התשובה האחרונה שלנו - כדאי להציץ" : "<b>"+n+"</b> אנשים כתבו לצוות Helpy אחרי התשובה האחרונה שלנו - כדאי להציץ"; },
       brInsPending:function(n){ return n==="1"? "<b>פנייה אחת</b> מחכה להחלטה של בעל/ת הבקשה יותר מיממה" : "<b>"+n+"</b> פניות מחכות להחלטה של בעל/ת הבקשה יותר מיממה"; },
       brInsNoOffer:function(n){ return n==="1"? "<b>בקשה אחת</b> מהשבוע האחרון עדיין בלי אף פנייה" : "<b>"+n+"</b> בקשות מהשבוע האחרון עדיין בלי אף פנייה"; },
       brInsCronBad:function(p,from,to){ return "<b>"+p+"%</b> מהמשימות המתוזמנות לא קיבלו תשובה תוך 5 שניות ("+from+"-"+to+") - הפלטפורמה איטית, לא בהכרח שבורה"; },
@@ -3379,7 +3459,7 @@
       brInsDone:function(n){ return n==="1"? "<b>עזרה אחת</b> הושלמה ביממה" : "<b>"+n+"</b> עזרות הושלמו ביממה"; },
       brInsAllClear:"כרגע שום דבר לא דורש את תשומת לבך",
       brCalmMore:function(n){ return "כל השאר תקין ("+n+")"; }, brCalmLess:"הסתרת השאר",
-      liveStale:"הרענון האוטומטי נכשל", themeBtn:{light:"כהה", dark:"בהיר"}, langBtn:"English",
+      liveStale:"הרענון האוטומטי נכשל", updatedAt:function(t){ return "עודכן ב-"+t; }, themeBtn:{light:"כהה", dark:"בהיר"}, langBtn:"English",
       themeTip:{light:"מעבר למצב כהה", dark:"מעבר למצב בהיר"}, langTip:"מעבר לאנגלית (\u2068English\u2069)"
     },
     en: {
@@ -3402,6 +3482,7 @@
       sfMetaEver:function(e,d,gap){ return e+" accounts created since launch · the gap of about "+gap+" vs downloads = people who installed but never got past sign-in · "+d+" of them have since deleted their account"; },
       sfMetaEverOver:function(e,date,d){ return e+" accounts created since launch - more than the downloads above, because the store reports stop at "+date+" and Apple counts opt-in devices only · "+d+" have since deleted their account"; },
       sfStale:function(d){ return "Store data from "+d; },
+      sfOld:function(n){ return "This data is "+n+" days old - the downloads here are older than the accounts beside them, so the ratios between rows are off until the next pull from the store reports"; },
       sfMetaDl:function(i,a){ return "iOS "+i+" · Android "+a+" · source: Apple and Google install reports. Apple only counts devices that opted into data sharing, so the iOS side is a floor - the true number is higher"; },
       sfMetaRm:function(i,a,ap){ return "iOS "+i+" · Android "+a+" ("+ap+" of installs) · Android is fully measured; iOS deletions are reported from opt-in devices only, so the true iOS rate is likely higher than shown"; },
       sfMetaHold:function(i,a){ return "iOS ~"+i+" (estimate: installs minus uninstalls) · Android "+a+" (device base measured directly by Google)"; },
@@ -3538,7 +3619,7 @@
       cmpPrevLabel:"previous period",
       cmpDauPrev:"avg DAU previous period",
       f1:"Signed up", f2:"Shared location", f3:"Allowed push", f4:"Verified phone",
-      f5:"Posted", f6:"Got matched", f7:"Sent a message",
+      f5:"Posted", f6:"Sent or got an approach", f7:"Sent a message",
       lf1:"New (up to 7 days)", lf2:"Active this week", lf3:"Dormant (30+ days)", lf4:"Total live users",
       lf2New:function(n){ return "Active this week, of them new "+n; }, lfRest:"Everyone else",
       liq1:"New requests", liq2:"Got an offer within 24h", liq3:"Got an offer eventually", liq4:"Median time to first offer",
@@ -3571,7 +3652,7 @@
       tagAskedNoAns:"asked if it happened · no answer", tagAnsGot:"answered: got help", tagAnsNotYet:"answered: not yet",
       tagAnsReason:{still_coordinating:"answered: still coordinating", no_response:"answered: got no response", no_longer_needed:"answered: no longer needed"},
       noData:"No data", noDataRange:"No data in range",
-      insFunnel:function(p,a,b,w){ return "Only <b>"+p+"%</b> of signups reach a conversation with a neighbor - the funnel's main bottleneck ("+a+" of "+b+" in "+w+" days)"; },
+      insFunnel:function(p,a,b,w){ return "Only <b>"+p+"%</b> of signups write a message to a neighbor - the funnel's main bottleneck ("+a+" of "+b+" in "+w+" days)"; },
       insOfferAns:function(p,a,b,bad){ return "Offer owners answered <b>"+p+"%</b> of openers ("+a+" of "+b+")"+(bad?" - an unanswered opener discourages neighbors":""); },
       insLiq:function(p){ return "<b>"+p+"%</b> of requests got an offer within 24h (target: "+bm("50%+","fill24")+")"; },
       insNoOffer:function(n){ return "<b>"+n+"</b> live requests still have zero offers - click to jump to the list"; },
@@ -3635,7 +3716,7 @@
       insMore:function(n){ return "Show "+n+" more insights"; },
       insLess:"Show only the top ones",
       rdCitiesTop:function(city,share,n){ return "<b>"+share+"</b> of posts come from <b>"+city+"</b> alone (of the top "+n+" cities by posts). That concentration is not a weakness - it is exactly where to dig in, because a neighbour network is built in a neighbourhood, not spread across a country."; },
-      sbGrowth:function(n,up,d,act,sign,msg){ return "<b>"+n+"</b> new neighbours signed up this week ("+(up?"up":"down")+" "+d+" on last week), but only <b>"+act+"%</b> of new signups reach a conversation with a neighbour ("+msg+" of "+sign+" in the last two weeks). Acquisition works, activation does not - every shekel spent on ads before that number moves is buying churn."; },
+      sbGrowth:function(n,up,d,act,sign,msg){ return "<b>"+n+"</b> new neighbours signed up in the last 7 days ("+(up?"up":"down")+" "+d+" on the 7 days before), but only <b>"+act+"%</b> of new signups wrote a message to a neighbour ("+msg+" of "+sign+" in the last two weeks). Acquisition works, activation does not - every shekel spent on ads before that number moves is buying churn."; },
       sbMarket:function(rq,of,ratio,fill,ans,sil,thin){ return "In the selected range <b>"+rq+"</b> requests were posted against <b>"+of+"</b> offers ("+ratio+"x supply), and only <b>"+fill+"%</b> of requests were answered within a day. Density explains the gap: an answered request sat among <b>"+ans+"</b> neighbours in range, a silent one among just <b>"+sil+"</b>. <b>"+thin+"</b> live requests are in thin areas right now - statistically, those people will get nothing. The move is not recruiting more helpers but concentrating demand where density already exists."; },
       sbChat:function(n,tw,med){ return "<b>"+n+"</b> conversations opened and <b>"+tw+"%</b> became a real exchange, at a median reply of <b>"+med+"</b>. Those who answer answer very fast, so this is not an availability problem but an attention one - nearly half of openers are simply not read in time."; },
       sbRetention:function(d1,a1,later,newshare,dorm,dormp){ return (
@@ -3696,7 +3777,7 @@
       glFirst:"First week in range - nothing to compare against",
       glPeak:"Strongest week in range",
       glLow:"Weakest week in range",
-      glSplit:function(i,a){ return i+" iOS · "+a+" Android"; },
+      glSplit:function(i,a){ return "iOS "+i+" · Android "+a; },
       glogEmpty:"Not enough weeks in range to build a log",
       rdGlog:function(best,bestN,drop){ return "The strongest week in range was <b>"+best+"</b> with <b>"+bestN+"</b> signups"+(drop?", and the pace has fallen <b>"+drop+"%</b> since":"")+". Growth arriving in waves around a campaign rather than as a steady climb says the channel is bought, not accumulated - when the budget stops, so does the wave."; },
       secEventsT:"What just happened", feedTitle:"Event log · {win}",
@@ -4077,7 +4158,7 @@
       scSecOtp:"1 · Phone verification codes",
       scChTitle:"Codes per day",
       scChSub:"Each bar is a day: codes sent at the bottom, codes refused on top, by reason.",
-      scSpan:function(d){ return "last "+d+" days"; },
+      scSpan:function(d){ return "last "+d+" days"; }, scSince:function(d){ return "since "+d+" (when logging began)"; },
       scChEmpty:"No code was sent or refused in this window.",
       scSerSent:"Sent", scSerRefused:"Refused", scSerOther:"Refused - reason unknown",
       scReasons:{ global_brake:"Emergency brake (40 in 10 min)", global_day:"Daily ceiling (60 a day)",
@@ -4251,7 +4332,7 @@
       brSub:function(d,ago){ return d+" · computed "+ago+" · every number is real users only"; },
       brEmpty:"The brief did not arrive - refresh; if it persists, get_morning_brief failed (admin-dashboard log).",
       brSecWait:"1 · Who is waiting on someone", brSecDay:"2 · The last 24 hours", brSecRun:"3 · Did the machine run overnight", brSecMoney:"4 · Campaigns and the desk",
-      brSupportT:"Wrote to the Helpy team, no reply", brSupportS:"Users whose latest Helpy-thread message got only the automatic acknowledgement",
+      brSupportT:"They have the last word in the Helpy thread", brSupportS:"They wrote again after the team's last reply - sometimes a question, sometimes just thanks",
       brPendingT:"Offers awaiting a decision", brPendingS:"A neighbour swiped on a request over a day ago and the owner has neither accepted nor declined",
       brNoOfferT:"New requests (1-7 days) with no offer yet", brNoOfferS:"Active requests one to seven days old that nobody swiped on",
       brStuckT:"Stuck chats", brStuckS:"Open rooms whose last message is 3 to 14 days old",
@@ -4279,9 +4360,15 @@
       brWatchdog:"Health checks", brUp:"OK", brDown:"failing", brInconc:"unclear", brSince:"since",
       brChecks:{ push_auth:"Push", founder_alerts:"Founder alerts", moderate_post:"Content moderation",
                  cron_delivery:"Job delivery", cron_jobs:"Scheduled jobs", outbox:"Retry queue",
-                 push_tickets:"Push receipts", daily_digest:"Daily digest" },
+                 push_tickets:"Push receipts", daily_digest:"Daily digest",
+                 abuse_volume:"Abuse volume", data_retention:"Data retention",
+                 infra_compute_budget:"Server size and budget", infra_connections:"DB connections",
+                 infra_cpu:"CPU", infra_disk:"Disk", infra_memory:"Memory",
+                 offsite_backup:"Off-site backup" },
+      brTabBadge:function(n){ return n==="1"? "One thing is waiting in the brief" : n+" things are waiting in the brief"; },
+      brAllUp:function(n){ return "All "+n+" checks OK"; }, brRestUp:function(n){ return n+" more OK"; }, brShowChecks:"Show all", brHideChecks:"Hide",
       brCheck:function(x){ return (this.brChecks && this.brChecks[x]) || String(x||"").replace(/_/g," "); },
-      brCron:"Scheduled jobs reaching the server", brCronLine:function(ok,to,dns,from,to2){ return "<b>"+ok+"</b> got through · <b>"+to+"</b> slow (no answer in 5s) · <b>"+dns+"</b> lost before sending · "+from+"-"+to2; },
+      brCron:"Scheduled jobs reaching the server", brCronLine:function(ok,to,dns,from,to2){ return "<b>"+ok+"</b> got through · <b>"+to+"</b> slow (no answer in 5s) · <b>"+dns+"</b> lost before sending<br><span class=\"brwin\">"+from+"-"+to2+"</span>"; },
       brCronNote:"A slow call usually still runs the job - the server just stopped waiting for the answer. A call lost before sending never left the server.",
       brDigest:"The 09:00 digest", brDigestOk:function(t){ return "sent today at "+t; }, brDigestMissing:"not sent yet today (due at 09:00)", brDigestDue:"goes out at 09:00",
       brDigestHint:"If it still has not gone out, check the daily-metrics function log",
@@ -4297,7 +4384,7 @@
       brAdsNone:"Meta data was not pulled on this load - the Campaigns tab fetches it on refresh.",
       brDeskNone:"No cards in \"now\" or \"next build\".", brDeskGo:"To the backlog", brDue:"due",
       brStNow:"now", brStBuild:"next build",
-      brInsSupport:function(n){ return n==="1"? "<b>One person</b> wrote to the Helpy team and got no human reply" : "<b>"+n+"</b> people wrote to the Helpy team and got no human reply"; },
+      brInsSupport:function(n){ return n==="1"? "<b>One person</b> wrote to the Helpy team after our last reply - worth a look" : "<b>"+n+"</b> people wrote to the Helpy team after our last reply - worth a look"; },
       brInsPending:function(n){ return n==="1"? "<b>One offer</b> has waited over a day for the request owner's decision" : "<b>"+n+"</b> offers have waited over a day for the request owner's decision"; },
       brInsNoOffer:function(n){ return n==="1"? "<b>One request</b> from the past week still has no offer" : "<b>"+n+"</b> requests from the past week still have no offer"; },
       brInsCronBad:function(p,from,to){ return "<b>"+p+"%</b> of scheduled jobs got no answer within 5 seconds ("+from+"-"+to+") - the platform is slow, not necessarily broken"; },
@@ -4316,7 +4403,7 @@
       brInsDone:function(n){ return n==="1"? "<b>One help</b> completed in 24h" : "<b>"+n+"</b> helps completed in 24h"; },
       brInsAllClear:"Nothing needs your attention right now",
       brCalmMore:function(n){ return "Everything else is fine ("+n+")"; }, brCalmLess:"Hide the rest",
-      liveStale:"auto refresh failed", themeBtn:{light:"Dark", dark:"Light"}, langBtn:"עברית",
+      liveStale:"auto refresh failed", updatedAt:function(t){ return "updated "+t; }, themeBtn:{light:"Dark", dark:"Light"}, langBtn:"עברית",
       themeTip:{light:"Switch to dark mode", dark:"Switch to light mode"}, langTip:"Switch to Hebrew (\u2068עברית\u2069)"
     }
   };
@@ -5846,6 +5933,9 @@
       var stale=h2.querySelector(".stale");
       if(!stale){ stale=el("span","stale"); h2.appendChild(stale); }
       stale.textContent=S.sfStale(storeDay);
+      var ageD=Math.floor((Date.now()-new Date(lastStore).getTime())/86400000);
+      stale.classList.toggle("old", ageD>14);
+      stale.title = ageD>14? S.sfOld(fmt(ageD)) : "";
     }
     panelRead("storeFunnel","",
       S.rdStore(fmt(dl),fmt(hold),fmt((A.live||0)+(A.deleted||0)),fmt(A.live||0),
@@ -7047,8 +7137,6 @@
       var ph=PHONE[c.match_id];
       if(ph || c.messages.some(function(m){ return PHONE_RE.test(m.content); })){
         meta.appendChild(el("span","tag phone",S.tagPhone(ph? fmtDay(new Date(ph.shared_at).toLocaleDateString("sv-SE",{timeZone:"Asia/Jerusalem"})) : "")));
-        if(S.tagStatus[c.status])
-          meta.appendChild(el("span", c.status==="completed"? "tag good" : "tag", S.tagStatus[c.status]));
         if(ph && ph.answer==="got_help") meta.appendChild(el("span","tag good",S.tagAnsGot));
         else if(ph && ph.answer==="not_yet"){
           var why=ph.reason && S.tagAnsReason[ph.reason];
@@ -7056,6 +7144,11 @@
         }
         else if(ph && ph.asked_at) meta.appendChild(el("span","tag",S.tagAskedNoAns));
       }
+      // how the match ended is said for EVERY conversation - it used to sit
+      // inside the phone-exchange branch, so a completed chat with no number
+      // in it (most offers) never showed that it completed
+      if(S.tagStatus[c.status])
+        meta.appendChild(el("span", c.status==="completed"? "tag good" : "tag", S.tagStatus[c.status]));
       if(c.mock) meta.appendChild(el("span","tag mock",S.tagMock));
       main.appendChild(meta);
       btn.appendChild(main);
@@ -8896,7 +8989,9 @@
   }
   function brAgoIso(iso){
     var h=Math.max(0,Math.round((Date.now()-new Date(iso).getTime())/3600000));
-    if(h<1){ var m=Math.max(1,Math.round((Date.now()-new Date(iso).getTime())/60000)); return LANG==="he"? "לפני "+m+" דקות" : m+" min ago"; }
+    if(h<1){ var m=Math.max(1,Math.round((Date.now()-new Date(iso).getTime())/60000));
+      if(m===1) return LANG==="he"? "לפני דקה" : "1 min ago";
+      return LANG==="he"? "לפני "+m+" דקות" : m+" min ago"; }
     return S.brAgo(h);
   }
   function brRow(host, who, when, what, act, opt){
@@ -8993,6 +9088,7 @@
     b.appendChild(i); host.appendChild(b); return b;
   }
   var brCalmOpen=false;   // the folded "everything else is fine" lines
+  var brChecksOpen=false;
   function renderBrief(){
     var host=$("brInsights"); if(!host) return;
     var B=DATA && DATA.brief;
@@ -9058,6 +9154,16 @@
     var work=ins.filter(function(x){ return rank[x[0]]<2; });
     var calmRows=ins.filter(function(x){ return rank[x[0]]>=2; });
     if(!work.length) host.appendChild(insight("lead good", S.brInsAllClear));
+    var bt=document.querySelector('#tabs button[data-v="brief"]');
+    if(bt){
+      var ob=bt.querySelector(".tabbadge"); if(ob) ob.remove();
+      var badN=work.filter(function(x){ return x[0]==="bad"; }).length;
+      if(work.length){
+        var bb=el("span","tabbadge"+(badN?" bad":" warn"),String(work.length));
+        bb.title=S.brTabBadge(fmt(work.length));
+        bt.appendChild(bb);
+      }
+    }
     work.forEach(function(x,i){
       host.appendChild(insight((i===0?"lead ":"")+x[0], x[1], function(){ flashTo(x[2]); }));
     });
@@ -9082,21 +9188,25 @@
     var delta=function(a,b){ var d=(a||0)-(b||0);
       if(LANG==="he") return d>0? "עלייה של "+fmt(d) : d<0? "ירידה של "+fmt(-d) : "ללא שינוי";
       return (d>=0?"+":"")+fmt(d); };
-    function t(label,val,sub,hero,dl){
+    function t(label,val,sub,hero,dl,prevVal){
       var x=tile(label, fmt(val)); if(hero) x.classList.add("hero");
       var s=x.querySelector(".sub");
       if(s){
         s.textContent="";
         // the sub is a flex row with its own gap - a trailing space doubled it
-        if(sub) s.appendChild(document.createTextNode(sub+(dl!=null? " ·" : "")));
+        // breakdown on one line, the change on its own line under it: a " ·"
+        // joining them was left dangling whenever the change wrapped
+        if(sub) s.appendChild(el("span","brbd",sub));
         if(dl!=null){
-          // number + phrase travel as ONE flex item, so a wrap never splits them
-          var wrap=el("span"); wrap.style.whiteSpace="nowrap";
+          var d0=(val||0)-(prevVal||0);
+          var wrap=el("span","brdelta "+(d0>0?"up":d0<0?"down":"flat"));
+          wrap.appendChild(icon(d0>0?"arrowup":d0<0?"arrowdown":"minus",12));
           var n=el("span",null,dl); n.setAttribute("dir","ltr"); n.style.unicodeBidi="isolate";
           wrap.appendChild(n); wrap.appendChild(document.createTextNode(" "+S.brVsYest));
           s.appendChild(wrap);
         }
         s.style.flexWrap="wrap";
+        s.style.flexDirection="column"; s.style.alignItems="flex-start";
       }
       T.appendChild(x);
     }
@@ -9110,13 +9220,20 @@
       var wsum=function(a){ return a.reduce(function(x,r){ return x+(+r.completed||0); },0); };
       var cur=wsum(MD.slice(-7)), prv=MD.length>=14? wsum(MD.slice(-14,-7)) : null;
       var hero=T.lastChild;
-      if(hero) hero.appendChild(el("div","sub brweek", S.brDone7(fmt(cur), prv==null? null : fmt(prv))));
+      if(hero){
+        var wk=el("div","sub brweek", S.brDone7(fmt(cur), prv==null? null : fmt(prv)));
+        // the north star going backwards is the one change on this page that
+        // should never be read past
+        if(prv!=null && cur<prv) wk.classList.add("down");
+        else if(prv!=null && cur>prv) wk.classList.add("up");
+        hero.appendChild(wk);
+      }
     }
-    t(S.brTSignups, D.signups, "iOS "+fmt(D.signups_ios)+" · Android "+fmt(D.signups_android), false, delta(D.signups,P.signups));
-    t(S.brTSeen, D.seen, "", false, delta(D.seen,P.seen));
-    t(S.brTPosts, (D.new_requests||0)+(D.new_offers||0), S.brReqOff(fmt(D.new_requests),fmt(D.new_offers)), false, delta((D.new_requests||0)+(D.new_offers||0),P.posts));
-    t(S.brTSwipes, D.swipes, S.brAccepted(fmt(D.accepted)), false, delta(D.swipes,P.swipes));
-    t(S.brTMsgs, D.messages, S.brSenders(fmt(D.chat_senders),fmt(D.chat_rooms)), false, delta(D.messages,P.messages));
+    t(S.brTSignups, D.signups, "iOS "+fmt(D.signups_ios)+" · Android "+fmt(D.signups_android), false, delta(D.signups,P.signups), P.signups);
+    t(S.brTSeen, D.seen, "", false, delta(D.seen,P.seen), P.seen);
+    t(S.brTPosts, (D.new_requests||0)+(D.new_offers||0), S.brReqOff(fmt(D.new_requests),fmt(D.new_offers)), false, delta((D.new_requests||0)+(D.new_offers||0),P.posts), P.posts);
+    t(S.brTSwipes, D.swipes, S.brAccepted(fmt(D.accepted)), false, delta(D.swipes,P.swipes), P.swipes);
+    t(S.brTMsgs, D.messages, S.brSenders(fmt(D.chat_senders),fmt(D.chat_rooms)), false, delta(D.messages,P.messages), P.messages);
     t(S.brTGone, (D.deletions||0)+(D.posts_deleted||0), S.brGoneSub(fmt(D.deletions),fmt(D.posts_deleted)));
     t(S.brTSafety, (D.reports||0)+(D.blocks||0), S.brSafetySub(fmt(D.reports),fmt(D.blocks)));
 
@@ -9200,11 +9317,25 @@
     var hh=$("brHealth");
     var wr=el("div","brk"); wr.appendChild(el("span","lbl",S.brWatchdog));
     var pills=el("span","brpills"); wr.appendChild(pills);
-    wd.forEach(function(w){
+    var upN=wd.filter(function(w){ return w.status==="up"; }).length;
+    wd.slice().sort(function(a,b){ return (a.status==="up")-(b.status==="up"); }).forEach(function(w){
+      if(w.status==="up" && !brChecksOpen) return;
       var cls=w.status==="up"?"up":w.status==="down"?"down":"mid";
       var p=el("span","brpill "+cls, S.brCheck(w.check)+" · "+(w.status==="up"?S.brUp:w.status==="down"?S.brDown:S.brInconc));
       p.title=w.check+" · "+S.brSince+" "+fmtTime(w.since); pills.appendChild(p);
     });
+    if(upN){
+      if(!brChecksOpen){
+        var all=el("span","brpill up allup");
+        all.appendChild(el("i","okdot"));
+        all.appendChild(document.createTextNode(upN===wd.length? S.brAllUp(fmt(upN)) : S.brRestUp(fmt(upN))));
+        pills.appendChild(all);
+      }
+      var tg=el("button","linklike brchk", brChecksOpen? S.brHideChecks : S.brShowChecks);
+      tg.type="button";
+      tg.addEventListener("click",function(){ brChecksOpen=!brChecksOpen; renderBrief(); });
+      pills.appendChild(tg);
+    }
     hh.appendChild(wr);
     if(calls){
       var cr=brKV(hh, S.brCron, S.brCronLine(fmt(http.ok||0), fmt(http.timeouts||0), fmt(http.dns_stalls||0), brHM(http.w_from), brHM(http.w_to)));
@@ -9430,7 +9561,9 @@
           ];
       if(T.opened || T.answered){
         bars.push({label:S.pnOpened,   v1:T.opened,   c1:ramp[2], suffix:" · "+pct(T.opened,base)});
-        bars.push({label:S.pnAnswered, v1:T.answered, c1:ramp[3], suffix:" · "+pct(T.answered,base)});
+        // only pushes with answer buttons can be answered (today: the
+        // completion question) - a % over every push sent is a structural 0
+        if(T.answered) bars.push({label:S.pnAnswered, v1:T.answered, c1:ramp[3], suffix:""});
       }
       hbars(fh,bars);
       Array.prototype.forEach.call(fh.querySelectorAll(".hrow"),function(r){ r.classList.add("wrap"); });
@@ -10894,6 +11027,15 @@
                   "user_30d","user_phones","country","attestation_invalid","attestation_missing"];
   var SC_OUTCOMES=["verified","missing","invalid","unverifiable","not_evaluated"];
   function securityOn(){ var v=$("securityView"); return !!(v && !v.classList.contains("hidden")); }
+  // The OTP log only began on 11.10.2026. "in the last 14 days" over four
+  // days of rows is the button speaking, not the data - when the payload
+  // says where the log starts and that is inside the window, say that instead.
+  function scLogStart(days){
+    var f=SEC && SEC.otp_first_at; if(!f) return null;
+    var t=new Date(f).getTime(); if(!(t > Date.now()-days*86400000)) return null;
+    return fmtDay(new Date(t).toLocaleDateString("sv-SE",{timeZone:"Asia/Jerusalem"}));
+  }
+  function scWinNote(days){ var d=scLogStart(days); return d? S.scSince(d) : S.scInDays(days); }
   function loadSecurity(){
     // the #security deep link switches tabs before the session is restored;
     // bootLoad kicks this again once it is
@@ -11016,8 +11158,8 @@
       if(!top || scN(by[k])>scN(by[top])) top=k;
     });
     var days=+SEC.days || SEC_DAYS;
-    th.appendChild(tile(S.scTSent, fmt(sent), {note:S.scInDays(days)}));
-    var t2=tile(S.scTRefused, fmt(refused), {note: refused && top ? S.scTopReason(scPlain(scReason(top))) : S.scInDays(days)});
+    th.appendChild(tile(S.scTSent, fmt(sent), {note:scWinNote(days)}));
+    var t2=tile(S.scTRefused, fmt(refused), {note: refused && top ? S.scTopReason(scPlain(scReason(top))) : scWinNote(days)});
     if(refused){
       t2.classList.add("scst-bad");
       var sub2=t2.querySelector(".sub");
@@ -11044,7 +11186,8 @@
     lg.innerHTML="";
     var rows=scArr(SEC.otp_daily).slice().sort(function(a,b){ return a.day<b.day ? -1 : 1; });
     // the window label comes from the payload, never from the button
-    cov.textContent=S.scSpan(+SEC.days || SEC_DAYS);
+    var sinceD=scLogStart(+SEC.days || SEC_DAYS);
+    cov.textContent= sinceD? S.scSince(sinceD) : S.scSpan(+SEC.days || SEC_DAYS);
     var any=rows.some(function(r){ return scN(r.sent) || scN(r.refused); });
     if(!any){
       if(einsts.scChart){ einsts.scChart.dispose(); delete einsts.scChart; }
@@ -11401,7 +11544,13 @@
   function updateTicker(){
     if(!lastLoadTs) return;
     var s=Math.round((Date.now()-lastLoadTs)/1000);
-    $("genAt").textContent = S.updatedAgo(s) + (staleSince? " \u00B7 "+S.liveStale : "");
+    // "עודכן לפני 23 שניות" was cut to "עודכן לפני 23 ש..." at laptop width.
+    // The clock time is short and never ticks mid-word; the age is the hover.
+    var g=$("genAt");
+    g.textContent = staleSince? S.liveStale
+      : S.updatedAt(new Date(lastLoadTs).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Jerusalem"}));
+    g.title = S.updatedAgo(s);
+    g.classList.toggle("stale", !!staleSince);
   }
   setInterval(updateTicker,5000);
 
