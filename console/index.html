@@ -2481,6 +2481,7 @@
       errForbidden:"החשבון הזה לא מורשה לקונסול", errServer:"שגיאת שרת, נסו שוב",
       errNoAuth:"שירות ההתחברות לא נטען, רעננו את הדף",
       errExpired:"ההתחברות פגה - התחברו שוב",
+      errMfa:"נדרש שוב קוד האימות - רעננו את הדף",
       mfaTitle:"עוד צעד אחד", mfaSub:"אשרו שזה אתם עם Face ID או טביעת אצבע",
       mfaSubCode:"הקלידו את הקוד בן 6 הספרות, או געו בשדה ובחרו אותו מהסיסמאות עם Face ID",
       mfaEnrollTitle:"הגדרה חד-פעמית", mfaEnrollSub:"חברו את Face ID או טביעת האצבע לקונסול. מעכשיו זה מה שיאשר את הכניסה",
@@ -3332,6 +3333,7 @@
       errForbidden:"This account is not authorized for the console", errServer:"Server error, try again",
       errNoAuth:"Sign-in service failed to load - refresh the page",
       errExpired:"Your session expired - sign in again",
+      errMfa:"Your verification code is needed again - refresh the page",
       mfaTitle:"One more step", mfaSub:"Confirm it's you with Face ID or your fingerprint",
       mfaSubCode:"Enter the 6-digit code, or tap the field and pick it from Passwords with Face ID",
       mfaEnrollTitle:"One-time setup", mfaEnrollSub:"Link Face ID or your fingerprint to the console. From now on, that's what approves sign-in",
@@ -10943,7 +10945,10 @@
                            backlog: BL_UPDATED===null})
     }).then(function(r){
       clearTimeout(killer);
-      if(r.status===401) throw new Error("unauthorized");
+      // a 401 is either an expired session or a missing second step - the
+      // body says which, and they need different words (and different fixes)
+      if(r.status===401) return r.json().catch(function(){ return {}; }).then(function(b){
+        throw new Error(b && b.error==="mfa_required" ? "mfa_required" : "unauthorized"); });
       if(r.status===403) throw new Error("forbidden");
       if(!r.ok) throw new Error("server");
       return r.json();
@@ -11023,6 +11028,9 @@
     } else if(err.message==="unauthorized"){
       sessionStorage.removeItem("helpy_dash_key");
       $("loginErr").textContent=S.errExpired;
+    } else if(err.message==="mfa_required"){
+      // reloading re-runs the second-step gate; the session itself is fine
+      $("loginErr").textContent=S.errMfa;
     } else if(err.message==="timeout"){
       $("loginErr").textContent=S.errTimeout;
     } else {
@@ -11299,7 +11307,7 @@
     }
     function fullBoot(attempt){
       load().then(function(){ bootSettled=true; }).catch(function(e){
-        var auth=e.message==="unauthorized" || e.message==="forbidden";
+        var auth=e.message==="unauthorized" || e.message==="forbidden" || e.message==="mfa_required";
         // the brief is already on screen: retry the rest quietly, then say so
         // plainly in the tabs that are waiting - never back to the login card
         // over a slow second call, and never a spinner that spins for ever
