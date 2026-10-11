@@ -803,16 +803,16 @@
   /* first paint: only the brief has arrived (see loadBriefFirst). Every other
      tab is a quiet spinner until the full payload lands, never a half-drawn
      page of empty panels. */
-  /* the server and expenses tabs are exempt: neither reads the dashboard
-     payload (their own calls, see loadInfra / loadExpenses), so they have
-     nothing to wait for */
-  body.partial #app > div:not(#briefView):not(#infraView):not(#expensesView) > * { display:none; }
-  body.partial #app > div:not(#briefView):not(#infraView):not(#expensesView)::before { content:""; display:block;
+  /* the server, expenses and security tabs are exempt: none reads the
+     dashboard payload (their own calls, see loadInfra / loadExpenses /
+     loadSecurity), so they have nothing to wait for */
+  body.partial #app > div:not(#briefView):not(#infraView):not(#expensesView):not(#securityView) > * { display:none; }
+  body.partial #app > div:not(#briefView):not(#infraView):not(#expensesView):not(#securityView)::before { content:""; display:block;
     width:28px; height:28px; margin:56px auto; border-radius:50%;
     border:2.5px solid var(--hairline); border-top-color:var(--s1);
     animation:spin 1.1s linear infinite; }
   body.partial #rail { display:none; }
-  body.partial.partial-failed #app > div:not(#briefView):not(#infraView):not(#expensesView)::before {
+  body.partial.partial-failed #app > div:not(#briefView):not(#infraView):not(#expensesView):not(#securityView)::before {
     content:attr(data-wait); width:auto; height:auto; border:none; animation:none;
     margin:56px 16px; text-align:center; color:var(--muted); font-size:14px; }
   .brwait { height:14px; width:62%; margin:6px 0; border-radius:7px;
@@ -1483,6 +1483,94 @@
   }
   .ifbottom { margin:12px 0 0; }
 
+  /* ---- security tab ----
+     The server tab's five-tile grid (.iftiles), the expenses tab's legend and
+     in-panel scrolling tables (.exlegend / .extblwrap). Colour states are the
+     same green / amber / red pills (.brpill) every other tab uses. */
+  #scHead .verdict { margin-bottom:8px; }
+  #scHead .verdict.lead { font-size:14.5px; font-weight:600; }
+  #scHead .empty { padding:40px 10px; font-size:13.5px; }
+  .sctiles .tile .sub { flex-wrap:wrap; row-gap:4px; align-items:center; }
+  .sctiles .tile .brpill { font-size:10.5px; padding:1px 8px; }
+  .tile.scst-bad { border-top:3px solid var(--bad-text); }
+  .tile.scst-bad .val { color:var(--bad-text); }
+  .tile.scst-warn { border-top:3px solid var(--warning); }
+  .scatt { padding:8px 0 10px; border-bottom:1px solid var(--grid); }
+  .scatt:last-of-type { border-bottom:0; }
+  .scatth { display:flex; flex-wrap:wrap; align-items:baseline; gap:4px 12px; margin-bottom:7px; font-size:13.5px; }
+  .scatth .scattn { margin-inline-start:auto; }
+  .scbar { display:flex; height:12px; border-radius:6px; overflow:hidden; background:var(--grid); direction:ltr; }
+  html[dir="rtl"] .scbar { direction:rtl; }
+  .scbar i { display:block; height:100%; min-width:3px; }
+  .sclegsm { margin:12px 0 4px; }
+  .sclegsm b { font-variant-numeric:tabular-nums; color:var(--ink); }
+  .scpol { margin:12px 0 10px; display:grid; grid-template-columns:max-content minmax(0,1fr); gap:0 16px; font-size:13px; }
+  .scpol > div { display:contents; }
+  .scpol span, .scpol b { padding:6px 0; border-bottom:1px solid var(--grid); }
+  .scpol > div:last-child span, .scpol > div:last-child b { border-bottom:0; }
+  .scpol span { color:var(--ink2); }
+  .scpol b { font-weight:700; color:var(--ink); }
+  .scpol b.scok { color:var(--good-text); }
+  .scpol b.scmid { color:var(--warning); }
+  .scplan { margin:0; }
+  .sctbl td.scbad { color:var(--bad-text); font-weight:700; }
+  .sctbl td.scmidt { color:var(--warning); font-weight:700; }
+  .sctbl td.scwrap { white-space:normal; min-width:180px; max-width:420px; line-height:1.45; }
+  .sctbl tr.screvoked td { color:var(--muted); }
+  /* the subject column does not pin here: these tables are narrow enough
+     that a sticky cell only paints a second background on the glass */
+  table.sctbl td.exv { position:static; background:none; }
+  .sctbl td.exv small { display:block; font-weight:400; color:var(--muted); font-size:11px; }
+  .schold { display:flex; align-items:center; gap:8px 16px; flex-wrap:wrap;
+            padding:10px 2px; border-bottom:1px solid var(--grid); font-size:13.5px; }
+  .schold:last-child { border-bottom:0; }
+  .schold > div { flex:1 1 220px; min-width:0; }
+  .schold > div b { display:block; color:var(--ink); word-break:break-word; }
+  .schold .note { margin-top:2px; }
+  #securityView .brgo { all:unset; box-sizing:border-box; cursor:pointer;
+                        display:inline-flex; align-items:center; gap:7px;
+                        padding:8px 13px; border-radius:9px;
+                        border:1px solid var(--hairline); color:var(--s1);
+                        font-size:12.5px; font-weight:600; line-height:1; }
+  #securityView .brgo:hover { background:var(--wash1); border-color:rgba(99,102,241,0.35); }
+  #securityView .brgo:focus-visible { outline:2px solid var(--s1); outline-offset:2px; }
+  html[dir="rtl"] #securityView .brgo .ar { transform:scaleX(-1); }
+  .scmod { margin-bottom:0; }
+  .scmod + .brnote { margin:4px 0 12px; }
+  .scmon { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,auto);
+           gap:4px 12px; align-items:center; padding:8px 2px; border-bottom:1px solid var(--grid); font-size:13px; }
+  .scmon:last-child { border-bottom:0; }
+  .scmonn { color:var(--ink); font-weight:600; min-width:0; }
+  .scmon .brpill { font-size:10.5px; padding:1px 8px; }
+  .scmons { white-space:nowrap; text-align:end; }
+  .scnow { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 12px; align-items:baseline;
+           padding:8px 2px 9px; border-bottom:1px solid var(--grid); font-size:13px; }
+  .scnow:last-child { border-bottom:0; }
+  .scnowl { color:var(--ink2); min-width:0; }
+  .scnowv { font-variant-numeric:tabular-nums; color:var(--muted); white-space:nowrap; }
+  .scnowv b { color:var(--ink); font-size:14px; }
+  .scnow.hot .scnowv b { color:var(--bad-text); }
+  .scnow.near .scnowv b { color:var(--warning); }
+  .scnowb { grid-column:1 / -1; height:4px; border-radius:2px; background:var(--grid); overflow:hidden; direction:ltr; }
+  html[dir="rtl"] .scnowb { direction:rtl; }
+  .scnowb i { display:block; height:100%; background:var(--s3); }
+  .scnow.near .scnowb i { background:var(--warning); }
+  .scnow.hot .scnowb i { background:var(--bad-text); }
+  @media (max-width:520px){
+    /* the wrapper scrolls, so the table stays a table and fills the panel */
+    .extblwrap table.sctbl { display:table; white-space:normal; }
+    .sctbl th, .sctbl td { white-space:nowrap; }
+    .sctbl td.scwrap, .sctbl td.exv { white-space:normal; }
+    .sctbl td.scwrap { min-width:130px; max-width:170px; }
+    table.sctbl td.exv { max-width:110px; min-width:80px; }
+    .sctbl th, .sctbl td { padding:8px 6px; }
+    .scmon { grid-template-columns:minmax(0,1fr) auto; }
+    .scmons { grid-column:1 / -1; text-align:start; }
+    .scpol { grid-template-columns:minmax(0,1fr); }
+    .scpol span { padding-bottom:0; border-bottom:0; }
+    .scpol b { padding-top:2px; }
+  }
+
   /* ---- expenses tab ----
      Same tile grid as the server tab (4 here, so the base .tiles grid), a
      window segment, one stacked chart, one month table, the ledger. The
@@ -1614,6 +1702,7 @@
          צ'אט · התראות        messages IN from them, messages OUT to them
          בקלוג                what we decided to do about all of the above
          שרת                  reference: is the machine big enough (CPU, memory, disk, connections)
+         אבטחה                reference: is anyone abusing us (SMS codes, device checks, holds, bans, monitors) - beside שרת, the other "does it hold" screen
          ארכיטקטורה           reference: how it is wired. Consulted rarely, so last.
 
        A NEW tab goes in its group, not on the end. Nothing depends on the
@@ -1628,6 +1717,7 @@
     <button data-v="push" data-ic="bell"><span data-i18n="tabPush">התראות</span></button>
     <button data-v="backlog" data-ic="box"><span data-i18n="tabBacklog">בקלוג</span></button>
     <button data-v="infra" data-ic="server"><span data-i18n="tabInfra">שרת</span></button>
+    <button data-v="security" data-ic="shieldok"><span data-i18n="tabSecurity">אבטחה</span></button>
     <button data-v="arch" data-ic="layers"><span data-i18n="tabArch">ארכיטקטורה</span></button>
   </div>
   <div class="hactions">
@@ -1950,6 +2040,83 @@
         <div id="exMissing"></div>
         <div id="exFormHost"></div>
         <div id="exLedger"></div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Security tab: SMS-code abuse, device attestation, posts held for a
+       decision, bans, the backend monitors and the alert throttle. Its own
+       call, like the server tab (action "security") - see loadSecurity.
+       This file is PUBLIC: nothing here is hard-coded, every name, number and
+       incident arrives from the backend after sign-in. Deep link: #security -->
+  <div id="securityView" class="hidden">
+    <div id="scHead"></div>
+    <div id="scBody" class="hidden">
+      <div class="filters ifwinbar">
+        <span class="blfgrp"><span class="cap" data-i18n="scWinL">חלון</span>
+          <span class="seg" id="scWinSeg">
+            <button data-d="7" data-i18n="scW7">7 ימים</button>
+            <button data-d="14" class="on" data-i18n="scW14">14 ימים</button>
+            <button data-d="30" data-i18n="scW30">30 יום</button>
+          </span></span>
+      </div>
+      <div class="tiles iftiles sctiles" id="scTiles"></div>
+
+      <div class="sechead" style="--sec-c:var(--s1)" data-i18n="scSecOtp">1 · קודי אימות בטלפון</div>
+      <section class="panel" style="opacity:1;transform:none">
+        <h2><span data-i18n="scChTitle">קודים לפי יום</span> <span class="pntag" id="scCover"></span></h2>
+        <div class="sub" data-i18n="scChSub"></div>
+        <div id="scLegend" class="exlegend"></div>
+        <div id="scChart"></div>
+      </section>
+      <div class="grid2">
+        <section class="panel" style="opacity:1;transform:none">
+          <h2 data-i18n="scAttTitle">אימות מכשיר</h2>
+          <div class="sub" data-i18n="scAttSub"></div>
+          <div id="scAttest"></div>
+        </section>
+        <section class="panel" style="opacity:1;transform:none">
+          <h2 data-i18n="scCtyTitle">לפי מדינה</h2>
+          <div class="sub" data-i18n="scCtySub"></div>
+          <div class="extblwrap" id="scCountry"></div>
+        </section>
+      </div>
+      <section class="panel" style="opacity:1;transform:none">
+        <h2 data-i18n="scTopTitle">החשבונות שנחסמו הכי הרבה</h2>
+        <div class="sub" data-i18n="scTopSub"></div>
+        <div class="extblwrap" id="scTop"></div>
+      </section>
+
+      <div class="sechead" style="--sec-c:var(--s8)" data-i18n="scSecMod">2 · תוכן ומשתמשים</div>
+      <section class="panel" style="opacity:1;transform:none">
+        <h2 data-i18n="scHoldTitle">פוסטים שמחכים להחלטה</h2>
+        <div class="sub" data-i18n="scHoldSub"></div>
+        <div id="scHolds"></div>
+      </section>
+      <section class="panel" style="opacity:1;transform:none">
+        <h2 data-i18n="scBanTitle">משתמשים חסומים</h2>
+        <div class="sub" data-i18n="scBanSub"></div>
+        <div id="scModeration"></div>
+        <div class="extblwrap" id="scBans"></div>
+      </section>
+
+      <div class="sechead" style="--sec-c:var(--s3)" data-i18n="scSecSys">3 · השמירה עצמה</div>
+      <div class="grid2">
+        <section class="panel" style="opacity:1;transform:none">
+          <h2 data-i18n="scMonTitle">מוניטורים</h2>
+          <div class="sub" data-i18n="scMonSub"></div>
+          <div id="scMonitors"></div>
+        </section>
+        <section class="panel" style="opacity:1;transform:none">
+          <h2 data-i18n="scNowTitle">עכשיו</h2>
+          <div class="sub" data-i18n="scNowSub"></div>
+          <div id="scNow"></div>
+        </section>
+      </div>
+      <section class="panel" style="opacity:1;transform:none">
+        <h2><span data-i18n="scAlTitle">התראות טלגרם שנחנקו</span> <span class="pntag" data-i18n="scAl48">48 שעות אחרונות</span></h2>
+        <div class="sub" data-i18n="scAlSub"></div>
+        <div class="extblwrap" id="scAlerts"></div>
       </section>
     </div>
   </div>
@@ -2762,6 +2929,96 @@
       ],
       ifExBottom:"<b>מתי לשדרג:</b> ⁨CPU⁩ מעל 80% לאורך זמן או חיבורים קרובים לתקרה = זמן לשדרג את המכונה. קפיצה של כמה דקות לא מצדיקה שדרוג, מגמה של כמה ימים כן.",
       ifMonBudget:"גודל השרת ותקציב ⁦$25⁩",
+      // security tab. Latin tokens (iOS, Android, country codes, ids) are
+      // isolated with U+2068/U+2069; one number per line wherever a Hebrew
+      // label and a number could pair up the wrong way
+      tabSecurity:"אבטחה",
+      scLoading:"טוען את נתוני האבטחה...",
+      scErr:function(m){ return "לא הצלחנו לטעון את נתוני האבטחה: ⁨"+m+"⁩"; },
+      scWinL:"חלון", scW7:"7 ימים", scW14:"14 ימים", scW30:"30 יום",
+      scVQuiet:"הכל שקט - אין מוניטור למטה, אין הצפה, אין אימות מכשיר פסול ואין פוסט שמחכה להחלטה.",
+      scVMonDown:function(nm, since){ return "מוניטור "+nm+" למטה"+(since ? ", מאז "+since : "")+"."; },
+      scVAbuse:function(list){ return "הצפה עכשיו - עבר את התקרה: "+list+"."; },
+      scVHolds:function(n){ return n===1 ? "פוסט אחד מחכה להחלטה שלך." : "<b>"+n+"</b> פוסטים מחכים להחלטה שלך."; },
+      scVInvalid:function(n){ return "אימות מכשיר פסול - חשד לבוט. שליחות כאלה בחלון: <b>"+n+"</b>"; },
+      scTSent:"קודים שנשלחו", scTRefused:"קודים שנחסמו", scTAttest:"אימות מכשיר",
+      scTHolds:"פוסטים שמחכים להחלטה", scTBans:"משתמשים חסומים",
+      scInDays:function(d){ return "ב-"+d+" הימים האחרונים"; },
+      scTopReason:function(r){ return "בעיקר: "+r; },
+      scPillBlocked:"נחסמו",
+      scAttOf:function(n){ return "מתוך "+n+" שליחות שנבדקו"; },
+      scAttNone:"עוד אין שליחות שנבדקו",
+      scEnfOn:"חסימה: פעילה", scEnfOff:"חסימה: כבויה",
+      scHoldsNote:"מוסתרים עד להחלטה", scHoldsNone:"אין מה להחליט",
+      scBansNote:"חסימות בתוקף",
+      scSecOtp:"1 · קודי אימות בטלפון",
+      scChTitle:"קודים לפי יום",
+      scChSub:"כל עמודה היא יום: למטה הקודים שנשלחו, מעליהם הקודים שנחסמו, לפי הסיבה.",
+      scSpan:function(d){ return d+" ימים אחרונים"; },
+      scChEmpty:"לא נשלח ולא נחסם אף קוד בחלון הזה.",
+      scSerSent:"נשלחו", scSerRefused:"נחסמו", scSerOther:"נחסמו - סיבה לא ידועה",
+      scReasons:{ global_brake:"בלם חירום (40 ב-10 דקות)", global_day:"תקרה יומית (60 ביום)",
+        phone_10min:"יותר מ-3 לאותו מספר ב-10 דק'", user_hour:"יותר מ-3 למשתמש בשעה",
+        user_day:"יותר מ-5 למשתמש ביום", user_30d:"יותר מ-8 למשתמש ב-30 יום",
+        user_phones:"יותר מ-5 מספרים ביום", country:"מדינה לא מאושרת",
+        attestation_invalid:"אימות מכשיר נכשל", attestation_missing:"חסר אימות מכשיר" },
+      scAttTitle:"אימות מכשיר",
+      scAttSub:"כל בקשה לקוד נבדקת: האם היא הגיעה מהאפליקציה האמיתית, במכשיר אמיתי.",
+      scAttEmpty:"עוד אין שליחות עם תוצאת בדיקה בחלון הזה.",
+      scOutcomes:{ verified:"אומת - האפליקציה האמיתית", missing:"בלי אימות (גרסה ישנה)",
+        invalid:"פסול - חשד לבוט", unverifiable:"לא ניתן לבדוק", not_evaluated:"לפני שהבדיקה עלתה" },
+      scPlat:{ ios:"⁨iOS⁩", android:"⁨Android⁩", unknown:"לא ידוע" },
+      scAttRow:function(p){ return "אומתו: "+p; },
+      scAttRowNone:"עוד לא נבדק",
+      scSends:function(n){ return "שליחות: "+n; },
+      scPolEnf:"חסימה", scPolAll:"דורש אימות מכולם",
+      scPolIos:"גרסת ⁨iOS⁩ הראשונה עם אימות", scPolAnd:"גרסת ⁨Android⁩ הראשונה עם אימות",
+      scPolUpd:"עודכן", scOn:"פעילה", scOff:"כבויה", scYes:"כן", scNo:"לא", scNotYet:"עוד לא",
+      scPlanOff:"כרגע רק רושמים: גם בקשה בלי אימות מקבלת קוד. אחרי כשבועיים של נתונים על הגרסה החדשה נחליט אם להפעיל חסימה.",
+      scPlanOn:"החסימה פעילה: בקשה שהאימות שלה נכשל לא מקבלת קוד.",
+      scCtyTitle:"לפי מדינה",
+      scCtySub:"לפי הקידומת של המספר שהקוד נשלח אליו.",
+      scCtyEmpty:"אין בקשות לקוד בחלון הזה.",
+      scColCountry:"מדינה", scColSent:"נשלחו", scColRefused:"נחסמו",
+      scTopTitle:"החשבונות שנחסמו הכי הרבה",
+      scTopSub:"מי ביקש קודים ונחסם הכי הרבה פעמים, ולמה.",
+      scTopEmpty:"אף חשבון לא נחסם בחלון הזה.",
+      scColUser:"משתמש/ת", scColReasons:"סיבות", scColLast:"פעם אחרונה", scNoName:"בלי שם",
+      scSecMod:"2 · תוכן ומשתמשים",
+      scHoldTitle:"פוסטים שמחכים להחלטה",
+      scHoldSub:"פוסטים שהוסתרו מהפיד עד להחלטה שלך: להחזיר או להשאיר מוסתרים.",
+      scHoldEmpty:"אין פוסט שמחכה להחלטה.",
+      scHoldBy:function(src){ return "הוסתר על ידי: "+src; },
+      scSinceT:function(t){ return "מאז "+t; },
+      scHoldOpen:"פתיחה בכרטיסים",
+      scSources:{ llm:"הסינון האוטומטי", moderate_post:"הסינון האוטומטי", report:"דיווחים של משתמשים",
+        reports:"דיווחים של משתמשים", admin:"החלטה ידנית", manual:"החלטה ידנית" },
+      scBanTitle:"משתמשים חסומים",
+      scBanSub:"חשבונות שנחסמו, החדשים למעלה. מעל הטבלה: מה קרה בחלון.",
+      scBanEmpty:"אין משתמשים חסומים.",
+      scReports:"דיווחים ממשתמשים",
+      scModKinds:{ "content_flagged:llm":"סומנו בסינון האוטומטי", admin_ban:"חסימות ידניות",
+        admin_unban:"ביטולי חסימה", admin_hide:"הסתרות ידניות", admin_restore:"החזרות ידניות" },
+      scColReason:"סיבה", scColWhen:"מתי", scRevoked:"החסימה בוטלה",
+      scSecSys:"3 · השמירה עצמה",
+      scMonTitle:"מוניטורים",
+      scMonSub:"הבדיקות האוטומטיות שרצות ברקע. מה שלמטה מופיע ראשון.",
+      scMonEmpty:"עוד אין מצב מהבדיקות האוטומטיות.",
+      scMonSt:{ up:"תקין", down:"למטה", unknown:"לא ידוע" },
+      scChecked:function(t){ return "נבדק לאחרונה: "+t; },
+      scMonNames:{ cron_delivery:"קריאות קרון לפונקציות", outbox:"שיגור חוזר של קריאות",
+        cron_jobs:"פקודות קרון", push_tickets:"כרטיסי פוש", daily_digest:"הסיכום היומי",
+        push_auth:"התראות פוש", founder_alerts:"התראות טלגרם", moderate_post:"סינון תוכן אוטומטי",
+        abuse_volume:"הצפה בפעולות משתמשים" },
+      scNowTitle:"עכשיו",
+      scNowSub:"כמה פעולות נעשו ממש עכשיו, מול התקרה שמעליה נכנס בלם.",
+      scNowEmpty:"אין מונים פעילים כרגע.",
+      scAlTitle:"התראות טלגרם שנבלעו",
+      scAl48:"48 שעות אחרונות",
+      scAlSub:"כמה התראות יצאו לטלגרם, כמה נבלעו כי אותה התראה כבר יצאה, וכמה סיכומים נשלחו במקומן. נשמר רק יומיים.",
+      scAlEmpty:"לא יצאו התראות ב-48 השעות האחרונות.",
+      scColEvent:"התראה", scColAlSent:"נשלחו", scColAlSup:"נבלעו", scColAlSum:"סיכומים",
+      scEvents:{ chat_message:"הודעות בצ'אט", new_user:"משתמש חדש", new_match:"התאמה חדשה", new_request:"פוסט חדש", report:"דיווח על משתמש", block:"חסימה בין משתמשים", spam_detected:"זוהה ספאם", "fn:onboarded":"סיים הרשמה", "fn:offer_onb_skip":"דילג על הצעת עזרה בהרשמה", "fn:location":"שיתף מיקום", "fn:verified":"אימת טלפון", "fn:notifications":"הפעיל התראות", "fn:client_blocked":"נחסם באפליקציה", "fn:completed":"עזרה הושלמה", "fn:not_completed":"לא יצא לפועל", "fn:declined":"הצעה נדחתה", "fn:ratelimit":"עבר מגבלת קצב" },
       // expenses tab. Every amount and Latin name is isolated (U+2066/U+2068
       // ... U+2069) so a number can never pair with the wrong word
       tabExpenses:"הוצאות",
@@ -3511,6 +3768,94 @@
       ],
       ifExBottom:"<b>When to upgrade:</b> CPU above 80% for a long stretch, or connections near the ceiling = time to upgrade the machine. A few minutes of spike does not justify an upgrade, a trend over several days does.",
       ifMonBudget:"Server size vs the $25 budget",
+      // security tab
+      tabSecurity:"Security",
+      scLoading:"Loading security data...",
+      scErr:function(m){ return "Could not load security data: "+m; },
+      scWinL:"Window", scW7:"7 days", scW14:"14 days", scW30:"30 days",
+      scVQuiet:"All quiet - no monitor down, no flood, no failed device check and no post waiting for a decision.",
+      scVMonDown:function(nm, since){ return "Monitor "+nm+" is down"+(since ? ", since "+since : "")+"."; },
+      scVAbuse:function(list){ return "Flood right now - over the ceiling: "+list+"."; },
+      scVHolds:function(n){ return n===1 ? "One post is waiting for your decision." : "<b>"+n+"</b> posts are waiting for your decision."; },
+      scVInvalid:function(n){ return "Failed device checks - likely a bot. Such sends in the window: <b>"+n+"</b>"; },
+      scTSent:"Codes sent", scTRefused:"Codes refused", scTAttest:"Device check",
+      scTHolds:"Posts awaiting a decision", scTBans:"Banned users",
+      scInDays:function(d){ return "in the last "+d+" days"; },
+      scTopReason:function(r){ return "Mostly: "+r; },
+      scPillBlocked:"refused",
+      scAttOf:function(n){ return "of "+n+" checked sends"; },
+      scAttNone:"No checked sends yet",
+      scEnfOn:"Blocking: on", scEnfOff:"Blocking: off",
+      scHoldsNote:"hidden until you decide", scHoldsNone:"nothing to decide",
+      scBansNote:"bans in force",
+      scSecOtp:"1 · Phone verification codes",
+      scChTitle:"Codes per day",
+      scChSub:"Each bar is a day: codes sent at the bottom, codes refused on top, by reason.",
+      scSpan:function(d){ return "last "+d+" days"; },
+      scChEmpty:"No code was sent or refused in this window.",
+      scSerSent:"Sent", scSerRefused:"Refused", scSerOther:"Refused - reason unknown",
+      scReasons:{ global_brake:"Emergency brake (40 in 10 min)", global_day:"Daily ceiling (60 a day)",
+        phone_10min:"More than 3 to one number in 10 min", user_hour:"More than 3 per user in an hour",
+        user_day:"More than 5 per user in a day", user_30d:"More than 8 per user in 30 days",
+        user_phones:"More than 5 numbers in a day", country:"Country not allowed",
+        attestation_invalid:"Device check failed", attestation_missing:"Device check missing" },
+      scAttTitle:"Device check",
+      scAttSub:"Every code request is checked: did it come from the real app, on a real device.",
+      scAttEmpty:"No sends with a check result in this window yet.",
+      scOutcomes:{ verified:"Verified - the real app", missing:"No check (older version)",
+        invalid:"Failed - likely a bot", unverifiable:"Could not be checked", not_evaluated:"Before the check went live" },
+      scPlat:{ ios:"iOS", android:"Android", unknown:"Unknown" },
+      scAttRow:function(p){ return "verified: "+p; },
+      scAttRowNone:"not checked yet",
+      scSends:function(n){ return "sends: "+n; },
+      scPolEnf:"Blocking", scPolAll:"Requires a check from everyone",
+      scPolIos:"First iOS version with the check", scPolAnd:"First Android version with the check",
+      scPolUpd:"Updated", scOn:"On", scOff:"Off", scYes:"Yes", scNo:"No", scNotYet:"Not yet",
+      scPlanOff:"Log-only for now: a request without a check still gets its code. After about two weeks of data on the new version we decide whether to turn blocking on.",
+      scPlanOn:"Blocking is on: a request whose device check failed gets no code.",
+      scCtyTitle:"By country",
+      scCtySub:"By the prefix of the number the code went to.",
+      scCtyEmpty:"No code requests in this window.",
+      scColCountry:"Country", scColSent:"Sent", scColRefused:"Refused",
+      scTopTitle:"Most-refused accounts",
+      scTopSub:"Who asked for codes and was refused most often, and why.",
+      scTopEmpty:"No account was refused in this window.",
+      scColUser:"User", scColReasons:"Reasons", scColLast:"Last time", scNoName:"No name",
+      scSecMod:"2 · Content and users",
+      scHoldTitle:"Posts awaiting a decision",
+      scHoldSub:"Posts hidden from the feed until you decide what to do with them.",
+      scHoldEmpty:"No post is waiting for a decision.",
+      scHoldBy:function(src){ return "Hidden by: "+src; },
+      scSinceT:function(t){ return "since "+t; },
+      scHoldOpen:"Open in Cards",
+      scSources:{ llm:"the automatic filter", moderate_post:"the automatic filter", report:"user reports",
+        reports:"user reports", admin:"a manual decision", manual:"a manual decision" },
+      scBanTitle:"Banned users",
+      scBanSub:"Banned accounts, newest first. Above the table: what happened in the window.",
+      scBanEmpty:"No banned users.",
+      scReports:"User reports",
+      scModKinds:{ "content_flagged:llm":"Flagged by the automatic filter", admin_ban:"Manual bans",
+        admin_unban:"Bans lifted", admin_hide:"Manual hides", admin_restore:"Manual restores" },
+      scColReason:"Reason", scColWhen:"When", scRevoked:"ban lifted",
+      scSecSys:"3 · The guards themselves",
+      scMonTitle:"Monitors",
+      scMonSub:"The automatic checks running in the background. Anything down is listed first.",
+      scMonEmpty:"No state from the automatic checks yet.",
+      scMonSt:{ up:"OK", down:"Down", unknown:"Unknown" },
+      scChecked:function(t){ return "Last checked: "+t; },
+      scMonNames:{ cron_delivery:"Cron calls to functions", outbox:"Call re-delivery",
+        cron_jobs:"Cron jobs", push_tickets:"Push tickets", daily_digest:"Daily digest",
+        push_auth:"Push notifications", founder_alerts:"Telegram alerts", moderate_post:"Automatic content filter",
+        abuse_volume:"Flood of user actions" },
+      scNowTitle:"Right now",
+      scNowSub:"How many actions are happening right now, against the ceiling where a brake kicks in.",
+      scNowEmpty:"No active counters right now.",
+      scAlTitle:"Swallowed Telegram alerts",
+      scAl48:"last 48 hours",
+      scAlSub:"How many alerts reached Telegram, how many were swallowed because the same alert had just gone out, and how many summaries went instead. Kept for two days only.",
+      scAlEmpty:"No alerts in the last 48 hours.",
+      scColEvent:"Alert", scColAlSent:"Sent", scColAlSup:"Swallowed", scColAlSum:"Summaries",
+      scEvents:{ chat_message:"Chat messages", new_user:"New user", new_match:"New match", new_request:"New post", report:"User report", block:"Block between users", spam_detected:"Spam detected", "fn:onboarded":"Finished sign-up", "fn:offer_onb_skip":"Skipped offer step at sign-up", "fn:location":"Shared location", "fn:verified":"Verified phone", "fn:notifications":"Enabled notifications", "fn:client_blocked":"Blocked in the app", "fn:completed":"Help completed", "fn:not_completed":"Did not happen", "fn:declined":"Offer declined", "fn:ratelimit":"Hit a rate limit" },
       // expenses tab
       tabExpenses:"Expenses",
       exLoading:"Loading expenses...",
@@ -4224,6 +4569,7 @@
     $("pushView").classList.toggle("hidden",v!=="push");
     $("infraView").classList.toggle("hidden",v!=="infra");
     $("expensesView").classList.toggle("hidden",v!=="expenses");
+    $("securityView").classList.toggle("hidden",v!=="security");
     $("briefView").classList.toggle("hidden",v!=="brief");
     $("rail").classList.toggle("hidden",v!=="metrics");
     if(v==="chat"){
@@ -4247,6 +4593,8 @@
     if(v==="infra"){ renderInfra(); loadInfra(); }
     // the expenses tab owns its data the same way
     if(v==="expenses"){ renderExpenses(); loadExpenses(); }
+    // and the security tab
+    if(v==="security"){ renderSecurity(); loadSecurity(); }
     // EVERY tab with a chart, not just metrics: a chart initialised while its
     // view was display:none measures zero width and stays a 100px sliver
     // forever. This guard was written when metrics owned the only charts; the
@@ -6439,6 +6787,8 @@
     pencil:["M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z","m15 5 4 4"],
     trash:["M3 6h18","M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6","M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2","M10 11v6","M14 11v6"],
     plus:["M5 12h14","M12 5v14"],
+    // Lucide "shield-check" (security tab)
+    shieldok:["M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z","m9 12 2 2 4-4"],
     moon:["M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"],
     sun:["M12 2v2","M12 20v2","m4.9 4.9 1.4 1.4","m17.7 17.7 1.4 1.4","M2 12h2","M20 12h2","m6.3 17.7-1.4 1.4","m19.1 4.9-1.4 1.4"],
     globe:["M2 12h20","M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"],
@@ -6475,7 +6825,9 @@
     topUsers:"award", safety:"shield", metaAdsSummary:"radio", metaAdsDaily:"file",
     blList:"box", psList:"file",
     driverTree:"trend", nbhd:"map", nudgeEff:"bell", helperDep:"award",
-    exChart:"trend", exTable:"file", exLedger:"wallet"
+    exChart:"trend", exTable:"file", exLedger:"wallet",
+    scChart:"msg", scAttest:"shieldok", scCountry:"globe", scTop:"users",
+    scHolds:"file", scBans:"ban", scMonitors:"activity", scNow:"zap", scAlerts:"bell"
   };
   var SEC_ICON={ secGrowth:"trend", secMarket:"layers", secChat:"msg",
                  secRetention:"refresh", secUsers:"award", secEvents:"activity",
@@ -9243,14 +9595,11 @@
     // When sampling has stopped the monitors are frozen too, so "all is well"
     // would be a claim nobody measured: the stale warning leads instead.
     var mons=INFRA.monitors||[];
-    var NAMES={ infra_cpu:S.ifMonCpu, infra_memory:S.ifMonMem,
-                infra_disk:S.ifMonDisk, infra_connections:S.ifMonConn,
-                infra_compute_budget:S.ifMonBudget };
     var down=mons.filter(function(m){ return m && m.status==="down"; });
     if(down.length){
       ifVerdict(head, "lead bad", S.ifDown(down.map(function(m){
         // an unknown check name is shown, but only as escaped text
-        var nm=NAMES[m.check] || String(m.check||"").replace(/[<>&"]/g,"");
+        var nm=MON_NAMES()[m.check] || String(m.check||"").replace(/[<>&"]/g,"");
         return "<b>"+nm+"</b>"+(m.since? " ("+S.ifSince(ifWhen(m.since))+")" : "");
       }).join(", ")));
     }
@@ -9335,6 +9684,17 @@
     ex.appendChild(g);
     var bt=el("div","verdict ifbottom"); bt.innerHTML=S.ifExBottom; // trusted: our dictionary
     ex.appendChild(bt);
+  }
+  // Every backend monitor by its human name: the server tab's four machine
+  // checks plus the ones the security tab lists. One map, so a check renamed
+  // here reads the same on both tabs. An id missing here is shown as itself.
+  function MON_NAMES(){
+    var m={ infra_cpu:S.ifMonCpu, infra_memory:S.ifMonMem,
+            infra_disk:S.ifMonDisk, infra_connections:S.ifMonConn,
+            infra_compute_budget:S.ifMonBudget };
+    var x=S.scMonNames||{};
+    Object.keys(x).forEach(function(k){ m[k]=x[k]; });
+    return m;
   }
   // A time-axis line chart. timeChart() is built for DAILY category rows
   // (fmtDay labels, release annotations); these are 5-minute samples. Same
@@ -9986,6 +10346,463 @@
     });
   }
 
+  // ---- security tab ----------------------------------------------------------
+  // Is anyone abusing us: SMS verification codes sent and refused (and why),
+  // device attestation on those sends, posts held for a decision, bans, the
+  // backend monitors, the Telegram alert throttle and the live abuse counters.
+  // admin-dashboard action "security", same SSO bearer as every relayCall.
+  // Its own call, like the server tab: pulled on entering the tab, on a window
+  // change, and by the live ticker only while this tab is on screen.
+  // This file is PUBLIC: no incident, name, number or id is written here -
+  // every one of them arrives from the backend after sign-in.
+  var SEC=null, SEC_ERR=null, SEC_SEQ=0, SEC_DAYS=14;
+  // fixed order = fixed colour slot: a reason keeps its colour whichever
+  // reasons happen to appear in the window
+  var SC_REASONS=["global_brake","global_day","phone_10min","user_hour","user_day",
+                  "user_30d","user_phones","country","attestation_invalid","attestation_missing"];
+  var SC_OUTCOMES=["verified","missing","invalid","unverifiable","not_evaluated"];
+  function securityOn(){ var v=$("securityView"); return !!(v && !v.classList.contains("hidden")); }
+  function loadSecurity(){
+    // the #security deep link switches tabs before the session is restored;
+    // bootLoad kicks this again once it is
+    if(!SESSION || !SESSION.access_token) return Promise.resolve();
+    var seq=++SEC_SEQ;
+    var body=$("scBody"); if(body && SEC) body.classList.add("loading");
+    return relayCall("security",{days:SEC_DAYS}).then(function(d){
+      if(seq!==SEC_SEQ) return;          // a newer window was asked for
+      SEC=d||{}; SEC_ERR=null;
+    }).catch(function(e){
+      if(seq!==SEC_SEQ) return;
+      SEC_ERR=(e && e.message) || "error";
+    }).then(function(){
+      if(seq!==SEC_SEQ) return;
+      if(body) body.classList.remove("loading");
+      if(securityOn()){ renderSecurity(); paintIcons(); }
+    });
+  }
+  function scN(v){ return exNum(v); }
+  function scArr(v){ return Array.isArray(v) ? v : []; }
+  // a code from the server we have no word for: shown as itself, kept whole
+  function scRaw(v){ return exIso(String(v==null ? "-" : v)); }
+  function scReason(r){ var m=S.scReasons||{}; return m[r] || scRaw(r); }
+  function scOutcome(o){ var m=S.scOutcomes||{}; return m[o] || scRaw(o); }
+  function scMon(c){ return MON_NAMES()[c] || scRaw(c); }
+  function scSource(x){ var m=S.scSources||{}; return m[x] || scRaw(x); }
+  function scModLabel(k){ var m=S.scModKinds||{}; return m[k] || scRaw(k); }
+  function scPlain(s){ return String(s==null?"":s).replace(/[⁦-⁩]/g,""); }
+  function scReasonCol(r){
+    var i=SC_REASONS.indexOf(r);
+    var map=[pal(7), pal(1), pal(3), pal(0), pal(5), pal(6), pal(4), tok("--ink2"), tok("--bad-text"), tok("--seq250")];
+    return i<0 ? tok("--muted") : map[i];
+  }
+  function scOutcomeCol(o){
+    return ({ verified:tok("--good-text"), missing:tok("--warning"), invalid:tok("--bad-text"),
+              unverifiable:tok("--muted"), not_evaluated:tok("--baseline") })[o] || tok("--grid");
+  }
+  // "verified of evaluated": a send from before the check went live says
+  // nothing either way, so it is not in the denominator
+  function scAttStats(A){
+    var by={}, tot={ev:0, ver:0, inv:0};
+    scArr(A).forEach(function(r){
+      if(!r) return;
+      var p=r.platform||"unknown", o=r.outcome||"not_evaluated", n=scN(r.sends);
+      var b=by[p] || (by[p]={total:0, ev:0, ver:0, o:{}});
+      b.o[o]=(b.o[o]||0)+n; b.total+=n;
+      if(o!=="not_evaluated"){ b.ev+=n; tot.ev+=n; }
+      if(o==="verified"){ b.ver+=n; tot.ver+=n; }
+      if(o==="invalid") tot.inv+=n;
+    });
+    return { by:by, tot:tot };
+  }
+  function scPct(a,b){ return b ? Math.round(100*a/b)+"%" : "-"; }
+
+  function renderSecurity(){
+    var head=$("scHead"), body=$("scBody");
+    if(!head || !body) return;
+    head.innerHTML="";
+    if(!SEC){
+      body.classList.add("hidden");
+      if(SEC_ERR) ifVerdict(head, "bad", null, S.scErr(SEC_ERR));
+      else emptyState(head, S.scLoading, "shieldok");
+      return;
+    }
+    // a failed refresh keeps the last good picture on screen, and says so
+    if(SEC_ERR) ifVerdict(head, "warn", null, S.scErr(SEC_ERR));
+    var wasHidden=body.classList.contains("hidden");
+    body.classList.remove("hidden");
+    var att=scAttStats(SEC.attestation);
+    scRenderVerdict(head, att);
+    scRenderTiles(att);
+    scRenderChart();
+    scRenderAttest(att);
+    scRenderCountry();
+    scRenderTop();
+    scRenderHolds();
+    scRenderBans();
+    scRenderMonitors();
+    scRenderNow();
+    scRenderAlerts();
+    if(wasHidden) resizeCharts();
+  }
+
+  // ── the headline: one line per thing that needs Nir, or one green line
+  function scRenderVerdict(head, att){
+    var mons=scArr(SEC.monitors), down=mons.filter(function(m){ return m && m.status==="down"; });
+    var holds=scArr(SEC.pending_holds);
+    var ab=SEC.abuse_now||{}, over=scArr(ab.over);
+    var items=[];
+    down.forEach(function(m){
+      items.push(["bad", S.scVMonDown("<b>"+exEsc(scPlain(scMon(m.check)))+"</b>",
+        m.since ? exEsc(scPlain(ifWhen(m.since))) : null)]);
+    });
+    if(over.length){
+      var names=over.map(function(o){ return "<b>\u2068"+exEsc(typeof o==="string" ? o : (o && (o.label||o.key)) || "-")+"\u2069</b>"; });
+      items.push(["bad", S.scVAbuse(names.join(", "))]);
+    }
+    if(holds.length) items.push(["warn", S.scVHolds(holds.length)]);
+    if(att.tot.inv) items.push(["warn", S.scVInvalid(fmt(att.tot.inv))]);
+    if(!items.length){ ifVerdict(head, "lead good", S.scVQuiet); return; }
+    items.forEach(function(it){ ifVerdict(head, "lead "+it[0], it[1]); }); // trusted: dictionary + escaped server text
+  }
+
+  function scRenderTiles(att){
+    var th=$("scTiles"); th.innerHTML="";
+    var by=SEC.otp_by_reason||{};
+    var sent=scN(by.sent), refused=0, top=null;
+    Object.keys(by).forEach(function(k){
+      if(k==="sent") return;
+      refused+=scN(by[k]);
+      if(!top || scN(by[k])>scN(by[top])) top=k;
+    });
+    var days=+SEC.days || SEC_DAYS;
+    th.appendChild(tile(S.scTSent, fmt(sent), {note:S.scInDays(days)}));
+    var t2=tile(S.scTRefused, fmt(refused), {note: refused && top ? S.scTopReason(scPlain(scReason(top))) : S.scInDays(days)});
+    if(refused){
+      t2.classList.add("scst-bad");
+      var sub2=t2.querySelector(".sub");
+      if(sub2) sub2.insertBefore(el("span","brpill down",S.scPillBlocked), sub2.firstChild);
+    }
+    th.appendChild(t2);
+    var pol=SEC.attestation_policy||{};
+    var t3=tile(S.scTAttest, scPct(att.tot.ver, att.tot.ev),
+      {note: att.tot.ev ? S.scAttOf(fmt(att.tot.ev)) : S.scAttNone});
+    var sub3=t3.querySelector(".sub");
+    if(sub3) sub3.insertBefore(el("span","brpill "+(pol.enforce?"up":"mid"), pol.enforce ? S.scEnfOn : S.scEnfOff), sub3.firstChild);
+    th.appendChild(t3);
+    var nh=scArr(SEC.pending_holds).length;
+    var t4=tile(S.scTHolds, fmt(nh), {note: nh ? S.scHoldsNote : S.scHoldsNone});
+    if(nh) t4.classList.add("scst-warn");
+    th.appendChild(t4);
+    var nb=scArr(SEC.bans).filter(function(b){ return b && !b.revoked; }).length;
+    th.appendChild(tile(S.scTBans, fmt(nb), {note:S.scBansNote}));
+  }
+
+  // ── stacked bars: sent below, every refusal reason on top of it
+  function scRenderChart(){
+    var host=$("scChart"), lg=$("scLegend"), cov=$("scCover");
+    lg.innerHTML="";
+    var rows=scArr(SEC.otp_daily).slice().sort(function(a,b){ return a.day<b.day ? -1 : 1; });
+    // the window label comes from the payload, never from the button
+    cov.textContent=S.scSpan(+SEC.days || SEC_DAYS);
+    var any=rows.some(function(r){ return scN(r.sent) || scN(r.refused); });
+    if(!any){
+      if(einsts.scChart){ einsts.scChart.dispose(); delete einsts.scChart; }
+      host.innerHTML=""; emptyState(host, S.scChEmpty, "msg"); return;
+    }
+    if(!ECH){ host.innerHTML=""; emptyState(host, S.ifNoChart, "activity"); return; }
+    var used=[];
+    rows.forEach(function(r){ Object.keys(r.reasons||{}).forEach(function(k){
+      if(scN(r.reasons[k]) && used.indexOf(k)<0) used.push(k); }); });
+    used.sort(function(a,b){
+      var ia=SC_REASONS.indexOf(a), ib=SC_REASONS.indexOf(b);
+      return (ia<0?99:ia)-(ib<0?99:ib);
+    });
+    // refused with no reason breakdown still has to be drawn, or the bar lies
+    var other=rows.some(function(r){
+      var s=0; Object.keys(r.reasons||{}).forEach(function(k){ s+=scN(r.reasons[k]); });
+      return scN(r.refused)>s;
+    });
+    var sentC=tok("--s3");
+    var keys=[{k:"__sent", name:S.scSerSent, color:sentC}];
+    used.forEach(function(k){ keys.push({k:k, name:scPlain(scReason(k)), color:scReasonCol(k)}); });
+    if(other) keys.push({k:"__other", name:S.scSerOther, color:tok("--muted")});
+    keys.forEach(function(s){
+      var sp=el("span"), i=el("i"); i.style.background=s.color;
+      sp.appendChild(i); sp.appendChild(el("span",null,s.name)); lg.appendChild(sp);
+    });
+    function val(r, k){
+      if(k==="__sent") return scN(r.sent);
+      if(k==="__other"){
+        var s=0; Object.keys(r.reasons||{}).forEach(function(x){ s+=scN(r.reasons[x]); });
+        return Math.max(0, scN(r.refused)-s);
+      }
+      return scN((r.reasons||{})[k]);
+    }
+    var inst=einsts.scChart;
+    if(!inst || !host.querySelector(".echart")){
+      host.innerHTML="";
+      var box=el("div","echart"); host.appendChild(box);
+      inst=echarts.init(box); einsts.scChart=inst;
+      // same zero-width trap as the server tab's #infra deep link: follow the
+      // box's real size instead of guessing when the shell shows
+      if(window.ResizeObserver){
+        var ro=new ResizeObserver(function(){
+          var cur=einsts.scChart;
+          if(!cur || cur.getDom()!==box){ ro.disconnect(); return; }
+          if(box.clientWidth) cur.resize();
+        });
+        ro.observe(box);
+      }
+    }
+    var ink=tok("--ink"), muted=tok("--muted"), grid=tok("--grid"),
+        surface=tok("--surface"), base=tok("--baseline");
+    var dir=LANG==="he" ? "rtl" : "ltr";
+    function dayLbl(d){ var p=String(d).split("-"); return p.length<3 ? String(d) : (+p[2])+"."+(+p[1]); }
+    var top={};
+    rows.forEach(function(r, i){ keys.forEach(function(s){ if(val(r,s.k)>0) top[i]=s.k; }); });
+    inst.setOption({
+      animationDuration:500, animationDurationUpdate:350,
+      textStyle:{ fontFamily:"Heebo, system-ui, sans-serif" },
+      grid:{ left:8, right:40, top:14, bottom:28 },
+      legend:{ show:false },
+      tooltip:{
+        trigger:"axis", axisPointer:{ type:"shadow" }, confine:true,
+        backgroundColor:surface, borderColor:grid, textStyle:{ color:ink, fontSize:12 },
+        // one name | value row per line, laid out in the page's direction
+        formatter:function(ps){
+          if(!ps || !ps.length) return "";
+          var r=rows[ps[0].dataIndex]; if(!r) return "";
+          var h='<div dir="'+dir+'" style="min-width:170px"><div dir="ltr" style="text-align:'+(dir==="rtl"?"right":"left")+
+                ';color:'+muted+';margin-bottom:4px">'+exEsc(dayLbl(r.day))+"</div>";
+          function line(label, v, mk, sub){
+            return '<div style="display:flex;justify-content:space-between;gap:16px;margin-top:3px'+
+              (sub? ';color:'+muted+';font-size:11.5px;padding-inline-start:14px' : '')+'"><span>'+(mk||"")+exEsc(label)+
+              '</span><b dir="ltr" style="font-variant-numeric:tabular-nums">'+fmt(v)+"</b></div>";
+          }
+          h+=line(S.scSerSent, scN(r.sent), ps[0] && ps[0].seriesIndex===0 ? ps[0].marker : "");
+          h+=line(S.scSerRefused, scN(r.refused), "");
+          ps.forEach(function(p){
+            var s=keys[p.seriesIndex]; if(!s || s.k==="__sent") return;
+            var v=val(r, s.k); if(!v) return;
+            h+=line(s.name, v, p.marker, true);
+          });
+          return h+"</div>";
+        }
+      },
+      xAxis:{ type:"category", data:rows.map(function(r){ return r.day; }),
+        axisLine:{ lineStyle:{ color:base } }, axisTick:{ show:false },
+        axisLabel:{ color:muted, fontSize:10.5, hideOverlap:true, formatter:function(v){ return dayLbl(v); } } },
+      yAxis:{ type:"value", position:"right", min:0, minInterval:1,
+        splitLine:{ lineStyle:{ color:grid } },
+        axisLabel:{ color:muted, fontSize:10 } },
+      series: keys.map(function(s){
+        return { name:s.name, type:"bar", stack:"otp", barMaxWidth:34,
+          emphasis:{ focus:"series" },
+          itemStyle:{ color:s.color, borderColor:surface, borderWidth:1 },
+          data: rows.map(function(r, i){
+            var v=val(r, s.k);
+            return top[i]===s.k ? { value:v, itemStyle:{ borderRadius:[4,4,0,0] } } : v;
+          }) };
+      })
+    }, { replaceMerge:["series"] });
+  }
+
+  // ── device attestation: the outcome mix per platform + where the policy is
+  function scRenderAttest(att){
+    var host=$("scAttest"); host.innerHTML="";
+    var pol=SEC.attestation_policy||{};
+    var plats=Object.keys(att.by).sort(function(a,b){
+      var o=["ios","android","unknown"]; return (o.indexOf(a)<0?9:o.indexOf(a))-(o.indexOf(b)<0?9:o.indexOf(b));
+    });
+    if(!plats.length) emptyState(host, S.scAttEmpty, "shieldok");
+    else {
+      var used=SC_OUTCOMES.filter(function(o){ return plats.some(function(p){ return att.by[p].o[o]; }); });
+      Object.keys(att.by).forEach(function(p){ Object.keys(att.by[p].o).forEach(function(o){
+        if(used.indexOf(o)<0) used.push(o); }); });
+      plats.forEach(function(p){
+        var b=att.by[p];
+        var row=el("div","scatt");
+        var hd=el("div","scatth");
+        hd.appendChild(el("b",null,(S.scPlat||{})[p] || scRaw(p)));
+        hd.appendChild(el("span","note", b.ev ? S.scAttRow(scPct(b.ver,b.ev)) : S.scAttRowNone));
+        hd.appendChild(el("span","note scattn", S.scSends(fmt(b.total))));
+        row.appendChild(hd);
+        var bar=el("div","scbar");
+        used.forEach(function(o){
+          var n=b.o[o]||0; if(!n) return;
+          var seg=el("i"); seg.style.width=(100*n/b.total)+"%"; seg.style.background=scOutcomeCol(o);
+          seg.title=scPlain(scOutcome(o))+": "+fmt(n);
+          bar.appendChild(seg);
+        });
+        row.appendChild(bar);
+        host.appendChild(row);
+      });
+      var lg=el("div","exlegend sclegsm");
+      used.forEach(function(o){
+        var n=0; plats.forEach(function(p){ n+=att.by[p].o[o]||0; });
+        var sp=el("span"), i=el("i"); i.style.background=scOutcomeCol(o);
+        sp.appendChild(i); sp.appendChild(el("span",null,scPlain(scOutcome(o))+": "));
+        sp.appendChild(el("b",null,fmt(n)));
+        lg.appendChild(sp);
+      });
+      host.appendChild(lg);
+    }
+    // the policy, as it stands on the server - one fact per line
+    var pl=el("div","scpol");
+    function prow(k, v, cls){ var d=el("div"); d.appendChild(el("span",null,k)); d.appendChild(el("b",cls||null,v)); pl.appendChild(d); }
+    prow(S.scPolEnf, pol.enforce ? S.scOn : S.scOff, pol.enforce ? "scok" : "scmid");
+    prow(S.scPolAll, pol.require_all ? S.scYes : S.scNo);
+    prow(S.scPolIos, pol.ios_first_attested_version ? exIso(String(pol.ios_first_attested_version)) : S.scNotYet);
+    prow(S.scPolAnd, pol.android_first_attested_version ? exIso(String(pol.android_first_attested_version)) : S.scNotYet);
+    if(pol.updated_at) prow(S.scPolUpd, ifWhen(pol.updated_at));
+    host.appendChild(pl);
+    host.appendChild(el("div","verdict calm scplan", pol.enforce ? S.scPlanOn : S.scPlanOff));
+  }
+
+  function scTable(hostId, heads, rows, emptyMsg, emptyIc){
+    var host=$(hostId); host.innerHTML="";
+    if(!rows.length){ emptyState(host, emptyMsg, emptyIc); return null; }
+    var t=el("table","plain extbl sctbl");
+    var hr=el("tr"); heads.forEach(function(h){ hr.appendChild(el("th",null,h)); }); t.appendChild(hr);
+    rows.forEach(function(r){ t.appendChild(r); });
+    host.appendChild(t);
+    return t;
+  }
+  function scTd(txt, cls, title){ var td=el("td",cls||null,txt); if(title) td.title=title; return td; }
+
+  function scRenderCountry(){
+    var rows=scArr(SEC.otp_by_country).slice().sort(function(a,b){
+      return (scN(b.sent)+scN(b.refused))-(scN(a.sent)+scN(a.refused)); });
+    scTable("scCountry", [S.scColCountry, S.scColSent, S.scColRefused], rows.map(function(r){
+      var tr=el("tr");
+      tr.appendChild(scTd(exIso(String(r.country||"?"))));
+      tr.appendChild(scTd(fmt(scN(r.sent))));
+      tr.appendChild(scTd(fmt(scN(r.refused)), scN(r.refused) ? "scbad" : "exnil"));
+      return tr;
+    }), S.scCtyEmpty, "globe");
+  }
+
+  function scRenderTop(){
+    var rows=scArr(SEC.otp_top_refused);
+    scTable("scTop", [S.scColUser, S.scColRefused, S.scColReasons, S.scColLast], rows.map(function(r){
+      var tr=el("tr");
+      var nm=el("td","exv"); var b=el("span",null,r.name || S.scNoName); b.dir="auto"; nm.appendChild(b);
+      tr.appendChild(nm);
+      tr.appendChild(scTd(fmt(scN(r.refused)), "scbad"));
+      tr.appendChild(scTd(scArr(r.reasons).map(function(x){ return scReason(x); }).join(", "), "scwrap"));
+      tr.appendChild(scTd(r.last_at ? ifWhen(r.last_at) : "-"));
+      return tr;
+    }), S.scTopEmpty, "users");
+  }
+
+  function scRenderHolds(){
+    var host=$("scHolds"); host.innerHTML="";
+    var rows=scArr(SEC.pending_holds);
+    if(!rows.length){ emptyState(host, S.scHoldEmpty, "check"); return; }
+    rows.forEach(function(h){
+      var row=el("div","schold");
+      var a=el("div");
+      var tt=el("b",null,h.title || "-"); tt.dir="auto"; a.appendChild(tt);
+      var meta=el("div","note");
+      meta.appendChild(document.createTextNode(S.scHoldBy(scSource(h.source))));
+      if(h.since) meta.appendChild(document.createTextNode(" · "+S.scSinceT(ifWhen(h.since))));
+      a.appendChild(meta);
+      row.appendChild(a);
+      // the Cards tab has no "show one card" filter: brToCard opens it with
+      // every filter cleared and the title in the search box
+      if(h.title){
+        var go=brGoBtn(S.scHoldOpen, function(){ brToCard(h.title); });
+        go.classList.add("scgo");
+        row.appendChild(go);
+      }
+      host.appendChild(row);
+    });
+  }
+
+  function scRenderBans(){
+    var mh=$("scModeration"); mh.innerHTML="";
+    var mod=SEC.moderation||{}, mk=Object.keys(mod).filter(function(k){ return scN(mod[k]); });
+    var rep=scArr(SEC.reports_daily).reduce(function(a,r){ return a+scN(r && r.n); },0);
+    var st=el("div","brstat scmod");
+    function cell(v, cap){ var d=el("div"); d.appendChild(el("b",null,fmt(v))); d.appendChild(el("span","cap",cap)); st.appendChild(d); }
+    cell(rep, S.scReports);
+    mk.sort(function(a,b){ return scN(mod[b])-scN(mod[a]); }).forEach(function(k){ cell(scN(mod[k]), scPlain(scModLabel(k))); });
+    mh.appendChild(st);
+    mh.appendChild(el("div","brnote",S.scInDays(+SEC.days || SEC_DAYS)));
+    var rows=scArr(SEC.bans).slice().sort(function(a,b){
+      return (!!a.revoked-!!b.revoked) || (String(b.at||"")>String(a.at||"") ? 1 : -1); });
+    scTable("scBans", [S.scColUser, S.scColReason, S.scColWhen], rows.map(function(r){
+      var tr=el("tr", r.revoked ? "screvoked" : null);
+      var nm=el("td","exv"); var b=el("span",null,r.name || S.scNoName); b.dir="auto"; nm.appendChild(b);
+      if(r.revoked) nm.appendChild(el("small",null,S.scRevoked));
+      tr.appendChild(nm);
+      var full=String(r.reason||"");
+      var short=full.length>120 ? full.slice(0,118).replace(/\s+\S*$/,"")+"..." : full;
+      var rs=scTd(short || "-", "scwrap", full.length>120 ? full : null); rs.dir="auto";
+      tr.appendChild(rs);
+      tr.appendChild(scTd(r.at ? ifWhen(r.at) : "-"));
+      return tr;
+    }), S.scBanEmpty, "ban");
+  }
+
+  function scRenderMonitors(){
+    var host=$("scMonitors"); host.innerHTML="";
+    var rows=scArr(SEC.monitors).slice().sort(function(a,b){
+      return ((a.status==="down")?0:(a.status==="up")?2:1)-((b.status==="down")?0:(b.status==="up")?2:1);
+    });
+    if(!rows.length){ emptyState(host, S.scMonEmpty, "activity"); return; }
+    rows.forEach(function(m){
+      var row=el("div","scmon");
+      var nm=el("span","scmonn"); nm.textContent=scMon(m.check);
+      if(m.check) nm.title=String(m.check);
+      row.appendChild(nm);
+      var stt=m.status==="down" ? "down" : m.status==="up" ? "up" : "mid";
+      row.appendChild(el("span","brpill "+stt, (S.scMonSt||{})[m.status] || scRaw(m.status)));
+      row.appendChild(el("span","note scmons", m.since ? S.scSinceT(ifWhen(m.since)) : ""));
+      if(m.last_checked_at) row.title=S.scChecked(scPlain(ifWhen(m.last_checked_at)));
+      host.appendChild(row);
+    });
+  }
+
+  function scRenderNow(){
+    var host=$("scNow"); host.innerHTML="";
+    var ab=SEC.abuse_now||{}, rows=scArr(ab.counts);
+    var over=scArr(ab.over).map(function(o){ return typeof o==="string" ? o : o && (o.label||o.key); });
+    if(!rows.length){ emptyState(host, S.scNowEmpty, "zap"); return; }
+    rows.forEach(function(r){
+      var n=scN(r.n), cap=r.ceiling==null ? null : scN(r.ceiling);
+      var hot = over.indexOf(r.label)>=0 || (cap!==null && n>=cap);
+      var near = !hot && cap ? n>=0.7*cap : false;
+      var row=el("div","scnow"+(hot?" hot":near?" near":""));
+      var lb=el("span","scnowl",r.label||"-"); lb.dir="auto"; row.appendChild(lb);
+      var v=el("span","scnowv"); v.dir="ltr";
+      v.appendChild(el("b",null,fmt(n)));
+      if(cap!==null) v.appendChild(el("span",null," / "+fmt(cap)));
+      row.appendChild(v);
+      var bar=el("div","scnowb"); var f=el("i");
+      f.style.width=(cap ? Math.min(100,100*n/cap) : 0)+"%";
+      bar.appendChild(f); row.appendChild(bar);
+      host.appendChild(row);
+    });
+  }
+
+  function scRenderAlerts(){
+    var rows=scArr(SEC.alerts).slice().sort(function(a,b){
+      return (scN(b.sent)+scN(b.suppressed))-(scN(a.sent)+scN(a.suppressed)); });
+    scTable("scAlerts", [S.scColEvent, S.scColAlSent, S.scColAlSup, S.scColAlSum], rows.map(function(r){
+      var tr=el("tr");
+      var ev=(S.scEvents||{})[r.event];
+      var td=scTd(ev || scRaw(r.event), "exv");
+      if(ev && r.event) td.title=String(r.event);
+      tr.appendChild(td);
+      tr.appendChild(scTd(fmt(scN(r.sent))));
+      tr.appendChild(scTd(fmt(scN(r.suppressed)), scN(r.suppressed) ? "scmidt" : "exnil"));
+      tr.appendChild(scTd(fmt(scN(r.summaries)), scN(r.summaries) ? null : "exnil"));
+      return tr;
+    }), S.scAlEmpty, "bell");
+  }
+
+
   // ---- data + auth ---------------------------------------------------------
   function segVal(id){
     var b=document.querySelector("#"+id+" button.on");
@@ -10118,6 +10935,7 @@
         // expenses too - but never under a form or a delete being answered:
         // the re-render would not lose the typing, but it would move it
         if(expensesOn() && !EX_FORM && !EX_DEL && !EX_RATE) loadExpenses();
+        if(securityOn()) loadSecurity();
       },60000);
     }
     else if(autoTimer){ clearInterval(autoTimer); autoTimer=null; markStale(true); }
@@ -10197,6 +11015,10 @@
   segWire("exWinSeg",function(){
     EXP_MONTHS=segVal("exWinSeg");
     loadExpenses();
+  });
+  segWire("scWinSeg",function(){
+    SEC_DAYS=segVal("scWinSeg");
+    loadSecurity();
   });
   segWire("chatTypeSeg",renderChat);
   segWire("funnelSeg",function(){ if(DATA) renderMetrics(); });
@@ -10330,6 +11152,7 @@
     // (switchTab repaints it on the way in otherwise)
     if(infraOn()){ try{ renderInfra(); }catch(e){ console.error("renderInfra failed",e); } paintIcons(); }
     if(expensesOn()){ try{ renderExpenses(); }catch(e){ console.error("renderExpenses failed",e); } paintIcons(); }
+    if(securityOn()){ try{ renderSecurity(); }catch(e){ console.error("renderSecurity failed",e); } paintIcons(); }
     syncChrome();  // English labels wrap the header differently than Hebrew
   }
   $("themeBtn").addEventListener("click",function(){
@@ -10397,6 +11220,7 @@
       // a #infra deep link landed before the session existed: fetch it now
       if(infraOn() && !INFRA) loadInfra();
       if(expensesOn() && !EXP) loadExpenses();
+      if(securityOn() && !SEC) loadSecurity();
       if(DATA || bootLoading) return;
       bootLoading=true;
       // brief FIRST, the full load after it: fired together, the brief's one
