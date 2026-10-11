@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Helpy Console</title>
+<!-- CSP (2026-10-11). The inline script needs 'unsafe-inline', so this does not
+     stop an injected script from RUNNING - escaping does that. What it stops is the
+     script getting the session OUT: fetch/XHR/WebSocket only to our Supabase, images
+     only from our own hosts, no forms, no plugins, <base> only to help-y.com (the doc viewer sets one). A new host the console
+     really needs = add it here, deliberately. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://lwomstzzmyegpbidibfm.supabase.co https://lh3.googleusercontent.com; connect-src 'self' https://lwomstzzmyegpbidibfm.supabase.co wss://lwomstzzmyegpbidibfm.supabase.co; frame-src 'self'; object-src 'none'; base-uri https://help-y.com; form-action 'none'">
 <link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
 <!-- Exact versions + SRI: these scripts run with the founder's session, so a bad
@@ -860,6 +866,13 @@
   #login .cta { width:100%; background:var(--s1); color:#fff; border:none;
                 padding:10px; border-radius:8px; cursor:pointer; font-weight:600; }
   #login .err { color:var(--bad-text); font-size:12px; min-height:16px; margin-top:12px; }
+  #mfaBox .mfa-title { color:var(--ink); font-weight:700; font-size:15px; margin-bottom:6px; }
+  #mfaQr { display:block; width:168px; height:168px; margin:14px auto 6px; background:#fff;
+           border-radius:10px; padding:6px; }
+  #mfaQr.hidden, #mfaSecret.hidden, #mfaUri.hidden, #mfaCode.hidden, #mfaBioBtn.hidden { display:none; }
+  #mfaSecret { display:block; font-size:11px; color:var(--muted); word-break:break-all; }
+  #mfaCode { text-align:center; letter-spacing:6px; font-size:18px; }
+  #mfaBox .mfa-note { font-size:11px; margin:14px 0 0; }
 
   /* ---- connecting (between the OAuth redirect and the first paint) ----
      Its own classes, NOT .brand: the phone header rule gives .brand
@@ -1716,6 +1729,23 @@
       <span data-i18n="loginGoogle">כניסה עם Google</span>
     </button>
     <div class="err" id="loginErr"></div>
+    <!-- Second step (2026-10-11): Google alone is not enough for a console that
+         holds every chat and every user's PII. Face ID / Touch ID (a WebAuthn
+         factor bound to help-y.com) is the main path; an authenticator-app code is
+         the fallback. Asked once per device - the session keeps aal2 until sign-out. -->
+    <div id="mfaBox" class="hidden">
+      <p class="mfa-title" id="mfaTitle"></p>
+      <p id="mfaSub"></p>
+      <button class="gbtn" id="mfaBioBtn" type="button"><span id="mfaBioLbl"></span></button>
+      <img id="mfaQr" class="hidden" alt="">
+      <code id="mfaSecret" class="hidden" dir="ltr"></code>
+      <a id="mfaUri" class="linklike hidden" data-i18n="mfaOpenPw"></a>
+      <input id="mfaCode" class="hidden" inputmode="numeric" autocomplete="one-time-code" maxlength="6" dir="ltr" placeholder="000000">
+      <button class="linklike" id="mfaAltBtn" type="button"></button>
+      <div class="err" id="mfaErr"></div>
+      <p class="mfa-note" data-i18n="mfaNote"></p>
+      <button class="linklike" id="mfaOutBtn" type="button" data-i18n="mfaOut"></button>
+    </div>
   </div>
 </div>
 
@@ -2516,6 +2546,15 @@
       errForbidden:"החשבון הזה לא מורשה לקונסול", errServer:"שגיאת שרת, נסו שוב",
       errNoAuth:"שירות ההתחברות לא נטען, רעננו את הדף",
       errExpired:"ההתחברות פגה - התחברו שוב",
+      mfaTitle:"עוד צעד אחד", mfaSub:"אשרו שזה אתם עם Face ID או טביעת אצבע",
+      mfaSubCode:"הקלידו את הקוד בן 6 הספרות, או געו בשדה ובחרו אותו מהסיסמאות עם Face ID",
+      mfaEnrollTitle:"הגדרה חד-פעמית", mfaEnrollSub:"חברו את Face ID או טביעת האצבע לקונסול. מעכשיו זה מה שיאשר את הכניסה",
+      mfaEnrollSubCode:"סרקו את הקוד במצלמת האייפון ושמרו אותו באפליקציית הסיסמאות (או ב-1Password). מעכשיו הוא ימולא עם Face ID. אחרי השמירה הקלידו כאן את 6 הספרות",
+      mfaBio:"אימות עם Face ID / טביעת אצבע", mfaBioEnroll:"הגדרת Face ID / טביעת אצבע",
+      mfaUseCode:"שימוש בקוד מאפליקציית אימות", mfaUseBio:"חזרה ל-Face ID / טביעת אצבע",
+      mfaBadCode:"הקוד לא נכון או שפג תוקפו - נסו את הקוד הבא",
+      mfaBioFail:"האימות לא הושלם - נסו שוב, או השתמשו בקוד",
+      mfaNote:"במכשיר הזה לא תתבקשו שוב עד שתתנתקו", mfaOpenPw:"בטלפון? פתיחה ישירה באפליקציית הסיסמאות", mfaOut:"התנתקות",
       errTimeout:"השרת לא הגיב תוך 25 שניות - נסו שוב",
       updatedAgo:function(s){ return s<10? "עודכן כרגע" : s<60? "עודכן לפני "+s+" שניות" : (Math.round(s/60)===1? "עודכן לפני דקה" : "עודכן לפני "+Math.round(s/60)+" דקות"); },
       tileHero:"עזרות שהושלמו · {win}",
@@ -3420,6 +3459,15 @@
       errForbidden:"This account is not authorized for the console", errServer:"Server error, try again",
       errNoAuth:"Sign-in service failed to load - refresh the page",
       errExpired:"Your session expired - sign in again",
+      mfaTitle:"One more step", mfaSub:"Confirm it's you with Face ID or your fingerprint",
+      mfaSubCode:"Enter the 6-digit code, or tap the field and pick it from Passwords with Face ID",
+      mfaEnrollTitle:"One-time setup", mfaEnrollSub:"Link Face ID or your fingerprint to the console. From now on, that's what approves sign-in",
+      mfaEnrollSubCode:"Scan the code with your iPhone camera and save it in the Passwords app (or 1Password). From then on it fills in with Face ID. Then enter the 6 digits here",
+      mfaBio:"Verify with Face ID / fingerprint", mfaBioEnroll:"Set up Face ID / fingerprint",
+      mfaUseCode:"Use a code from an authenticator app", mfaUseBio:"Back to Face ID / fingerprint",
+      mfaBadCode:"That code is wrong or expired - try the next one",
+      mfaBioFail:"Verification didn't complete - try again, or use a code",
+      mfaNote:"You won't be asked again on this device until you sign out", mfaOpenPw:"On your phone? Open it in Passwords directly", mfaOut:"Sign out",
       errTimeout:"The server did not answer within 25 seconds - try again",
       updatedAgo:function(s){ return s<10? "updated just now" : s<60? "updated "+s+" seconds ago" : (Math.round(s/60)===1? "updated 1 minute ago" : "updated "+Math.round(s/60)+" minutes ago"); },
       tileHero:"Helps completed · {win}",
@@ -6958,6 +7006,11 @@
   // Lucide-style line icons, inlined. A dashboard with no icons reads as a
   // spreadsheet; one icon per panel gives the eye an anchor before the words.
   var ICONS={
+    // Lucide "fingerprint" (the console's second-step button)
+    fingerprint:["M12 10a2 2 0 0 0-2 2c0 1.02-.1 2.51-.26 4","M14 13.12c0 2.38 0 6.38-1 8.88",
+      "M17.29 21.02c.12-.6.43-2.3.5-3.02","M2 12a10 10 0 0 1 18-6","M2 16h.01",
+      "M21.8 16c.2-2 .131-5.354 0-6","M5 19.5C5.5 18 6 15 6 12a6 6 0 0 1 .34-2",
+      "M8.65 22c.21-.66.45-1.32.57-2","M9 6.8a6 6 0 0 1 9 5.2v2"],
     activity:["M22 12h-4l-3 9L9 3l-3 9H2"],
     users:["M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2","M22 21v-2a4 4 0 0 0-3-3.87","M16 3.13a4 4 0 0 1 0 7.75"],
     userplus:["M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2","M19 8v6","M22 11h-6"],
@@ -11681,13 +11734,155 @@
         paintIcons(); syncChrome();
       }).catch(function(){});
     }
+    // ---- second step (aal2) before any data call ---------------------------
+    // admin-dashboard refuses an aal1 token, so this gate runs first. A session
+    // that already holds aal2 (every refresh after the first verify on this
+    // device) passes straight through - the user sees nothing.
+    var gatePending=false, MFA={factor:null, kind:null, enroll:false, totp:null, codeFactor:null};
+    function mfaShow(){
+      $("connecting").classList.add("hidden");
+      $("login").classList.remove("hidden");
+      $("googleBtn").classList.add("hidden");
+      document.querySelector('#login [data-i18n="loginSub"]').classList.add("hidden");
+      $("loginErr").textContent="";
+      $("mfaBox").classList.remove("hidden");
+      var bio=MFA.kind==="webauthn";
+      $("mfaTitle").textContent= MFA.enroll? S.mfaEnrollTitle : S.mfaTitle;
+      $("mfaSub").textContent= bio ? (MFA.enroll? S.mfaEnrollSub : S.mfaSub)
+                                   : (MFA.enroll? S.mfaEnrollSubCode : S.mfaSubCode);
+      $("mfaBioBtn").classList.toggle("hidden", !bio);
+      var lbl=$("mfaBioLbl"); lbl.textContent= MFA.enroll? S.mfaBioEnroll : S.mfaBio;
+      if(!$("mfaBioBtn").querySelector(".ico")) $("mfaBioBtn").insertBefore(icon("fingerprint",18), lbl);
+      var qr=!bio && MFA.enroll && MFA.totp;
+      $("mfaQr").classList.toggle("hidden", !qr);
+      $("mfaSecret").classList.toggle("hidden", !qr);
+      if(qr){ $("mfaQr").src=MFA.totp.qr_code; $("mfaSecret").textContent=MFA.totp.secret; }
+      // on the phone itself there is no second screen to scan from: the
+      // otpauth:// link hands the code straight to Passwords / 1Password
+      var uri=qr && /^otpauth:\/\//.test(MFA.totp.uri||"");
+      $("mfaUri").classList.toggle("hidden", !uri);
+      if(uri) $("mfaUri").href=MFA.totp.uri;
+      $("mfaCode").classList.toggle("hidden", bio);
+      $("mfaCode").value="";
+      // the fallback link exists only where there is a fallback to take
+      var alt=bio ? !!MFA.codeFactor : !!MFA.bioFactor;
+      $("mfaAltBtn").classList.toggle("hidden", !alt);
+      $("mfaAltBtn").textContent= bio? S.mfaUseCode : S.mfaUseBio;
+      $("mfaErr").textContent="";
+      if(!bio) setTimeout(function(){ $("mfaCode").focus(); },50);
+    }
+    function mfaPassed(){
+      sb.auth.getSession().then(function(r){
+        SESSION=r.data.session;
+        $("mfaBox").classList.add("hidden");
+        $("googleBtn").classList.remove("hidden");
+        document.querySelector('#login [data-i18n="loginSub"]').classList.remove("hidden");
+        $("login").classList.add("hidden");
+        $("connecting").classList.remove("hidden");
+        gatePending=false;
+        bootLoad();
+      });
+    }
+    function clearStale(all){
+      // a half-finished enrolment blocks a new one with the same name
+      return Promise.all(all.filter(function(f){ return f.status!=="verified"; })
+        .map(function(f){ return sb.auth.mfa.unenroll({factorId:f.id}); }));
+    }
+    function startTotpEnroll(){
+      return sb.auth.mfa.listFactors().then(function(lf){
+        return clearStale((lf.data && lf.data.all)||[]);
+      }).then(function(){
+        return sb.auth.mfa.enroll({factorType:"totp", friendlyName:"Helpy Console code"});
+      }).then(function(en){
+        if(en.error) throw en.error;
+        MFA.factor=en.data.id; MFA.kind="totp"; MFA.enroll=true; MFA.totp=en.data.totp;
+        mfaShow();
+      });
+    }
+    function gateThenBoot(){
+      if(gatePending || DATA || bootLoading) return;
+      gatePending=true;
+      // never call Supabase from inside onAuthStateChange (auth lock): next tick
+      setTimeout(function(){
+        sb.auth.mfa.getAuthenticatorAssuranceLevel().then(function(r){
+          if(r.error) throw r.error;
+          if(r.data.currentLevel==="aal2"){ gatePending=false; bootLoad(); return; }
+          return sb.auth.mfa.listFactors().then(function(lf){
+            if(lf.error) throw lf.error;
+            var all=(lf.data && lf.data.all)||[];
+            var ok=all.filter(function(f){ return f.status==="verified"; });
+            var bio=ok.filter(function(f){ return f.factor_type==="webauthn"; })[0];
+            var code=ok.filter(function(f){ return f.factor_type==="totp"; })[0];
+            MFA.bioOk=!!window.PublicKeyCredential;
+            MFA.codeFactor=code? code.id : null;
+            MFA.bioFactor= (bio && MFA.bioOk)? bio.id : null;
+            // Enrolment is always a TOTP code: Supabase does not offer WebAuthn as
+            // an MFA factor on this project (dashboard, 2026-10-11). The code is
+            // kept in Apple Passwords / 1Password, which fill it in after Face ID,
+            // so day to day it still feels like Face ID. A WebAuthn factor, if one
+            // ever exists, is used first.
+            if(MFA.bioFactor){ MFA.factor=bio.id; MFA.kind="webauthn"; MFA.enroll=false; }
+            else if(code){ MFA.factor=code.id; MFA.kind="totp"; MFA.enroll=false; }
+            else return startTotpEnroll();
+            mfaShow();
+          });
+        }).catch(function(e){
+          gatePending=false;
+          console.error("mfa gate", e);
+          bootFail(new Error("server"));
+        });
+      },0);
+    }
+    $("mfaBioBtn").addEventListener("click",function(){
+      var btn=this; btn.disabled=true; $("mfaErr").textContent="";
+      var done=function(r){
+        btn.disabled=false;
+        if(r && r.error){ console.warn("webauthn", r.error);
+          $("mfaErr").textContent=S.mfaBioFail; return; }
+        mfaPassed();
+      };
+      var p;
+      if(MFA.enroll){
+        p=sb.auth.mfa.listFactors().then(function(lf){
+          return clearStale((lf.data && lf.data.all)||[]);
+        }).then(function(){
+          return sb.auth.mfa.webauthn.register({friendlyName:"Helpy Console "+new Date().toISOString().slice(0,10)});
+        });
+      } else {
+        p=sb.auth.mfa.webauthn.authenticate({factorId:MFA.factor});
+      }
+      p.then(done, function(e){ done({error:e}); });
+    });
+    $("mfaAltBtn").addEventListener("click",function(){
+      $("mfaErr").textContent="";
+      if(MFA.kind==="webauthn"){
+        MFA.factor=MFA.codeFactor; MFA.kind="totp"; MFA.enroll=false; mfaShow();
+      } else {
+        MFA.factor=MFA.bioFactor; MFA.kind="webauthn"; MFA.enroll=false; mfaShow();
+      }
+    });
+    $("mfaCode").addEventListener("input",function(){
+      var code=this.value.replace(/\D/g,"").slice(0,6);
+      this.value=code;
+      if(code.length!==6) return;
+      var inp=this; inp.disabled=true;
+      sb.auth.mfa.challengeAndVerify({factorId:MFA.factor, code:code}).then(function(r){
+        inp.disabled=false;
+        if(r.error){ $("mfaErr").textContent=S.mfaBadCode; inp.value=""; inp.focus(); return; }
+        mfaPassed();
+      });
+    });
+    $("mfaOutBtn").addEventListener("click",function(){
+      sb.auth.signOut().then(function(){ location.reload(); });
+    });
+
     sb.auth.onAuthStateChange(function(ev,session){
       SESSION=session;
-      if(ev==="SIGNED_IN" && session) bootLoad();
+      if(ev==="SIGNED_IN" && session) gateThenBoot();
     });
     sb.auth.getSession().then(function(r){
       SESSION=r.data.session;
-      if(SESSION) bootLoad();
+      if(SESSION) gateThenBoot();
       else {
         // the stored key was stale - fall back to the real login card
         $("connecting").classList.add("hidden");
