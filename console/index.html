@@ -11334,7 +11334,10 @@
       nm.title=String(r.id||"");
       row.appendChild(nm);
       row.appendChild(el("span","brpill "+(r.pass===false?"down":"up"), r.pass===false ? S.scGdOpen : S.scGdOk));
-      row.appendChild(el("span","note scmons",""));
+      // a failing check carries what broke it (a table or function name) -
+      // plain text, LTR-isolated, never HTML
+      var det=el("span","note scmons", r.pass===false && r.detail ? "\u2068"+String(r.detail)+"\u2069" : "");
+      det.dir="auto"; row.appendChild(det);
       host.appendChild(row);
     });
   }
