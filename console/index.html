@@ -1486,6 +1486,43 @@
   }
   .ifbottom { margin:12px 0 0; }
 
+  /* ---- backups + data retention (server tab, section 3) ----
+     Three copy cards (live / Supabase daily / off-site), then the same
+     in-panel scrolling tables (.extblwrap + .sctbl) the security tab uses.
+     Fact lists reuse .scpol: one label, one value, one number per line. */
+  #bkHead .verdict { margin-bottom:8px; }
+  #bkHead .verdict.lead { font-size:14.5px; font-weight:600; }
+  #bkHead .empty { padding:28px 10px; font-size:13.5px; }
+  .bkcards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; align-items:start; }
+  @media (max-width:1100px){ .bkcards { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+  @media (max-width:720px){ .bkcards { grid-template-columns:minmax(0,1fr); } }
+  .bkcard { border:1px solid var(--grid); border-radius:12px; padding:12px 14px 6px; background:var(--plane); min-width:0; }
+  .bkcard.bkok { border-top:3px solid var(--good-text); }
+  .bkcard.bkbad { border-top:3px solid var(--bad-text); }
+  .bkch { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700; color:var(--ink); margin-bottom:2px; }
+  .bkch .ico { color:var(--s1); flex-shrink:0; }
+  .bkch .brpill { margin-inline-start:auto; font-size:10.5px; padding:1px 8px; }
+  .bkcard .scpol { margin:6px 0 4px; font-size:12.5px; }
+  .scpol b.bkbadv { color:var(--bad-text); }
+  .scpol b[title] { cursor:help; }
+  .bknote { margin:4px 0 8px; line-height:1.5; }
+  .bkkey { margin:12px 0 0; }
+  .bkfoot { margin:12px 0 0; }
+  table.sctbl.bktbl td.exv { min-width:200px; }
+  .bktbl td.bkold .brpill { margin-inline-start:8px; font-size:10.5px; padding:1px 8px; }
+  .bktbl tr.bklate td.bkold > span:first-child { color:var(--bad-text); font-weight:700; }
+  .bktbl .exnilt { color:var(--muted); }
+  @media (max-width:1100px) and (min-width:721px){ .bkcards > .bkcard:last-child:nth-child(odd) { grid-column:1 / -1; } }
+  @media (max-width:520px){
+    table.sctbl.bktbl td.exv { min-width:150px; max-width:180px; }
+    .bktbl td.bkold { white-space:normal; min-width:110px; }
+    .bktbl td.bkold .brpill { display:inline-block; margin:4px 0 0; }
+    .bkcard .scpol { grid-template-columns:max-content minmax(0,1fr); }
+    .bkcard .scpol span { padding-bottom:6px; border-bottom:1px solid var(--grid); }
+    .bkcard .scpol b { padding-top:6px; }
+    .bkcard .scpol > div:last-child span, .bkcard .scpol > div:last-child b { border-bottom:0; }
+  }
+
   /* ---- security tab ----
      The server tab's five-tile grid (.iftiles), the expenses tab's legend and
      in-panel scrolling tables (.exlegend / .extblwrap). Colour states are the
@@ -2001,6 +2038,34 @@
         <h2 data-i18n="ifExTitle">איך לקרוא את המסך</h2>
         <div id="ifExplain"></div>
       </section>
+    </div>
+
+    <!-- Backups and data retention: where a copy of the data exists, the
+         recent off-site runs, and how long every pruned log is kept. Its own
+         call (action "backups") - see loadBackups. Outside #ifBody on purpose:
+         a server-samples failure must not hide the backups, nor the reverse.
+         PUBLIC file: every number, date and size arrives after sign-in. -->
+    <div id="bkWrap">
+      <div class="sechead" style="--sec-c:var(--s7)" data-i18n="bkSec">3 · גיבויים ושמירת נתונים</div>
+      <div id="bkHead"></div>
+      <div id="bkBody" class="hidden">
+        <section class="panel" style="opacity:1;transform:none">
+          <h2 data-i18n="bkWhereTitle">איפה יש עותק של הנתונים</h2>
+          <div class="sub" data-i18n="bkWhereSub"></div>
+          <div id="bkWhere"></div>
+        </section>
+        <section class="panel" style="opacity:1;transform:none">
+          <h2 data-i18n="bkRunsTitle">הגיבויים החיצוניים האחרונים</h2>
+          <div class="sub" data-i18n="bkRunsSub"></div>
+          <div class="extblwrap" id="bkRuns"></div>
+        </section>
+        <section class="panel" style="opacity:1;transform:none">
+          <h2 data-i18n="bkRetTitle">כמה זמן נשמר כל רישום</h2>
+          <div class="sub" data-i18n="bkRetSub"></div>
+          <div class="extblwrap" id="bkRet"></div>
+          <div class="verdict calm bkfoot" data-i18n="bkFoot"></div>
+        </section>
+      </div>
     </div>
   </div>
 
@@ -2932,6 +2997,68 @@
       ],
       ifExBottom:"<b>מתי לשדרג:</b> ⁨CPU⁩ מעל 80% לאורך זמן או חיבורים קרובים לתקרה = זמן לשדרג את המכונה. קפיצה של כמה דקות לא מצדיקה שדרוג, מגמה של כמה ימים כן.",
       ifMonBudget:"גודל השרת ותקציב ⁦$25⁩",
+      // backups + data retention (server tab, its own call "backups"). Latin
+      // names isolated; one number per line in every fact list
+      bkSec:"3 · גיבויים ושמירת נתונים",
+      bkLoading:"טוען את מצב הגיבויים...",
+      bkErr:function(m){ return "לא הצלחנו לטעון את מצב הגיבויים: ⁨"+m+"⁩"; },
+      bkVOk:"הגיבוי החיצוני בזמן, וכל רישום ישן נמחק לפי הכלל שלו.",
+      bkVNone:"עוד אין גיבוי חיצוני מוצלח. עד שיהיה, כל הנתונים נמצאים רק אצל ⁨Supabase⁩.",
+      bkVStale:function(ago){ return "הגיבוי החיצוני המוצלח האחרון היה "+ago+". הוא אמור לרוץ כל שבוע."; },
+      bkVLastFail:"הריצה האחרונה של הגיבוי החיצוני לא הצליחה. העותק הקודם עדיין שמור.",
+      bkVOverdue:function(n){ return n===1 ? "רישום אחד לא נמחק בזמן - המחיקה האוטומטית שלו כנראה נעצרה." :
+        "רישומים שלא נמחקו בזמן: <b>"+n+"</b>. המחיקה האוטומטית שלהם כנראה נעצרה."; },
+      bkWhereTitle:"איפה יש עותק של הנתונים",
+      bkWhereSub:"שלושה מקומות, מהקרוב לרחוק. ככל שהעותק רחוק יותר מהנתונים החיים, הוא שורד יותר תקלות.",
+      bkLiveT:"הנתונים החיים", bkLiveNote:"המסד שהאפליקציה עובדת מולו עכשיו. זה לא גיבוי: מחיקה כאן היא מיידית.",
+      bkDailyT:"גיבוי יומי של ⁨Supabase⁩",
+      bkOffT:"גיבוי חיצוני שבועי (⁨GitHub⁩)",
+      bkFWhere:"איפה", bkFWhen:"מתי", bkFKeep:"נשמר", bkFImages:"תמונות",
+      bkLiveWhere:"⁨Supabase⁩, פרנקפורט",
+      bkDailyWhen:"כל יום, אוטומטית",
+      bkDailyWhere:"באותו חשבון ⁨Supabase⁩",
+      bkDailyNoImg:"לא כלולות",
+      bkBack:function(n){ return n===1 ? "עותק אחד אחורה" : n+" עותקים אחורה"; },
+      bkOffWhere:"מוצפן, מחוץ ל-⁨Supabase⁩",
+      bkFDb:"מסד הנתונים", bkWeekly:"כל שבוע", bkMonthly:"פעם בחודש",
+      bkFDbKeep:"מסד הנתונים נשמר", bkFImgKeep:"תמונות נשמרות",
+      bkFDbCopies:"עותקי מסד שמורים", bkFImgCopies:"עותקי תמונות שמורים",
+      bkFLast:"גיבוי מוצלח אחרון", bkFImgLast:"תמונות גובו לאחרונה", bkFNext:"הריצה הבאה",
+      bkNever:"עוד אף פעם",
+      bkNext:function(d){ return "יום ראשון "+d; },
+      bkPillOk:"בזמן", bkPillLate:"באיחור", bkPillNone:"אין עדיין",
+      bkKey:"רק אצלך: מפתח הפענוח שמור בסיסמאות של המק. בלעדיו אי אפשר לפתוח את הגיבוי.",
+      bkRunsTitle:"הגיבויים החיצוניים האחרונים",
+      bkRunsSub:"כל ריצה של הגיבוי החיצוני, החדשה למעלה. השעות לפי שעון ישראל.",
+      bkRunsEmpty:"הגיבוי החיצוני עוד לא רץ אף פעם.",
+      bkColWhen:"מתי", bkColHow:"איך התחיל", bkColRes:"תוצאה", bkColDb:"מסד הנתונים", bkColImg:"תמונות", bkColNote:"הערות",
+      bkTrig:{ schedule:"אוטומטי", workflow_dispatch:"ידני" },
+      bkSt:{ success:"הצליח", failure:"נכשל", cancelled:"בוטל" },
+      bkSkipped:function(n){ return n===1 ? "דילג על קובץ ריק אחד" : "דילג על "+n+" קבצים ריקים"; },
+      bkRetTitle:"כמה זמן נשמר כל רישום",
+      bkRetSub:"יומנים ומונים פנימיים נמחקים אוטומטית אחרי זמן קבוע. אדום = המחיקה האוטומטית נעצרה.",
+      bkRetEmpty:"אין כללי שמירה להצגה.",
+      bkColLog:"רישום", bkColKeep:"נשמר", bkColRows:"שורות", bkColOldest:"הישן ביותר",
+      bkHours6:"6 שעות",
+      bkDays:function(n){ return n===1 ? "יום אחד" : n===2 ? "יומיים" : n<=10 ? n+" ימים" : n+" יום"; },
+      bkTblEmpty:"ריק",
+      bkOverdue:"לא נמחק בזמן",
+      bkPrunedBy:function(x){ return "נמחק על ידי: "+x; },
+      bkLogs:{
+        infra_samples:["מדידות השרת","המעבד, הזיכרון והדיסק, מדידה כל 5 דקות"],
+        otp_sends:["בקשות קוד ⁨SMS⁩ (בלי מספרי טלפון)","מתי נשלח קוד ולמה נחסם, כדי לעצור הצפה"],
+        alert_claims:["ספירת התראות טלגרם","כדי שאותה התראה לא תישלח שוב ושוב"],
+        post_quota_ledger:["מונה פוסטים למשתמש","כמה פוסטים כל אחד פרסם, בשביל מגבלת הפרסום"],
+        geocode_search_claims:["מונה חיפושי כתובת","כמה חיפושי כתובת נעשו, בשביל התקרה היומית"],
+        attestation_challenges:["אתגרי אימות מכשיר","קוד חד-פעמי שהאפליקציה חותמת עליו כדי להוכיח שהיא אמיתית"],
+        device_attestations:["מכשירים שאומתו","המכשירים שהוכיחו שהם מריצים את האפליקציה האמיתית"],
+        webhook_outbox:["תור שליחה חוזרת","קריאות שנכשלו ומחכות שישלחו אותן שוב"],
+        notification_log:["יומן התראות פוש","איזו התראה נשלחה למי ומתי"],
+        cron_runs:["היסטוריית משימות מתוזמנות","מתי כל משימה מתוזמנת רצה, והאם הצליחה"],
+        http_responses:["תשובות שרת פנימיות","התשובות לקריאות שהשרת שולח לעצמו"],
+        backup_runs:["יומן הגיבויים","כל ריצה של הגיבוי החיצוני והתוצאה שלה"] },
+      bkFoot:"נתוני המשתמשים עצמם (פרופילים, פוסטים, שיחות) נשמרים עד שהמשתמש מוחק את החשבון, ואז נמחקים גם מהגיבויים תוך 90 יום לכל היותר.",
+      bkMonOffsite:"גיבוי חיצוני שבועי", bkMonRet:"מחיקת נתונים ישנים",
       // security tab. Latin tokens (iOS, Android, country codes, ids) are
       // isolated with U+2068/U+2069; one number per line wherever a Hebrew
       // label and a number could pair up the wrong way
@@ -3771,6 +3898,66 @@
       ],
       ifExBottom:"<b>When to upgrade:</b> CPU above 80% for a long stretch, or connections near the ceiling = time to upgrade the machine. A few minutes of spike does not justify an upgrade, a trend over several days does.",
       ifMonBudget:"Server size vs the $25 budget",
+      bkSec:"3 · Backups and data retention",
+      bkLoading:"Loading the backup status...",
+      bkErr:function(m){ return "Could not load the backup status: "+m; },
+      bkVOk:"The off-site backup is on time, and every old record is deleted by its rule.",
+      bkVNone:"No successful off-site backup yet. Until there is one, all the data lives only at Supabase.",
+      bkVStale:function(ago){ return "The last successful off-site backup was "+ago+". It should run every week."; },
+      bkVLastFail:"The latest off-site backup run failed. The previous copy is still kept.",
+      bkVOverdue:function(n){ return n===1 ? "One record was not deleted on time - its automatic deletion has probably stopped." :
+        "<b>"+n+"</b> records were not deleted on time - their automatic deletion has probably stopped."; },
+      bkWhereTitle:"Where a copy of the data exists",
+      bkWhereSub:"Three places, nearest to farthest. The farther a copy is from the live data, the more failures it survives.",
+      bkLiveT:"The live data", bkLiveNote:"The database the app works against right now. Not a backup: a delete here is immediate.",
+      bkDailyT:"Supabase daily backup",
+      bkOffT:"Weekly off-site backup (GitHub)",
+      bkFWhere:"Where", bkFWhen:"When", bkFKeep:"Kept", bkFImages:"Images",
+      bkLiveWhere:"Supabase, Frankfurt",
+      bkDailyWhen:"Every day, automatically",
+      bkDailyWhere:"In the same Supabase account",
+      bkDailyNoImg:"Not included",
+      bkBack:function(n){ return n===1 ? "1 copy back" : n+" copies back"; },
+      bkOffWhere:"Encrypted, outside Supabase",
+      bkFDb:"Database", bkWeekly:"Every week", bkMonthly:"Once a month",
+      bkFDbKeep:"Database kept", bkFImgKeep:"Images kept",
+      bkFDbCopies:"Database copies kept", bkFImgCopies:"Image copies kept",
+      bkFLast:"Last successful backup", bkFImgLast:"Images last backed up", bkFNext:"Next run",
+      bkNever:"Never yet",
+      bkNext:function(d){ return "Sunday "+d; },
+      bkPillOk:"On time", bkPillLate:"Late", bkPillNone:"None yet",
+      bkKey:"Only you have it: the decryption key is saved in the Mac's Passwords. Without it the backup cannot be opened.",
+      bkRunsTitle:"Recent off-site backups",
+      bkRunsSub:"Every run of the off-site backup, newest first. Times in Israel time.",
+      bkRunsEmpty:"The off-site backup has never run yet.",
+      bkColWhen:"When", bkColHow:"Started", bkColRes:"Result", bkColDb:"Database", bkColImg:"Images", bkColNote:"Notes",
+      bkTrig:{ schedule:"Automatic", workflow_dispatch:"Manual" },
+      bkSt:{ success:"Succeeded", failure:"Failed", cancelled:"Cancelled" },
+      bkSkipped:function(n){ return n===1 ? "Skipped 1 empty file" : "Skipped "+n+" empty files"; },
+      bkRetTitle:"How long each record is kept",
+      bkRetSub:"Internal logs and counters are deleted automatically after a fixed time. Red = the automatic deletion stopped.",
+      bkRetEmpty:"No retention rules to show.",
+      bkColLog:"Record", bkColKeep:"Kept", bkColRows:"Rows", bkColOldest:"Oldest",
+      bkHours6:"6 hours",
+      bkDays:function(n){ return n===1 ? "1 day" : n+" days"; },
+      bkTblEmpty:"Empty",
+      bkOverdue:"Not deleted on time",
+      bkPrunedBy:function(x){ return "Deleted by: "+x; },
+      bkLogs:{
+        infra_samples:["Server samples","CPU, memory and disk, measured every 5 minutes"],
+        otp_sends:["SMS code requests (no phone numbers)","When a code was sent or refused, to stop floods"],
+        alert_claims:["Telegram alert counter","So the same alert is not sent again and again"],
+        post_quota_ledger:["Per-user post counter","How many posts each person published, for the posting limit"],
+        geocode_search_claims:["Address search counter","Address searches made, for the daily cap"],
+        attestation_challenges:["Device-check challenges","A one-time code the app signs to prove it is genuine"],
+        device_attestations:["Verified devices","Devices that proved they run the genuine app"],
+        webhook_outbox:["Retry queue","Calls that failed and wait to be sent again"],
+        notification_log:["Push notification log","Which push went to whom, and when"],
+        cron_runs:["Scheduled job history","When each scheduled job ran, and whether it worked"],
+        http_responses:["Internal call responses","Replies to calls the server makes to itself"],
+        backup_runs:["Backup log","Every off-site backup run and its result"] },
+      bkFoot:"The users' own data (profiles, posts, chats) is kept until the user deletes the account, and is then deleted from the backups too within 90 days at most.",
+      bkMonOffsite:"Weekly off-site backup", bkMonRet:"Old-data deletion",
       // security tab
       tabSecurity:"Security",
       scLoading:"Loading security data...",
@@ -4602,7 +4789,7 @@
     if(v==="brief") renderBrief();
     // the server tab owns its data: draw what we have (after the view is
     // visible, so its charts measure a real width), then pull a fresh copy
-    if(v==="infra"){ renderInfra(); loadInfra(); }
+    if(v==="infra"){ renderInfra(); loadInfra(); renderBackups(); loadBackups(); }
     // the expenses tab owns its data the same way
     if(v==="expenses"){ renderExpenses(); loadExpenses(); }
     // and the security tab
@@ -6801,6 +6988,12 @@
     plus:["M5 12h14","M12 5v14"],
     // Lucide "shield-check" (security tab)
     shieldok:["M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z","m9 12 2 2 4-4"],
+    // Lucide "database", "cloud", "lock", "history", "clock" (backups panel)
+    database:["M3 5a9 3 0 1 0 18 0a9 3 0 1 0-18 0","M3 5v14a9 3 0 0 0 18 0V5","M3 12a9 3 0 0 0 18 0"],
+    cloud:["M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"],
+    lock:["M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2z","M7 11V7a5 5 0 0 1 10 0v4"],
+    history:["M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8","M3 3v5h5","M12 7v5l4 2"],
+    clock:["M12 6v6l4 2"],
     moon:["M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"],
     sun:["M12 2v2","M12 20v2","m4.9 4.9 1.4 1.4","m17.7 17.7 1.4 1.4","M2 12h2","M20 12h2","m6.3 17.7-1.4 1.4","m19.1 4.9-1.4 1.4"],
     globe:["M2 12h20","M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"],
@@ -6815,7 +7008,7 @@
     ban:["m4.9 4.9 14.2 14.2"], alertc:["M12 8v4","M12 16h.01"], more:[]
   };
   var CIRCLES={ pin:[[12,10,3]], radio:[[12,12,2]], award:[[12,8,6]],
-                sun:[[12,12,4]], globe:[[12,12,10]], ban:[[12,12,10]], alertc:[[12,12,10]],
+                sun:[[12,12,4]], globe:[[12,12,10]], clock:[[12,12,10]], ban:[[12,12,10]], alertc:[[12,12,10]],
                 more:[[12,12,1],[19,12,1],[5,12,1]] };
   function icon(name,size){
     var sz=size||16;
@@ -6839,7 +7032,8 @@
     driverTree:"trend", nbhd:"map", nudgeEff:"bell", helperDep:"award",
     exChart:"trend", exTable:"file", exLedger:"wallet",
     scChart:"msg", scAttest:"shieldok", scCountry:"globe", scTop:"users",
-    scHolds:"file", scBans:"ban", scMonitors:"activity", scNow:"zap", scAlerts:"bell"
+    scHolds:"file", scBans:"ban", scMonitors:"activity", scNow:"zap", scAlerts:"bell",
+    bkWhere:"database", bkRuns:"history", bkRet:"clock"
   };
   var SEC_ICON={ secGrowth:"trend", secMarket:"layers", secChat:"msg",
                  secRetention:"refresh", secUsers:"award", secEvents:"activity",
@@ -9703,7 +9897,8 @@
   function MON_NAMES(){
     var m={ infra_cpu:S.ifMonCpu, infra_memory:S.ifMonMem,
             infra_disk:S.ifMonDisk, infra_connections:S.ifMonConn,
-            infra_compute_budget:S.ifMonBudget };
+            infra_compute_budget:S.ifMonBudget,
+            offsite_backup:S.bkMonOffsite, data_retention:S.bkMonRet };
     var x=S.scMonNames||{};
     Object.keys(x).forEach(function(k){ m[k]=x[k]; });
     return m;
@@ -10358,6 +10553,198 @@
     });
   }
 
+  // ---- backups + data retention (server tab) ---------------------------------
+  // Where a copy of the data exists, the recent off-site backup runs, and how
+  // long every pruned log is kept. admin-dashboard action "backups", same SSO
+  // bearer as every relayCall. Its own call next to loadInfra, never inside it:
+  // either one failing leaves the other on screen. Pulled on entering the
+  // server tab and by the live ticker only while that tab is on screen.
+  // This file is PUBLIC: every count, size, date and rule arrives after sign-in;
+  // only the labels and their explanations are written here.
+  var BK=null, BK_ERR=null, BK_SEQ=0;
+  // the backend's "no success for 8 days" monitor, mirrored - change both together
+  var BK_STALE_DAYS=8;
+  function loadBackups(){
+    if(!SESSION || !SESSION.access_token) return Promise.resolve();
+    var seq=++BK_SEQ;
+    var body=$("bkBody"); if(body && BK) body.classList.add("loading");
+    return relayCall("backups",{}).then(function(d){
+      if(seq!==BK_SEQ) return;
+      BK=d||{}; BK_ERR=null;
+    }).catch(function(e){
+      if(seq!==BK_SEQ) return;
+      BK_ERR=(e && e.message) || "error";
+    }).then(function(){
+      if(seq!==BK_SEQ) return;
+      if(body) body.classList.remove("loading");
+      if(infraOn()){ renderBackups(); paintIcons(); }
+    });
+  }
+  // Israel wall-clock parts of a moment, whatever the viewer's own time zone
+  function bkIl(t){
+    try{
+      var o={};
+      new Intl.DateTimeFormat("en-GB",{ timeZone:"Asia/Jerusalem", weekday:"short",
+        day:"numeric", month:"numeric", hour:"2-digit", minute:"2-digit", hourCycle:"h23" })
+        .formatToParts(new Date(t)).forEach(function(p){ o[p.type]=p.value; });
+      return o;
+    }catch(e){
+      var d=new Date(t);
+      return { weekday:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][d.getDay()], day:String(d.getDate()),
+               month:String(d.getMonth()+1), hour:String(d.getHours()).padStart(2,"0"),
+               minute:String(d.getMinutes()).padStart(2,"0") };
+    }
+  }
+  // "9.10 05:17" as one LTR unit, in Israel time
+  function bkWhen(iso){
+    var t=new Date(iso).getTime(); if(isNaN(t)) return "-";
+    var o=bkIl(t);
+    return "⁦"+o.day+"."+o.month+" "+o.hour+":"+o.minute+"⁩";
+  }
+  // the workflow's cron: Sunday 05:17 Israel. The date is worked out here, the
+  // time is the schedule's own (the backend's prose schedule is the tooltip)
+  function bkNextRun(){
+    var now=Date.now();
+    for(var i=0;i<8;i++){
+      var o=bkIl(now+i*86400000);
+      if(o.weekday!=="Sun") continue;
+      if(i===0 && (+o.hour*60 + +o.minute)>=317) continue;
+      return "⁦"+o.day+"."+o.month+" 05:17⁩";
+    }
+    return "⁦05:17⁩";
+  }
+  function bkAgeMs(iso){ var t=new Date(iso).getTime(); return isNaN(t) ? null : Math.max(0, Date.now()-t); }
+  function bkAgo(iso){ var a=bkAgeMs(iso); return a===null ? "-" : S.ifAgo(Math.floor(a/60000)); }
+  function bkMB(b){
+    b=ifNum(b); if(b===null) return null;
+    var m=b/1048576;
+    return "⁦"+(m<10 ? m.toFixed(1) : String(Math.round(m*10)/10))+" MB⁩";
+  }
+  function bkKeep(n){ n=ifNum(n); if(n===null) return "-"; return n<=0 ? S.bkHours6 : S.bkDays(n); }
+  function bkLog(k){ var m=S.bkLogs||{}; return m[k] || null; }
+
+  function renderBackups(){
+    var head=$("bkHead"), body=$("bkBody");
+    if(!head || !body) return;
+    head.innerHTML="";
+    if(!BK){
+      body.classList.add("hidden");
+      if(BK_ERR) ifVerdict(head, "bad", null, S.bkErr(BK_ERR));
+      else emptyState(head, S.bkLoading, "database");
+      return;
+    }
+    // a failed refresh keeps the last good picture on screen, and says so
+    if(BK_ERR) ifVerdict(head, "warn", null, S.bkErr(BK_ERR));
+    body.classList.remove("hidden");
+    var off=BK.offsite||{}, runs=scArr(off.runs), ret=scArr(BK.retention);
+
+    // ── headline
+    var lastAge=off.last_success_at ? bkAgeMs(off.last_success_at) : null;
+    var fresh=lastAge!==null && lastAge<=BK_STALE_DAYS*86400000;
+    var late=ret.filter(function(r){ return r && r.overdue; });
+    var items=[];
+    if(lastAge===null) items.push(["bad", null, S.bkVNone]);
+    else if(!fresh) items.push(["bad", null, S.bkVStale(bkAgo(off.last_success_at))]);
+    else if(runs[0] && runs[0].status && runs[0].status!=="success") items.push(["warn", null, S.bkVLastFail]);
+    if(late.length) items.push(["warn", S.bkVOverdue(late.length)]); // trusted: dictionary + a count
+    if(!items.length) ifVerdict(head, "lead good", S.bkVOk);
+    else items.forEach(function(it){ ifVerdict(head, "lead "+it[0], it[1], it[2]); });
+
+    bkRenderWhere(off, fresh, lastAge);
+    bkRenderRuns(runs);
+    bkRenderRet(ret);
+  }
+
+  // ── three places a copy lives, nearest first
+  function bkRenderWhere(off, fresh, lastAge){
+    var host=$("bkWhere"); host.innerHTML="";
+    var grid=el("div","bkcards");
+    function card(ic, title, pill){
+      var c=el("div","bkcard");
+      var h=el("div","bkch"); h.appendChild(icon(ic,16)); h.appendChild(el("span",null,title));
+      if(pill) h.appendChild(pill);
+      c.appendChild(h);
+      var f=el("div","scpol"); c.appendChild(f);
+      grid.appendChild(c);
+      return { c:c, row:function(k, v, cls, tip){
+        var d=el("div"); d.appendChild(el("span",null,k));
+        var b=el("b",cls||null,v); if(tip) b.title=tip; d.appendChild(b); f.appendChild(d); } };
+    }
+    var a=card("server", S.bkLiveT);
+    a.row(S.bkFWhere, S.bkLiveWhere);
+    a.c.appendChild(el("div","note bknote",S.bkLiveNote));
+
+    var sd=BK.supabase_daily||{};
+    var b=card("database", S.bkDailyT);
+    b.row(S.bkFWhen, S.bkDailyWhen, null, sd.schedule ? String(sd.schedule) : null);
+    b.row(S.bkFKeep, ifNum(sd.keep_days)===null ? "-" : S.bkBack(+sd.keep_days));
+    b.row(S.bkFWhere, S.bkDailyWhere);
+    b.row(S.bkFImages, S.bkDailyNoImg);
+
+    var st=lastAge===null ? ["down", S.bkPillNone] : fresh ? ["up", S.bkPillOk] : ["down", S.bkPillLate];
+    var c=card("cloud", S.bkOffT, el("span","brpill "+st[0], st[1]));
+    c.c.classList.add(fresh ? "bkok" : "bkbad");
+    c.row(S.bkFWhere, S.bkOffWhere);
+    c.row(S.bkFLast, off.last_success_at ? bkAgo(off.last_success_at) : S.bkNever, fresh ? "scok" : "bkbadv",
+      off.last_success_at ? scPlain(bkWhen(off.last_success_at)) : null);
+    c.row(S.bkFDb, S.bkWeekly);
+    c.row(S.bkFDbKeep, bkKeep(off.db_keep_days));
+    c.row(S.bkFDbCopies, ifNum(off.db_copies)===null ? "-" : fmt(+off.db_copies));
+    c.row(S.bkFImages, S.bkMonthly);
+    c.row(S.bkFImgKeep, bkKeep(off.img_keep_days));
+    c.row(S.bkFImgCopies, ifNum(off.img_copies)===null ? "-" : fmt(+off.img_copies));
+    c.row(S.bkFImgLast, off.last_images_at ? bkAgo(off.last_images_at) : S.bkNever, null,
+      off.last_images_at ? scPlain(bkWhen(off.last_images_at)) : null);
+    c.row(S.bkFNext, S.bkNext(bkNextRun()), null, off.schedule ? String(off.schedule) : null);
+    host.appendChild(grid);
+
+    var key=el("div","exmiss bkkey");
+    key.appendChild(icon("lock",15));
+    key.appendChild(el("span",null,S.bkKey));
+    host.appendChild(key);
+  }
+
+  function bkRenderRuns(runs){
+    scTable("bkRuns", [S.bkColWhen, S.bkColHow, S.bkColRes, S.bkColDb, S.bkColImg, S.bkColNote], runs.map(function(r){
+      r=r||{};
+      var tr=el("tr");
+      tr.appendChild(scTd(bkWhen(r.finished_at || r.started_at)));
+      tr.appendChild(scTd((S.bkTrig||{})[r.trigger] || scRaw(r.trigger)));
+      var res=el("td");
+      var cls=r.status==="success" ? "up" : r.status==="failure" ? "down" : "mid";
+      res.appendChild(el("span","brpill "+cls, (S.bkSt||{})[r.status] || scRaw(r.status)));
+      tr.appendChild(res);
+      var db=bkMB(r.db_bytes);
+      tr.appendChild(scTd(db || "-", db ? null : "exnil"));
+      var im=r.with_images ? bkMB(r.img_bytes) : null;
+      tr.appendChild(scTd(im || "-", im ? null : "exnil"));
+      var sk=ifNum(r.skipped_objects);
+      tr.appendChild(scTd(sk ? S.bkSkipped(sk) : "", null));
+      return tr;
+    }), S.bkRunsEmpty, "history");
+  }
+
+  function bkRenderRet(rows){
+    var t=scTable("bkRet", [S.bkColLog, S.bkColKeep, S.bkColRows, S.bkColOldest], rows.map(function(r){
+      r=r||{};
+      var tr=el("tr", r.overdue ? "bklate" : null);
+      var nm=el("td","exv"), lg=bkLog(r.key);
+      if(lg){ nm.appendChild(document.createTextNode(lg[0])); nm.appendChild(el("small",null,lg[1])); nm.title=String(r.key); }
+      else nm.textContent=scRaw(r.key);   // a log we have no words for yet: shown as itself
+      tr.appendChild(nm);
+      tr.appendChild(scTd(bkKeep(r.keep_days), null, r.pruned_by ? S.bkPrunedBy(String(r.pruned_by)) : null));
+      var n=ifNum(r.rows);
+      tr.appendChild(scTd(n===null ? "-" : fmt(n), n ? null : "exnil"));
+      var od=el("td","bkold");
+      od.appendChild(el("span", r.oldest ? null : "exnilt", r.oldest ? bkAgo(r.oldest) : S.bkTblEmpty));
+      if(r.oldest) od.title=scPlain(bkWhen(r.oldest));
+      if(r.overdue) od.appendChild(el("span","brpill down",S.bkOverdue));
+      tr.appendChild(od);
+      return tr;
+    }), S.bkRetEmpty, "clock");
+    if(t) t.classList.add("bktbl");
+  }
+
   // ---- security tab ----------------------------------------------------------
   // Is anyone abusing us: SMS verification codes sent and refused (and why),
   // device attestation on those sends, posts held for a decision, bans, the
@@ -10943,7 +11330,7 @@
         // tell at all - the only signal was the "updated N ago" ticker climbing
         load(true).catch(function(){ markStale(); });
         // the server tab rides the same tick, but only while it is on screen
-        if(infraOn()) loadInfra();
+        if(infraOn()){ loadInfra(); loadBackups(); }
         // expenses too - but never under a form or a delete being answered:
         // the re-render would not lose the typing, but it would move it
         if(expensesOn() && !EX_FORM && !EX_DEL && !EX_RATE) loadExpenses();
@@ -11162,7 +11549,8 @@
     try{ renderPublicPages(); }catch(e){ console.error("renderPublicPages failed",e); }
     // the server tab keeps its own payload; repaint it only where it is seen
     // (switchTab repaints it on the way in otherwise)
-    if(infraOn()){ try{ renderInfra(); }catch(e){ console.error("renderInfra failed",e); } paintIcons(); }
+    if(infraOn()){ try{ renderInfra(); }catch(e){ console.error("renderInfra failed",e); }
+                   try{ renderBackups(); }catch(e){ console.error("renderBackups failed",e); } paintIcons(); }
     if(expensesOn()){ try{ renderExpenses(); }catch(e){ console.error("renderExpenses failed",e); } paintIcons(); }
     if(securityOn()){ try{ renderSecurity(); }catch(e){ console.error("renderSecurity failed",e); } paintIcons(); }
     syncChrome();  // English labels wrap the header differently than Hebrew
@@ -11231,6 +11619,7 @@
     function bootLoad(){
       // a #infra deep link landed before the session existed: fetch it now
       if(infraOn() && !INFRA) loadInfra();
+      if(infraOn() && !BK) loadBackups();
       if(expensesOn() && !EXP) loadExpenses();
       if(securityOn() && !SEC) loadSecurity();
       if(DATA || bootLoading) return;
