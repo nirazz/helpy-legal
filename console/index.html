@@ -2216,6 +2216,18 @@
         <div class="sub" data-i18n="scAlSub"></div>
         <div class="extblwrap" id="scAlerts"></div>
       </section>
+
+      <div class="sechead" style="--sec-c:var(--s5)" data-i18n="scSecGd">4 · פריצות והגנות</div>
+      <section class="panel" style="opacity:1;transform:none">
+        <h2><span data-i18n="scGdTitle">ההגנות הקבועות</span> <span class="pntag" id="scGdWhen"></span></h2>
+        <div class="sub" data-i18n="scGdSub"></div>
+        <div id="scGuards"></div>
+      </section>
+      <section class="panel" style="opacity:1;transform:none">
+        <h2><span data-i18n="scBrkTitle">ניסיונות כניסה לניהול</span> <span class="pntag" id="scBrkWin"></span></h2>
+        <div class="sub" data-i18n="scBrkSub"></div>
+        <div class="extblwrap" id="scBreakins"></div>
+      </section>
     </div>
   </div>
 
@@ -3092,6 +3104,7 @@
         geocode_search_claims:["מונה חיפושי כתובת","כמה חיפושי כתובת נעשו, בשביל התקרה היומית"],
         attestation_challenges:["אתגרי אימות מכשיר","קוד חד-פעמי שהאפליקציה חותמת עליו כדי להוכיח שהיא אמיתית"],
         device_attestations:["מכשירים שאומתו","המכשירים שהוכיחו שהם מריצים את האפליקציה האמיתית"],
+        admin_access_refusals:["ניסיונות כניסה לניהול","חשבונות שנחסמו בכניסה לקונסול או בשליחת הודעות - נשמרים 90 יום"],
         webhook_outbox:["תור שליחה חוזרת","קריאות שנכשלו ומחכות שישלחו אותן שוב"],
         notification_log:["יומן התראות פוש","איזו התראה נשלחה למי ומתי"],
         cron_runs:["היסטוריית משימות מתוזמנות","מתי כל משימה מתוזמנת רצה, והאם הצליחה"],
@@ -3170,6 +3183,29 @@
       scModKinds:{ "content_flagged:llm":"סומנו בסינון האוטומטי", admin_ban:"חסימות ידניות",
         admin_unban:"ביטולי חסימה", admin_hide:"הסתרות ידניות", admin_restore:"החזרות ידניות", "content_review_pending:llm":"נבדקו בסינון האוטומטי", client_blocked:"נעצרו בטופס לפני פרסום", "content_flagged:founder":"הוסתרו על ידך", content_approved:"אושרו", "content_approved:manual_review":"אושרו בבדיקה ידנית", admin_content_removed:"תוכן הוסר ידנית", founder_closed_matches:"שיחות שסגרת", "content_rejected:founder":"נדחו על ידך", content_rejected:"נדחו", "content_flagged:held":"נעצרו לבדיקה" },
       scColReason:"סיבה", scColWhen:"מתי", scRevoked:"החסימה בוטלה",
+      scSecGd:"4 · פריצות והגנות",
+      scGdTitle:"ההגנות הקבועות",
+      scGdSub:"כל שורה היא חור שנסגר. הבדיקות רצות גם בכל סגירת סשן - אדום אומר שמשהו פתח אותו מחדש.",
+      scGdOk:"סגור", scGdOpen:"נפתח מחדש",
+      scGdWhen:function(w){ return "נבדק "+w; },
+      scGdNull:"לא הצלחנו לקרוא את ההגנות עכשיו. רענון ינסה שוב.",
+      scVBreakin:function(n){ return n===1 ? "ניסיון כניסה דחוף אחד לניהול בחלון הזה - פרטים בחלק 4" : "ניסיונות כניסה דחופים לניהול בחלון הזה: "+n+" - פרטים בחלק 4"; },
+      scGdBad:function(n){ return n===1 ? "הגנה אחת נפתחה מחדש - צריך לטפל עכשיו" : "הגנות שנפתחו מחדש: "+n+" - צריך לטפל עכשיו"; },
+      scGdNames:{ S1:"מיקום מדויק של מפרסמים חסום למשתמשים", S2:"אי אפשר למחוק התאמה, ואיתה צ'אט ודירוגים",
+        S3:"התאמה נוצרת רק דרך השרת", S4:"אי אפשר לזייף או לשנות דירוג", S5:"אי אפשר לערוך או למחוק הודעות בצ'אט",
+        S6:"ביטול חסימה לא מוחק את ההיסטוריה", S7:"טלפון, כתובת וטוקן של משתמש חסומים לאחרים",
+        S8:"הגנת שורות פעילה בכל הטבלאות", S9:"גולש לא מחובר לא קורא שום טבלה",
+        S10:"גולש לא מחובר לא מפעיל פונקציות מוגנות", S11:"פונקציות מוגנות נעולות לסכמה שלהן",
+        S12:"פונקציות שקוראות סודות סגורות למשתמשים", S13:"שמות ותמונות פרופיל נקיים מקוד",
+        S14:"מספר טלפון מאומת שייך לחשבון אחד", S15:"יומן ניסיונות הפריצה סגור ופעיל" },
+      scBrkTitle:"ניסיונות כניסה לניהול",
+      scBrkSub:"חשבונות שנחסמו בכניסה לקונסול או בשליחת הודעות בשם האפליקציה. כל ניסיון מגיע גם לטלגרם.",
+      scBrkWin:function(d){ return d+" ימים אחרונים"; },
+      scBrkEmpty:"אין ניסיונות בחלון הזה",
+      scColWhen:"מתי", scColWho:"חשבון", scColKind:"סוג", scColVia:"דרך",
+      scBrkKinds:{ mfa_required:"מנהל בלי קוד אימות", admin_email_not_google:"כתובת מנהל שלא דרך גוגל", not_admin:"חשבון שאינו מנהל" },
+      scBrkVia:{ "admin-dashboard":"הקונסול", "system-broadcast":"שליחת הודעות" },
+      scBrkNoApp:"חשבון שאינו רשום באפליקציה", scBrkNoName:"משתמש בלי שם",
       scSecSys:"3 · השמירה עצמה",
       scMonTitle:"מוניטורים",
       scMonSub:"הבדיקות האוטומטיות שרצות ברקע. מה שלמטה מופיע ראשון.",
@@ -3188,7 +3224,12 @@
       scAlSub:"כמה התראות יצאו לטלגרם, כמה נבלעו כי אותה התראה כבר יצאה, וכמה סיכומים נשלחו במקומן. נשמר רק יומיים.",
       scAlEmpty:"לא יצאו התראות ב-48 השעות האחרונות.",
       scColEvent:"התראה", scColAlSent:"נשלחו", scColAlSup:"נבלעו", scColAlSum:"סיכומים",
-      scEvents:{ chat_message:"הודעות בצ'אט", new_user:"משתמש חדש", new_match:"התאמה חדשה", new_request:"פוסט חדש", post_deleted:"פוסט נמחק", report:"דיווח על משתמש", block:"חסימה בין משתמשים", spam_detected:"זוהה ספאם", "fn:onboarded":"סיים הרשמה", "fn:offer_onb_skip":"דילג על הצעת עזרה בהרשמה", "fn:location":"שיתף מיקום", "fn:verified":"אימת טלפון", "fn:notifications":"הפעיל התראות", "fn:client_blocked":"נחסם באפליקציה", "fn:completed":"עזרה הושלמה", "fn:not_completed":"לא יצא לפועל", "fn:declined":"הצעה נדחתה", "fn:ratelimit":"עבר מגבלת קצב" },
+      scEvents:{ chat_message:"הודעות בצ'אט", new_user:"משתמש חדש", new_match:"התאמה חדשה", new_request:"פוסט חדש", post_deleted:"פוסט נמחק", report:"דיווח על משתמש", block:"חסימה בין משתמשים", spam_detected:"זוהה ספאם", "fn:onboarded":"סיים הרשמה", "fn:offer_onb_skip":"דילג על הצעת עזרה בהרשמה", "fn:location":"שיתף מיקום", "fn:verified":"אימת טלפון", "fn:notifications":"הפעיל התראות", "fn:client_blocked":"נחסם באפליקציה", "fn:completed":"עזרה הושלמה", "fn:not_completed":"לא יצא לפועל", "fn:declined":"הצעה נדחתה", "fn:ratelimit":"עבר מגבלת קצב",
+        "admin_access_refused:admin_no_code:admin-dashboard":"כניסה לקונסול בלי קוד אימות",
+        "admin_access_refused:admin_no_code:system-broadcast":"שליחת הודעות בלי קוד אימות",
+        "admin_access_refused:impersonation:admin-dashboard":"כניסה לקונסול עם כתובת מנהל שלא דרך גוגל",
+        "admin_access_refused:not_admin:admin-dashboard":"כניסה לקונסול מחשבון לא מורשה",
+        "admin_access_refused:not_admin:system-broadcast":"שליחת הודעות מחשבון שאינו מנהל" },
       // expenses tab. Every amount and Latin name is isolated (U+2066/U+2068
       // ... U+2069) so a number can never pair with the wrong word
       tabExpenses:"הוצאות",
@@ -4001,6 +4042,7 @@
         geocode_search_claims:["Address search counter","Address searches made, for the daily cap"],
         attestation_challenges:["Device-check challenges","A one-time code the app signs to prove it is genuine"],
         device_attestations:["Verified devices","Devices that proved they run the genuine app"],
+        admin_access_refusals:["Admin access attempts","Accounts refused at the console or when sending messages - kept 90 days"],
         webhook_outbox:["Retry queue","Calls that failed and wait to be sent again"],
         notification_log:["Push notification log","Which push went to whom, and when"],
         cron_runs:["Scheduled job history","When each scheduled job ran, and whether it worked"],
@@ -4077,6 +4119,29 @@
       scModKinds:{ "content_flagged:llm":"Flagged by the automatic filter", admin_ban:"Manual bans",
         admin_unban:"Bans lifted", admin_hide:"Manual hides", admin_restore:"Manual restores", "content_review_pending:llm":"Checked by the automatic filter", client_blocked:"Stopped in the form before posting", "content_flagged:founder":"Hidden by you", content_approved:"Approved", "content_approved:manual_review":"Approved on manual review", admin_content_removed:"Content removed manually", founder_closed_matches:"Chats you closed", "content_rejected:founder":"Rejected by you", content_rejected:"Rejected", "content_flagged:held":"Held for review" },
       scColReason:"Reason", scColWhen:"When", scRevoked:"ban lifted",
+      scSecGd:"4 · Break-ins and guards",
+      scGdTitle:"Standing guards",
+      scGdSub:"Each row is a hole that was closed. They also run at every session close - red means something reopened it.",
+      scGdOk:"Closed", scGdOpen:"Reopened",
+      scGdWhen:function(w){ return "checked "+w; },
+      scGdNull:"Could not read the guards right now. A refresh will retry.",
+      scVBreakin:function(n){ return n===1 ? "One urgent admin access attempt in this window - details in part 4" : "Urgent admin access attempts in this window: "+n+" - details in part 4"; },
+      scGdBad:function(n){ return n===1 ? "One guard was reopened - act now" : "Guards reopened: "+n+" - act now"; },
+      scGdNames:{ S1:"Posters' exact location closed to users", S2:"A match cannot be deleted, nor its chat and ratings",
+        S3:"Matches are created by the server only", S4:"Ratings cannot be forged or changed", S5:"Chat messages cannot be edited or deleted",
+        S6:"Unblocking keeps the block history", S7:"Users' phone, address and push token closed to others",
+        S8:"Row-level security on every table", S9:"A signed-out visitor reads no table",
+        S10:"A signed-out visitor runs no protected function", S11:"Protected functions pin their schema",
+        S12:"Secret-reading functions closed to users", S13:"Profile names and photos carry no code",
+        S14:"A verified phone belongs to one account", S15:"The break-in log is closed and working" },
+      scBrkTitle:"Admin access attempts",
+      scBrkSub:"Accounts refused at the console or when sending messages as the app. Every attempt also reaches Telegram.",
+      scBrkWin:function(d){ return "last "+d+" days"; },
+      scBrkEmpty:"No attempts in this window",
+      scColWhen:"When", scColWho:"Account", scColKind:"Kind", scColVia:"Via",
+      scBrkKinds:{ mfa_required:"Admin without the code", admin_email_not_google:"Admin address not via Google", not_admin:"Not an admin" },
+      scBrkVia:{ "admin-dashboard":"Console", "system-broadcast":"Sending messages" },
+      scBrkNoApp:"Account not registered in the app", scBrkNoName:"User without a name",
       scSecSys:"3 · The guards themselves",
       scMonTitle:"Monitors",
       scMonSub:"The automatic checks running in the background. Anything down is listed first.",
@@ -4095,7 +4160,12 @@
       scAlSub:"How many alerts reached Telegram, how many were swallowed because the same alert had just gone out, and how many summaries went instead. Kept for two days only.",
       scAlEmpty:"No alerts in the last 48 hours.",
       scColEvent:"Alert", scColAlSent:"Sent", scColAlSup:"Swallowed", scColAlSum:"Summaries",
-      scEvents:{ chat_message:"Chat messages", new_user:"New user", new_match:"New match", new_request:"New post", post_deleted:"Post deleted", report:"User report", block:"Block between users", spam_detected:"Spam detected", "fn:onboarded":"Finished sign-up", "fn:offer_onb_skip":"Skipped offer step at sign-up", "fn:location":"Shared location", "fn:verified":"Verified phone", "fn:notifications":"Enabled notifications", "fn:client_blocked":"Blocked in the app", "fn:completed":"Help completed", "fn:not_completed":"Did not happen", "fn:declined":"Offer declined", "fn:ratelimit":"Hit a rate limit" },
+      scEvents:{ chat_message:"Chat messages", new_user:"New user", new_match:"New match", new_request:"New post", post_deleted:"Post deleted", report:"User report", block:"Block between users", spam_detected:"Spam detected", "fn:onboarded":"Finished sign-up", "fn:offer_onb_skip":"Skipped offer step at sign-up", "fn:location":"Shared location", "fn:verified":"Verified phone", "fn:notifications":"Enabled notifications", "fn:client_blocked":"Blocked in the app", "fn:completed":"Help completed", "fn:not_completed":"Did not happen", "fn:declined":"Offer declined", "fn:ratelimit":"Hit a rate limit",
+        "admin_access_refused:admin_no_code:admin-dashboard":"Console without the code",
+        "admin_access_refused:admin_no_code:system-broadcast":"Sending messages without the code",
+        "admin_access_refused:impersonation:admin-dashboard":"Console with an admin address not via Google",
+        "admin_access_refused:not_admin:admin-dashboard":"Console from an unauthorized account",
+        "admin_access_refused:not_admin:system-broadcast":"Sending messages from a non-admin account" },
       // expenses tab
       tabExpenses:"Expenses",
       exLoading:"Loading expenses...",
@@ -7088,6 +7158,7 @@
     exChart:"trend", exTable:"file", exLedger:"wallet",
     scChart:"msg", scAttest:"shieldok", scCountry:"globe", scTop:"users",
     scHolds:"file", scBans:"ban", scMonitors:"activity", scNow:"zap", scAlerts:"bell",
+    scGuards:"shieldok", scBreakins:"ban",
     bkWhere:"database", bkRuns:"history", bkRet:"clock"
   };
   var SEC_ICON={ secGrowth:"trend", secMarket:"layers", secChat:"msg",
@@ -10896,6 +10967,8 @@
     scRenderMonitors();
     scRenderNow();
     scRenderAlerts();
+    scRenderGuards();
+    scRenderBreakins();
     if(wasHidden) resizeCharts();
   }
 
@@ -10905,6 +10978,13 @@
     var holds=scArr(SEC.pending_holds);
     var ab=SEC.abuse_now||{}, over=scArr(ab.over);
     var items=[];
+    // a reopened security guard outranks everything on this tab
+    var gd=SEC.guards;
+    var gBad=gd ? scArr(gd.invariants).filter(function(r){ return r && r.pass===false; }).length : 0;
+    if(gBad) items.push(["bad", S.scGdBad(gBad)]);
+    var urgent=gd ? scArr(gd.refusals).filter(function(r){
+      return r && (r.reason==="mfa_required" || r.reason==="admin_email_not_google"); }).length : 0;
+    if(urgent) items.push(["warn", S.scVBreakin(urgent)]);
     down.forEach(function(m){
       items.push(["bad", S.scVMonDown("<b>"+exEsc(scPlain(scMon(m.check)))+"</b>",
         m.since ? exEsc(scPlain(ifWhen(m.since))) : null)]);
@@ -11238,6 +11318,48 @@
       bar.appendChild(f); row.appendChild(bar);
       host.appendChild(row);
     });
+  }
+
+  // ---- 4 · break-ins and guards (get_security_guards via admin-dashboard) --
+  // Every string from the data goes through el()/textContent - never HTML.
+  function scRenderGuards(){
+    var host=$("scGuards"); host.innerHTML="";
+    var g=SEC.guards, when=$("scGdWhen");
+    if(when) when.textContent=g && g.checked_at ? S.scGdWhen(scPlain(ifWhen(g.checked_at))) : "";
+    if(!g){ emptyState(host, S.scGdNull, "shieldok"); return; }
+    var rows=scArr(g.invariants);
+    rows.slice().sort(function(a,b){ return (a.pass===false?0:1)-(b.pass===false?0:1); }).forEach(function(r){
+      var row=el("div","scmon");
+      var nm=el("span","scmonn", (S.scGdNames||{})[r.id] || scRaw(r.id));
+      nm.title=String(r.id||"");
+      row.appendChild(nm);
+      row.appendChild(el("span","brpill "+(r.pass===false?"down":"up"), r.pass===false ? S.scGdOpen : S.scGdOk));
+      // a failing check carries what broke it (a table or function name) -
+      // plain text, LTR-isolated, never HTML
+      var det=el("span","note scmons", r.pass===false && r.detail ? "\u2068"+String(r.detail)+"\u2069" : "");
+      det.dir="auto"; row.appendChild(det);
+      host.appendChild(row);
+    });
+  }
+
+  function scRenderBreakins(){
+    var g=SEC.guards, win=$("scBrkWin");
+    // the window label comes from the payload, never from the button that asked
+    if(win) win.textContent=g && g.refusal_days ? S.scBrkWin(g.refusal_days) : "";
+    // unreadable is not "no attempts": say we could not read it
+    if(!g){ var h=$("scBreakins"); h.innerHTML=""; emptyState(h, S.scGdNull, "ban"); return; }
+    var rows=scArr(g.refusals);
+    scTable("scBreakins", [S.scColWhen, S.scColWho, S.scColKind, S.scColVia], rows.map(function(r){
+      var tr=el("tr");
+      tr.appendChild(scTd(r.at ? ifWhen(r.at) : "-"));
+      var who = r.name ? String(r.name)
+        : (r.in_app ? S.scBrkNoName : S.scBrkNoApp) + (r.short_id ? " \u2068"+String(r.short_id)+"\u2069" : "");
+      var wd=scTd(who); wd.dir="auto"; tr.appendChild(wd);
+      var urgent = r.reason==="mfa_required" || r.reason==="admin_email_not_google";
+      tr.appendChild(scTd((S.scBrkKinds||{})[r.reason] || scRaw(r.reason), urgent ? "scbad" : null));
+      tr.appendChild(scTd((S.scBrkVia||{})[r.source] || scRaw(r.source)));
+      return tr;
+    }), S.scBrkEmpty, "ban");
   }
 
   function scRenderAlerts(){
