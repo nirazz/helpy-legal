@@ -11481,6 +11481,9 @@
         inp.disabled=false;
         if(r.error){ $("mfaErr").textContent=S.mfaBadCode; inp.value=""; inp.focus(); return; }
         mfaPassed();
+      }, function(){
+        // a network failure must not leave the field locked with no word
+        inp.disabled=false; inp.value=""; $("mfaErr").textContent=S.errServer;
       });
     });
     $("mfaOutBtn").addEventListener("click",function(){
