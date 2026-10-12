@@ -1831,7 +1831,13 @@
   #metricsView .mlede { font-size:18px; line-height:1.5; color:var(--ink); margin:2px 2px 18px; max-width:80ch;
       text-wrap:pretty; }
   #metricsView .mlede:empty { display:none; }
+  #metricsView .mlede .nsline { font-size:inherit; font-weight:400; padding:0; }
+  #metricsView .mlede .nsline b { font-weight:700; }
   #metricsView #tipLine { display:none; }
+  /* folded sections read as a list of topics: a hairline between them, the
+     brief right under its title */
+  #metricsView .sechead.toggle { border-top:1px solid var(--hairline); padding-top:22px; margin-top:22px; margin-bottom:8px; }
+  #metricsView .sechead.toggle:hover { color:var(--s1); }
   @media (max-width:720px){ #metricsView .mlede { font-size:16px; } }
   /* ---- morning screen v3: the investor-page reading ------------------- */
   #briefView .brlede { font-size:18px; line-height:1.5; color:var(--ink); margin:10px 0 6px; max-width:62ch;
