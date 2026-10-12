@@ -180,14 +180,14 @@
   .safety-section > h2, .safety-section > .section-sub { max-width: 1072px; margin-inline: auto; }
   .safety-section h2 { font-size: 44px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 16px; }
   .safety-section .section-sub { font-size: 19px; color: var(--ink2); max-width: 1072px; line-height: 1.6; margin-bottom: 56px; }
-  .safety-section .section-sub { padding-inline-end: max(0px, calc(100% - 64ch)); }
+  .safety-section .section-sub { box-sizing: content-box; max-width: 64ch;
+    padding-inline-end: max(0px, calc(min(100vw - 48px, 1072px) - 64ch)); }
   .safety-grid {
     max-width: 1072px; margin: 0 auto;
     display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
     border-top: 1px solid #cfd3da;
   }
-  .safety-card { padding: 28px 28px 8px 0; }
-  html[dir="rtl"] .safety-card { padding: 28px 0 8px 28px; }
+  .safety-card { padding-block: 28px 8px; padding-inline: 0 28px; }
   .safety-card + .safety-card { padding-inline-start: 28px; border-inline-start: 1px solid var(--line); }
   .safety-card .icon { margin-bottom: 16px; display: flex; }
   .safety-card .icon svg { width: 22px; height: 22px; stroke: var(--brand); stroke-width: 1.8; }
@@ -246,7 +246,7 @@
     .footer h2 { font-size: 38px; }
     .flow-section, .bilingual-section, .safety-section { padding: 80px 24px; }
     .footer { padding: 80px 24px 40px; }
-    .safety-section .section-sub { padding-inline-end: 0; }
+    .safety-section .section-sub { padding-inline-end: 0; max-width: none; box-sizing: border-box; }
   }
   @media (max-width: 600px) {
     .lang-switch-top { padding: 14px 16px 0; }
@@ -266,7 +266,7 @@
     .bilingual-phones { gap: 24px; }
     .bilingual-phones .device-shot { width: 240px; }
     .safety-grid { grid-template-columns: minmax(0, 1fr); }
-    .safety-card, html[dir="rtl"] .safety-card, .safety-card + .safety-card {
+    .safety-card, .safety-card + .safety-card {
       padding: 24px 0 20px; border-inline-start: 0; border-top: 1px solid var(--line);
     }
     .safety-card:first-child { border-top: 0; }
