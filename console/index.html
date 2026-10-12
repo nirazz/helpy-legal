@@ -9468,7 +9468,9 @@
       var rows=h.querySelectorAll(".brrow"), CAP=4;
       if(rows.length<=CAP+1) return;          // never fold away a single row
       var open=!!brRowsOpen[id];
-      for(var i=CAP;i<rows.length;i++) rows[i].hidden=!open;
+      // .hidden (display:none !important), not the hidden attribute: .brrow
+      // is display:grid, which beats the attribute
+      for(var i=CAP;i<rows.length;i++) rows[i].classList.toggle("hidden", !open);
       var b=el("button","linklike brrowsmore", open? S.brRowsLess : S.brRowsMore(fmt(rows.length-CAP)));
       b.type="button";
       b.addEventListener("click",function(){ brRowsOpen[id]=!open; renderBrief(); });
