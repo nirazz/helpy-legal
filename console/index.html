@@ -12,6 +12,7 @@
      really needs = add it here, deliberately. -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://lwomstzzmyegpbidibfm.supabase.co https://lh3.googleusercontent.com; connect-src 'self' https://lwomstzzmyegpbidibfm.supabase.co wss://lwomstzzmyegpbidibfm.supabase.co; frame-src 'self'; object-src 'none'; base-uri https://help-y.com; form-action 'none'">
 <link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/fonts/plex.css">
 <link rel="icon" href="/app-icon-512.png">
 <link rel="apple-touch-icon" href="/app-icon-512.png">
 <!-- Exact versions + SRI: these scripts run with the founder's session, so a bad
@@ -24,8 +25,9 @@
      white surfaces on hairlines, one brand indigo that means "you can act on
      this" or "this is selected", and colour otherwise reserved for state
      (good / warn / bad). No glass, glow, grid or decorative motion: the
-     numbers are the design. Inter carries numerals and Latin, Heebo the
-     Hebrew; one family voice, tabular figures everywhere a number lines up.
+     numbers are the design. IBM Plex Sans Hebrew carries Hebrew, Latin and
+     numerals (Nir's pick 12.10, self-hosted in /fonts/plex.css because CSP
+     allows only 'self' fonts); tabular figures wherever a number lines up.
      Chart series colours (--s*) are the validated data palette. */
   :root {
     color-scheme: light;
@@ -45,7 +47,7 @@
     --shadow-lg:0 4px 8px rgba(16,24,40,0.06), 0 16px 40px rgba(16,24,40,0.12);
     --num-glow:none;
     --meas:#9aa1ad;
-    --font:"Inter","Heebo",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --font:"IBM Plex Sans Hebrew","Inter","Heebo",system-ui,-apple-system,"Segoe UI",sans-serif;
   }
   /* dark: Linear's near-black, not a coloured "space" */
   html[data-theme="dark"] {
@@ -4938,7 +4940,7 @@
     inst.setOption({
       animationDuration: 700,
       animationDurationUpdate: 450,
-      textStyle: { fontFamily: "Heebo, system-ui, sans-serif" },
+      textStyle: { fontFamily: "'IBM Plex Sans Hebrew', Heebo, system-ui, sans-serif" },
       // extra headroom when annotation labels sit above the plot
       // a left-hand value axis needs room for its own labels; without it the
       // second axis rendered as a column of clipped stubs
@@ -6050,7 +6052,7 @@
     var ink=tok("--ink"), muted=tok("--muted"), grid=tok("--grid"), surface=tok("--surface");
     inst.setOption({
       animationDuration:700,
-      textStyle:{ fontFamily:"Heebo, system-ui, sans-serif" },
+      textStyle:{ fontFamily:"'IBM Plex Sans Hebrew', Heebo, system-ui, sans-serif" },
       grid:{ left:10, right:46, top:34, bottom:26 },
       legend:{ top:0, right:0, itemWidth:12, itemHeight:8, textStyle:{ color:tok("--ink2"), fontSize:12 } },
       tooltip:{ trigger:"axis", backgroundColor:surface, borderColor:grid,
@@ -10561,7 +10563,7 @@
     var marks=(o.marks||[]).filter(function(m){ return m.y!=null; });
     inst.setOption({
       animationDuration:500, animationDurationUpdate:350,
-      textStyle:{ fontFamily:"Heebo, system-ui, sans-serif" },
+      textStyle:{ fontFamily:"'IBM Plex Sans Hebrew', Heebo, system-ui, sans-serif" },
       // left room for the first time label ("00:00" was clipped at 10)
       grid:{ left:22, right:46, top: series.length>1 ? 36 : 18, bottom:26 },
       legend:{ show: series.length>1, top:0, right:0, itemWidth:12, itemHeight:8,
@@ -10882,7 +10884,7 @@
     function money(n){ return "₪"+fmt(Math.round(n)); }
     inst.setOption({
       animationDuration:500, animationDurationUpdate:350,
-      textStyle:{ fontFamily:"Heebo, system-ui, sans-serif" },
+      textStyle:{ fontFamily:"'IBM Plex Sans Hebrew', Heebo, system-ui, sans-serif" },
       grid:{ left:8, right:58, top:14, bottom:34 },
       legend:{ show:false },
       tooltip:{
@@ -11615,7 +11617,7 @@
     rows.forEach(function(r, i){ keys.forEach(function(s){ if(val(r,s.k)>0) top[i]=s.k; }); });
     inst.setOption({
       animationDuration:500, animationDurationUpdate:350,
-      textStyle:{ fontFamily:"Heebo, system-ui, sans-serif" },
+      textStyle:{ fontFamily:"'IBM Plex Sans Hebrew', Heebo, system-ui, sans-serif" },
       grid:{ left:8, right:40, top:14, bottom:28 },
       legend:{ show:false },
       tooltip:{
