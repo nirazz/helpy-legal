@@ -2781,7 +2781,7 @@
       updatedAgo:function(s){ return s<10? "עודכן כרגע" : s<60? "עודכן לפני "+s+" שניות" : (Math.round(s/60)===1? "עודכן לפני דקה" : "עודכן לפני "+Math.round(s/60)+" דקות"); },
       tileHero:"עזרות שהושלמו · {win}",
       tileHeroTip:"המדד הצפוני של Helpy: עזרות שמקבל/ת העזרה סימנו שבוצעו בפועל",
-      tileSignups:"הרשמות · {win}",
+      tileSignups:"הרשמות · {win}", serPlatOther:"פלטפורמה לא ידועה", covNote:function(n,d){ return "הנתונים מכסים "+n+" ימים בלבד · מאז "+d; },
       tileActive:"פעילים היום · עכשיו",
       tileActiveTip:"משתמשים שפתחו את האפליקציה היום, לפי חותמת last_seen_at שהשרת מטביע פעם בשעה",
       tileActiveNote:function(w,m){ return "שבוע: "+w+" · חודש: "+m; },
@@ -3516,7 +3516,7 @@
       archSub:"כל רכיב, מה מחובר למה, ואיפה כל דבר מאוחסן · ריחוף על מונח מקוצר מסביר אותו",
       archPickFlow:"בחר/י זרימה למעלה כדי לראות איך בקשה עוברת במערכת, שלב אחר שלב",
       archPickNode:"לחיצה על רכיב מציגה מה הוא עושה ולמה הוא שם",
-      archStop:"⏹ עצירת ההדגמה",
+      archStop:"עצירת ההדגמה",
       tileJump:"לחיצה קופצת לגרף המלא ומדגישה אותו",
       sparkTip:"12 שבועות אחרונים · סכום שבועי",
       tabBrief:"בוקר",
@@ -3738,7 +3738,7 @@
       updatedAgo:function(s){ return s<10? "updated just now" : s<60? "updated "+s+" seconds ago" : (Math.round(s/60)===1? "updated 1 minute ago" : "updated "+Math.round(s/60)+" minutes ago"); },
       tileHero:"Helps completed · {win}",
       tileHeroTip:"Helpy's north star: helps the receiver marked as actually done",
-      tileSignups:"Signups · {win}",
+      tileSignups:"Signups · {win}", serPlatOther:"Unknown platform", covNote:function(n,d){ return "Data covers only "+n+" days · since "+d; },
       tileActive:"Active today · now",
       tileActiveTip:"Users who opened the app today, by the hourly server-side last_seen_at stamp",
       tileActiveNote:function(w,m){ return "week: "+w+" · month: "+m; },
@@ -4465,7 +4465,7 @@
       archSub:"Every component, what talks to what, and where things are stored · hover any abbreviation for an explanation",
       archPickFlow:"Pick a flow above to watch a request travel through the system, step by step",
       archPickNode:"Click a component to see what it does and why it is there",
-      archStop:"⏹ Stop the demo",
+      archStop:"Stop the demo",
       tileJump:"Click to jump to the full chart and highlight it",
       sparkTip:"Last 12 weeks · weekly totals",
       tabBrief:"Morning",
@@ -6101,9 +6101,12 @@
   // spend / real DB signups - the same rule as the daily report.
   // the campaigns tab owns its own window, independent of the metrics range
   var META_DAYS=7, META_CAMP=null;
+  // FULL days, said on the label: the metrics tab counts "30 days" including
+  // today's partial day, this tab excludes it (spend and sign-ups must cover
+  // the same hours), so the same words showed 410 there and 406 here (audit 12.10)
   function metaWinLabel(n){
-    if(LANG!=="he") return n===7? "week" : n===14? "2 weeks" : n+" days";
-    return n===7? "שבוע" : n===14? "שבועיים" : n+" ימים";
+    if(LANG!=="he") return n===7? "full week" : n===14? "2 full weeks" : n+" full days";
+    return n===7? "שבוע מלא" : n===14? "שבועיים מלאים" : n+" ימים מלאים";
   }
   function metaWinPhrase(n){
     if(LANG!=="he"){
@@ -6838,6 +6841,17 @@
       opts.fadeLast = !opts.avg && weeklyOn() && rows.length>0 && isPartialWeekStart(rows[rows.length-1].d);
       timeChart(chartId, rows, series, opts);
       var cur = rangeRows(source), prv = prevRows(source);
+      // a series shorter than the window says so (audit 12.10: DAU drew 60
+      // days under a "90 days" range without a word) - same wording the
+      // notifications tab uses for its log
+      var host=$(chartId), pnl=host && host.closest("section.panel");
+      if(pnl){
+        var cn=pnl.querySelector(".covnote"); if(cn) cn.remove();
+        if(!CUSTOM && cur.length && cur.length < RANGE-1){
+          cn=el("div","note covnote", S.covNote(fmt(cur.length), fmtDay(String(cur[0].d).slice(0,10))));
+          host.parentNode.insertBefore(cn, host);
+        }
+      }
       var curV, prvV;
       if(opts.avg){
         curV = cur.length? Math.round(sumRows(cur,keys)/cur.length):0;
@@ -6854,9 +6868,16 @@
         {unit: opts.avg? S.uPerDay(opts.unit) : opts.unit,
          weekly: !opts.avg && weeklyOn()});
     }
-    segChart("chSignups","segSignups",DATA.signups_by_day,[
-      {key:"ios",name:"iOS",color:S1,type:"bar"},
-      {key:"android",name:"Android",color:S3,type:"bar"}],
+    // sign-ups whose platform is unknown were in the total but in no bar, so
+    // the stack summed 5 short of the number printed above it (audit 12.10):
+    // they get their own grey segment, drawn only when there are any
+    (DATA.signups_by_day||[]).forEach(function(r){
+      r.other=Math.max(0,(+r.total||0)-(+r.ios||0)-(+r.android||0)); });
+    var suDefs=[{key:"ios",name:"iOS",color:S1,type:"bar"},
+                {key:"android",name:"Android",color:S3,type:"bar"}];
+    if((DATA.signups_by_day||[]).some(function(r){ return r.other>0; }))
+      suDefs.push({key:"other",name:S.serPlatOther,color:tok("--baseline"),type:"bar"});
+    segChart("chSignups","segSignups",DATA.signups_by_day,suDefs,
       ["total"],{zoom:true, annot:true, unit:S.uSignups});
     segChart("chDau","segDau",DATA.dau_by_day,[
       {key:"dau",name:S.serDau,color:S1,type:"line",area:true},
@@ -7601,9 +7622,11 @@
     rows.sort(function(a,b){
       if(PS_SORT==="offers") return (b.offers-a.offers) || (a.created_at<b.created_at?1:-1);
       // silent-first ranks live posts above closed ones: a closed post with no
-      // offer is history, a live one is a person still waiting
+      // offer is history, a live one is a person still waiting. Inside that,
+      // the LONGEST wait leads (audit 12.10): newest-first put posts published
+      // this morning on top - those are new, not silent
       if(PS_SORT==="silent") return (a.offers-b.offers) || (b.is_active-a.is_active)
-                                 || (a.created_at<b.created_at?1:-1);
+                                 || (a.created_at<b.created_at?-1:1);
       if(PS_SORT==="old")    return a.created_at<b.created_at? -1:1;
       return a.created_at<b.created_at? 1:-1;
     });
