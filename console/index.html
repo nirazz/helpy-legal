@@ -10493,6 +10493,9 @@
     var head=$("ifHead"), body=$("ifBody");
     if(!head || !body) return;
     head.innerHTML="";
+    // the backups section sits below the server body; while the tab is still
+    // loading its folded title floated under the loading message (13.10)
+    var bkH=$("secIfBackup"); if(bkH) bkH.classList.toggle("hidden", !INFRA);
     if(!INFRA){
       body.classList.add("hidden");
       if(INFRA_ERR) ifVerdict(head, "bad", null, S.ifErr(INFRA_ERR));
