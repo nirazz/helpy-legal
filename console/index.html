@@ -1906,7 +1906,18 @@
   .tabmenuitem:hover, .tabmenuitem:focus-visible { background:var(--wash-hover); color:var(--ink); outline:none; }
   .tabmenuitem.on { color:var(--s1); font-weight:600; background:var(--wash1); }
   .tabmenuitem .tabbadge { margin-inline-start:auto; }
-  @media (max-width:720px){ #tabs .tabmore { min-height:42px; padding:0 9px; font-size:13px; } .tabmenuitem { min-height:44px; } }
+  @media (max-width:720px){
+    #tabs .tabmore { min-height:42px; padding:0 9px; font-size:13px; }
+    .tabmenuitem { min-height:44px; }
+    /* five tabs + more fit one phone row once the tab icons go (the chevron stays) */
+    #tabs button:not(.tabmore) .ico { display:none; }
+    #tabs button { padding:0 8px; }
+    /* and on a phone too narrow even for that, "more" stays pinned at the
+       strip's end instead of scrolling out of reach */
+    #tabs .tabmore { position:sticky; inset-inline-end:0; background:var(--surface);
+        box-shadow:-10px 0 10px -6px var(--surface); order:9; }
+    html[dir="rtl"] #tabs .tabmore { box-shadow:10px 0 10px -6px var(--surface); }
+  }
 </style>
 </head>
 <body>
