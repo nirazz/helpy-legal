@@ -1849,6 +1849,19 @@
   #app .sechead.toggle { border-top:1px solid var(--hairline); padding-top:22px; margin-top:22px; margin-bottom:8px; }
   #app .sechead.toggle:hover { color:var(--s1); }
   @media (max-width:720px){ #metricsView .mlede { font-size:16px; } }
+  /* ---- console-wide calm pass 13.10 (redesign-skill audit, every tab) ---
+     One accent. State is carried by the small tone icon, never by a tinted
+     box: verdicts sit on the neutral surface, attention rows are plain rows
+     on hairlines with ink numbers, period deltas are grey (they inform, the
+     verdict judges). */
+  .verdict.good, .verdict.warn, .verdict.bad { background:var(--surface2); border-color:var(--hairline); }
+  .panel .ins.lead.warn, .panel .ins.lead.bad { background:none; border-radius:0; padding-inline:0;
+      margin-block:0; border-bottom:1px solid var(--hairline); }
+  .panel .ins.lead.warn b:first-of-type, .panel .ins.lead.bad b:first-of-type { color:var(--ink); }
+  .panel .ins b { color:var(--ink); }
+  .delta.up, .delta.down { color:var(--ink2); background:var(--surface2); }
+  .cmp .delta.up, .cmp .delta.down { color:var(--ink2); }
+  .panel h2 .brattnn, .panel h2 .brattnn.bad { color:var(--ink2); background:var(--surface2); }
   /* ---- morning 13.10 calm pass (redesign-skill audit): ONE accent ------
      deltas are information, not alarms: grey arrow + number; numbers in
      work rows are ink, the small icon alone carries amber/red */
@@ -1937,15 +1950,10 @@
   .tile.scst-bad, .tile.scst-warn { border:0; }
   /* attention panels everywhere read like the brief's: the count by the title,
      work rows on a state tint, the number leading */
-  .panel h2 .brattnn { font-size:12px; font-weight:600; color:var(--warning); background:var(--warn-bg);
+  .panel h2 .brattnn { font-size:12px; font-weight:600; color:var(--ink2); background:var(--surface2);
       border-radius:6px; padding:1px 7px; font-variant-numeric:tabular-nums; }
-  .panel h2 .brattnn.bad { color:var(--bad-text); background:var(--bad-bg); }
-  .panel .ins.lead.warn, .panel .ins.lead.bad { border-radius:8px; padding:8px 12px; margin-block:4px;
-      border-bottom:0; }
-  .panel .ins.lead.warn { background:var(--warn-bg); }
-  .panel .ins.lead.bad { background:var(--bad-bg); }
-  .panel .ins.lead.warn b:first-of-type { color:var(--warning); }
-  .panel .ins.lead.bad b:first-of-type { color:var(--bad-text); }
+  /* old tinted-strip geometry removed 13.10 */
+  /* (13.10) the tints that sat here are gone - see the calm pass above */
   /* analyst prose under a section head: two lines, then "more" */
   .secbrief.clamp { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .secmore { display:block; margin:-12px 0 18px; font-size:12.5px; color:var(--s1); }
