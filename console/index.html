@@ -1868,6 +1868,13 @@
   /* analyst prose under a section head: two lines, then "more" */
   .secbrief.clamp { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
   .secmore { display:block; margin:-12px 0 18px; font-size:12.5px; color:var(--s1); }
+  /* the cards and backlog summaries are number rows too: same strip */
+  .pssum, .blsum { gap:1px; background:var(--hairline); border:1px solid var(--hairline);
+      border-radius:10px; overflow:hidden; box-shadow:var(--shadow-sm); }
+  .pssum .pscell, .blsum .blcell { border:0; border-radius:0; box-shadow:none; background:var(--surface); }
+  /* a backlog item reads as its title + two lines; the rest is one click away */
+  .blitem .blwhy { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; cursor:pointer; }
+  .blitem.open .blwhy { display:block; overflow:visible; }
 </style>
 </head>
 <body>
@@ -8190,7 +8197,10 @@
 
       var main=el("div","blmain");
       main.appendChild(el("div","bltitle", LANG==="he"? it.tH : it.tE));
-      main.appendChild(el("p","blwhy", LANG==="he"? it.wH : it.wE));
+      var why=el("p","blwhy", LANG==="he"? it.wH : it.wE);
+      why.title=LANG==="he"? "לחיצה פותחת את כל הטקסט" : "Click for the full text";
+      why.addEventListener("click",function(){ card.classList.toggle("open"); });
+      main.appendChild(why);
       var chips=el("div","blchips");
       // the status chip is redundant under its own heading, so it appears only
       // where the list is not grouped by status
