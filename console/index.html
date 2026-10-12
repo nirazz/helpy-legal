@@ -221,7 +221,7 @@
   .brk:last-child { border-bottom:0; }
   .brk .lbl { color:var(--ink2); min-width:120px; }
   .brk b { font-variant-numeric:tabular-nums; }
-  .brpill { display:inline-block; font-size:11.5px; font-weight:600; padding:1px 8px; border-radius:6px;
+  .brpill { display:inline-block; font-size:12px; font-weight:600; padding:1px 8px; border-radius:6px;
             border:1px solid transparent; line-height:1.6; }
   .brpill.up   { color:var(--good-text); background:var(--good-bg); }
   .brpill.down { color:var(--bad-text);  background:var(--bad-bg); }
@@ -236,7 +236,7 @@
   .brstat > div { display:flex; flex-direction:column; gap:3px; min-width:88px; }
   .brstat b { font-size:22px; font-weight:600; letter-spacing:-.02em;
               font-variant-numeric:tabular-nums; line-height:1.1; }
-  .brstat .cap { font-size:11.5px; color:var(--muted); letter-spacing:.02em; }
+  .brstat .cap { font-size:12px; color:var(--muted); letter-spacing:.02em; }
   .brday { font-size:12px; color:var(--ink2); margin-bottom:2px; }
   .brdesk { display:flex; gap:10px; align-items:baseline; padding:7px 0; border-bottom:1px solid var(--grid); font-size:13.5px; }
   .brdesk:last-child { border-bottom:0; }
@@ -517,7 +517,7 @@
                 margin-inline-end:5px; vertical-align:3px; }
   .chartbox { direction:ltr; position:relative; }
   .chartbox svg { display:block; width:100%; }
-  svg text { fill:var(--muted); font-size:10px; font-variant-numeric:tabular-nums; }
+  svg text { fill:var(--muted); font-size:11px; font-variant-numeric:tabular-nums; }
 
   #tt { position:fixed; z-index:40; pointer-events:none; background:var(--surface);
         border:1px solid var(--hairline); border-radius:8px; padding:8px 12px;
@@ -611,7 +611,7 @@
             padding:11px 14px; display:flex; flex-direction:column; gap:1px; }
   .pscell b { font-size:22px; font-weight:600; line-height:1.15; letter-spacing:-.02em;
               font-variant-numeric:tabular-nums; }
-  .pscell > span, .pscell .term { font-size:11.5px; color:var(--ink2); font-weight:500; }
+  .pscell > span, .pscell .term { font-size:12px; color:var(--ink2); font-weight:500; }
   .pscell.accent b { color:var(--warning); }
   @media (max-width:720px){ .pssum { grid-template-columns:repeat(2,minmax(0,1fr)); } }
   /* First write surface the console has ever had, so it is deliberately a
@@ -628,10 +628,10 @@
       border:1px solid var(--grid); border-radius:10px; padding:11px 13px; outline:none; }
   .msgbox textarea:focus { border-color:var(--s1); box-shadow:var(--ring); background:var(--surface); }
   .msgrow { display:flex; align-items:center; gap:10px; margin:10px 0 4px; flex-wrap:wrap; }
-  .msgrow .cap { font-size:11.5px; color:var(--muted); }
-  .msgcount { margin-inline-start:auto; font-size:11.5px; color:var(--muted);
+  .msgrow .cap { font-size:12px; color:var(--muted); }
+  .msgcount { margin-inline-start:auto; font-size:12px; color:var(--muted);
               font-variant-numeric:tabular-nums; }
-  .msgnote { font-size:11.5px; color:var(--ink2); line-height:1.55; margin:10px 0 16px;
+  .msgnote { font-size:12px; color:var(--ink2); line-height:1.55; margin:10px 0 16px;
              padding:9px 12px; border:1px solid var(--grid); border-radius:9px;
              background:var(--wash1); }
   .msgerr { font-size:12px; color:var(--bad-text); margin:0 0 10px; font-weight:600; }
@@ -662,7 +662,7 @@
   .msgthread .mt.them { align-self:flex-start; background:var(--surface);
       border:1px solid var(--grid); color:var(--ink); }
   .msgthread .mt.us { align-self:flex-end; background:var(--wash1); color:var(--ink); }
-  .msgthread .mtwhen { font-size:10.5px; color:var(--muted); margin-top:3px; }
+  .msgthread .mtwhen { font-size:11px; color:var(--muted); margin-top:3px; }
   .msgthread .mtempty { font-size:12px; color:var(--muted); text-align:center; padding:6px 0; }
   .msgpick { display:flex; flex-direction:column; gap:6px; max-height:260px; overflow-y:auto;
              margin-top:10px; }
@@ -695,7 +695,7 @@
   .pstitle b { font-weight:600; white-space:normal; line-height:1.3; }
   .pstitle b, .pstitle > span { text-align:left; }
   html[dir="rtl"] .pstitle b, html[dir="rtl"] .pstitle > span { text-align:right; }
-  .pstitle > span { font-size:11.5px; color:var(--muted); font-weight:400;
+  .pstitle > span { font-size:12px; color:var(--muted); font-weight:400;
       white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%; }
   /* a closed card recedes as a whole row rather than announcing itself in a
      column - it is history, not news */
@@ -781,7 +781,7 @@
                 border-bottom-left-radius:4px; }
   .msg.requester { border-bottom-right-radius:4px; }
   .msg .who { font-size:11px; color:var(--ink2); font-weight:600; margin-bottom:2px; }
-  .msg .when { font-size:10px; color:var(--muted); margin-top:3px; direction:ltr; text-align:left; }
+  .msg .when { font-size:11px; color:var(--muted); margin-top:3px; direction:ltr; text-align:left; }
   .msg mark { background:var(--warning); color:#0b0b0b; border-radius:3px; padding:0 3px; }
   .note { font-size:12px; color:var(--muted); }
   /* a caveat that changes how a number should be READ is not a footnote */
@@ -893,8 +893,8 @@
       transition:box-shadow .15s ease, border-color .15s ease; }
   .archnode:hover { border-color:var(--border-strong); box-shadow:var(--shadow-md); }
   .archnode .nl { font-size:13px; font-weight:600; display:flex; align-items:center; gap:6px; }
-  .archnode .ns { font-size:11.5px; color:var(--muted); margin-top:2px; }
-  .archnode .nv { font-size:11.5px; color:var(--s1); font-weight:700;
+  .archnode .ns { font-size:12px; color:var(--muted); margin-top:2px; }
+  .archnode .nv { font-size:12px; color:var(--s1); font-weight:700;
       font-variant-numeric:tabular-nums; margin-top:3px; }
   .archnode i.dotc { width:8px; height:8px; border-radius:2px; flex-shrink:0; }
   .archnode.lit { border-color:var(--s1); box-shadow:var(--ring); }
@@ -917,7 +917,7 @@
   .nfitem .nfhead { display:flex; align-items:baseline; gap:8px;
       flex-wrap:wrap; }
   .nfitem .nftitle { font-weight:700; font-size:13px; color:var(--ink); }
-  .nfitem .nfkey { font-size:10.5px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  .nfitem .nfkey { font-size:11px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
       color:var(--muted); background:var(--plane); border-radius:5px;
       padding:1px 5px; direction:ltr; unicode-bidi:isolate; }
   .nfitem .nfcad { font-size:11px; color:var(--ink2); background:var(--plane);
@@ -965,7 +965,7 @@
   .blsum .blcell b { display:block; font-size:26px; font-weight:600; letter-spacing:-.02em;
       font-variant-numeric:tabular-nums; line-height:1.1; color:var(--ink);
       text-shadow:var(--num-glow); }
-  .blsum .blcell span { display:block; font-size:11.5px; color:var(--ink2);
+  .blsum .blcell span { display:block; font-size:12px; color:var(--ink2);
       margin-top:3px; }
   .blsum .blcell i { display:block; width:8px; height:8px; border-radius:50%;
       margin-bottom:10px; }
@@ -999,7 +999,7 @@
       text-shadow:var(--num-glow); }
   .blmeta .blgate { font-size:12px; font-weight:700; color:var(--ink2);
       line-height:1.35; padding-top:3px; }
-  .blmeta .blcap { font-size:10px; color:var(--muted); letter-spacing:.04em;
+  .blmeta .blcap { font-size:11px; color:var(--muted); letter-spacing:.04em;
       margin-top:2px; }
   .blmeta .bleff { font-size:11px; color:var(--muted); margin-top:5px;
       padding-top:5px; border-top:1px dashed var(--hairline); }
@@ -1007,7 +1007,7 @@
   .blempty { color:var(--muted); font-size:13px; padding:18px 2px; }
   /* The stamp exists so a stale backlog announces itself instead of looking
      current. It escalates on purpose: a quiet grey dot is not a signal. */
-  .blupd { display:inline-flex; align-items:center; gap:7px; font-size:11.5px;
+  .blupd { display:inline-flex; align-items:center; gap:7px; font-size:12px;
       color:var(--muted); margin-top:7px; }
   .blupd i { width:6px; height:6px; border-radius:50%; flex-shrink:0;
       background:var(--good-text); }
@@ -1082,7 +1082,7 @@
     .tile svg { width:100%; height:24px; }
     .panel { padding:14px 14px 13px; border-radius:10px; margin-bottom:12px; }
     .panel h2, .panel.wide h2 { font-size:15px; }
-    .panel .sub { font-size:11.5px; }
+    .panel .sub { font-size:12px; }
     .echart, .panel.wide .echart { height:230px; }
     .secbrief { font-size:13px; margin:-2px 0 12px; }
     .verdict { font-size:12.5px; padding:8px 10px; }
@@ -1139,7 +1139,7 @@
   .evrow .evt { font-weight:600; }
   .evrow .evs { color:var(--muted); font-size:12px; margin-top:1px;
                 overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .evrow .evw { color:var(--muted); font-size:11.5px; white-space:nowrap;
+  .evrow .evw { color:var(--muted); font-size:12px; white-space:nowrap;
                 flex-shrink:0; font-variant-numeric:tabular-nums; }
   /* week logs: the direction is an outline icon on a quiet tint - a filled
      brown square per down week read as an alarm on every ordinary dip.
@@ -1353,14 +1353,14 @@
   .platcard .pname { font-size:13px; font-weight:600;
               color:var(--ink2); }
   .platcard .chip { margin-inline-start:auto; }
-  .chip { font-size:11.5px; font-weight:600; padding:1px 7px; border-radius:6px;
+  .chip { font-size:12px; font-weight:600; padding:1px 7px; border-radius:6px;
           white-space:nowrap; }
   .chip.good { color:var(--good-text); background:var(--good-bg); }
   .chip.warn { color:var(--warning);   background:var(--warn-bg); }
   .chip.bad  { color:var(--bad-text);  background:var(--bad-bg); }
   .platcard .pbig { font-size:26px; font-weight:600; line-height:1.1;
               letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
-  .platcard .pbigl { font-size:11.5px; color:var(--muted); margin-bottom:11px; }
+  .platcard .pbigl { font-size:12px; color:var(--muted); margin-bottom:11px; }
   .pmetrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px;
               border-top:1px solid var(--grid); padding-top:10px; }
   .pm .pmk { display:block; font-size:11px; color:var(--muted); margin-bottom:3px; }
@@ -1412,7 +1412,7 @@
   .pnratio .pnkey { direction:inherit; text-align:end; }
   /* the window chips scope the LOG panels, not this one - a control that
      appears to govern a panel it cannot touch is worse than no control */
-  .pntag { display:inline-block; font-size:10px; padding:2px 8px; border-radius:99px;
+  .pntag { display:inline-block; font-size:11px; padding:2px 8px; border-radius:99px;
            border:1px solid var(--hairline); color:var(--muted); vertical-align:middle;
            margin-inline-start:8px; font-weight:500; }
   /* the senders table is wider than a phone - it scrolls inside its panel */
@@ -1436,7 +1436,7 @@
   }
   @media (max-width:359px){ .tiles.iftiles { grid-template-columns:1fr; } }
   .iftiles .tile .sub { flex-wrap:wrap; row-gap:4px; align-items:center; }
-  .iftiles .tile .brpill { font-size:10.5px; padding:1px 8px; }
+  .iftiles .tile .brpill { font-size:11px; padding:1px 8px; }
   .iftiles .tile .ifextra { margin:2px 0 4px; font-size:11px; }
   .ifst-near .bullet .bval { background:var(--warning); }
   .ifst-over .bullet .bval { background:var(--bad-text); }
@@ -1474,7 +1474,7 @@
   .bkcard.bkbad { border-color:var(--bad-text); }
   .bkch { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700; color:var(--ink); margin-bottom:2px; }
   .bkch .ico { color:var(--muted); flex-shrink:0; }
-  .bkch .brpill { margin-inline-start:auto; font-size:10.5px; padding:1px 8px; }
+  .bkch .brpill { margin-inline-start:auto; font-size:11px; padding:1px 8px; }
   .bkcard .scpol { margin:6px 0 4px; font-size:12.5px; }
   .scpol b.bkbadv { color:var(--bad-text); }
   .scpol b[title] { cursor:help; }
@@ -1482,7 +1482,7 @@
   .bkkey { margin:12px 0 0; }
   .bkfoot { margin:12px 0 0; }
   table.sctbl.bktbl td.exv { min-width:200px; }
-  .bktbl td.bkold .brpill { margin-inline-start:8px; font-size:10.5px; padding:1px 8px; }
+  .bktbl td.bkold .brpill { margin-inline-start:8px; font-size:11px; padding:1px 8px; }
   .bktbl tr.bklate td.bkold > span:first-child { color:var(--bad-text); font-weight:700; }
   .bktbl .exnilt { color:var(--muted); }
   @media (max-width:1100px) and (min-width:721px){ .bkcards > .bkcard:last-child:nth-child(odd) { grid-column:1 / -1; } }
@@ -1504,7 +1504,7 @@
   #scHead .verdict.lead { font-size:14.5px; font-weight:600; }
   #scHead .empty { padding:40px 10px; font-size:13.5px; }
   .sctiles .tile .sub { flex-wrap:wrap; row-gap:4px; align-items:center; }
-  .sctiles .tile .brpill { font-size:10.5px; padding:1px 8px; }
+  .sctiles .tile .brpill { font-size:11px; padding:1px 8px; }
   .tile.scst-bad { border-color:var(--bad-text); }
   .tile.scst-bad .val { color:var(--bad-text); }
   .tile.scst-warn { border-color:var(--warning); }
@@ -1554,7 +1554,7 @@
            gap:4px 12px; align-items:center; padding:8px 2px; border-bottom:1px solid var(--grid); font-size:13px; }
   .scmon:last-child { border-bottom:0; }
   .scmonn { color:var(--ink); font-weight:600; min-width:0; }
-  .scmon .brpill { font-size:10.5px; padding:1px 8px; }
+  .scmon .brpill { font-size:11px; padding:1px 8px; }
   .scmons { white-space:nowrap; text-align:end; }
   .scnow { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:4px 12px; align-items:baseline;
            padding:8px 2px 9px; border-bottom:1px solid var(--grid); font-size:13px; }
@@ -1594,7 +1594,7 @@
   .exrate .ghost, .exacts .ghost { padding:3px 10px; font-size:12px; }
   .exrate input { width:76px; }
   .extiles .tile .sub { flex-wrap:wrap; row-gap:4px; align-items:center; }
-  .extiles .tile .brpill { font-size:10.5px; padding:1px 8px; }
+  .extiles .tile .brpill { font-size:11px; padding:1px 8px; }
   .extiles .tile .exnote2 { margin:2px 0 4px; font-size:11px; line-height:1.45; }
   .exst-over .bullet .bval { background:var(--bad-text); }
   #exHead .verdict { margin-bottom:10px; }
@@ -1606,7 +1606,7 @@
   .extblwrap { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:0 -4px; padding:0 4px; }
   table.extbl { min-width:100%; width:max-content; }
   .extbl th { white-space:nowrap; font-size:12px; }
-  .extbl th small { display:block; color:var(--muted); font-weight:400; font-size:10.5px; }
+  .extbl th small { display:block; color:var(--muted); font-weight:400; font-size:11px; }
   .extbl td { white-space:nowrap; vertical-align:top; }
   .extbl td.exv { position:sticky; inset-inline-start:0; background:var(--surface); z-index:1;
                   font-weight:600; color:var(--ink); max-width:220px; white-space:normal; }
@@ -1677,7 +1677,7 @@
   /* band headers: 12 flat rows is a list, three bands is a judgement */
   .pnband td { padding-top:16px; padding-bottom:4px; font-size:12px; font-weight:600;
                letter-spacing:0; color:var(--ink2); border-bottom:none; }
-  .pnweak { font-size:10px; padding:1px 6px; border-radius:99px; border:1px solid var(--hairline);
+  .pnweak { font-size:11px; padding:1px 6px; border-radius:99px; border:1px solid var(--hairline);
             color:var(--muted); margin-inline-start:6px; white-space:nowrap; }
 
   /* ==== attention layer (2026-10-11) =====================================
@@ -4700,27 +4700,27 @@
         data: rows.map(function(r){ return fmtDay(r.d); }),
         axisLine: { lineStyle: { color: base } },
         axisTick: { show: false },
-        axisLabel: { color: muted, fontSize: 10 }
+        axisLabel: { color: muted, fontSize: 11 }
       },
       // a second axis is OPT-IN (opts.axis2) and only the campaigns chart asks
       // for one: series carrying a different unit set `axis:1`
       yAxis: opts.axis2 ? [
         { type: "value", position: "right", minInterval: 1,
           splitLine: { lineStyle: { color: grid } },
-          axisLabel: { color: muted, fontSize: 10 } },
+          axisLabel: { color: muted, fontSize: 11 } },
         { type: "value", position: "left", minInterval: 1, splitLine: { show: false },
-          axisLabel: { color: muted, fontSize: 10 } }
+          axisLabel: { color: muted, fontSize: 11 } }
       ] : {
         type: "value", position: "right", minInterval: 1,
         splitLine: { lineStyle: { color: grid } },
-        axisLabel: { color: muted, fontSize: 10 }
+        axisLabel: { color: muted, fontSize: 11 }
       },
       dataZoom: opts.zoom ? [
         { type: "slider", height: 20, bottom: 8, borderColor: grid,
           backgroundColor: "transparent",
           fillerColor: "rgba(99,102,241,0.16)",
           handleStyle: { color: tok("--s1") },
-          textStyle: { color: muted, fontSize: 9 },
+          textStyle: { color: muted, fontSize: 11 },
           brushSelect: false },
         { type: "inside" }
       ] : undefined,
@@ -4772,7 +4772,7 @@
           symbol: "none",
           lineStyle: { type: "dashed", color: base, width: 1 },
           label: { show: true, formatter: function(p){ return p.name; },
-                   fontSize: 9, color: muted, position: "end",
+                   fontSize: 11, color: muted, position: "end",
                    rotate: 0, align: "center", verticalAlign: "bottom" },
           data: marks
         }
@@ -5784,7 +5784,7 @@
       // leave the plot - grow to the next 5 with room for the label
       yAxis:{ type:"value", position:"right", max:function(v){ return Math.max(30, Math.ceil((v.max+4)/5)*5); },
         splitLine:{ lineStyle:{ color:grid } },
-        axisLabel:{ color:muted, fontSize:10, formatter:"{value}%" } },
+        axisLabel:{ color:muted, fontSize: 11, formatter:"{value}%" } },
       series:[
         { name:S.retOurs, type:"line", data:ours,
           lineStyle:{ width:3, color:tok("--s1") },
@@ -10176,7 +10176,7 @@
       },
       xAxis:{ type:"time",
         axisLine:{ lineStyle:{ color:base } }, axisTick:{ show:false }, splitLine:{ show:false },
-        axisLabel:{ color:muted, fontSize:10, hideOverlap:true,
+        axisLabel:{ color:muted, fontSize: 11, hideOverlap:true,
           formatter:function(v){ var d=new Date(v); return long ? d.getDate()+"."+(d.getMonth()+1) : hm(d); } } },
       yAxis:{ type:"value", position:"right", min:0,
         max: o.pct ? 100 : function(e){
@@ -10185,7 +10185,7 @@
         },
         minInterval: o.pct ? undefined : 1,
         splitLine:{ lineStyle:{ color:grid } },
-        axisLabel:{ color:muted, fontSize:10, formatter: o.pct ? "{value}%" : "{value}" } },
+        axisLabel:{ color:muted, fontSize: 11, formatter: o.pct ? "{value}%" : "{value}" } },
       series: series.map(function(s, i){
         var sr={ name:s.name, type:"line", showSymbol:false, symbol:"circle", symbolSize:6,
           connectNulls:false, emphasis:{ focus:"series" },
@@ -10203,7 +10203,7 @@
         if(i===0 && marks.length) sr.markLine={ symbol:"none", silent:true, animation:false,
           data: marks.map(function(m){ return { yAxis:m.y,
             lineStyle:{ color:m.color, type:"dashed", width:1.2 },
-            label:{ formatter:m.label, color:m.color, fontSize:10, position:"insideStartTop" } }; }) };
+            label:{ formatter:m.label, color:m.color, fontSize: 11, position:"insideStartTop" } }; }) };
         return sr;
       })
     }, { replaceMerge:["series"] });
@@ -10502,14 +10502,14 @@
       },
       xAxis:{ type:"category", data:D.M,
         axisLine:{ lineStyle:{ color:base } }, axisTick:{ show:false },
-        axisLabel:{ color:muted, fontSize:10.5, hideOverlap:true, interval:"auto",
+        axisLabel:{ color:muted, fontSize: 11.5, hideOverlap:true, interval:"auto",
           formatter:function(v, i){
             var mm=String(v).slice(5,7);
             return exMonthName(v,true)+((i===0 || mm==="01") ? "\n"+String(v).slice(0,4) : "");
           } } },
       yAxis:{ type:"value", position:"right", min:0,
         splitLine:{ lineStyle:{ color:grid } },
-        axisLabel:{ color:muted, fontSize:10, formatter:function(v){ return "₪"+fmt(v); } } },
+        axisLabel:{ color:muted, fontSize: 11, formatter:function(v){ return "₪"+fmt(v); } } },
       series: used.map(function(c){
         return { name:plain(exCatLabel(c)), type:"bar", stack:"total", barMaxWidth:46,
           emphasis:{ focus:"series" },
@@ -11235,10 +11235,10 @@
       },
       xAxis:{ type:"category", data:rows.map(function(r){ return r.day; }),
         axisLine:{ lineStyle:{ color:base } }, axisTick:{ show:false },
-        axisLabel:{ color:muted, fontSize:10.5, hideOverlap:true, formatter:function(v){ return dayLbl(v); } } },
+        axisLabel:{ color:muted, fontSize: 11.5, hideOverlap:true, formatter:function(v){ return dayLbl(v); } } },
       yAxis:{ type:"value", position:"right", min:0, minInterval:1,
         splitLine:{ lineStyle:{ color:grid } },
-        axisLabel:{ color:muted, fontSize:10 } },
+        axisLabel:{ color:muted, fontSize: 11 } },
       series: keys.map(function(s){
         return { name:s.name, type:"bar", stack:"otp", barMaxWidth:34,
           emphasis:{ focus:"series" },
