@@ -1842,6 +1842,32 @@
      margin, and width:100% on a phone) is meant for the trend line only */
   .tile .sub svg.ico, .tile .brdelta svg.ico, .tile .delta svg.ico {
       display:inline-block; width:12px; height:12px; margin:0; flex-shrink:0; }
+
+  /* ---- round 2 across the tabs (2026-10-12) ------------------------------ */
+  /* every number row is ONE strip: cells on hairlines (the gap shows the
+     container's hairline colour), not N separate shadowed cards */
+  .tiles:not(.brstrip) { gap:1px; background:var(--hairline); border:1px solid var(--hairline);
+      border-radius:10px; overflow:hidden; box-shadow:var(--shadow-sm); }
+  .tiles:not(.brstrip) > .tile { border:0; border-radius:0; box-shadow:none; background:var(--surface); }
+  .tiles:not(.brstrip) > .tile:hover { box-shadow:none; background:var(--surface2); }
+  /* an odd last cell on a two-up grid takes the row instead of leaving a grey hole */
+  @media (max-width:900px){ .tiles:not(.brstrip) > .tile:last-child:nth-child(odd) { grid-column:1 / -1; } }
+  .tile.zero .val { color:var(--baseline); }
+  .tile.scst-bad, .tile.scst-warn { border:0; }
+  /* attention panels everywhere read like the brief's: the count by the title,
+     work rows on a state tint, the number leading */
+  .panel h2 .brattnn { font-size:12px; font-weight:600; color:var(--warning); background:var(--warn-bg);
+      border-radius:6px; padding:1px 7px; font-variant-numeric:tabular-nums; }
+  .panel h2 .brattnn.bad { color:var(--bad-text); background:var(--bad-bg); }
+  .panel .ins.lead.warn, .panel .ins.lead.bad { border-radius:8px; padding:8px 12px; margin-block:4px;
+      border-bottom:0; }
+  .panel .ins.lead.warn { background:var(--warn-bg); }
+  .panel .ins.lead.bad { background:var(--bad-bg); }
+  .panel .ins.lead.warn b:first-of-type { color:var(--warning); }
+  .panel .ins.lead.bad b:first-of-type { color:var(--bad-text); }
+  /* analyst prose under a section head: two lines, then "more" */
+  .secbrief.clamp { display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .secmore { display:block; margin:-12px 0 18px; font-size:12.5px; color:var(--s1); }
 </style>
 </head>
 <body>
@@ -2156,7 +2182,7 @@
       <p class="note ifage" id="ifAge"></p>
       <div class="tiles iftiles" id="ifTiles"></div>
 
-      <div class="sechead" style="--sec-c:var(--s1)" data-i18n="ifSecLoad">1 · עומס לאורך זמן</div>
+      <div class="sechead" style="--sec-c:var(--s1)" data-i18n="ifSecLoad">עומס לאורך זמן</div>
       <div class="filters ifwinbar">
         <span class="blfgrp"><span class="cap" data-i18n="ifWinL">חלון</span>
           <span class="seg" id="ifWinSeg">
@@ -2194,7 +2220,7 @@
         </section>
       </div>
 
-      <div class="sechead" style="--sec-c:var(--s3)" data-i18n="ifSecExplain">2 · מה המספרים אומרים</div>
+      <div class="sechead" style="--sec-c:var(--s3)" data-i18n="ifSecExplain">מה המספרים אומרים</div>
       <section class="panel" style="opacity:1;transform:none">
         <h2 data-i18n="ifExTitle">איך לקרוא את המסך</h2>
         <div id="ifExplain"></div>
@@ -2207,7 +2233,7 @@
          a server-samples failure must not hide the backups, nor the reverse.
          PUBLIC file: every number, date and size arrives after sign-in. -->
     <div id="bkWrap">
-      <div class="sechead" style="--sec-c:var(--s7)" data-i18n="bkSec">3 · גיבויים ושמירת נתונים</div>
+      <div class="sechead" style="--sec-c:var(--s7)" data-i18n="bkSec">גיבויים ושמירת נתונים</div>
       <div id="bkHead"></div>
       <div id="bkBody" class="hidden">
         <section class="panel" style="opacity:1;transform:none">
@@ -2249,7 +2275,7 @@
       <div class="tiles extiles" id="exTiles"></div>
       <p class="note warn exapprox hidden" id="exApprox"></p>
 
-      <div class="sechead" style="--sec-c:var(--s1)" data-i18n="exSecMoney">1 · לאן הכסף הולך</div>
+      <div class="sechead" style="--sec-c:var(--s1)" data-i18n="exSecMoney">לאן הכסף הולך</div>
       <section class="panel" style="opacity:1;transform:none">
         <h2 data-i18n="exChTitle">הוצאות לפי חודש</h2>
         <div class="sub" data-i18n="exChSub"></div>
@@ -2262,7 +2288,7 @@
         <div class="extblwrap" id="exTable"></div>
       </section>
 
-      <div class="sechead" style="--sec-c:var(--s3)" data-i18n="exSecLedger">2 · מה הוזן</div>
+      <div class="sechead" style="--sec-c:var(--s3)" data-i18n="exSecLedger">מה הוזן</div>
       <section class="panel" style="opacity:1;transform:none">
         <h2 data-i18n="exLedTitle">ההוצאות הקבועות והחד-פעמיות שלי</h2>
         <div class="sub" data-i18n="exLedSub"></div>
@@ -2292,7 +2318,7 @@
       </div>
       <div class="tiles iftiles sctiles" id="scTiles"></div>
 
-      <div class="sechead" style="--sec-c:var(--s1)" data-i18n="scSecOtp">1 · קודי אימות בטלפון</div>
+      <div class="sechead" style="--sec-c:var(--s1)" data-i18n="scSecOtp">קודי אימות בטלפון</div>
       <section class="panel" style="opacity:1;transform:none">
         <h2><span data-i18n="scChTitle">קודים לפי יום</span> <span class="pntag" id="scCover"></span></h2>
         <div class="sub" data-i18n="scChSub"></div>
@@ -2317,7 +2343,7 @@
         <div class="extblwrap" id="scTop"></div>
       </section>
 
-      <div class="sechead" style="--sec-c:var(--s8)" data-i18n="scSecMod">2 · תוכן ומשתמשים</div>
+      <div class="sechead" style="--sec-c:var(--s8)" data-i18n="scSecMod">תוכן ומשתמשים</div>
       <section class="panel" style="opacity:1;transform:none">
         <h2 data-i18n="scHoldTitle">פוסטים שמחכים להחלטה</h2>
         <div class="sub" data-i18n="scHoldSub"></div>
@@ -2330,7 +2356,7 @@
         <div class="extblwrap" id="scBans"></div>
       </section>
 
-      <div class="sechead" style="--sec-c:var(--s3)" data-i18n="scSecSys">3 · השמירה עצמה</div>
+      <div class="sechead" style="--sec-c:var(--s3)" data-i18n="scSecSys">השמירה עצמה</div>
       <div class="grid2">
         <section class="panel" style="opacity:1;transform:none">
           <h2 data-i18n="scMonTitle">מוניטורים</h2>
@@ -2349,7 +2375,7 @@
         <div class="extblwrap" id="scAlerts"></div>
       </section>
 
-      <div class="sechead" style="--sec-c:var(--s5)" data-i18n="scSecGd">4 · פריצות והגנות</div>
+      <div class="sechead" style="--sec-c:var(--s5)" data-i18n="scSecGd">פריצות והגנות</div>
       <section class="panel" style="opacity:1;transform:none">
         <h2><span data-i18n="scGdTitle">ההגנות הקבועות</span> <span class="pntag" id="scGdWhen"></span></h2>
         <div class="sub" data-i18n="scGdSub"></div>
@@ -2463,13 +2489,13 @@
     </section>
     <div class="tiles" id="pnTiles"></div>
 
-    <div class="sechead" style="--sec-c:var(--s1)" data-i18n="pnSecWorks">1 · האם ההתראות משיגות משהו</div>
+    <div class="sechead" style="--sec-c:var(--s1)" data-i18n="pnSecWorks">האם ההתראות משיגות משהו</div>
     <section class="panel wide" style="opacity:1;transform:none">
       <h2><span data-i18n="pnEffTitle">האם ההתראות עובדות</span> <span class="pntag" data-i18n="pnAllTime">כל הזמן</span></h2>
       <div class="sub" data-i18n="pnEffSub"></div>
       <div id="pnEff"></div>
     </section>
-    <div class="sechead" style="--sec-c:var(--s3)" data-i18n="pnSecDelivery">2 · האם הן בכלל הגיעו</div>
+    <div class="sechead" style="--sec-c:var(--s3)" data-i18n="pnSecDelivery">האם הן בכלל הגיעו</div>
     <div class="filters pnwinbar">
       <span class="blfgrp"><span class="cap" data-i18n="pnWinL">חלון</span>
         <span class="seg" id="pnWinSeg">
@@ -2491,7 +2517,7 @@
       <div class="sub" data-i18n="pnHoSub"></div>
       <div id="pnHoldout"></div>
     </section>
-    <div class="sechead" style="--sec-c:var(--s5)" data-i18n="pnSecQuestion">3 · השאלות שאנחנו שואלים</div>
+    <div class="sechead" style="--sec-c:var(--s5)" data-i18n="pnSecQuestion">השאלות שאנחנו שואלים</div>
     <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="pnQTitle">השאלה ששאלנו</h2>
       <div class="sub" data-i18n="pnQSub"></div>
@@ -2980,9 +3006,9 @@
       pnHoNote:"ההפרש מוצג רק כשהוא עובר מבחן מובהקות של 95% (z מעל 1.96). בנפחים שלנו זה ייקח שבועות - וזו בדיוק הסיבה שעדיף להמתין מאשר להסיק ממספר קטן.",
       pnInsHoSig:function(n,all){ return "<b>"+n+"</b> מתוך "+all+" השולחים עם ביקורת הראו הפרש מובהק - יש להם הוכחה, לא רק שיעור."; },
       pnInsHoRunning:function(all,held){ return "קבוצת ביקורת פעילה על <b>"+all+"</b> שולחים שיווקיים ("+held+" אנשים לא קיבלו עד כה). עוד אין מספיק נתונים למסקנה - זה תקין, ובינתיים כל שיעור על המסך הוא תיאור ולא הוכחה."; },
-      pnSecWorks:"1 · האם ההתראות משיגות משהו",
-      pnSecDelivery:"2 · האם הן בכלל הגיעו",
-      pnSecQuestion:"3 · השאלות שאנחנו שואלים",
+      pnSecWorks:"האם ההתראות משיגות משהו",
+      pnSecDelivery:"האם הן בכלל הגיעו",
+      pnSecQuestion:"השאלות שאנחנו שואלים",
       pnWinTag:function(d){ return d+" ימים אחרונים"; },
       // The chip states what the LOG covers, never what the button asked for.
       pnWinReal:function(span,since){ return "הנתונים מכסים "+span+" בלבד · מאז "+since; },
@@ -3149,8 +3175,8 @@
       ifSwap:function(p){ return "⁨swap⁩ בשימוש: "+p; },
       ifSok:"תקין", ifSnear:"מתקרב לסף", ifSover:"מעל הסף",
       ifThresh:function(v){ return "סף התראה: "+v; },
-      ifSecLoad:"1 · עומס לאורך זמן",
-      ifSecExplain:"2 · מה המספרים אומרים",
+      ifSecLoad:"עומס לאורך זמן",
+      ifSecExplain:"מה המספרים אומרים",
       ifWinL:"חלון", ifW6:"6 שעות", ifW24:"24 שעות", ifW7:"7 ימים", ifW30:"30 יום",
       ifPeaksTitle:"שיאים בחלון",
       ifPeaksSub:"הרגע הכי עמוס בחלון שנבחר. קפיצה אחת לא מדאיגה - מגמה כן.",
@@ -3184,7 +3210,7 @@
       ifMonBudget:"גודל השרת ותקציב ⁦$25⁩",
       // backups + data retention (server tab, its own call "backups"). Latin
       // names isolated; one number per line in every fact list
-      bkSec:"3 · גיבויים ושמירת נתונים",
+      bkSec:"גיבויים ושמירת נתונים",
       bkLoading:"טוען את מצב הגיבויים...",
       bkErr:function(m){ return "לא הצלחנו לטעון את מצב הגיבויים: ⁨"+m+"⁩"; },
       bkVOk:"הגיבוי החיצוני בזמן, וכל רישום ישן נמחק לפי הכלל שלו.",
@@ -3267,7 +3293,7 @@
       scEnfOn:"חסימה: פעילה", scEnfOff:"חסימה: כבויה",
       scHoldsNote:"מוסתרים עד להחלטה", scHoldsNone:"אין מה להחליט",
       scBansNote:"חסימות בתוקף",
-      scSecOtp:"1 · קודי אימות בטלפון",
+      scSecOtp:"קודי אימות בטלפון",
       scChTitle:"קודים לפי יום",
       scChSub:"כל עמודה היא יום: למטה הקודים שנשלחו, מעליהם הקודים שנחסמו, לפי הסיבה.",
       scSpan:function(d){ return d+" ימים אחרונים"; }, scSince:function(d){ return "מאז "+d+" (תחילת המדידה)"; },
@@ -3302,7 +3328,7 @@
       scTopSub:"מי ביקש קודים ונחסם הכי הרבה פעמים, ולמה.",
       scTopEmpty:"אף חשבון לא נחסם בחלון הזה.",
       scColUser:"משתמש/ת", scColReasons:"סיבות", scColLast:"פעם אחרונה", scNoName:"בלי שם",
-      scSecMod:"2 · תוכן ומשתמשים",
+      scSecMod:"תוכן ומשתמשים",
       scHoldTitle:"פוסטים שמחכים להחלטה",
       scHoldSub:"פוסטים שהוסתרו מהפיד עד להחלטה שלך: להחזיר או להשאיר מוסתרים.",
       scHoldEmpty:"אין פוסט שמחכה להחלטה.",
@@ -3318,7 +3344,7 @@
       scModKinds:{ "content_flagged:llm":"סומנו בסינון האוטומטי", admin_ban:"חסימות ידניות",
         admin_unban:"ביטולי חסימה", admin_hide:"הסתרות ידניות", admin_restore:"החזרות ידניות", "content_review_pending:llm":"נבדקו בסינון האוטומטי", client_blocked:"נעצרו בטופס לפני פרסום", "content_flagged:founder":"הוסתרו על ידך", content_approved:"אושרו", "content_approved:manual_review":"אושרו בבדיקה ידנית", admin_content_removed:"תוכן הוסר ידנית", founder_closed_matches:"שיחות שסגרת", "content_rejected:founder":"נדחו על ידך", content_rejected:"נדחו", "content_flagged:held":"נעצרו לבדיקה" },
       scColReason:"סיבה", scColWhen:"מתי", scRevoked:"החסימה בוטלה",
-      scSecGd:"4 · פריצות והגנות",
+      scSecGd:"פריצות והגנות",
       scGdTitle:"ההגנות הקבועות",
       scGdSub:"כל שורה היא חור שנסגר. הבדיקות רצות גם בכל סגירת סשן - אדום אומר שמשהו פתח אותו מחדש.",
       scGdOk:"סגור", scGdOpen:"נפתח מחדש",
@@ -3344,7 +3370,7 @@
       scBrkKinds:{ mfa_required:"מנהל בלי קוד אימות", admin_email_not_google:"כתובת מנהל שלא דרך גוגל", not_admin:"חשבון שאינו מנהל" },
       scBrkVia:{ "admin-dashboard":"הקונסול", "system-broadcast":"שליחת הודעות" },
       scBrkNoApp:"חשבון שאינו רשום באפליקציה", scBrkNoName:"משתמש בלי שם",
-      scSecSys:"3 · השמירה עצמה",
+      scSecSys:"השמירה עצמה",
       scMonTitle:"מוניטורים",
       scMonSub:"הבדיקות האוטומטיות שרצות ברקע. מה שלמטה מופיע ראשון.",
       scMonEmpty:"עוד אין מצב מהבדיקות האוטומטיות.",
@@ -3390,7 +3416,7 @@
       exRateEdit:"עדכון שער", exRateUsd:"דולר", exRateEur:"יורו",
       exRateBad:"שער צריך להיות מספר בין 1 ל-10.",
       exSave:"שמירה", exSaving:"שומר...", exCancel:"ביטול",
-      exSecMoney:"1 · לאן הכסף הולך",
+      exSecMoney:"לאן הכסף הולך",
       exChTitle:"הוצאות לפי חודש",
       exChSub:"כל עמודה היא חודש, מחולקת לפי סוג ההוצאה. ריחוף מראה את הספקים. הפרסום כולל את ⁨Meta⁩, שנמשך אוטומטית.",
       exChEmpty:"אין הוצאות בחלון הזה.",
@@ -3403,7 +3429,7 @@
       exMetaTip:"⁨Meta⁩ (אוטומטי)",
       exMetaUnknown:"⁨Meta⁩ לא ענה - הסכום לא ידוע",
       exPartial:"עד עכשיו",
-      exSecLedger:"2 · מה הוזן",
+      exSecLedger:"מה הוזן",
       exLedTitle:"ההוצאות הקבועות והחד-פעמיות שלי",
       exLedSub:"כל מה שמוזן כאן נכנס לסכומים למעלה. ⁨Meta⁩ לא כאן - הוא נמשך לבד.",
       exAdd:"הוסף הוצאה",
@@ -3448,7 +3474,7 @@
       brSub:function(d,ago){ return d+" · הנתונים חושבו "+ago+" · כל המספרים על משתמשים אמיתיים בלבד"; },
       brEmpty:"הבריף לא הגיע מהשרת - רענון יעזור, ואם לא, get_morning_brief נכשל (יומן admin-dashboard).",
       brSecWait:"מי מחכה למישהו", brSecDay:"מה קרה ביממה האחרונה", brSecRun:"האם המכונה רצה בלילה", brSecMoney:"קמפיינים ועל השולחן",
-      brAttnT:"דורש טיפול", brDeltaCap:"החצים: שינוי מול היממה שלפני", brRowsMore:function(n){ return "הצג עוד "+n; }, brRowsLess:"הצג פחות",
+      brAttnT:"דורש טיפול", readMore:"הצג עוד", readLess:"הצג פחות", brDeltaCap:"החצים: שינוי מול היממה שלפני", brRowsMore:function(n){ return "הצג עוד "+n; }, brRowsLess:"הצג פחות",
       brSupportT:"המילה האחרונה בשרשור Helpy היא שלהם", brSupportS:"אחרי התשובה האחרונה של הצוות הם כתבו שוב - לפעמים שאלה, לפעמים רק תודה",
       brPendingT:"פניות שמחכות להחלטה", brPendingS:"שכן/ה החליק/ה על בקשה לפני יותר מיממה, ובעל/ת הבקשה עדיין לא אישר/ה ולא דחה/תה",
       brNoOfferT:"בקשות חדשות (יום עד שבוע) שעוד לא קיבלו פנייה", brNoOfferS:"בקשות פעילות בנות יום עד שבוע שאף אחד לא החליק עליהן",
@@ -3936,9 +3962,9 @@
       pnHoNote:"A lift is shown only once it clears a 95% significance test (z above 1.96). At our volume that will take weeks - which is exactly why waiting beats concluding from a small number.",
       pnInsHoSig:function(n,all){ return "<b>"+n+"</b> of "+all+" senders with a control group show a significant lift - they have evidence, not just a rate."; },
       pnInsHoRunning:function(all,held){ return "A control group is running on <b>"+all+"</b> marketing senders ("+held+" people held back so far). Not enough data for a verdict yet - that is expected, and until then every rate on this screen is a description, not proof."; },
-      pnSecWorks:"1 · Do the notifications achieve anything",
-      pnSecDelivery:"2 · Did they even arrive",
-      pnSecQuestion:"3 · The questions we ask",
+      pnSecWorks:"Do the notifications achieve anything",
+      pnSecDelivery:"Did they even arrive",
+      pnSecQuestion:"The questions we ask",
       pnWinTag:function(d){ return "last "+d+" days"; },
       pnWinReal:function(span,since){ return "data covers "+span+" only · since "+since; },
       pnWinHours:function(h){ return h===1? "1 hour" : h+" hours"; },
@@ -4103,8 +4129,8 @@
       ifSwap:function(p){ return "Swap in use: "+p; },
       ifSok:"OK", ifSnear:"Near the line", ifSover:"Over the line",
       ifThresh:function(v){ return "Alert line: "+v; },
-      ifSecLoad:"1 · Load over time",
-      ifSecExplain:"2 · What the numbers mean",
+      ifSecLoad:"Load over time",
+      ifSecExplain:"What the numbers mean",
       ifWinL:"Window", ifW6:"6 hours", ifW24:"24 hours", ifW7:"7 days", ifW30:"30 days",
       ifPeaksTitle:"Peaks in this window",
       ifPeaksSub:"The busiest moment in the selected window. One spike is no worry - a trend is.",
@@ -4136,7 +4162,7 @@
       ],
       ifExBottom:"<b>When to upgrade:</b> CPU above 80% for a long stretch, or connections near the ceiling = time to upgrade the machine. A few minutes of spike does not justify an upgrade, a trend over several days does.",
       ifMonBudget:"Server size vs the $25 budget",
-      bkSec:"3 · Backups and data retention",
+      bkSec:"Backups and data retention",
       bkLoading:"Loading the backup status...",
       bkErr:function(m){ return "Could not load the backup status: "+m; },
       bkVOk:"The off-site backup is on time, and every old record is deleted by its rule.",
@@ -4217,7 +4243,7 @@
       scEnfOn:"Blocking: on", scEnfOff:"Blocking: off",
       scHoldsNote:"hidden until you decide", scHoldsNone:"nothing to decide",
       scBansNote:"bans in force",
-      scSecOtp:"1 · Phone verification codes",
+      scSecOtp:"Phone verification codes",
       scChTitle:"Codes per day",
       scChSub:"Each bar is a day: codes sent at the bottom, codes refused on top, by reason.",
       scSpan:function(d){ return "last "+d+" days"; }, scSince:function(d){ return "since "+d+" (when logging began)"; },
@@ -4252,7 +4278,7 @@
       scTopSub:"Who asked for codes and was refused most often, and why.",
       scTopEmpty:"No account was refused in this window.",
       scColUser:"User", scColReasons:"Reasons", scColLast:"Last time", scNoName:"No name",
-      scSecMod:"2 · Content and users",
+      scSecMod:"Content and users",
       scHoldTitle:"Posts awaiting a decision",
       scHoldSub:"Posts hidden from the feed until you decide what to do with them.",
       scHoldEmpty:"No post is waiting for a decision.",
@@ -4268,7 +4294,7 @@
       scModKinds:{ "content_flagged:llm":"Flagged by the automatic filter", admin_ban:"Manual bans",
         admin_unban:"Bans lifted", admin_hide:"Manual hides", admin_restore:"Manual restores", "content_review_pending:llm":"Checked by the automatic filter", client_blocked:"Stopped in the form before posting", "content_flagged:founder":"Hidden by you", content_approved:"Approved", "content_approved:manual_review":"Approved on manual review", admin_content_removed:"Content removed manually", founder_closed_matches:"Chats you closed", "content_rejected:founder":"Rejected by you", content_rejected:"Rejected", "content_flagged:held":"Held for review" },
       scColReason:"Reason", scColWhen:"When", scRevoked:"ban lifted",
-      scSecGd:"4 · Break-ins and guards",
+      scSecGd:"Break-ins and guards",
       scGdTitle:"Standing guards",
       scGdSub:"Each row is a hole that was closed. They also run at every session close - red means something reopened it.",
       scGdOk:"Closed", scGdOpen:"Reopened",
@@ -4294,7 +4320,7 @@
       scBrkKinds:{ mfa_required:"Admin without the code", admin_email_not_google:"Admin address not via Google", not_admin:"Not an admin" },
       scBrkVia:{ "admin-dashboard":"Console", "system-broadcast":"Sending messages" },
       scBrkNoApp:"Account not registered in the app", scBrkNoName:"User without a name",
-      scSecSys:"3 · The guards themselves",
+      scSecSys:"The guards themselves",
       scMonTitle:"Monitors",
       scMonSub:"The automatic checks running in the background. Anything down is listed first.",
       scMonEmpty:"No state from the automatic checks yet.",
@@ -4339,7 +4365,7 @@
       exRateEdit:"Edit rate", exRateUsd:"USD", exRateEur:"EUR",
       exRateBad:"A rate must be a number between 1 and 10.",
       exSave:"Save", exSaving:"Saving...", exCancel:"Cancel",
-      exSecMoney:"1 · Where the money goes",
+      exSecMoney:"Where the money goes",
       exChTitle:"Spend by month",
       exChSub:"Each bar is a month, split by kind of cost. Hover to see the vendors. Advertising includes Meta, pulled automatically.",
       exChEmpty:"No spend in this window.",
@@ -4352,7 +4378,7 @@
       exMetaTip:"Meta (automatic)",
       exMetaUnknown:"Meta did not answer - amount unknown",
       exPartial:"so far",
-      exSecLedger:"2 · What is entered",
+      exSecLedger:"What is entered",
       exLedTitle:"My recurring and one-time costs",
       exLedSub:"Everything entered here goes into the totals above. Meta is not here - it is pulled on its own.",
       exAdd:"Add expense",
@@ -4397,7 +4423,7 @@
       brSub:function(d,ago){ return d+" · computed "+ago+" · every number is real users only"; },
       brEmpty:"The brief did not arrive - refresh; if it persists, get_morning_brief failed (admin-dashboard log).",
       brSecWait:"Who is waiting on someone", brSecDay:"The last 24 hours", brSecRun:"Did the machine run overnight", brSecMoney:"Campaigns and the desk",
-      brAttnT:"Needs you", brDeltaCap:"arrows: change vs the day before", brRowsMore:function(n){ return "Show "+n+" more"; }, brRowsLess:"Show less",
+      brAttnT:"Needs you", readMore:"Show more", readLess:"Show less", brDeltaCap:"arrows: change vs the day before", brRowsMore:function(n){ return "Show "+n+" more"; }, brRowsLess:"Show less",
       brSupportT:"They have the last word in the Helpy thread", brSupportS:"They wrote again after the team's last reply - sometimes a question, sometimes just thanks",
       brPendingT:"Offers awaiting a decision", brPendingS:"A neighbour swiped on a request over a day ago and the owner has neither accepted nor declined",
       brNoOfferT:"New requests (1-7 days) with no offer yet", brNoOfferS:"Active requests one to seven days old that nobody swiped on",
@@ -5123,6 +5149,8 @@
   function tile(label, value, opts){
     opts=opts||{};
     var t=el("div","tile");
+    // a plain zero is a fact, not a headline (a "0%" rate stays: it is a verdict)
+    if(String(value)==="0") t.classList.add("zero");
     var lbl=el("div","lbl");
     if(opts.dot){ var d=el("i"); d.style.background=opts.dot; lbl.appendChild(d); }
     if(opts.tip){
@@ -8945,6 +8973,12 @@
   function insightsInto(hostId, rows){
     var host=$(hostId); if(!host) return;
     host.innerHTML="";
+    var hp=host.closest("section.panel"), hh=hp && hp.querySelector("h2");
+    if(hh){
+      var oc=hh.querySelector(".brattnn"); if(oc) oc.remove();
+      var wn=rows.filter(function(r){ return r[0]==="warn"||r[0]==="bad"; }).length;
+      if(wn) hh.appendChild(el("span","brattnn"+(rows.some(function(r){ return r[0]==="bad"; })?" bad":""), fmt(wn)));
+    }
     if(!rows.length){ host.appendChild(el("div","note",S.insNone)); return; }
     var rank={bad:0,warn:1,good:2,info:3};
     // `rank.bad` is 0, and `0 || 9` is 9 - the original `||` sent the MOST
@@ -9496,18 +9530,47 @@
   // The grey line under every panel title was the loudest text on a screen
   // meant to be glanced at. It is still one hover / tap away: an (i) next to
   // the title carries it, so the title stands alone.
-  function brInfoTips(){
-    document.querySelectorAll("#briefView section.panel > .sub").forEach(function(sub){
-      var h=sub.parentElement.querySelector("h2"); if(!h) return;
-      var old=h.querySelector(".infotip"); if(old) old.remove();
+  function brInfoTips(){ infoTips(); }
+  // Console-wide (2026-10-12, round 2): the grey line under a panel title and
+  // the analyst paragraph under a section head were the loudest text on
+  // screens meant to be glanced at. The first moves behind an (i) beside the
+  // title, the second folds to two lines with "more". Idempotent, so it can
+  // run after every render; one observer re-runs it when a view redraws.
+  function infoTips(){
+    document.querySelectorAll("#app section.panel > .sub").forEach(function(sub){
+      var h=sub.parentElement.querySelector(":scope > h2"); if(!h) return;
       var txt=(sub.textContent||"").trim();
-      sub.hidden=true;
-      if(!txt) return;
+      if(!sub.hidden) sub.hidden=true;
+      var tip=h.querySelector(".infotip");
+      if(!txt){ if(tip) tip.remove(); return; }
+      if(tip && tip.getAttribute("data-tip")===txt) return;
+      if(tip) tip.remove();
       var t=el("span","term below infotip"); t.setAttribute("data-tip",txt);
       t.setAttribute("tabindex","0"); t.setAttribute("aria-label",txt);
       t.appendChild(icon("info",15)); h.appendChild(t);
     });
+    document.querySelectorAll("#app .secbrief:not(.brstuck)").forEach(function(p){
+      if(p.dataset.fold==="1" || p.offsetParent===null) return;
+      if(p.scrollHeight <= p.clientHeight+2 && !p.classList.contains("clamp")){
+        p.classList.add("clamp");
+        if(p.scrollHeight <= p.clientHeight+2){ p.classList.remove("clamp"); return; }
+      }
+      p.dataset.fold="1"; p.classList.add("clamp");
+      var b=el("button","linklike secmore", S.readMore); b.type="button";
+      b.addEventListener("click",function(e){ e.stopPropagation();
+        var open=p.classList.toggle("clamp")===false;
+        b.textContent=open? S.readLess : S.readMore; });
+      p.insertAdjacentElement("afterend", b);
+    });
   }
+  (function(){
+    var app=document.getElementById("app"); if(!app || !window.MutationObserver) return;
+    var pend=false;
+    new MutationObserver(function(){
+      if(pend) return; pend=true;
+      requestAnimationFrame(function(){ pend=false; infoTips(); });
+    }).observe(app,{childList:true,subtree:true,characterData:true});
+  })();
 
   function renderPush(){
     var fh=$("pnFunnel"), qh=$("pnQuestion"), th=$("pnTypes"), eh=$("pnErrors");
