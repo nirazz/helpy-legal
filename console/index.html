@@ -1838,6 +1838,9 @@
   #metricsView .mlede .nsline { font-size:inherit; font-weight:400; padding:0; }
   #metricsView .mlede .nsline b { font-weight:700; }
   #metricsView #tipLine { display:none; }
+  #metricsView .datesbox { display:inline-flex; align-items:center; gap:6px; }
+  #metricsView .datesbox.hidden { display:none !important; }
+  #metricsView .datesbtn.on { color:var(--s1); border-color:var(--s1); }
   /* a folded section is only its brief - three lines say the conclusion, two cut it mid-sentence */
   #metricsView .secbrief.clamp { -webkit-line-clamp:3; }
   /* cards: the chips above already carry every count - the strip repeated them */
@@ -2192,9 +2195,12 @@
         <button data-d="90" class="on" data-i18n="r90">90 יום</button>
         <button data-d="180" data-i18n="r180">חצי שנה</button>
       </div>
-      <span class="cap" data-i18n="orDates">או תאריכים:</span>
-      <input type="date" id="fromDate"> <span class="cap" data-i18n="until">עד</span> <input type="date" id="toDate">
-      <button class="ghost" id="applyRange" data-i18n="show">הצג</button>
+      <!-- polish 13.10: exact dates are the rare case - one button opens them -->
+      <button class="ghost datesbtn" id="datesBtn" type="button" aria-expanded="false" aria-controls="datesBox"><span data-i18n="datesBtn">תאריכים</span></button>
+      <span class="datesbox hidden" id="datesBox">
+        <input type="date" id="fromDate" aria-label="from"> <span class="cap" data-i18n="until">עד</span> <input type="date" id="toDate" aria-label="to">
+        <button class="ghost" id="applyRange" data-i18n="show">הצג</button>
+      </span>
       <span class="fsep" aria-hidden="true"></span>
       <span class="cap" data-i18n="grain">רזולוציה</span>
       <div class="seg" id="grainSeg">
@@ -2754,7 +2760,7 @@
       railOverview:"סקירה", railEvents:"יומן", railGrowth:"צמיחה", railMarket:"היצע וביקוש", railChat:"שיחות",
       railRetention:"שימור", railUsers:"מובילים", railSafety:"בטיחות",
       range:"טווח", r7:"שבוע", r14:"שבועיים", r30:"30 יום", r60:"60 יום", r90:"90 יום", r180:"חצי שנה", r365:"שנה",
-      orDates:"או תאריכים:", until:"עד", show:"הצג",
+      orDates:"או תאריכים:", datesBtn:"תאריכים", until:"עד", show:"הצג",
       tipLine:"טיפ: בתוך כל גרף אפשר לגרור את פס הטווח שלמטה, ללחוץ על מקרא כדי להסתיר סדרה, וללחוץ על קטגוריות, משתמשים וכרטיסים כדי לצלול פנימה",
       insightsTitle:"מה דורש תשומת לב", insightsSub:"תובנות מחושבות מהנתונים · כל שורה מציינת את חלון הזמן שלה",
       secGrowthT:"צמיחה והפעלה", secMarketT:"מרקטפלייס", secChatT:"מעורבות בצ'אט",
@@ -3723,7 +3729,7 @@
       railOverview:"Overview", railEvents:"Log", railGrowth:"Growth", railMarket:"Supply & demand", railChat:"Conversations",
       railRetention:"Retention", railUsers:"Top users", railSafety:"Safety",
       range:"Range", r7:"Week", r14:"2 weeks", r30:"30 days", r60:"60 days", r90:"90 days", r180:"Half year", r365:"Year",
-      orDates:"or dates:", until:"to", show:"Show",
+      orDates:"or dates:", datesBtn:"Dates", until:"to", show:"Show",
       tipLine:"Tip: drag the range slider under any chart, click a legend item to hide a series, and click categories, users and tiles to drill in",
       insightsTitle:"What needs attention", insightsSub:"Computed insights · each line names its own time window",
       secGrowthT:"Growth & activation", secMarketT:"Marketplace", secChatT:"Chat engagement",
@@ -5020,7 +5026,8 @@
         axisPointer: { type: hasBar ? "shadow" : "line" },
         backgroundColor: surface, borderColor: grid,
         textStyle: { color: ink, fontSize: 12 },
-        valueFormatter: function(v){ return fmt(v); }
+        // opts.prefix: a unit the value carries (the campaigns chart is in ₪)
+        valueFormatter: function(v){ return v==null? "-" : (opts.prefix||"")+(opts.prefix? Number(v).toFixed(1) : fmt(v)); }
       },
       xAxis: {
         type: "category",
@@ -5040,7 +5047,7 @@
       ] : {
         type: "value", position: "right", minInterval: 1,
         splitLine: { lineStyle: { color: grid } },
-        axisLabel: { color: muted, fontSize: 11 }
+        axisLabel: { color: muted, fontSize: 11, formatter: opts.prefix? (opts.prefix+"{value}") : "{value}" }
       },
       dataZoom: opts.zoom ? [
         { type: "slider", height: 20, bottom: 8, borderColor: grid,
@@ -6476,7 +6483,7 @@
       // answers the one question the tab asks: what did a signup cost.
       timeChart("metaChart", crows, [
         { key:"cps", name:S.maSeriesCost, type:"bar", color:tok("--s1") }
-      ], { zoom:days.length>21, fadeLast:true });
+      ], { zoom:days.length>21, fadeLast:true, prefix:"\u20AA" });
     }
     var cls=cost7==null? "" : (cost7<25? "good" : (cost7<=35? "warn" : "bad"));
     panelRead("metaAdsSummary", cls,
@@ -12185,10 +12192,21 @@
     else location.reload();
   });
   $("refreshBtn").addEventListener("click",function(){ load().catch(function(){}); });
+  function datesOpen(open){
+    var bx=$("datesBox"), bt=$("datesBtn"); if(!bx||!bt) return;
+    bx.classList.toggle("hidden", !open);
+    bt.setAttribute("aria-expanded", open? "true" : "false");
+  }
+  if($("datesBtn")) $("datesBtn").addEventListener("click",function(){
+    var open=$("datesBox").classList.contains("hidden");
+    datesOpen(open);
+    if(open) $("fromDate").focus();
+  });
   $("applyRange").addEventListener("click",function(){
     var f=$("fromDate").value, t=$("toDate").value;
     if(!f||!t||f>t) return;
     CUSTOM={from:f,to:t};
+    if($("datesBtn")) $("datesBtn").classList.add("on");
     document.querySelectorAll("#rangeSeg button").forEach(function(b){ b.classList.remove("on"); });
     load().catch(function(){});
   });
@@ -12202,6 +12220,8 @@
   }
   segWire("rangeSeg",function(){
     CUSTOM=null; $("fromDate").value=""; $("toDate").value="";
+    if($("datesBtn")) $("datesBtn").classList.remove("on");
+    datesOpen(false);
     load().catch(function(){});
   });
   segWire("chatRangeSeg",function(){ load().catch(function(){}); });
