@@ -540,7 +540,8 @@
         box-shadow:var(--shadow-lg); font-size:12px; display:none;
         direction:rtl; min-width:120px; }
   /* glossary terms: dotted underline + hover explanation (data-tip) */
-  .term { border-bottom:1px dotted var(--muted); cursor:help; position:relative; }
+  .term { border-bottom:1px dashed var(--border-strong); cursor:help; position:relative; }
+  .term:hover { border-bottom-color:var(--ink2); }
   .term::after { content:attr(data-tip); position:absolute;
         bottom:calc(100% + 8px); inset-inline-start:50%; transform:translateX(50%);
         width:max-content; max-width:250px; white-space:normal;
@@ -2009,7 +2010,8 @@
        strip's end instead of scrolling out of reach */
     #tabs .tabmore { position:sticky; inset-inline-end:0; background:var(--surface);
         box-shadow:-10px 0 10px -6px var(--surface); order:9; }
-    html[dir="rtl"] #tabs .tabmore { box-shadow:10px 0 10px -6px var(--surface); }
+    html[dir="rtl"] #tabs .tabmore { box-shadow:22px 0 14px -4px var(--surface); }
+    html[dir="ltr"] #tabs .tabmore { box-shadow:-22px 0 14px -4px var(--surface); }
   }
 </style>
 </head>
@@ -5239,6 +5241,12 @@
     document.querySelectorAll("#tabs button").forEach(function(b){
       b.classList.toggle("on", b.getAttribute("data-v")===v);
     });
+    // on a phone the strip scrolls: bring the open tab out from under the
+    // pinned "more" button (a half-hidden active tab read as broken)
+    var onB=document.querySelector('#tabs button[data-v="'+v+'"]:not(.inmore)');
+    if(onB && window.innerWidth<=720 && onB.scrollIntoView){
+      try{ onB.scrollIntoView({block:"nearest",inline:"center"}); }catch(e){}
+    }
     $("metricsView").classList.toggle("hidden",v!=="metrics");
     $("postsView").classList.toggle("hidden",v!=="posts");
     $("chatView").classList.toggle("hidden",v!=="chat");
@@ -10465,7 +10473,9 @@
     if(st){
       t.classList.add("ifst-"+st);
       var sub=t.querySelector(".sub");
-      if(sub) sub.insertBefore(el("span","brpill "+({ok:"up",near:"mid",over:"down"})[st], S["ifS"+st]), sub.firstChild);
+      // an "OK" pill on every tile repeated the verdict four times; the pill
+      // now appears only when a measure nears or crosses its line (polish 13.10)
+      if(sub && st!=="ok") sub.insertBefore(el("span","brpill "+({ok:"up",near:"mid",over:"down"})[st], S["ifS"+st]), sub.firstChild);
       var tg=t.querySelector(".btgt"); if(tg) tg.title=S.ifThresh(lim+"%");
     }
     if(extra) t.appendChild(el("div","note ifextra",extra));
