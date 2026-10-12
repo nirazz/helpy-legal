@@ -299,7 +299,8 @@
      line lines up with the prose above it rather than half a character out */
   #briefView .brquiet { font-size:12.5px; color:var(--muted);
                         margin:8px 2px 0; padding-inline-start:15px; }
-  #briefView .secbrief.brstuck { margin:0 2px 2px; font-size:13.5px; }
+  #briefView .secbrief.brstuck { margin:0 0 2px; font-size:13.5px; background:var(--surface);
+      border:1px solid var(--hairline); border-radius:10px; padding:14px 16px; box-shadow:var(--shadow-sm); }
   /* a bar is a full-width line under its number, never a third column that
      wraps on its own */
   /* Every line in the "did it run" cards is label | value, on one grid, so
@@ -1834,6 +1835,13 @@
   #metricsView .mlede .nsline { font-size:inherit; font-weight:400; padding:0; }
   #metricsView .mlede .nsline b { font-weight:700; }
   #metricsView #tipLine { display:none; }
+  /* a folded section is only its brief - three lines say the conclusion, two cut it mid-sentence */
+  #metricsView .secbrief.clamp { -webkit-line-clamp:3; }
+  /* cards: the chips above already carry every count - the strip repeated them */
+  #postsView #psSummary { display:none; }
+  /* backlog: the filter chips carry the same four counts */
+  #backlogView #blSummary { display:none; }
+  #postsView .psmore { display:block; margin:14px auto 4px; font-size:13.5px; font-weight:600; color:var(--s1); }
   /* folded sections read as a list of topics: a hairline between them, the
      brief right under its title */
   #app .sechead.toggle { border-top:1px solid var(--hairline); padding-top:22px; margin-top:22px; margin-bottom:8px; }
@@ -2550,8 +2558,8 @@
     </div>
     <div class="tiles" id="metaAdsTiles"></div>
     <section class="panel wide" style="opacity:1;transform:none">
-      <h2 data-i18n="maChartTitle">הוצאה מול הרשמות</h2>
-      <div class="sub" data-i18n="maChartSub">עמודות = מה הוצאנו באותו יום · קו = כמה אנשים באמת נרשמו · הקו המקווקו = כמה עלתה כל הרשמה</div>
+      <h2 data-i18n="maChartTitle">כמה עלתה כל הרשמה, יום אחר יום</h2>
+      <div class="sub" data-i18n="maChartSub"></div>
       <div id="metaChart"></div>
     </section>
     <section class="panel wide" style="opacity:1;transform:none">
@@ -2741,8 +2749,8 @@
       tabAds:"קמפיינים",
       maTitle:"קמפיינים · Meta", maSub:"הוצאה והתקנות מהקמפיינים מול כל ההרשמות במסד (מודעות + אורגני) · נמשך חי מ-Meta בכל רענון של הדף",
       maDailyTitle:"יום אחר יום", maDailySub:"מה הוצאנו בכל יום, כמה התקנות Meta ייחסה לעצמה, וכמה אנשים באמת נרשמו באותו יום",
-      maChartTitle:"הוצאה מול הרשמות",
-      maChartSub:"עמודות = מה הוצאנו באותו יום · קו = כמה אנשים באמת נרשמו · הקו המקווקו = כמה עלתה כל הרשמה",
+      maChartTitle:"כמה עלתה כל הרשמה, יום אחר יום",
+      maChartSub:"הוצאה על מודעות באותו יום, חלקי כל ההרשמות באותו יום (ממודעות ואורגני) · מתחת ל-25 ש״ח להרשמה זה טוב · ההוצאה וההרשמות עצמן בטבלה למטה",
       maSeriesSpend:"הוצאה", maSeriesSignups:"כל ההרשמות", maSeriesCost:"עלות להרשמה",
       maFilterOn:function(p){ return "מסונן ל-"+p+" · לחיצה חוזרת על הכרטיס מבטלת"; },
       maFilterHint:"לחיצה על כרטיס פלטפורמה מסננת את הגרף ואת הטבלה",
@@ -3242,6 +3250,7 @@
       psSumTotal:"סה״כ", psSumLive:"חיים", psSumClosed:"סגורים", psSumSilent:"בלי פנייה (פעילים וסגורים)", psSumMock:"מוקים",
       psNone:"אין כרטיסים שעונים לסינון",
       psShowing:"מוצגים {n} מתוך {t} כרטיסים",
+      psMore:function(n,left){ return "הצג עוד "+n+" (נשארו "+left+")"; },
       psTwoTip:"שני הצדדים כתבו לפחות הודעה אחת – הסימן הזול היחיד לכך שהתחילה שיחה אמיתית, ולא צד אחד שמדבר לחלל",
       psMockTip:"פוסט בדיקה. מוצג כאן בכוונה: זה המסך היחיד שאמור להראות הכל, והסתרה כאן הייתה שקר לגבי מה שקיים במסד",
       psSumSilentTip:"כרטיס שאף אחד לא פנה אליו: בקשה שאיש לא הציע לה עזרה, או הצעה שאיש לא ביקש. נספרים כרטיסים פעילים וגם סגורים.",
@@ -3467,7 +3476,7 @@
       scGdOk:"סגור", scGdOpen:"נפתח מחדש",
       scGdWhen:function(w){ return "נבדק "+w; },
       scGdNull:"לא הצלחנו לקרוא את ההגנות עכשיו. רענון ינסה שוב.",
-      scVBreakin:function(n){ return n===1 ? "ניסיון כניסה דחוף אחד לניהול בחלון הזה - פרטים בחלק 4" : "ניסיונות כניסה דחופים לניהול בחלון הזה: "+n+" - פרטים בחלק 4"; },
+      scVBreakin:function(n){ return n===1 ? "ניסיון כניסה דחוף אחד לניהול בחלון הזה · הפרטים ב«פריצות והגנות» למטה" : "ניסיונות כניסה דחופים לניהול בחלון הזה: "+n+" · הפרטים ב«פריצות והגנות» למטה"; },
       scGdBad:function(n){ return n===1 ? "הגנה אחת נפתחה מחדש - צריך לטפל עכשיו" : "הגנות שנפתחו מחדש: "+n+" - צריך לטפל עכשיו"; },
       scGdNames:{ S1:"מיקום מדויק של מפרסמים חסום למשתמשים", S2:"אי אפשר למחוק התאמה, ואיתה צ'אט ודירוגים",
         S3:"התאמה נוצרת רק דרך השרת", S4:"אי אפשר לזייף או לשנות דירוג", S5:"אי אפשר לערוך או למחוק הודעות בצ'אט",
@@ -3709,8 +3718,8 @@
       tabAds:"Campaigns",
       maTitle:"Meta campaigns", maSub:"Campaign spend and installs against all database signups (ads + organic) · pulled live from Meta on every page refresh",
       maDailyTitle:"Day by day", maDailySub:"What we spent each day, how many installs Meta attributed to itself, and how many people actually signed up that day",
-      maChartTitle:"Spend against signups",
-      maChartSub:"Bars = what we spent that day · line = how many people actually signed up · dashed = what each signup cost",
+      maChartTitle:"What each signup cost, day by day",
+      maChartSub:"Ad spend that day divided by every signup that day (ads and organic) · under ₪25 a signup is good · spend and signups themselves are in the table below",
       maSeriesSpend:"Spend", maSeriesSignups:"All signups", maSeriesCost:"Cost per signup",
       maFilterOn:function(p){ return "filtered to "+p+" · click the card again to clear"; },
       maFilterHint:"click a platform card to filter the chart and the table",
@@ -4208,6 +4217,7 @@
       psSumTotal:"Total", psSumLive:"Live", psSumClosed:"Closed", psSumSilent:"No offer (live and closed)", psSumMock:"Mock",
       psNone:"No card matches this filter",
       psShowing:"Showing {n} of {t} cards",
+      psMore:function(n,left){ return "Show "+n+" more ("+left+" left)"; },
       psTwoTip:"Both sides wrote at least one message \u2013 the only cheap signal that a real exchange started, rather than one side talking into the void",
       psMockTip:"A test post. Shown here on purpose: this is the one screen meant to show everything, and hiding it here would misstate what exists in the database",
       psSumSilentTip:"A card nobody approached: a request no one offered to help with, or an offer no one asked for. Counts live and closed cards.",
@@ -4427,7 +4437,7 @@
       scGdOk:"Closed", scGdOpen:"Reopened",
       scGdWhen:function(w){ return "checked "+w; },
       scGdNull:"Could not read the guards right now. A refresh will retry.",
-      scVBreakin:function(n){ return n===1 ? "One urgent admin access attempt in this window - details in part 4" : "Urgent admin access attempts in this window: "+n+" - details in part 4"; },
+      scVBreakin:function(n){ return n===1 ? "One urgent admin access attempt in this window · details under «Break-ins and guards» below" : "Urgent admin access attempts in this window: "+n+" · details under «Break-ins and guards» below"; },
       scGdBad:function(n){ return n===1 ? "One guard was reopened - act now" : "Guards reopened: "+n+" - act now"; },
       scGdNames:{ S1:"Posters' exact location closed to users", S2:"A match cannot be deleted, nor its chat and ratings",
         S3:"Matches are created by the server only", S4:"Ratings cannot be forged or changed", S5:"Chat messages cannot be edited or deleted",
@@ -6421,11 +6431,13 @@
         var sp=byDay[d].spend, su=suOf(d);
         return { d:d, spend:+sp.toFixed(2), signups:su, cps: su? +(sp/su).toFixed(2) : null };
       });
+      // ONE measure on ONE axis (UX pass 12.10): spend, signups and cost on
+      // two unlabelled y-axes could not be read - which line used which
+      // scale? Spend and signups per day are in the table below; the chart
+      // answers the one question the tab asks: what did a signup cost.
       timeChart("metaChart", crows, [
-        { key:"spend",   name:S.maSeriesSpend,   type:"bar",  color:tok("--s1") },
-        { key:"signups", name:S.maSeriesSignups, type:"line", color:tok("--s3"), axis:1 },
-        { key:"cps",     name:S.maSeriesCost,    type:"line", color:tok("--s2"), axis:1, dashed:true }
-      ], { group:true, axis2:true, zoom:days.length>21, fadeLast:true });
+        { key:"cps", name:S.maSeriesCost, type:"bar", color:tok("--s1") }
+      ], { zoom:days.length>21, fadeLast:true });
     }
     var cls=cost7==null? "" : (cost7<25? "good" : (cost7<=35? "warn" : "bad"));
     panelRead("metaAdsSummary", cls,
@@ -7552,6 +7564,8 @@
   // and never shows a closed one - which is the half worth reviewing. Measured
   // the day this was built: his deck could reach 133 of the 180 that exist.
   var PS_TYPE="all", PS_STATUS="all", PS_RESP="all", PS_SORT="new", PS_Q="";
+  // 50 rows at a time (UX pass 12.10): 327 rows made a 17,000px page
+  var PS_PAGE=50, PS_LIMIT=PS_PAGE;
 
   function psAge(d){
     if(d==null) return "-";
@@ -7659,7 +7673,7 @@
       h.innerHTML="";
       opts.forEach(function(o){
         var b=el("button",cur===o.id?"on":null,o.label+(o.n==null?"":" · "+o.n));
-        b.onclick=function(){ set(o.id); renderPosts(); };
+        b.onclick=function(){ set(o.id); PS_LIMIT=PS_PAGE; renderPosts(); };
         h.appendChild(b);
       });
     }
@@ -7705,7 +7719,7 @@
     var sb=$("psSearch");
     if(sb && !sb.dataset.wired){
       sb.dataset.wired="1";
-      sb.addEventListener("input",function(){ PS_Q=this.value; renderPosts(); });
+      sb.addEventListener("input",function(){ PS_Q=this.value; PS_LIMIT=PS_PAGE; renderPosts(); });
     }
     if(sb && sb.value!==PS_Q) sb.value=PS_Q;
 
@@ -7723,8 +7737,8 @@
     });
 
     var cnt=$("psCount");
-    if(cnt) cnt.textContent=S.psShowing.split("{n}").join(fmt(rows.length))
-                                       .split("{t}").join(fmt(PS_STATUS==="mock"? P.length-R.length : R.length));
+    if(cnt) cnt.textContent=S.psShowing.split("{n}").join(fmt(Math.min(rows.length,PS_LIMIT)))
+                                       .split("{t}").join(fmt(rows.length));
     if(!rows.length){ emptyState(host,S.psNone,"file"); return; }
 
     var t=el("table","plain");
@@ -7739,7 +7753,7 @@
     });
     t.appendChild(hr);
 
-    rows.forEach(function(p){
+    rows.slice(0,PS_LIMIT).forEach(function(p){
       var tr=el("tr", p.is_active? null : "psclosed");
 
       // title + the first line of the description: the card as the neighbour
@@ -7841,6 +7855,13 @@
       t.appendChild(tr);
     });
     host.appendChild(t);
+    if(rows.length>PS_LIMIT){
+      var left=rows.length-PS_LIMIT;
+      var mb=el("button","linklike psmore", S.psMore(fmt(Math.min(PS_PAGE,left)), fmt(left)));
+      mb.type="button";
+      mb.addEventListener("click",function(){ PS_LIMIT+=PS_PAGE; renderPosts(); });
+      host.appendChild(mb);
+    }
   }
 
   // ---- send a message to one user -----------------------------------------
@@ -9714,6 +9735,9 @@
       b.addEventListener("click",function(){ brRowsOpen[id]=!open; renderBrief(); });
       var after=rows[rows.length-1].nextSibling;
       h.insertBefore(b, after);
+      // "show 4 more" and "and 9 more waiting" under one list read as two
+      // different counts; the server's remainder shows once the list is open
+      h.querySelectorAll(".brmore").forEach(function(m){ m.classList.toggle("hidden", !open); });
     });
     brInfoTips();
   }
@@ -9847,7 +9871,7 @@
         var t=el("div",null,pushTitleFor(r.type));
         if(r.weak) t.appendChild(el("span","pnweak",S.pnEffWeak));
         nm.appendChild(t);
-        nm.appendChild(el("div","pnkey",r.type));
+        nm.title=r.type;
 
         var cell=el("div","pnratio");
         cell.appendChild(pushRateCell(actedWin(r), r.sent, r.weak));
@@ -9990,7 +10014,8 @@
       ], H.map(function(r){
         var nm=el("div");
         nm.appendChild(el("div",null,pushTitleFor(r.type)));
-        nm.appendChild(el("div","pnkey",r.type+" · "+r.pct+"%"));
+        nm.appendChild(el("div","pnkey",r.pct+"%"));
+        nm.title=r.type;
         // A lift is only reportable once the z-test clears; until then the
         // honest cell is the sample size, not a number that looks like a result.
         var verdict = r.significant ? S.pnHoSig(String(r.z))
@@ -10110,7 +10135,7 @@
         var base=r.delivered||r.sent;
         var nm=el("div");
         nm.appendChild(el("div",null,pushTitleFor(r.type)));
-        nm.appendChild(el("div","pnkey",r.type));
+        nm.title=r.type;
         return [
           {node:nm},
           fmt(r.sent),
@@ -11527,7 +11552,7 @@
     if(gBad) items.push(["bad", S.scGdBad(gBad)]);
     var urgent=gd ? scArr(gd.refusals).filter(function(r){
       return r && (r.reason==="mfa_required" || r.reason==="admin_email_not_google"); }).length : 0;
-    if(urgent) items.push(["warn", S.scVBreakin(urgent)]);
+    if(urgent) items.push(["warn", S.scVBreakin(urgent), "secScGd"]);
     down.forEach(function(m){
       items.push(["bad", S.scVMonDown("<b>"+exEsc(scPlain(scMon(m.check)))+"</b>",
         m.since ? exEsc(scPlain(ifWhen(m.since))) : null)]);
@@ -11539,7 +11564,13 @@
     if(holds.length) items.push(["warn", S.scVHolds(holds.length)]);
     if(att.tot.inv) items.push(["warn", S.scVInvalid(fmt(att.tot.inv))]);
     if(!items.length){ ifVerdict(head, "lead good", S.scVQuiet); return; }
-    items.forEach(function(it){ ifVerdict(head, "lead "+it[0], it[1]); }); // trusted: dictionary + escaped server text
+    items.forEach(function(it){
+      ifVerdict(head, "lead "+it[0], it[1]); // trusted: dictionary + escaped server text
+      // a line that names a section below takes you there (sections fold now)
+      var v=head.lastElementChild;
+      if(it[2] && v){ v.classList.add("clickable"); v.style.cursor="pointer";
+        v.addEventListener("click",function(){ openSec(it[2]); var h=$(it[2]); if(h) h.scrollIntoView({behavior:"smooth",block:"start"}); }); }
+    });
   }
 
   function scRenderTiles(att){
