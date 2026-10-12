@@ -1836,8 +1836,8 @@
   #metricsView #tipLine { display:none; }
   /* folded sections read as a list of topics: a hairline between them, the
      brief right under its title */
-  #metricsView .sechead.toggle { border-top:1px solid var(--hairline); padding-top:22px; margin-top:22px; margin-bottom:8px; }
-  #metricsView .sechead.toggle:hover { color:var(--s1); }
+  #app .sechead.toggle { border-top:1px solid var(--hairline); padding-top:22px; margin-top:22px; margin-bottom:8px; }
+  #app .sechead.toggle:hover { color:var(--s1); }
   @media (max-width:720px){ #metricsView .mlede { font-size:16px; } }
   /* ---- morning screen v3: the investor-page reading ------------------- */
   #briefView .brlede { font-size:18px; line-height:1.5; color:var(--ink); margin:10px 0 6px; max-width:62ch;
@@ -2298,7 +2298,7 @@
       <p class="note ifage" id="ifAge"></p>
       <div class="tiles iftiles" id="ifTiles"></div>
 
-      <div class="sechead" style="--sec-c:var(--s1)" data-i18n="ifSecLoad">עומס לאורך זמן</div>
+      <div class="sechead" id="secIfLoad" style="--sec-c:var(--s1)" data-i18n="ifSecLoad">עומס לאורך זמן</div>
       <div class="filters ifwinbar">
         <span class="blfgrp"><span class="cap" data-i18n="ifWinL">חלון</span>
           <span class="seg" id="ifWinSeg">
@@ -2336,7 +2336,7 @@
         </section>
       </div>
 
-      <div class="sechead" style="--sec-c:var(--s3)" data-i18n="ifSecExplain">מה המספרים אומרים</div>
+      <div class="sechead" id="secIfExplain" style="--sec-c:var(--s3)" data-i18n="ifSecExplain">מה המספרים אומרים</div>
       <section class="panel" style="opacity:1;transform:none">
         <h2 data-i18n="ifExTitle">איך לקרוא את המסך</h2>
         <div id="ifExplain"></div>
@@ -2349,7 +2349,7 @@
          a server-samples failure must not hide the backups, nor the reverse.
          PUBLIC file: every number, date and size arrives after sign-in. -->
     <div id="bkWrap">
-      <div class="sechead" style="--sec-c:var(--s7)" data-i18n="bkSec">גיבויים ושמירת נתונים</div>
+      <div class="sechead" id="secIfBackup" style="--sec-c:var(--s7)" data-i18n="bkSec">גיבויים ושמירת נתונים</div>
       <div id="bkHead"></div>
       <div id="bkBody" class="hidden">
         <section class="panel" style="opacity:1;transform:none">
@@ -2391,7 +2391,7 @@
       <div class="tiles extiles" id="exTiles"></div>
       <p class="note warn exapprox hidden" id="exApprox"></p>
 
-      <div class="sechead" style="--sec-c:var(--s1)" data-i18n="exSecMoney">לאן הכסף הולך</div>
+      <div class="sechead" id="secExMoney" style="--sec-c:var(--s1)" data-i18n="exSecMoney">לאן הכסף הולך</div>
       <section class="panel" style="opacity:1;transform:none">
         <h2 data-i18n="exChTitle">הוצאות לפי חודש</h2>
         <div class="sub" data-i18n="exChSub"></div>
@@ -2404,7 +2404,7 @@
         <div class="extblwrap" id="exTable"></div>
       </section>
 
-      <div class="sechead" style="--sec-c:var(--s3)" data-i18n="exSecLedger">מה הוזן</div>
+      <div class="sechead" id="secExLedger" style="--sec-c:var(--s3)" data-i18n="exSecLedger">מה הוזן</div>
       <section class="panel" style="opacity:1;transform:none">
         <h2 data-i18n="exLedTitle">ההוצאות הקבועות והחד-פעמיות שלי</h2>
         <div class="sub" data-i18n="exLedSub"></div>
@@ -2434,7 +2434,7 @@
       </div>
       <div class="tiles iftiles sctiles" id="scTiles"></div>
 
-      <div class="sechead" style="--sec-c:var(--s1)" data-i18n="scSecOtp">קודי אימות בטלפון</div>
+      <div class="sechead" id="secScOtp" style="--sec-c:var(--s1)" data-i18n="scSecOtp">קודי אימות בטלפון</div>
       <section class="panel" style="opacity:1;transform:none">
         <h2><span data-i18n="scChTitle">קודים לפי יום</span> <span class="pntag" id="scCover"></span></h2>
         <div class="sub" data-i18n="scChSub"></div>
@@ -2459,7 +2459,7 @@
         <div class="extblwrap" id="scTop"></div>
       </section>
 
-      <div class="sechead" style="--sec-c:var(--s8)" data-i18n="scSecMod">תוכן ומשתמשים</div>
+      <div class="sechead" id="secScMod" style="--sec-c:var(--s8)" data-i18n="scSecMod">תוכן ומשתמשים</div>
       <section class="panel" style="opacity:1;transform:none">
         <h2 data-i18n="scHoldTitle">פוסטים שמחכים להחלטה</h2>
         <div class="sub" data-i18n="scHoldSub"></div>
@@ -2472,7 +2472,7 @@
         <div class="extblwrap" id="scBans"></div>
       </section>
 
-      <div class="sechead" style="--sec-c:var(--s3)" data-i18n="scSecSys">השמירה עצמה</div>
+      <div class="sechead" id="secScSys" style="--sec-c:var(--s3)" data-i18n="scSecSys">השמירה עצמה</div>
       <div class="grid2">
         <section class="panel" style="opacity:1;transform:none">
           <h2 data-i18n="scMonTitle">מוניטורים</h2>
@@ -2491,7 +2491,7 @@
         <div class="extblwrap" id="scAlerts"></div>
       </section>
 
-      <div class="sechead" style="--sec-c:var(--s5)" data-i18n="scSecGd">פריצות והגנות</div>
+      <div class="sechead" id="secScGd" style="--sec-c:var(--s5)" data-i18n="scSecGd">פריצות והגנות</div>
       <section class="panel" style="opacity:1;transform:none">
         <h2><span data-i18n="scGdTitle">ההגנות הקבועות</span> <span class="pntag" id="scGdWhen"></span></h2>
         <div class="sub" data-i18n="scGdSub"></div>
@@ -2605,13 +2605,13 @@
     </section>
     <div class="tiles" id="pnTiles"></div>
 
-    <div class="sechead" style="--sec-c:var(--s1)" data-i18n="pnSecWorks">האם ההתראות משיגות משהו</div>
+    <div class="sechead" id="secPnWorks" style="--sec-c:var(--s1)" data-i18n="pnSecWorks">האם ההתראות משיגות משהו</div>
     <section class="panel wide" style="opacity:1;transform:none">
       <h2><span data-i18n="pnEffTitle">האם ההתראות עובדות</span> <span class="pntag" data-i18n="pnAllTime">כל הזמן</span></h2>
       <div class="sub" data-i18n="pnEffSub"></div>
       <div id="pnEff"></div>
     </section>
-    <div class="sechead" style="--sec-c:var(--s3)" data-i18n="pnSecDelivery">האם הן בכלל הגיעו</div>
+    <div class="sechead" id="secPnDelivery" style="--sec-c:var(--s3)" data-i18n="pnSecDelivery">האם הן בכלל הגיעו</div>
     <div class="filters pnwinbar">
       <span class="blfgrp"><span class="cap" data-i18n="pnWinL">חלון</span>
         <span class="seg" id="pnWinSeg">
@@ -2633,7 +2633,7 @@
       <div class="sub" data-i18n="pnHoSub"></div>
       <div id="pnHoldout"></div>
     </section>
-    <div class="sechead" style="--sec-c:var(--s5)" data-i18n="pnSecQuestion">השאלות שאנחנו שואלים</div>
+    <div class="sechead" id="secPnQuestion" style="--sec-c:var(--s5)" data-i18n="pnSecQuestion">השאלות שאנחנו שואלים</div>
     <section class="panel wide" style="opacity:1;transform:none">
       <h2 data-i18n="pnQTitle">השאלה ששאלנו</h2>
       <div class="sub" data-i18n="pnQSub"></div>
@@ -5892,11 +5892,15 @@
     var fold=t.closest("details"); if(fold && !fold.open) fold.open=true;
     // the destination may live inside a collapsed section (the phone default) -
     // scrolling to display:none goes nowhere, so open its section first
-    var top=surface;
-    while(top.parentElement && top.parentElement.id!=="metricsView") top=top.parentElement;
-    var head=top;
-    while(head && !(head.classList && head.classList.contains("sechead"))) head=head.previousElementSibling;
-    if(head && typeof openSec==="function") openSec(head.id);
+    // sections are sibling-based (a .sechead, then its blocks), on any tab:
+    // the nearest .sechead before the target or one of its ancestors owns it
+    var up=surface, head=null;
+    while(up && up!==document.body && !head){
+      var sib=up.previousElementSibling;
+      while(sib && !(sib.classList && sib.classList.contains("sechead"))) sib=sib.previousElementSibling;
+      if(sib) head=sib; else up=up.parentElement;
+    }
+    if(head && head.id && typeof openSec==="function") openSec(head.id);
     surface.scrollIntoView({behavior:"smooth",block:"center"});
     document.querySelectorAll(".landed").forEach(function(n){ n.classList.remove("landed"); });
     if(landTimer) clearTimeout(landTimer);
@@ -9758,7 +9762,9 @@
       // a timer, not requestAnimationFrame: rAF never fires in a background
       // tab, so one early mutation left pend=true and nothing folded until
       // the tab was looked at again (found 12.10 in the full check)
-      setTimeout(function(){ pend=false; infoTips(); }, 30);
+      // the status dots of folded sections follow whatever tab just rendered
+      // (updateSecStatus writes only on a change, so it cannot re-trigger this)
+      setTimeout(function(){ pend=false; infoTips(); if(typeof updateSecStatus==="function") updateSecStatus(); }, 30);
     // class/hidden too: a tab switch or an opened section only toggles a
     // class, and prose can only be measured once it is on screen
     }).observe(app,{childList:true,subtree:true,characterData:true,
@@ -12179,7 +12185,12 @@
   // ---- collapsible sections: summary-first, phone-first --------------------
   // A collapsed section keeps its title + one-line brief (the summary strip);
   // the phone starts collapsed, the desktop open; the user's choice persists.
-  var SEC_IDS=["secGrowth","secMarket","secChat","secRetention","secUsers","secEvents","secSafety"];
+  var SEC_IDS=["secGrowth","secMarket","secChat","secRetention","secUsers","secEvents","secSafety",
+    // the other tabs fold the same way (12.10): their FIRST section starts
+    // open - it is what the tab is for - the rest start folded to the title
+    "secIfLoad","secIfExplain","secIfBackup","secExMoney","secExLedger",
+    "secScOtp","secScMod","secScSys","secScGd","secPnWorks","secPnDelivery","secPnQuestion"];
+  var SEC_OPEN_DEFAULT={secIfLoad:1, secExMoney:1, secScOtp:1, secPnWorks:1};
   var secOpen={};
   try{ secOpen=JSON.parse(localStorage.getItem("helpy_console_secopen2")||"{}"); }catch(e){}
   function secBlocks(id){
@@ -12192,7 +12203,7 @@
     if(Object.prototype.hasOwnProperty.call(secOpen,id)) return !!secOpen[id];
     // folded by default everywhere: the brief says what is inside, the reader
     // opens what they need (the key moved to ...secopen2 so old choices reset)
-    return false;
+    return !!SEC_OPEN_DEFAULT[id];
   }
   function applySec(id){
     var open=isSecOpen(id);
@@ -12215,7 +12226,7 @@
   function secChevron(h){
     var c=h.querySelector(".secchev");
     if(!c){ c=el("span","secchev"); var ic=icon("chevdown",16); ic.classList.add("chev"); c.appendChild(ic); }
-    h.appendChild(c);
+    if(h.lastElementChild!==c) h.appendChild(c);
   }
   SEC_IDS.forEach(function(id){
     var h=$(id); if(!h) return;
@@ -12243,14 +12254,14 @@
       if(h){
         var d=h.querySelector(".secdot");
         if(!d){ d=el("span","secdot"); h.appendChild(d); }
-        d.className=cls;
+        if(d.className!==cls) d.className=cls;
         secChevron(h);
       }
       var a=document.querySelector('#rail a[data-t="'+id+'"]');
       if(a){
         var d2=a.querySelector(".secdot");
         if(!d2){ d2=el("span","secdot"); a.appendChild(d2); }
-        d2.className=cls;
+        if(d2.className!==cls) d2.className=cls;
       }
     });
   }
