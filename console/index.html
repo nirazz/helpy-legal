@@ -1838,6 +1838,10 @@
   .infotip::after { font-weight:400; }
   #briefView .brrowsmore { margin-top:8px; font-size:12.5px; color:var(--s1); }
   #briefView .sechead { margin-top:32px; }
+  /* an icon inside a tile is an icon, not a sparkline: '.tile svg' (block,
+     margin, and width:100% on a phone) is meant for the trend line only */
+  .tile .sub svg.ico, .tile .brdelta svg.ico, .tile .delta svg.ico {
+      display:inline-block; width:12px; height:12px; margin:0; flex-shrink:0; }
 </style>
 </head>
 <body>
