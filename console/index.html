@@ -1746,6 +1746,50 @@
   /* a snapshot weeks old: the age chip turns red and breathes once */
   .panel h2 .stale.old { color:#fff; background:var(--bad-text); border-color:transparent;
                          cursor:help; }
+
+  /* ---- header fit (2026-10-12) ----------------------------------------
+     The underline tabs (text + icon) are ~965px wide, so between the phone
+     layout and ~1500px the row could not hold brand + tabs + utilities: the
+     overflow pushed the brand and the time off the right edge (Nir's
+     screenshot, 12.10) or the utilities off the left. Now the brand and the
+     utilities never shrink, and the TAB STRIP takes what is left and scrolls
+     sideways inside it (Linear's model) - nothing is ever clipped by the page
+     edge. Icons go first when room is short, so most widths need no scroll. */
+  @media (min-width:721px){
+    header { flex-wrap:nowrap; }
+    header .grow { display:none; }
+    header .brand { flex:0 0 auto; overflow:visible; }
+    header .brand small { overflow:visible; text-overflow:clip; flex-shrink:0; white-space:nowrap; }
+    header .hactions { flex:0 0 auto; flex-wrap:nowrap; }
+    #tabs { flex:1 1 auto; min-width:0; overflow-x:auto; overflow-y:hidden;
+            scrollbar-width:none; justify-content:flex-start; }
+    #tabs::-webkit-scrollbar { display:none; }
+    #tabs button { flex-shrink:0; white-space:nowrap; }
+    /* centred while it fits, start-aligned once it scrolls: justify-content
+       centre would push the first tabs out of reach on the scrolling side */
+    #tabs > button:first-child { margin-inline-start:auto; }
+    #tabs > button:last-child { margin-inline-end:auto; }
+  }
+  @media (min-width:721px) and (max-width:1499px){
+    header #tabs button { padding:0 9px; gap:0; }
+    header #tabs button .ico { display:none; }
+    header .brand .bn { display:none; }
+  }
+  /* where the strip scrolls, its far edge fades: a tab cut by a hard edge
+     reads as broken, a faded one reads as "more this way" */
+  @media (min-width:721px) and (max-width:1060px){
+    html[dir="rtl"] #tabs { -webkit-mask-image:linear-gradient(to right, transparent 0, #000 36px);
+                            mask-image:linear-gradient(to right, transparent 0, #000 36px); }
+    html[dir="ltr"] #tabs { -webkit-mask-image:linear-gradient(to left, transparent 0, #000 36px);
+                            mask-image:linear-gradient(to left, transparent 0, #000 36px); }
+  }
+  /* utilities collapse to icons before the strip has to scroll */
+  @media (min-width:721px) and (max-width:1199px){
+    header .ghost > span:not(.ico):not(#refreshIcon) { display:none; }
+    header .ghost { padding:0 9px; gap:0; }
+    .live > span[data-i18n] { display:none; }
+    .live { padding:0 9px; }
+  }
 </style>
 </head>
 <body>
