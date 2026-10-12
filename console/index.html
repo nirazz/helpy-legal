@@ -114,6 +114,11 @@
                 cursor:pointer; color:var(--ink2); font-size:13px; }
   .seg button.on { background:var(--surface); color:var(--ink); font-weight:600;
                    box-shadow:0 1px 3px rgba(45,45,100,0.16); }
+  /* a window longer than the log itself: still clickable, visibly empty-handed */
+  .seg button.nodata { opacity:.45; }
+  .seg button.nodata.on { opacity:1; }
+  .scwinhint { font-size:12.5px; color:var(--ink2); background:var(--plane);
+               border:1px dashed var(--hairline); border-radius:999px; padding:4px 12px; }
   .ghost { border:1px solid var(--hairline); background:none; border-radius:8px;
            padding:5px 14px; cursor:pointer; color:var(--ink2); font-size:13px; }
   .ghost:hover { background:var(--wash-hover); }
@@ -2231,6 +2236,7 @@
             <button data-d="14" class="on" data-i18n="scW14">14 ימים</button>
             <button data-d="30" data-i18n="scW30">30 יום</button>
           </span></span>
+        <span class="scwinhint hidden" id="scWinHint"></span>
       </div>
       <div class="tiles iftiles sctiles" id="scTiles"></div>
 
@@ -3213,6 +3219,8 @@
       scChTitle:"קודים לפי יום",
       scChSub:"כל עמודה היא יום: למטה הקודים שנשלחו, מעליהם הקודים שנחסמו, לפי הסיבה.",
       scSpan:function(d){ return d+" ימים אחרונים"; }, scSince:function(d){ return "מאז "+d+" (תחילת המדידה)"; },
+      scWinHint:function(d){ return "יש נתונים רק מאז "+d+" (תחילת המדידה)"; },
+      scWinNoData:"עדיין אין נתונים לכל התקופה הזו",
       scChEmpty:"לא נשלח ולא נחסם אף קוד בחלון הזה.",
       scSerSent:"נשלחו", scSerRefused:"נחסמו", scSerOther:"נחסמו - סיבה לא ידועה",
       scReasons:{ global_brake:"בלם חירום (40 ב-10 דקות)", global_day:"תקרה יומית (60 ביום)",
@@ -4160,6 +4168,8 @@
       scChTitle:"Codes per day",
       scChSub:"Each bar is a day: codes sent at the bottom, codes refused on top, by reason.",
       scSpan:function(d){ return "last "+d+" days"; }, scSince:function(d){ return "since "+d+" (when logging began)"; },
+      scWinHint:function(d){ return "Data only since "+d+" (when logging began)"; },
+      scWinNoData:"Not enough data yet for this whole period",
       scChEmpty:"No code was sent or refused in this window.",
       scSerSent:"Sent", scSerRefused:"Refused", scSerOther:"Refused - reason unknown",
       scReasons:{ global_brake:"Emergency brake (40 in 10 min)", global_day:"Daily ceiling (60 a day)",
@@ -11037,6 +11047,23 @@
     var t=new Date(f).getTime(); if(!(t > Date.now()-days*86400000)) return null;
     return fmtDay(new Date(t).toLocaleDateString("sv-SE",{timeZone:"Asia/Jerusalem"}));
   }
+  // the window buttons offer 7/14/30 days even while the log is two days old -
+  // every one of them then draws the same bars. Dim each button the log does
+  // not yet cover and say once, beside them, where the data starts.
+  function scWinMark(){
+    var hint=$("scWinHint"), f=SEC && SEC.otp_first_at;
+    var il=function(t){ return new Date(t).toLocaleDateString("sv-SE",{timeZone:"Asia/Jerusalem"}); };
+    var logDays= f ? Math.round((Date.parse(il(Date.now()))-Date.parse(il(f)))/86400000)+1 : Infinity;
+    var short=false;
+    document.querySelectorAll("#scWinSeg button").forEach(function(b){
+      var no= +b.getAttribute("data-d") > logDays;
+      b.classList.toggle("nodata", no);
+      if(no){ b.title=S.scWinNoData; short=true; } else b.removeAttribute("title");
+    });
+    if(!hint) return;
+    hint.textContent= short ? S.scWinHint(fmtDay(il(f))) : "";
+    hint.classList.toggle("hidden", !short);
+  }
   function scWinNote(days){ var d=scLogStart(days); return d? S.scSince(d) : S.scInDays(days); }
   function loadSecurity(){
     // the #security deep link switches tabs before the session is restored;
@@ -11108,6 +11135,7 @@
     body.classList.remove("hidden");
     var att=scAttStats(SEC.attestation);
     scRenderVerdict(head, att);
+    scWinMark();
     scRenderTiles(att);
     scRenderChart();
     scRenderAttest(att);
