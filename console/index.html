@@ -44,6 +44,7 @@
     --shadow-md:0 1px 2px rgba(16,24,40,0.05), 0 4px 12px rgba(16,24,40,0.06);
     --shadow-lg:0 4px 8px rgba(16,24,40,0.06), 0 16px 40px rgba(16,24,40,0.12);
     --num-glow:none;
+    --meas:#9aa1ad;
     --font:"Inter","Heebo",system-ui,-apple-system,"Segoe UI",sans-serif;
   }
   /* dark: Linear's near-black, not a coloured "space" */
@@ -63,6 +64,7 @@
     --shadow-sm:0 0 0 1px rgba(0,0,0,0.2);
     --shadow-md:0 1px 2px rgba(0,0,0,0.4), 0 4px 14px rgba(0,0,0,0.35);
     --shadow-lg:0 8px 32px rgba(0,0,0,0.55);
+    --meas:#5b616c;
   }
   * { box-sizing:border-box; margin:0; }
   html { background:var(--plane); }
@@ -71,6 +73,9 @@
          font-feature-settings:"cv11","ss03";
          -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
   ::selection { background:rgba(79,70,229,0.18); }
+  html[data-theme="dark"] ::selection { background:rgba(129,140,248,0.28); }
+  html { scrollbar-width:thin; scrollbar-color:var(--border-strong) transparent; }
+  input[type=checkbox], input[type=radio] { accent-color:var(--s1); }
   :focus-visible { outline:2px solid var(--s1); outline-offset:2px; }
   button { font:inherit; color:inherit; }
 
@@ -135,7 +140,7 @@
     #rail:not(.hidden) ~ main { max-width:calc(100vw - 400px); }
   }
   #rail a:hover { background:var(--wash-hover); }
-  #rail a.on { background:var(--grid); color:var(--ink); font-weight:600; }
+  #rail a.on { background:var(--wash1); color:var(--s1); font-weight:600; }
   @media (max-width:1400px){
     /* --hdr-h is measured from the real header (JS, on resize/lang change):
        the header wraps to two rows on a phone, so a hard-coded 50px parked the
@@ -149,7 +154,7 @@
     #rail a { flex-shrink:0; font-size:12.5px; padding:5px 12px;
               border:1px solid var(--hairline); border-radius:999px;
               white-space:nowrap; }
-    #rail a.on { border-color:var(--ink); background:var(--ink); color:var(--surface); }
+    #rail a.on { border-color:transparent; background:var(--wash1); color:var(--s1); }
   }
   /* a jump target has to clear BOTH sticky strips, not a guessed 64px */
   .sechead, #overviewTop { scroll-margin-top:calc(var(--chrome-h,64px) + 8px); }
@@ -171,7 +176,7 @@
   .verdict.bad  { background:var(--bad-bg); border-color:transparent; }
   .verdict b { font-variant-numeric:tabular-nums; }
   /* the tone icon: one Lucide stroke per tone, coloured by the tone itself */
-  .verdict .vi { flex-shrink:0; display:flex; margin-top:1px; color:var(--s1); }
+  .verdict .vi { flex-shrink:0; display:flex; margin-top:1px; color:var(--muted); }
   .verdict.good .vi { color:var(--good-text); }
   .verdict.warn .vi { color:var(--warning); }
   .verdict.bad  .vi { color:var(--bad-text); }
@@ -229,7 +234,7 @@
   .brbar { position:relative; height:6px; border-radius:3px; background:var(--grid); overflow:hidden;
            flex:1 1 120px; min-width:80px; direction:ltr; }
   .brbar i { position:absolute; inset:0 auto 0 0; border-radius:3px;
-             background:var(--s1); }
+             background:var(--meas); }
   .brbar i.warn { background:var(--warning); } .brbar i.bad { background:var(--bad-text); }
   .brnote { font-size:12px; color:var(--muted); margin-top:8px; line-height:1.5; }
   .brstat { display:flex; flex-wrap:wrap; gap:10px 26px; margin:4px 0 2px; }
@@ -442,13 +447,16 @@
   .bullet i { position:absolute; display:block; }
   .bullet .band { top:0; bottom:0; }
   .bullet .bval { top:3px; bottom:3px; left:0; border-radius:2px;
-                  background:var(--s1);
+                  background:var(--meas);
                   transition:width .7s cubic-bezier(.2,.8,.2,1); }
   .bullet .btgt { top:-1px; bottom:-1px; width:2px; background:var(--ink2); }
   .tile .sub { display:flex; align-items:baseline; gap:8px; min-height:18px; }
   .tile .delta { font-size:12px; font-weight:600; }
   /* colored delta pills (tile + cmp) */
-  .delta.up, .delta.down { padding:1px 6px; border-radius:6px; font-variant-numeric:tabular-nums; }
+  .delta.up, .delta.down { padding:1px 6px; border-radius:6px; font-variant-numeric:tabular-nums;
+      white-space:nowrap; flex-shrink:0; display:inline-flex; align-items:center; gap:3px; }
+  .delta .ico { flex-shrink:0; }
+  .tile .sub { flex-wrap:wrap; row-gap:2px; }
   .delta.up { color:var(--good-text); background:var(--good-bg); }
   .delta.down { color:var(--bad-text); background:var(--bad-bg); }
   .tile .vs { font-size:11px; color:var(--muted); }
@@ -492,6 +500,11 @@
   .pubsum b { color:var(--ink); font-weight:700; margin-inline-end:5px; }
   .pubgrid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
   @media (max-width:880px){ .pubgrid{ grid-template-columns:1fr; } }
+  /* the two site-page groups are columns of one panel, not cards in it */
+  .panel .pubgrp { border:0; box-shadow:none; background:none; padding:0; }
+  .panel .pubgrid { gap:32px; }
+  @media (min-width:881px){
+    .panel .pubgrp + .pubgrp { border-inline-start:1px solid var(--hairline); padding-inline-start:32px; } }
   .pubgrp { border:1px solid var(--hairline); border-radius:10px; background:var(--surface); box-shadow:var(--shadow-sm);
             padding:18px 18px 16px; min-width:0; }
 
@@ -743,7 +756,7 @@
                   padding:12px 16px; cursor:pointer; gap:12px; align-items:center; }
   .convo>button:hover { background:var(--wash-hover); }
   .avatars { display:flex; }
-  .av { width:34px; height:34px; border-radius:50%; background:var(--wash1); color:var(--s1);
+  .av { width:34px; height:34px; border-radius:50%; background:var(--grid); color:var(--ink2);
         display:flex; align-items:center; justify-content:center; font-weight:600; font-size:14px;
         border:2px solid var(--surface); }
   .av+.av { margin-inline-start:-6px; }
@@ -894,7 +907,7 @@
   .archnode:hover { border-color:var(--border-strong); box-shadow:var(--shadow-md); }
   .archnode .nl { font-size:13px; font-weight:600; display:flex; align-items:center; gap:6px; }
   .archnode .ns { font-size:12px; color:var(--muted); margin-top:2px; }
-  .archnode .nv { font-size:12px; color:var(--s1); font-weight:700;
+  .archnode .nv { font-size:12px; color:var(--ink); font-weight:600;
       font-variant-numeric:tabular-nums; margin-top:3px; }
   .archnode i.dotc { width:8px; height:8px; border-radius:2px; flex-shrink:0; }
   .archnode.lit { border-color:var(--s1); box-shadow:var(--ring); }
@@ -947,7 +960,6 @@
      box, which reads as an unfinished nesting rather than as one control */
   .blfgrp .seg { border-color:transparent; background:transparent; padding:0; }
   /* native checkboxes default to the browser's blue; tie them to the brand */
-  .blfgrp.checks input[type=checkbox] { accent-color:var(--s1); }
   /* ordering is not filtering: push it to the far end of the row */
   .blfgrp.sortgrp { margin-inline-start:auto; }
   /* the checkbox set is one control group, and its labels are long */
@@ -1005,6 +1017,10 @@
       padding-top:5px; border-top:1px dashed var(--hairline); }
   .blmeta .bleff.alone { margin-top:0; padding-top:0; border-top:0; }
   .blempty { color:var(--muted); font-size:13px; padding:18px 2px; }
+  /* inside a panel the backlog items are ROWS, not cards in a card */
+  .panel .blitem { border:0; border-top:1px solid var(--hairline); border-radius:0;
+      box-shadow:none; background:none; margin:0; padding:14px 0; }
+  .panel .blitem:first-of-type, .panel .blgrouphead + .blitem { border-top:0; }
   /* The stamp exists so a stale backlog announces itself instead of looking
      current. It escalates on purpose: a quiet grey dot is not a signal. */
   .blupd { display:inline-flex; align-items:center; gap:7px; font-size:12px;
@@ -1178,7 +1194,7 @@
   #tabs button:hover:not(.on)::after { background:var(--baseline); }
   #tabs button:hover:not(.on) .ico { opacity:.9; }
   #tabs button.on { background:none; color:var(--ink); font-weight:600; box-shadow:none; }
-  #tabs button.on::after { background:var(--ink); }
+  #tabs button.on::after { background:var(--s1); }
   #tabs button.on .ico { opacity:1; color:var(--ink); }
   html[data-theme="dark"] #tabs button.on { background:none; box-shadow:none; }
   .hactions { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
@@ -1201,6 +1217,8 @@
   header .ghost.danger:hover .ico { color:var(--bad-text); }
   html[dir="rtl"] #logoutBtn .ico { transform:scaleX(-1); }
   header .ghost.iconly { width:32px; padding:0; justify-content:center; gap:0; }
+  html[data-theme="dark"] header .ghost, html[data-theme="dark"] .live { border-color:var(--border-strong); }
+  html[data-theme="dark"] header .ghost .ico { opacity:.9; }
   /* ONE row from 1100px. Measured by arithmetic (no layout engine here): at
      1728 the tabs (~905px) + icon-only utilities (~380) + brand (~300) fit; at
      1440 they did not, so below 1600 the wordmark goes (the pulsing dot and
@@ -1274,11 +1292,11 @@
        icon plus the button's own title attribute carries the meaning here.
        #refreshIcon is the refresh button's icon HOST (the spinner target), not
        a label - hiding it left an empty button. */
-    header .ghost { height:34px; padding:0 9px; gap:0; }
+    header .ghost { height:40px; padding:0 10px; gap:0; }
     header .ghost > span:not(.ico):not(#refreshIcon) { display:none; }
     #refreshBtn { padding:0 9px; }
-    header .ghost.iconly { width:36px; }
-    .live { height:34px; padding:0 9px; gap:7px; font-size:12px; }
+    header .ghost.iconly { width:40px; }
+    .live { height:40px; padding:0 10px; gap:7px; font-size:12px; }
     .live > span[data-i18n] { display:none; }
     /* the tab strip is the primary navigation and it was CLIPPED: four tabs
        need ~415px, the row offered 366, and html{overflow-x:clip} silently ate
@@ -1331,7 +1349,7 @@
   .pacetrack { position:relative; height:10px; border-radius:5px;
                background:var(--grid); }
   .pacetrack .pfill { position:absolute; top:0; bottom:0; inset-inline-start:0; border-radius:5px;
-               background:var(--s1);
+               background:var(--meas);
                transition:width .7s cubic-bezier(.2,.8,.2,1); }
   .pacetrack .pmark { position:absolute; top:-4px; bottom:-4px; width:2px;
                background:var(--ink2); border-radius:1px; }
@@ -1368,7 +1386,7 @@
   .meter { height:4px; border-radius:2px; background:var(--grid); margin-top:7px;
            overflow:hidden; }
   .meter i { display:block; height:100%; border-radius:2px;
-             background:var(--s1);
+             background:var(--meas);
              transition:width .7s cubic-bezier(.2,.8,.2,1); }
   /* the spend column carries its own bar: a column of numbers hides the shape */
   .plain td.barcell { min-width:132px; }
@@ -5033,8 +5051,9 @@
     if(opts.delta!=null && opts.prev!=null){
       var d=opts.delta-opts.prev;
       var cls=d>0?"up":d<0?"down":"";
-      var arrow=d>0?"▲":d<0?"▼":"";
-      var span=el("span","delta "+cls,arrow+" "+fmt(Math.abs(d)));
+      var span=el("span","delta "+cls);
+      if(d) span.appendChild(icon(d>0?"arrowup":"arrowdown",12));
+      span.appendChild(document.createTextNode(fmt(Math.abs(d))));
       sub.appendChild(span);
       sub.appendChild(el("span","vs",S.prevWeek(fmt(opts.prev))));
     } else if(opts.note){ sub.appendChild(el("span","vs",opts.note)); }
@@ -5121,7 +5140,10 @@
     var d=cur-prev;
     var cls=d>0?"up":d<0?"down":"";
     var txt=prev>0? Math.round(100*Math.abs(d)/prev)+"%" : fmt(Math.abs(d));
-    c.appendChild(el("span","delta "+cls,(d>0?"▲":d<0?"▼":"=")+" "+txt));
+    var dsp=el("span","delta "+cls);
+    dsp.appendChild(icon(d>0?"arrowup":d<0?"arrowdown":"minus",12));
+    dsp.appendChild(document.createTextNode(txt));
+    c.appendChild(dsp);
     c.appendChild(el("span","vs",(label||S.cmpPrevLabel)+": "+fmt(prev)));
   }
   // The glance layer: one plain-language sentence per chart, so the reader gets
@@ -8796,11 +8818,14 @@
     var wrap=el("div","pnrate");
     var b=el("b", null, sent? pctv+"%" : "-");
     // the same zone scale the campaigns tab uses: this is a judgement, not decoration
-    var col = weak? tok("--muted") : (pctv>=40? tok("--s5")||tok("--seq700")
-                    : (pctv>=15? tok("--seq550") : tok("--s8")));
+    // the zone is a STATE (works / middling / does not), so it takes the state
+    // colours; the middle band is plain ink, not brand indigo
+    var col = weak? tok("--muted") : (pctv>=40? tok("--good-text")
+                    : (pctv>=15? tok("--ink") : tok("--bad-text")));
     b.style.color = col;
     var track=el("div","track"), fill=el("div","fill");
-    fill.style.width = Math.max(2, pctv) + "%"; fill.style.background = col;
+    fill.style.width = Math.max(2, pctv) + "%";
+    fill.style.background = (pctv>=15 && pctv<40 && !weak)? tok("--meas") : col;
     track.appendChild(fill);
     wrap.appendChild(b); wrap.appendChild(track);
     return wrap;
