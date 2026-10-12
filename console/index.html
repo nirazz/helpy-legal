@@ -12,6 +12,7 @@
      really needs = add it here, deliberately. -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://lwomstzzmyegpbidibfm.supabase.co https://lh3.googleusercontent.com; connect-src 'self' https://lwomstzzmyegpbidibfm.supabase.co wss://lwomstzzmyegpbidibfm.supabase.co; frame-src 'self'; object-src 'none'; base-uri https://help-y.com; form-action 'none'">
 <link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/fonts/plex.css">
 <link rel="icon" href="/app-icon-512.png">
 <link rel="apple-touch-icon" href="/app-icon-512.png">
 <!-- Exact versions + SRI: these scripts run with the founder's session, so a bad
@@ -24,8 +25,9 @@
      white surfaces on hairlines, one brand indigo that means "you can act on
      this" or "this is selected", and colour otherwise reserved for state
      (good / warn / bad). No glass, glow, grid or decorative motion: the
-     numbers are the design. Inter carries numerals and Latin, Heebo the
-     Hebrew; one family voice, tabular figures everywhere a number lines up.
+     numbers are the design. IBM Plex Sans Hebrew carries Hebrew, Latin and
+     numerals (Nir's pick 12.10, self-hosted in /fonts/plex.css because CSP
+     allows only 'self' fonts); tabular figures wherever a number lines up.
      Chart series colours (--s*) are the validated data palette. */
   :root {
     color-scheme: light;
@@ -45,7 +47,7 @@
     --shadow-lg:0 4px 8px rgba(16,24,40,0.06), 0 16px 40px rgba(16,24,40,0.12);
     --num-glow:none;
     --meas:#9aa1ad;
-    --font:"Inter","Heebo",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --font:"IBM Plex Sans Hebrew","Inter","Heebo",system-ui,-apple-system,"Segoe UI",sans-serif;
   }
   /* dark: Linear's near-black, not a coloured "space" */
   html[data-theme="dark"] {
@@ -1825,6 +1827,18 @@
     #briefView #brGreet { font-size:22px; }
     #briefView .brhead { margin-bottom:16px; }
   }
+  /* ---- metrics v3: the sentence first, the tip line gone ------------------ */
+  #metricsView .mlede { font-size:18px; line-height:1.5; color:var(--ink); margin:2px 2px 18px; max-width:80ch;
+      text-wrap:pretty; }
+  #metricsView .mlede:empty { display:none; }
+  #metricsView .mlede .nsline { font-size:inherit; font-weight:400; padding:0; }
+  #metricsView .mlede .nsline b { font-weight:700; }
+  #metricsView #tipLine { display:none; }
+  /* folded sections read as a list of topics: a hairline between them, the
+     brief right under its title */
+  #metricsView .sechead.toggle { border-top:1px solid var(--hairline); padding-top:22px; margin-top:22px; margin-bottom:8px; }
+  #metricsView .sechead.toggle:hover { color:var(--s1); }
+  @media (max-width:720px){ #metricsView .mlede { font-size:16px; } }
   /* ---- morning screen v3: the investor-page reading ------------------- */
   #briefView .brlede { font-size:18px; line-height:1.5; color:var(--ink); margin:10px 0 6px; max-width:62ch;
       text-wrap:pretty; }
@@ -2149,10 +2163,13 @@
       </div>
     </div>
     <p class="note" id="tipLine" style="margin-bottom:14px;cursor:pointer" title="לחיצה מסתירה" data-i18n="tipLine">טיפ: בתוך כל גרף אפשר לגרור את פס הטווח שלמטה, ללחוץ על מקרא כדי להסתיר סדרה, וללחוץ על קטגוריות, משתמשים וכרטיסים כדי לצלול פנימה</p>
+    <!-- 2026-10-12 metrics v3: the north-star sentence leads the tab, the way
+         the investor page leads with its conclusion; sections start folded to
+         their one-line brief -->
+    <div class="mlede" id="nsLine"></div>
     <section class="panel" id="overviewTop">
       <h2 data-i18n="insightsTitle">מה דורש תשומת לב</h2>
       <div class="sub" data-i18n="insightsSub">תובנות מחושבות מהנתונים של 30 הימים האחרונים</div>
-      <div id="nsLine"></div>
       <div id="insightsBody"></div>
     </section>
     <div class="tiles" id="tiles"></div>
@@ -2770,7 +2787,8 @@
         var t= cur==="1"? "עזרה <b>אחת</b> הושלמה "+bw
              : "<b>"+cur+"</b> עזרות הושלמו "+bw;
         if(prev!=null) t+=" (מול "+(prev==="1"?"אחת":"<b>"+prev+"</b>")+" בתקופה הקודמת)";
-        if(mover) t+=" · הגורם שהשתנה הכי הרבה: <b>"+mover+"</b>"; return t+"."; },
+        if(mover) t+=". השלב שהשתנה הכי הרבה: <b>"+mover+"</b>"; return t+"."; },
+      nsMoverUp:"השתפר", nsMoverDown:"ירד",
       rdDtree:function(step,a,b){ return "הצוואר כרגע הוא <b>"+step+"</b>: "+a+" מתוך "+b+" עוברים את השלב. זה הגורם שהזזה שלו תזיז הכי הרבה את מדד הצפון."; },
       rdDtreeZero:"אפס השלמות בטווח. לפני שמתקנים שלבים באמצע - זה המספר שצריך לדבר עליו.",
       nbhdTitle:"סולם השכונות מול קו ה-60",
@@ -3736,7 +3754,8 @@
         var t= cur==="1"? "<b>One</b> help completed in the last {win}"
              : "<b>"+cur+"</b> helps completed in the last {win}";
         if(prev!=null) t+=" (vs "+(prev==="1"?"one":"<b>"+prev+"</b>")+" the period before)";
-        if(mover) t+=" · biggest factor change: <b>"+mover+"</b>"; return t+"."; },
+        if(mover) t+=". The stage that moved most: <b>"+mover+"</b>"; return t+"."; },
+      nsMoverUp:"better", nsMoverDown:"worse",
       rdDtree:function(step,a,b){ return "The bottleneck right now is <b>"+step+"</b>: "+a+" of "+b+" pass that stage. Moving it moves the north star more than anything else."; },
       rdDtreeZero:"Zero completions in range. Before fixing middle stages - this is the number to talk about.",
       nbhdTitle:"The neighborhood ladder vs the 60 line",
@@ -4938,7 +4957,7 @@
     inst.setOption({
       animationDuration: 700,
       animationDurationUpdate: 450,
-      textStyle: { fontFamily: "Heebo, system-ui, sans-serif" },
+      textStyle: { fontFamily: "'IBM Plex Sans Hebrew', Heebo, system-ui, sans-serif" },
       // extra headroom when annotation labels sit above the plot
       // a left-hand value axis needs room for its own labels; without it the
       // second axis rendered as a column of clipped stubs
@@ -6050,7 +6069,7 @@
     var ink=tok("--ink"), muted=tok("--muted"), grid=tok("--grid"), surface=tok("--surface");
     inst.setOption({
       animationDuration:700,
-      textStyle:{ fontFamily:"Heebo, system-ui, sans-serif" },
+      textStyle:{ fontFamily:"'IBM Plex Sans Hebrew', Heebo, system-ui, sans-serif" },
       grid:{ left:10, right:46, top:34, bottom:26 },
       legend:{ top:0, right:0, itemWidth:12, itemHeight:8, textStyle:{ color:tok("--ink2"), fontSize:12 } },
       tooltip:{ trigger:"axis", backgroundColor:surface, borderColor:grid,
@@ -6710,7 +6729,7 @@
           if((st.base||0)>=3 && (st.pbase||0)>=3){
             var cr=st.v/st.base, pr=st.p/st.pbase;
             if(Math.abs(cr-pr)>mag){ mag=Math.abs(cr-pr);
-              mover=(S.dtSteps[st.k]||st.k)+(cr>pr?" \u25B2":" \u25BC"); }
+              mover=(S.dtSteps[st.k]||st.k)+" ("+(cr>pr? S.nsMoverUp : S.nsMoverDown)+")"; }
           }
         });
         var line=el("div","nsline");
@@ -10561,7 +10580,7 @@
     var marks=(o.marks||[]).filter(function(m){ return m.y!=null; });
     inst.setOption({
       animationDuration:500, animationDurationUpdate:350,
-      textStyle:{ fontFamily:"Heebo, system-ui, sans-serif" },
+      textStyle:{ fontFamily:"'IBM Plex Sans Hebrew', Heebo, system-ui, sans-serif" },
       // left room for the first time label ("00:00" was clipped at 10)
       grid:{ left:22, right:46, top: series.length>1 ? 36 : 18, bottom:26 },
       legend:{ show: series.length>1, top:0, right:0, itemWidth:12, itemHeight:8,
@@ -10882,7 +10901,7 @@
     function money(n){ return "₪"+fmt(Math.round(n)); }
     inst.setOption({
       animationDuration:500, animationDurationUpdate:350,
-      textStyle:{ fontFamily:"Heebo, system-ui, sans-serif" },
+      textStyle:{ fontFamily:"'IBM Plex Sans Hebrew', Heebo, system-ui, sans-serif" },
       grid:{ left:8, right:58, top:14, bottom:34 },
       legend:{ show:false },
       tooltip:{
@@ -11615,7 +11634,7 @@
     rows.forEach(function(r, i){ keys.forEach(function(s){ if(val(r,s.k)>0) top[i]=s.k; }); });
     inst.setOption({
       animationDuration:500, animationDurationUpdate:350,
-      textStyle:{ fontFamily:"Heebo, system-ui, sans-serif" },
+      textStyle:{ fontFamily:"'IBM Plex Sans Hebrew', Heebo, system-ui, sans-serif" },
       grid:{ left:8, right:40, top:14, bottom:28 },
       legend:{ show:false },
       tooltip:{
@@ -12162,7 +12181,7 @@
   // the phone starts collapsed, the desktop open; the user's choice persists.
   var SEC_IDS=["secGrowth","secMarket","secChat","secRetention","secUsers","secEvents","secSafety"];
   var secOpen={};
-  try{ secOpen=JSON.parse(localStorage.getItem("helpy_console_secopen")||"{}"); }catch(e){}
+  try{ secOpen=JSON.parse(localStorage.getItem("helpy_console_secopen2")||"{}"); }catch(e){}
   function secBlocks(id){
     var out=[], n=$(id); if(!n) return out;
     n=n.nextElementSibling;
@@ -12171,7 +12190,9 @@
   }
   function isSecOpen(id){
     if(Object.prototype.hasOwnProperty.call(secOpen,id)) return !!secOpen[id];
-    return window.innerWidth>720;
+    // folded by default everywhere: the brief says what is inside, the reader
+    // opens what they need (the key moved to ...secopen2 so old choices reset)
+    return false;
   }
   function applySec(id){
     var open=isSecOpen(id);
@@ -12187,7 +12208,7 @@
     if(!isSecOpen(id)){ secOpen[id]=true; persistSec(); applySec(id); }
   }
   function persistSec(){
-    try{ localStorage.setItem("helpy_console_secopen",JSON.stringify(secOpen)); }catch(e){}
+    try{ localStorage.setItem("helpy_console_secopen2",JSON.stringify(secOpen)); }catch(e){}
   }
   // the collapse affordance: a chevron icon, always the header's last child
   // (a language flip rewrites the header text, so it is re-added each render)
