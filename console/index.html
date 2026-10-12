@@ -1849,6 +1849,19 @@
   #app .sechead.toggle { border-top:1px solid var(--hairline); padding-top:22px; margin-top:22px; margin-bottom:8px; }
   #app .sechead.toggle:hover { color:var(--s1); }
   @media (max-width:720px){ #metricsView .mlede { font-size:16px; } }
+  /* ---- console-wide calm pass 13.10 (redesign-skill audit, every tab) ---
+     One accent. State is carried by the small tone icon, never by a tinted
+     box: verdicts sit on the neutral surface, attention rows are plain rows
+     on hairlines with ink numbers, period deltas are grey (they inform, the
+     verdict judges). */
+  .verdict.good, .verdict.warn, .verdict.bad { background:var(--surface2); border-color:var(--hairline); }
+  .panel .ins.lead.warn, .panel .ins.lead.bad { background:none; border-radius:0; padding-inline:0;
+      margin-block:0; border-bottom:1px solid var(--hairline); }
+  .panel .ins.lead.warn b:first-of-type, .panel .ins.lead.bad b:first-of-type { color:var(--ink); }
+  .panel .ins b { color:var(--ink); }
+  .delta.up, .delta.down { color:var(--ink2); background:var(--surface2); }
+  .cmp .delta.up, .cmp .delta.down { color:var(--ink2); }
+  .panel h2 .brattnn, .panel h2 .brattnn.bad { color:var(--ink2); background:var(--surface2); }
   /* ---- morning 13.10 calm pass (redesign-skill audit): ONE accent ------
      deltas are information, not alarms: grey arrow + number; numbers in
      work rows are ink, the small icon alone carries amber/red */
