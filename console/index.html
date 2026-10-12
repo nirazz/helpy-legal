@@ -1853,7 +1853,10 @@
      deltas are information, not alarms: grey arrow + number; numbers in
      work rows are ink, the small icon alone carries amber/red */
   #briefView .brvrow .brdelta.up, #briefView .brvrow .brdelta.down, #briefView .brvrow .brdelta.flat { color:var(--muted); font-weight:500; }
-  #briefView .brstrip .tile .brbd.down, #briefView .brstrip .tile .brbd.up { color:var(--muted); font-weight:500; }
+  #briefView .brstrip .tile .sub .brbd.down, #briefView .brstrip .tile .sub .brbd.up { color:var(--muted); font-weight:500; }
+  /* one row size: the first work row was larger than the next two */
+  #briefView #brInsights .ins.lead:not(.rest) { font-size:inherit; padding-block:8px; }
+  #briefView #brInsights .ins:not(.rest) { font-size:14px; padding-block:8px; }
   #briefView #brInsights .ins:not(.rest) b, #briefView #brInsights .ins.warn:not(.rest) b,
   #briefView #brInsights .ins.bad:not(.rest) b { color:var(--ink); }
   #briefView #brInsights .ins:last-of-type { border-bottom:0; }
