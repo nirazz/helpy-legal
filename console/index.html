@@ -3216,7 +3216,7 @@
       scChEmpty:"לא נשלח ולא נחסם אף קוד בחלון הזה.",
       scSerSent:"נשלחו", scSerRefused:"נחסמו", scSerOther:"נחסמו - סיבה לא ידועה",
       scReasons:{ global_brake:"בלם חירום (40 ב-10 דקות)", global_day:"תקרה יומית (60 ביום)",
-        phone_10min:"יותר מ-3 לאותו מספר ב-10 דק'", user_hour:"יותר מ-3 למשתמש בשעה",
+        phone_10min:"יותר מ-3 לאותו מספר ב-10 דק'", phone_day:"יותר מ-5 לאותו מספר ביום", user_hour:"יותר מ-3 למשתמש בשעה",
         user_day:"יותר מ-5 למשתמש ביום", user_30d:"יותר מ-8 למשתמש ב-30 יום",
         user_phones:"יותר מ-5 מספרים ביום", country:"מדינה לא מאושרת",
         attestation_invalid:"אימות מכשיר נכשל", attestation_missing:"חסר אימות מכשיר" },
@@ -4163,7 +4163,7 @@
       scChEmpty:"No code was sent or refused in this window.",
       scSerSent:"Sent", scSerRefused:"Refused", scSerOther:"Refused - reason unknown",
       scReasons:{ global_brake:"Emergency brake (40 in 10 min)", global_day:"Daily ceiling (60 a day)",
-        phone_10min:"More than 3 to one number in 10 min", user_hour:"More than 3 per user in an hour",
+        phone_10min:"More than 3 to one number in 10 min", phone_day:"More than 5 to one number in a day", user_hour:"More than 3 per user in an hour",
         user_day:"More than 5 per user in a day", user_30d:"More than 8 per user in 30 days",
         user_phones:"More than 5 numbers in a day", country:"Country not allowed",
         attestation_invalid:"Device check failed", attestation_missing:"Device check missing" },
@@ -11026,7 +11026,8 @@
   // fixed order = fixed colour slot: a reason keeps its colour whichever
   // reasons happen to appear in the window
   var SC_REASONS=["global_brake","global_day","phone_10min","user_hour","user_day",
-                  "user_30d","user_phones","country","attestation_invalid","attestation_missing"];
+                  "user_30d","user_phones","country","attestation_invalid","attestation_missing",
+                  "phone_day"];
   var SC_OUTCOMES=["verified","missing","invalid","unverifiable","not_evaluated"];
   function securityOn(){ var v=$("securityView"); return !!(v && !v.classList.contains("hidden")); }
   // The OTP log only began on 11.10.2026. "in the last 14 days" over four
@@ -11068,7 +11069,7 @@
   function scPlain(s){ return String(s==null?"":s).replace(/[⁦-⁩]/g,""); }
   function scReasonCol(r){
     var i=SC_REASONS.indexOf(r);
-    var map=[pal(7), pal(1), pal(3), pal(0), pal(5), pal(6), pal(4), tok("--ink2"), tok("--bad-text"), tok("--seq250")];
+    var map=[pal(7), pal(1), pal(3), pal(0), pal(5), pal(6), pal(4), tok("--ink2"), tok("--bad-text"), tok("--seq250"), pal(2)];
     return i<0 ? tok("--muted") : map[i];
   }
   function scOutcomeCol(o){
