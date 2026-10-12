@@ -1790,6 +1790,58 @@
     .live > span[data-i18n] { display:none; }
     .live { padding:0 9px; }
   }
+
+  /* ---- morning screen v2 (2026-10-12) ----------------------------------- */
+  #briefView .brhead { margin:4px 0 22px; }
+  #briefView #brGreet { font-size:26px; font-weight:600; letter-spacing:-.025em; line-height:1.2; }
+  #briefView .brhead .sub { font-size:13px; color:var(--muted); margin-top:4px; }
+  #briefView .brcap { font-size:13px; font-weight:600; color:var(--ink2); margin:0 0 10px; }
+  #briefView .brstrip .brdelta { font-size:12.5px; margin-top:4px; }
+  #briefView .brstrip .tile .sub { min-width:0; }
+  #briefView .brstrip .tile .brbd, #briefView .brstrip .tile .brweek { overflow-wrap:anywhere; }
+  /* the day as ONE strip (Stripe's metric row): cells share hairlines, not
+     eight separate shadows */
+  #briefView .tiles.brstrip { gap:0; margin-bottom:24px; background:var(--surface);
+      border:1px solid var(--hairline); border-radius:10px; box-shadow:var(--shadow-sm); overflow:hidden; }
+  #briefView .brstrip .tile { border:0; border-radius:0; box-shadow:none; background:none;
+      padding:16px 18px 14px; border-inline-start:1px solid var(--hairline); border-top:1px solid var(--hairline); }
+  #briefView .brstrip .tile:nth-child(4n+1) { border-inline-start:0; }
+  #briefView .brstrip .tile:nth-child(-n+4) { border-top:0; }
+  #briefView .brstrip .tile .val { font-size:30px; }
+  #briefView .brstrip .tile.hero .val { font-size:30px; color:var(--s1); }
+  #briefView .brstrip .tile.zero .val { color:var(--baseline); }
+  #briefView .brstrip .tile.hero.zero .val { color:var(--baseline); }
+  #briefView .brstrip .tile .lbl { color:var(--ink2); }
+  #briefView .brstrip .tile .brbd { font-size:12.5px; color:var(--muted); }
+  @media (max-width:900px){
+    #briefView .brstrip .tile:nth-child(4n+1) { border-inline-start:1px solid var(--hairline); }
+    #briefView .brstrip .tile:nth-child(-n+4) { border-top:1px solid var(--hairline); }
+    #briefView .brstrip .tile:nth-child(2n+1) { border-inline-start:0; }
+    #briefView .brstrip .tile:nth-child(-n+2) { border-top:0; }
+  }
+  @media (max-width:720px){
+    #briefView .brstrip .tile { padding:12px 13px 11px; }
+    #briefView .brstrip .tile .val, #briefView .brstrip .tile.hero .val { font-size:24px; }
+    #briefView #brGreet { font-size:22px; }
+    #briefView .brhead { margin-bottom:16px; }
+  }
+  /* what needs you: a titled list with its count, the number leads each row */
+  #briefView .brattn h2 { margin-bottom:10px; }
+  #briefView .brattnn { font-size:12px; font-weight:600; color:var(--warning); background:var(--warn-bg);
+      border-radius:6px; padding:1px 7px; font-variant-numeric:tabular-nums; }
+  #briefView .brattnn:empty { display:none; }
+  #briefView #brInsights .ins:not(.rest) b:first-of-type { font-size:1.15em; font-weight:700; }
+  /* the explanation behind an (i), not under the title */
+  .infotip { border-bottom:0 !important; display:inline-flex; align-items:center; color:var(--muted);
+      cursor:help; margin-inline-start:2px; }
+  .infotip:hover, .infotip:focus-visible, .infotip.open { color:var(--ink2); }
+  .infotip::after { font-weight:400; }
+  #briefView .brrowsmore { margin-top:8px; font-size:12.5px; color:var(--s1); }
+  #briefView .sechead { margin-top:32px; }
+  /* an icon inside a tile is an icon, not a sparkline: '.tile svg' (block,
+     margin, and width:100% on a phone) is meant for the trend line only */
+  .tile .sub svg.ico, .tile .brdelta svg.ico, .tile .delta svg.ico {
+      display:inline-block; width:12px; height:12px; margin:0; flex-shrink:0; }
 </style>
 </head>
 <body>
@@ -1888,12 +1940,20 @@
 
 <main class="hidden" id="app">
   <div id="briefView">
-    <section class="panel" id="brTop" style="opacity:1;transform:none">
-      <h2 id="brGreet"></h2>
+    <!-- 2026-10-12 morning screen v2: the page reads top-down as a glance -
+         who I am / when (no box), the day in ONE number strip, then the work.
+         Lists and machinery come after, folded. -->
+    <div class="brhead">
+      <h1 id="brGreet"></h1>
       <div class="sub" id="brSub"></div>
+    </div>
+    <div class="brcap" data-i18n="brSecDay">מה קרה ביממה האחרונה</div>
+    <div class="tiles brstrip" id="brTiles"></div>
+    <section class="panel brattn" id="brTop" style="opacity:1;transform:none">
+      <h2><span data-i18n="brAttnT">דורש טיפול</span><span class="brattnn" id="brAttnN"></span></h2>
       <div id="brInsights"></div>
     </section>
-    <div class="sechead" style="--sec-c:var(--s1)" data-i18n="brSecWait">1 · מי מחכה למישהו</div>
+    <div class="sechead" style="--sec-c:var(--s1)" data-i18n="brSecWait">מי מחכה למישהו</div>
     <div class="grid2" id="brWait">
       <section class="panel" style="opacity:1;transform:none">
         <h2 data-i18n="brSupportT">המילה האחרונה בשרשור Helpy היא שלהם</h2>
@@ -1913,9 +1973,7 @@
     </div>
     <div class="secbrief brstuck" id="brStuck" style="--sec-c:var(--s1)"></div>
     <div class="brquiet" id="brQuiet" hidden></div>
-    <div class="sechead" style="--sec-c:var(--s2)" data-i18n="brSecDay">2 · מה קרה ביממה האחרונה</div>
-    <div class="tiles" id="brTiles"></div>
-    <div class="sechead" style="--sec-c:var(--s3)" data-i18n="brSecRun">3 · האם המכונה רצה בלילה</div>
+    <div class="sechead" style="--sec-c:var(--s3)" data-i18n="brSecRun">האם המכונה רצה בלילה</div>
     <div class="grid2">
       <section class="panel" style="opacity:1;transform:none">
         <h2 data-i18n="brHealthT">שרת ומשימות מתוזמנות</h2>
@@ -1928,7 +1986,7 @@
         <div id="brPush"></div>
       </section>
     </div>
-    <div class="sechead" style="--sec-c:var(--s7)" data-i18n="brSecMoney">4 · קמפיינים ועל השולחן</div>
+    <div class="sechead" style="--sec-c:var(--s7)" data-i18n="brSecMoney">קמפיינים ועל השולחן</div>
     <div class="grid2">
       <section class="panel" style="opacity:1;transform:none">
         <h2 data-i18n="brAdsT">קמפיינים אתמול</h2>
@@ -3389,7 +3447,8 @@
       brGreet:function(h){ return h<12? "בוקר טוב, ניר" : h<18? "צהריים טובים, ניר" : "ערב טוב, ניר"; },
       brSub:function(d,ago){ return d+" · הנתונים חושבו "+ago+" · כל המספרים על משתמשים אמיתיים בלבד"; },
       brEmpty:"הבריף לא הגיע מהשרת - רענון יעזור, ואם לא, get_morning_brief נכשל (יומן admin-dashboard).",
-      brSecWait:"1 · מי מחכה למישהו", brSecDay:"2 · מה קרה ביממה האחרונה", brSecRun:"3 · האם המכונה רצה בלילה", brSecMoney:"4 · קמפיינים ועל השולחן",
+      brSecWait:"מי מחכה למישהו", brSecDay:"מה קרה ביממה האחרונה", brSecRun:"האם המכונה רצה בלילה", brSecMoney:"קמפיינים ועל השולחן",
+      brAttnT:"דורש טיפול", brDeltaCap:"החצים: שינוי מול היממה שלפני", brRowsMore:function(n){ return "הצג עוד "+n; }, brRowsLess:"הצג פחות",
       brSupportT:"המילה האחרונה בשרשור Helpy היא שלהם", brSupportS:"אחרי התשובה האחרונה של הצוות הם כתבו שוב - לפעמים שאלה, לפעמים רק תודה",
       brPendingT:"פניות שמחכות להחלטה", brPendingS:"שכן/ה החליק/ה על בקשה לפני יותר מיממה, ובעל/ת הבקשה עדיין לא אישר/ה ולא דחה/תה",
       brNoOfferT:"בקשות חדשות (יום עד שבוע) שעוד לא קיבלו פנייה", brNoOfferS:"בקשות פעילות בנות יום עד שבוע שאף אחד לא החליק עליהן",
@@ -4337,7 +4396,8 @@
       brGreet:function(h){ return h<12? "Good morning, Nir" : h<18? "Good afternoon, Nir" : "Good evening, Nir"; },
       brSub:function(d,ago){ return d+" · computed "+ago+" · every number is real users only"; },
       brEmpty:"The brief did not arrive - refresh; if it persists, get_morning_brief failed (admin-dashboard log).",
-      brSecWait:"1 · Who is waiting on someone", brSecDay:"2 · The last 24 hours", brSecRun:"3 · Did the machine run overnight", brSecMoney:"4 · Campaigns and the desk",
+      brSecWait:"Who is waiting on someone", brSecDay:"The last 24 hours", brSecRun:"Did the machine run overnight", brSecMoney:"Campaigns and the desk",
+      brAttnT:"Needs you", brDeltaCap:"arrows: change vs the day before", brRowsMore:function(n){ return "Show "+n+" more"; }, brRowsLess:"Show less",
       brSupportT:"They have the last word in the Helpy thread", brSupportS:"They wrote again after the team's last reply - sometimes a question, sometimes just thanks",
       brPendingT:"Offers awaiting a decision", brPendingS:"A neighbour swiped on a request over a day ago and the owner has neither accepted nor declined",
       brNoOfferT:"New requests (1-7 days) with no offer yet", brNoOfferS:"Active requests one to seven days old that nobody swiped on",
@@ -7241,7 +7301,8 @@
   };
   var CIRCLES={ pin:[[12,10,3]], radio:[[12,12,2]], award:[[12,8,6]],
                 sun:[[12,12,4]], globe:[[12,12,10]], clock:[[12,12,10]], ban:[[12,12,10]], alertc:[[12,12,10]],
-                more:[[12,12,1],[19,12,1],[5,12,1]] };
+                more:[[12,12,1],[19,12,1],[5,12,1]], info:[[12,12,10]] };
+  ICONS.info=["M12 16v-4","M12 8h.01"];
   function icon(name,size){
     var sz=size||16;
     var svg=sv("svg",{viewBox:"0 0 24 24",width:sz,height:sz,fill:"none",
@@ -9164,6 +9225,7 @@
     var work=ins.filter(function(x){ return rank[x[0]]<2; });
     var calmRows=ins.filter(function(x){ return rank[x[0]]>=2; });
     if(!work.length) host.appendChild(insight("lead good", S.brInsAllClear));
+    var an=$("brAttnN"); if(an) an.textContent=work.length? fmt(work.length) : "";
     var bt=document.querySelector('#tabs button[data-v="brief"]');
     if(bt){
       var ob=bt.querySelector(".tabbadge"); if(ob) ob.remove();
@@ -9192,6 +9254,8 @@
 
     // ---- the day in eight tiles ------------------------------------------
     var T=$("brTiles");
+    var cap=document.querySelector("#briefView .brcap");
+    if(cap) cap.textContent=S.brSecDay+" \u00b7 "+S.brDeltaCap;
     // the delta is a signed number inside RTL prose - without isolation
     // "-8" renders as "8-" on the phone; it travels as its own LTR span
     // Hebrew says the change in words: a leading "+" lands after the number in an RTL line
@@ -9200,6 +9264,8 @@
       return (d>=0?"+":"")+fmt(d); };
     function t(label,val,sub,hero,dl,prevVal){
       var x=tile(label, fmt(val)); if(hero) x.classList.add("hero");
+      // a zero is a fact, not a headline: it recedes instead of shouting
+      if(!val) x.classList.add("zero");
       var s=x.querySelector(".sub");
       if(s){
         s.textContent="";
@@ -9209,10 +9275,14 @@
         if(sub) s.appendChild(el("span","brbd",sub));
         if(dl!=null){
           var d0=(val||0)-(prevVal||0);
+          // compact, the way a metric row says it: arrow + amount. The
+          // sentence ("down 4 vs the day before") is the hover, and the strip
+          // caption says once what the arrows compare against
           var wrap=el("span","brdelta "+(d0>0?"up":d0<0?"down":"flat"));
+          wrap.title=dl+" "+S.brVsYest;
           wrap.appendChild(icon(d0>0?"arrowup":d0<0?"arrowdown":"minus",12));
-          var n=el("span",null,dl); n.setAttribute("dir","ltr"); n.style.unicodeBidi="isolate";
-          wrap.appendChild(n); wrap.appendChild(document.createTextNode(" "+S.brVsYest));
+          var n=el("span",null,d0? fmt(Math.abs(d0)) : ""); n.setAttribute("dir","ltr"); n.style.unicodeBidi="isolate";
+          wrap.appendChild(n);
           s.appendChild(wrap);
         }
         s.style.flexWrap="wrap";
@@ -9404,6 +9474,39 @@
       dh.appendChild(r);
     });
     dh.appendChild(brGoBtn(S.brDeskGo, function(){ switchTab("backlog"); }));
+
+    // a waiting list shows its first four rows; the rest are one tap away
+    ["brSupport","brPending","brNoOffer"].forEach(function(id){
+      var h=$(id); if(!h) return;
+      var rows=h.querySelectorAll(".brrow"), CAP=4;
+      if(rows.length<=CAP+1) return;          // never fold away a single row
+      var open=!!brRowsOpen[id];
+      // .hidden (display:none !important), not the hidden attribute: .brrow
+      // is display:grid, which beats the attribute
+      for(var i=CAP;i<rows.length;i++) rows[i].classList.toggle("hidden", !open);
+      var b=el("button","linklike brrowsmore", open? S.brRowsLess : S.brRowsMore(fmt(rows.length-CAP)));
+      b.type="button";
+      b.addEventListener("click",function(){ brRowsOpen[id]=!open; renderBrief(); });
+      var after=rows[rows.length-1].nextSibling;
+      h.insertBefore(b, after);
+    });
+    brInfoTips();
+  }
+  var brRowsOpen={};
+  // The grey line under every panel title was the loudest text on a screen
+  // meant to be glanced at. It is still one hover / tap away: an (i) next to
+  // the title carries it, so the title stands alone.
+  function brInfoTips(){
+    document.querySelectorAll("#briefView section.panel > .sub").forEach(function(sub){
+      var h=sub.parentElement.querySelector("h2"); if(!h) return;
+      var old=h.querySelector(".infotip"); if(old) old.remove();
+      var txt=(sub.textContent||"").trim();
+      sub.hidden=true;
+      if(!txt) return;
+      var t=el("span","term below infotip"); t.setAttribute("data-tip",txt);
+      t.setAttribute("tabindex","0"); t.setAttribute("aria-label",txt);
+      t.appendChild(icon("info",15)); h.appendChild(t);
+    });
   }
 
   function renderPush(){
