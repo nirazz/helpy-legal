@@ -1984,6 +1984,10 @@
   #tabs .tabmore.cur { color:var(--ink); font-weight:600; }
   #tabs .tabmore.cur::after { background:var(--s1); }
   #tabs .tabmore .ico { opacity:.6; }
+  #tabs .tabmore.cur .tabcuric { opacity:1; color:var(--ink); }
+  /* where the five tabs drop their icons, the open "more" tab drops its own too */
+  @media (max-width:1499px){ header #tabs .tabmore .tabcuric { display:none; } }
+  #tabs .tabmore > svg.ico:not(.tabcuric) { width:12px; height:12px; margin-inline-start:-1px; }
   .tabmoredot { width:7px; height:7px; border-radius:50%; background:var(--warning); }
   .tabmoredot.bad { background:var(--bad-text); }
   .tabmenu { position:fixed; z-index:45; min-width:210px; padding:6px; background:var(--surface);
@@ -12661,11 +12665,15 @@
     function sync(){
       var cur=hiddenBtns().filter(function(b){ return b.classList.contains("on"); })[0];
       var badge=hiddenBtns().map(function(b){ return b.querySelector(".tabbadge"); }).filter(Boolean);
-      var want=(cur? (S.tabMore+" \u00b7 "+(cur.querySelector("[data-i18n]")||cur).textContent) : S.tabMore)
+      // a hidden tab that is open shows as itself (its icon + name, like the
+      // five beside it) - "עוד · בקלוג" read as a breadcrumb, not a tab
+      var want=(cur? (cur.querySelector("[data-i18n]")||cur).textContent : S.tabMore)
                +"|"+(badge.some(function(x){ return x.classList.contains("bad"); })? "bad" : badge.length? "warn" : "");
       if(mb.dataset.k===want && mb.classList.contains("cur")===!!cur) return;
       mb.dataset.k=want; mb.classList.toggle("cur", !!cur);
       mb.innerHTML="";
+      var cic=cur && cur.querySelector("svg.ico");
+      if(cic){ var c2=cic.cloneNode(true); c2.classList.add("tabcuric"); mb.appendChild(c2); }
       mb.appendChild(el("span",null, want.split("|")[0]));
       mb.appendChild(icon("chevdown",14));
       var st=want.split("|")[1];
