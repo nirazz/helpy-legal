@@ -1825,6 +1825,48 @@
     #briefView #brGreet { font-size:22px; }
     #briefView .brhead { margin-bottom:16px; }
   }
+  /* ---- morning screen v3: the investor-page reading ------------------- */
+  #briefView .brlede { font-size:18px; line-height:1.5; color:var(--ink); margin:10px 0 6px; max-width:62ch;
+      text-wrap:pretty; }
+  #briefView .brhead .sub { font-size:12.5px; }
+  #briefView .tiles.brstrip { grid-template-columns:repeat(6,minmax(0,1fr)); margin-bottom:8px; }
+  #briefView .brstrip .tile { padding:18px 18px 16px; border-top:0; border-inline-start:1px solid var(--hairline); }
+  #briefView .brstrip .tile:nth-child(4n+1) { border-inline-start:1px solid var(--hairline); }
+  #briefView .brstrip .tile:first-child { border-inline-start:0; }
+  #briefView .brstrip .tile .val { font-size:32px; line-height:1.1; }
+  #briefView .brstrip .tile.hero .val { font-size:32px; }
+  #briefView .brvrow { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  #briefView .brvrow .brdelta { font-size:12.5px; font-weight:600; }
+  #briefView .brstrip .tile .sub { margin-top:6px; }
+  #briefView .brstrip .tile .brbd.down { color:var(--bad-text); font-weight:600; }
+  #briefView .brstrip .tile .brbd.up { color:var(--good-text); font-weight:600; }
+  #briefView .brfoot { font-size:12.5px; color:var(--muted); margin:0 2px 24px; }
+  #briefView .brfoot.warn { color:var(--warning); font-weight:600; }
+  #briefView details.brmach { margin-top:32px; border-top:1px solid var(--hairline); padding-top:4px; }
+  #briefView details.brmach > summary { cursor:pointer; list-style:none; display:flex; align-items:center; gap:10px;
+      font-size:14px; font-weight:600; color:var(--ink2); padding:12px 2px; }
+  #briefView details.brmach > summary::-webkit-details-marker { display:none; }
+  #briefView details.brmach > summary::after { content:""; width:7px; height:7px; margin-inline-start:auto;
+      border-inline-end:1.5px solid var(--muted); border-bottom:1.5px solid var(--muted); transform:rotate(45deg); }
+  #briefView details.brmach[open] > summary::after { transform:rotate(-135deg); }
+  #briefView details.brmach > summary:hover { color:var(--ink); }
+  #briefView .brmachs { font-size:12px; font-weight:600; border-radius:6px; padding:1px 8px; }
+  #briefView .brmachs.ok { color:var(--good-text); background:var(--good-bg); }
+  #briefView .brmachs.warn { color:var(--warning); background:var(--warn-bg); }
+  #briefView details.brmach > .sechead:first-of-type { margin-top:12px; }
+  @media (max-width:1100px){
+    #briefView .tiles.brstrip { grid-template-columns:repeat(3,minmax(0,1fr)); }
+    #briefView .brstrip .tile:nth-child(3n+1) { border-inline-start:0; }
+    #briefView .brstrip .tile:nth-child(n+4) { border-top:1px solid var(--hairline); }
+  }
+  @media (max-width:720px){
+    #briefView .tiles.brstrip { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    #briefView .brstrip .tile:nth-child(3n+1) { border-inline-start:1px solid var(--hairline); }
+    #briefView .brstrip .tile:nth-child(2n+1) { border-inline-start:0; }
+    #briefView .brstrip .tile:nth-child(n+3) { border-top:1px solid var(--hairline); }
+    #briefView .brstrip .tile .val, #briefView .brstrip .tile.hero .val { font-size:26px; }
+    #briefView .brlede { font-size:16px; }
+  }
   /* what needs you: a titled list with its count, the number leads each row */
   #briefView .brattn h2 { margin-bottom:10px; }
   #briefView .brattnn { font-size:12px; font-weight:600; color:var(--warning); background:var(--warn-bg);
@@ -2019,12 +2061,16 @@
     <!-- 2026-10-12 morning screen v2: the page reads top-down as a glance -
          who I am / when (no box), the day in ONE number strip, then the work.
          Lists and machinery come after, folded. -->
+    <!-- v3 (2026-10-12): read like the investor page - one sentence that
+         says the state, six numbers with one line each, then the work.
+         The machinery (server, push, campaigns, desk) sits folded at the end. -->
     <div class="brhead">
       <h1 id="brGreet"></h1>
+      <p class="brlede" id="brLede"></p>
       <div class="sub" id="brSub"></div>
     </div>
-    <div class="brcap" data-i18n="brSecDay">מה קרה ביממה האחרונה</div>
     <div class="tiles brstrip" id="brTiles"></div>
+    <div class="brfoot" id="brFoot"></div>
     <section class="panel brattn" id="brTop" style="opacity:1;transform:none">
       <h2><span data-i18n="brAttnT">דורש טיפול</span><span class="brattnn" id="brAttnN"></span></h2>
       <div id="brInsights"></div>
@@ -2049,6 +2095,8 @@
     </div>
     <div class="secbrief brstuck" id="brStuck" style="--sec-c:var(--s1)"></div>
     <div class="brquiet" id="brQuiet" hidden></div>
+    <details class="brmach" id="brMach">
+    <summary><span data-i18n="brMachT">שרת, התראות, קמפיינים ועל השולחן</span><span class="brmachs" id="brMachS"></span></summary>
     <div class="sechead" style="--sec-c:var(--s3)" data-i18n="brSecRun">האם המכונה רצה בלילה</div>
     <div class="grid2">
       <section class="panel" style="opacity:1;transform:none">
@@ -2075,6 +2123,7 @@
         <div id="brDesk"></div>
       </section>
     </div>
+    </details>
   </div>
 
   <div id="metricsView" class="hidden">
@@ -3524,6 +3573,15 @@
       brSub:function(d,ago){ return d+" · הנתונים חושבו "+ago+" · כל המספרים על משתמשים אמיתיים בלבד"; },
       brEmpty:"הבריף לא הגיע מהשרת - רענון יעזור, ואם לא, get_morning_brief נכשל (יומן admin-dashboard).",
       brSecWait:"מי מחכה למישהו", brSecDay:"מה קרה ביממה האחרונה", brSecRun:"האם המכונה רצה בלילה", brSecMoney:"קמפיינים ועל השולחן",
+      brMachT:"שרת, התראות, קמפיינים ועל השולחן",
+      brLedeWork:function(n){ return n==="1"? "דבר אחד מחכה לך." : n+" דברים מחכים לך."; },
+      brLedeCalm:"שום דבר לא מחכה לך.",
+      brLedeWeek:function(c,p){ return (c==="0"? "ב-7 הימים האחרונים לא הושלמה אף עזרה" : c==="1"? "ב-7 הימים האחרונים הושלמה עזרה אחת" : "ב-7 הימים האחרונים הושלמו "+c+" עזרות")+(p!=null? " (בשבוע שלפני: "+p+")." : "."); },
+      brLedeDay:function(s,o){ return "ביממה האחרונה "+(s==="1"? "נרשם/ה שכן/ה חדש/ה" : "נרשמו "+s+" שכנים חדשים")+", ו-"+o+" פתחו את האפליקציה."; },
+      brTDone7:"עזרות שהושלמו · 7 ימים", brPrevWk:function(m){ return "בשבוע שלפני: "+m; },
+      brFootLine:function(a,p,r,b){ return "חשבונות שנמחקו: "+a+" · פוסטים שנמחקו: "+p+" · דיווחים: "+r+" · חסימות: "+b; },
+      brMachAllOk:"הכל תקין", brMachIssues:function(n){ return n==="1"? "בעיה אחת" : n+" בעיות"; },
+      brShowMoreWork:function(n){ return "עוד "+n+" שמחכים לך"; },
       brAttnT:"דורש טיפול", tabMore:"עוד", readMore:"הצג עוד", readLess:"הצג פחות", brDeltaCap:"החצים: שינוי מול היממה שלפני", brRowsMore:function(n){ return "הצג עוד "+n; }, brRowsLess:"הצג פחות",
       brSupportT:"המילה האחרונה בשרשור Helpy היא שלהם", brSupportS:"אחרי התשובה האחרונה של הצוות הם כתבו שוב - לפעמים שאלה, לפעמים רק תודה",
       brPendingT:"פניות שמחכות להחלטה", brPendingS:"שכן/ה החליק/ה על בקשה לפני יותר מיממה, ובעל/ת הבקשה עדיין לא אישר/ה ולא דחה/תה",
@@ -4473,6 +4531,15 @@
       brSub:function(d,ago){ return d+" · computed "+ago+" · every number is real users only"; },
       brEmpty:"The brief did not arrive - refresh; if it persists, get_morning_brief failed (admin-dashboard log).",
       brSecWait:"Who is waiting on someone", brSecDay:"The last 24 hours", brSecRun:"Did the machine run overnight", brSecMoney:"Campaigns and the desk",
+      brMachT:"Server, push, campaigns and the desk",
+      brLedeWork:function(n){ return n==="1"? "One thing is waiting for you." : n+" things are waiting for you."; },
+      brLedeCalm:"Nothing is waiting for you.",
+      brLedeWeek:function(c,p){ return (c==="0"? "No help was completed" : c==="1"? "One help was completed" : c+" helps were completed")+" in the last 7 days"+(p!=null? " (week before: "+p+")." : "."); },
+      brLedeDay:function(s,o){ return "In the last 24 hours "+(s==="1"? "one new neighbour signed up" : s+" new neighbours signed up")+" and "+o+" opened the app."; },
+      brTDone7:"Helps completed · 7 days", brPrevWk:function(m){ return "week before: "+m; },
+      brFootLine:function(a,p,r,b){ return "Accounts deleted: "+a+" · posts deleted: "+p+" · reports: "+r+" · blocks: "+b; },
+      brMachAllOk:"all fine", brMachIssues:function(n){ return n==="1"? "one issue" : n+" issues"; },
+      brShowMoreWork:function(n){ return n+" more waiting for you"; },
       brAttnT:"Needs you", tabMore:"More", readMore:"Show more", readLess:"Show less", brDeltaCap:"arrows: change vs the day before", brRowsMore:function(n){ return "Show "+n+" more"; }, brRowsLess:"Show less",
       brSupportT:"They have the last word in the Helpy thread", brSupportS:"They wrote again after the team's last reply - sometimes a question, sometimes just thanks",
       brPendingT:"Offers awaiting a decision", brPendingS:"A neighbour swiped on a request over a day ago and the owner has neither accepted nor declined",
@@ -5803,6 +5870,7 @@
   function flashTo(id){
     var t=$(id); if(!t) return;
     var surface=t.closest("section.panel")||t;
+    var fold=t.closest("details"); if(fold && !fold.open) fold.open=true;
     // the destination may live inside a collapsed section (the phone default) -
     // scrolling to display:none goes nowhere, so open its section first
     var top=surface;
@@ -9275,7 +9343,8 @@
     var b=el("div","brbar"); var i=el("i",cls||""); i.style.width=Math.round(100*Math.max(0,Math.min(1,frac)))+"%";
     b.appendChild(i); host.appendChild(b); return b;
   }
-  var brCalmOpen=false;   // the folded "everything else is fine" lines
+  var brCalmOpen=false;
+  var brMachTouched=false; // once the founder opened/closed it, the data stops deciding   // the folded "everything else is fine" lines
   var brChecksOpen=false;
   function renderBrief(){
     var host=$("brInsights"); if(!host) return;
@@ -9353,16 +9422,23 @@
         bt.appendChild(bb);
       }
     }
+    // three is what the eye takes in at once; the rest of the work and the
+    // calm lines share the one "show more" below
+    var WORK_UP=3;
     work.forEach(function(x,i){
-      host.appendChild(insight((i===0?"lead ":"")+x[0], x[1], function(){ flashTo(x[2]); }));
+      var row=insight((i===0?"lead ":"")+x[0], x[1], function(){ flashTo(x[2]); });
+      if(i>=WORK_UP && !brCalmOpen) row.classList.add("hidden");
+      host.appendChild(row);
     });
+    var workHid=Math.max(0, work.length-WORK_UP);
     calmRows.forEach(function(x,i){
       var row=insight(x[0]+" rest"+(i===0?" calmtop":""), x[1], function(){ flashTo(x[2]); });
       if(!brCalmOpen) row.classList.add("hidden");
       host.appendChild(row);
     });
-    if(calmRows.length){
-      var more=el("button","linklike brcalm", brCalmOpen? S.brCalmLess : S.brCalmMore(fmt(calmRows.length)));
+    if(calmRows.length || workHid){
+      var more=el("button","linklike brcalm", brCalmOpen? S.brCalmLess
+        : workHid? S.brShowMoreWork(fmt(workHid)) : S.brCalmMore(fmt(calmRows.length)));
       more.type="button";
       more.setAttribute("aria-expanded", brCalmOpen? "true" : "false");
       more.addEventListener("click",function(){ brCalmOpen=!brCalmOpen; renderBrief(); });
@@ -9379,60 +9455,69 @@
     var delta=function(a,b){ var d=(a||0)-(b||0);
       if(LANG==="he") return d>0? "עלייה של "+fmt(d) : d<0? "ירידה של "+fmt(-d) : "ללא שינוי";
       return (d>=0?"+":"")+fmt(d); };
-    function t(label,val,sub,hero,dl,prevVal){
+    // one number, its change beside it (the sentence is the hover), and ONE
+    // plain line under it - the investor page's tile, which reads at a glance
+    function t(label,val,sub,hero,dl,prevVal,hint){
       var x=tile(label, fmt(val)); if(hero) x.classList.add("hero");
-      // a zero is a fact, not a headline: it recedes instead of shouting
       if(!val) x.classList.add("zero");
-      var s=x.querySelector(".sub");
-      if(s){
-        s.textContent="";
-        // the sub is a flex row with its own gap - a trailing space doubled it
-        // breakdown on one line, the change on its own line under it: a " ·"
-        // joining them was left dangling whenever the change wrapped
-        if(sub) s.appendChild(el("span","brbd",sub));
-        if(dl!=null){
-          var d0=(val||0)-(prevVal||0);
-          // compact, the way a metric row says it: arrow + amount. The
-          // sentence ("down 4 vs the day before") is the hover, and the strip
-          // caption says once what the arrows compare against
-          var wrap=el("span","brdelta "+(d0>0?"up":d0<0?"down":"flat"));
-          wrap.title=dl+" "+S.brVsYest;
-          wrap.appendChild(icon(d0>0?"arrowup":d0<0?"arrowdown":"minus",12));
-          var n=el("span",null,d0? fmt(Math.abs(d0)) : ""); n.setAttribute("dir","ltr"); n.style.unicodeBidi="isolate";
-          wrap.appendChild(n);
-          s.appendChild(wrap);
-        }
-        s.style.flexWrap="wrap";
-        s.style.flexDirection="column"; s.style.alignItems="flex-start";
+      if(hint) x.title=hint;
+      var v=x.querySelector(".val");
+      if(v && dl!=null){
+        var d0=(val||0)-(prevVal||0);
+        var row=el("div","brvrow"); v.parentNode.insertBefore(row,v); row.appendChild(v);
+        var wrap=el("span","brdelta "+(d0>0?"up":d0<0?"down":"flat"));
+        wrap.title=dl+" "+S.brVsYest;
+        wrap.appendChild(icon(d0>0?"arrowup":d0<0?"arrowdown":"minus",12));
+        if(d0){ var n=el("span",null,fmt(Math.abs(d0))); n.setAttribute("dir","ltr"); n.style.unicodeBidi="isolate"; wrap.appendChild(n); }
+        row.appendChild(wrap);
       }
+      var s=x.querySelector(".sub");
+      if(s){ s.textContent=""; if(sub) s.appendChild(el("span","brbd",sub)); }
       T.appendChild(x);
+      return x;
     }
-    t(S.brTDone, D.completed, S.brNorth, true);
-    // A 24h count of completions is 0 on most days, so the hero tile said
-    // nothing. The full payload's matches_by_day counts completions by the day
-    // they were completed (real users only) - the same series the metrics hero
-    // reads. Brief-only first paint has no such series: nothing extra then.
+    // The north star as a WEEK: a 24h count of completions is 0 on most days.
+    // matches_by_day counts completions by the day they were completed (real
+    // users only); brief-only first paint has no series, so the 24h count then.
     var MD=(!DATA.partial && DATA.matches_by_day) || [];
+    var wkCur=null, wkPrv=null;
     if(MD.length>=7){
       var wsum=function(a){ return a.reduce(function(x,r){ return x+(+r.completed||0); },0); };
-      var cur=wsum(MD.slice(-7)), prv=MD.length>=14? wsum(MD.slice(-14,-7)) : null;
-      var hero=T.lastChild;
-      if(hero){
-        var wk=el("div","sub brweek", S.brDone7(fmt(cur), prv==null? null : fmt(prv)));
-        // the north star going backwards is the one change on this page that
-        // should never be read past
-        if(prv!=null && cur<prv) wk.classList.add("down");
-        else if(prv!=null && cur>prv) wk.classList.add("up");
-        hero.appendChild(wk);
-      }
+      wkCur=wsum(MD.slice(-7)); wkPrv=MD.length>=14? wsum(MD.slice(-14,-7)) : null;
+      var hx=t(S.brTDone7, wkCur, wkPrv==null? S.brNorth : S.brPrevWk(fmt(wkPrv)), true, null, null, S.brNorth);
+      var hs=hx.querySelector(".brbd");
+      if(hs && wkPrv!=null){ if(wkCur<wkPrv) hs.classList.add("down"); else if(wkCur>wkPrv) hs.classList.add("up"); }
+    } else {
+      t(S.brTDone, D.completed, S.brNorth, true);
     }
     t(S.brTSignups, D.signups, "iOS "+fmt(D.signups_ios)+" · Android "+fmt(D.signups_android), false, delta(D.signups,P.signups), P.signups);
     t(S.brTSeen, D.seen, "", false, delta(D.seen,P.seen), P.seen);
     t(S.brTPosts, (D.new_requests||0)+(D.new_offers||0), S.brReqOff(fmt(D.new_requests),fmt(D.new_offers)), false, delta((D.new_requests||0)+(D.new_offers||0),P.posts), P.posts);
     t(S.brTSwipes, D.swipes, S.brAccepted(fmt(D.accepted)), false, delta(D.swipes,P.swipes), P.swipes);
     t(S.brTMsgs, D.messages, S.brSenders(fmt(D.chat_senders),fmt(D.chat_rooms)), false, delta(D.messages,P.messages), P.messages);
-    t(S.brTGone, (D.deletions||0)+(D.posts_deleted||0), S.brGoneSub(fmt(D.deletions),fmt(D.posts_deleted)));
-    t(S.brTSafety, (D.reports||0)+(D.blocks||0), S.brSafetySub(fmt(D.reports),fmt(D.blocks)));
+    // deletions and safety are facts to know, not headlines: one muted line,
+    // which turns into a warning only when someone was reported
+    var ft=$("brFoot");
+    if(ft){
+      ft.textContent=S.brFootLine(fmt(D.deletions||0), fmt(D.posts_deleted||0), fmt(D.reports||0), fmt(D.blocks||0));
+      ft.classList.toggle("warn", (D.reports||0)>0);
+    }
+    // the sentence on top says the state in words, from the same numbers
+    var ld=$("brLede");
+    if(ld){
+      var parts=[work.length? S.brLedeWork(fmt(work.length)) : S.brLedeCalm];
+      if(wkCur!=null) parts.push(S.brLedeWeek(fmt(wkCur), wkPrv==null? null : fmt(wkPrv)));
+      parts.push(S.brLedeDay(fmt(D.signups||0), fmt(D.seen||0)));
+      ld.textContent=parts.join(" ");
+    }
+    // the folded machinery says on its closed line whether it needs opening
+    var ms=$("brMachS");
+    if(ms){
+      var machBad=work.filter(function(x){ return x[2]==="brHealth"||x[2]==="brPush"; }).length;
+      ms.textContent=machBad? S.brMachIssues(fmt(machBad)) : S.brMachAllOk;
+      ms.className="brmachs "+(machBad?"warn":"ok");
+      if(machBad && !brMachTouched) $("brMach").open=true;
+    }
 
     // ---- who is waiting ------------------------------------------------------
     var sh=$("brSupport");
