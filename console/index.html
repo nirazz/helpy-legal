@@ -1882,6 +1882,31 @@
     table.pntbl th, table.pntbl td { white-space:nowrap; }
     table.pntbl td.name { white-space:normal; min-width:150px; }
   }
+
+  /* ---- five tabs + more ---- */
+  #tabs button.inmore { display:none !important; }
+  header #tabs .tabmore .ico { display:inline-block; }
+  #tabs .tabmore { display:inline-flex; align-items:center; gap:5px; border:0; background:none;
+      padding:0 11px; font:inherit; font-size:13.5px; font-weight:500; color:var(--ink2); cursor:pointer;
+      position:relative; min-height:56px; flex-shrink:0; white-space:nowrap; }
+  #tabs .tabmore::after { content:""; position:absolute; inset-inline:8px; bottom:-1px; height:2px;
+      border-radius:2px 2px 0 0; background:transparent; }
+  #tabs .tabmore:hover { color:var(--ink); }
+  #tabs .tabmore.cur { color:var(--ink); font-weight:600; }
+  #tabs .tabmore.cur::after { background:var(--s1); }
+  #tabs .tabmore .ico { opacity:.6; }
+  .tabmoredot { width:7px; height:7px; border-radius:50%; background:var(--warning); }
+  .tabmoredot.bad { background:var(--bad-text); }
+  .tabmenu { position:fixed; z-index:45; min-width:210px; padding:6px; background:var(--surface);
+      border:1px solid var(--hairline); border-radius:10px; box-shadow:var(--shadow-lg);
+      display:flex; flex-direction:column; gap:2px; }
+  .tabmenuitem { display:flex; align-items:center; gap:10px; border:0; background:none; font:inherit;
+      font-size:13.5px; color:var(--ink2); padding:9px 10px; border-radius:6px; cursor:pointer; text-align:start; }
+  .tabmenuitem .ico { opacity:.6; flex-shrink:0; }
+  .tabmenuitem:hover, .tabmenuitem:focus-visible { background:var(--wash-hover); color:var(--ink); outline:none; }
+  .tabmenuitem.on { color:var(--s1); font-weight:600; background:var(--wash1); }
+  .tabmenuitem .tabbadge { margin-inline-start:auto; }
+  @media (max-width:720px){ #tabs .tabmore { min-height:42px; padding:0 9px; font-size:13px; } .tabmenuitem { min-height:44px; } }
 </style>
 </head>
 <body>
@@ -3488,7 +3513,7 @@
       brSub:function(d,ago){ return d+" · הנתונים חושבו "+ago+" · כל המספרים על משתמשים אמיתיים בלבד"; },
       brEmpty:"הבריף לא הגיע מהשרת - רענון יעזור, ואם לא, get_morning_brief נכשל (יומן admin-dashboard).",
       brSecWait:"מי מחכה למישהו", brSecDay:"מה קרה ביממה האחרונה", brSecRun:"האם המכונה רצה בלילה", brSecMoney:"קמפיינים ועל השולחן",
-      brAttnT:"דורש טיפול", readMore:"הצג עוד", readLess:"הצג פחות", brDeltaCap:"החצים: שינוי מול היממה שלפני", brRowsMore:function(n){ return "הצג עוד "+n; }, brRowsLess:"הצג פחות",
+      brAttnT:"דורש טיפול", tabMore:"עוד", readMore:"הצג עוד", readLess:"הצג פחות", brDeltaCap:"החצים: שינוי מול היממה שלפני", brRowsMore:function(n){ return "הצג עוד "+n; }, brRowsLess:"הצג פחות",
       brSupportT:"המילה האחרונה בשרשור Helpy היא שלהם", brSupportS:"אחרי התשובה האחרונה של הצוות הם כתבו שוב - לפעמים שאלה, לפעמים רק תודה",
       brPendingT:"פניות שמחכות להחלטה", brPendingS:"שכן/ה החליק/ה על בקשה לפני יותר מיממה, ובעל/ת הבקשה עדיין לא אישר/ה ולא דחה/תה",
       brNoOfferT:"בקשות חדשות (יום עד שבוע) שעוד לא קיבלו פנייה", brNoOfferS:"בקשות פעילות בנות יום עד שבוע שאף אחד לא החליק עליהן",
@@ -4437,7 +4462,7 @@
       brSub:function(d,ago){ return d+" · computed "+ago+" · every number is real users only"; },
       brEmpty:"The brief did not arrive - refresh; if it persists, get_morning_brief failed (admin-dashboard log).",
       brSecWait:"Who is waiting on someone", brSecDay:"The last 24 hours", brSecRun:"Did the machine run overnight", brSecMoney:"Campaigns and the desk",
-      brAttnT:"Needs you", readMore:"Show more", readLess:"Show less", brDeltaCap:"arrows: change vs the day before", brRowsMore:function(n){ return "Show "+n+" more"; }, brRowsLess:"Show less",
+      brAttnT:"Needs you", tabMore:"More", readMore:"Show more", readLess:"Show less", brDeltaCap:"arrows: change vs the day before", brRowsMore:function(n){ return "Show "+n+" more"; }, brRowsLess:"Show less",
       brSupportT:"They have the last word in the Helpy thread", brSupportS:"They wrote again after the team's last reply - sometimes a question, sometimes just thanks",
       brPendingT:"Offers awaiting a decision", brPendingS:"A neighbour swiped on a request over a day ago and the owner has neither accepted nor declined",
       brNoOfferT:"New requests (1-7 days) with no offer yet", brNoOfferS:"Active requests one to seven days old that nobody swiped on",
@@ -5166,7 +5191,8 @@
     // a plain zero is a fact, not a headline (a "0%" rate stays: it is a verdict)
     if(String(value)==="0") t.classList.add("zero");
     var lbl=el("div","lbl");
-    if(opts.dot){ var d=el("i"); d.style.background=opts.dot; lbl.appendChild(d); }
+    // no series dot: beside the rail's state dots a brown series dot read as
+    // "warning" (review 12.10); the sparkline below carries the series colour
     if(opts.tip){
       // "below": the tiles are the first viewport row, so an upward tip opens
       // off-screen / behind the sticky header - open downward instead
@@ -5887,6 +5913,12 @@
       var ra = rank[a[0]]; var rb = rank[b[0]];
       return (ra===undefined?9:ra) - (rb===undefined?9:rb);
     });
+    var mh=document.querySelector("#overviewTop > h2");
+    if(mh){
+      var mo=mh.querySelector(".brattnn"); if(mo) mo.remove();
+      var mw=rows.filter(function(r){ return r[0]==="warn"||r[0]==="bad"; }).length;
+      if(mw) mh.appendChild(el("span","brattnn"+(rows.some(function(r){ return r[0]==="bad"; })?" bad":""), fmt(mw)));
+    }
     rows.forEach(function(r,i){
       var row=insight(r[0],r[1],r[2]);
       if(i<3) row.classList.add("lead");
@@ -12391,6 +12423,66 @@
       }
     });
   }
+
+  // ---- five tabs + "more" (2026-10-12, Nir: do it) ------------------------
+  // The five read every day stay in the strip; the six consulted (expenses,
+  // notifications, backlog, server, security, architecture) sit behind one
+  // "more" menu. The real buttons STAY inside #tabs (every lookup in this file
+  // selects #tabs button[data-v=...], and segWire bound them at init) - they
+  // are only hidden from the strip; the menu items click them.
+  (function(){
+    var MORE=["expenses","push","backlog","infra","security","arch"];
+    var tabs=document.getElementById("tabs"); if(!tabs) return;
+    MORE.forEach(function(v){ var b=tabs.querySelector('button[data-v="'+v+'"]'); if(b) b.classList.add("inmore"); });
+    var mb=document.createElement("button"); mb.type="button"; mb.className="tabmore";
+    mb.setAttribute("aria-haspopup","menu"); mb.setAttribute("aria-expanded","false");
+    tabs.appendChild(mb);
+    var menu=document.createElement("div"); menu.className="tabmenu hidden"; menu.setAttribute("role","menu");
+    document.body.appendChild(menu);
+    function hiddenBtns(){ return MORE.map(function(v){ return tabs.querySelector('button[data-v="'+v+'"]'); }).filter(Boolean); }
+    function sync(){
+      var cur=hiddenBtns().filter(function(b){ return b.classList.contains("on"); })[0];
+      var badge=hiddenBtns().map(function(b){ return b.querySelector(".tabbadge"); }).filter(Boolean);
+      var want=(cur? (S.tabMore+" \u00b7 "+(cur.querySelector("[data-i18n]")||cur).textContent) : S.tabMore)
+               +"|"+(badge.some(function(x){ return x.classList.contains("bad"); })? "bad" : badge.length? "warn" : "");
+      if(mb.dataset.k===want && mb.classList.contains("cur")===!!cur) return;
+      mb.dataset.k=want; mb.classList.toggle("cur", !!cur);
+      mb.innerHTML="";
+      mb.appendChild(el("span",null, want.split("|")[0]));
+      mb.appendChild(icon("chevdown",14));
+      var st=want.split("|")[1];
+      if(st) mb.appendChild(el("i","tabmoredot "+st));
+    }
+    function close(){ menu.classList.add("hidden"); mb.setAttribute("aria-expanded","false"); }
+    function open(){
+      menu.innerHTML="";
+      hiddenBtns().forEach(function(b){
+        var it=document.createElement("button"); it.type="button"; it.setAttribute("role","menuitem");
+        it.className="tabmenuitem"+(b.classList.contains("on")? " on" : "");
+        var ic=b.querySelector("svg.ico"); if(ic) it.appendChild(ic.cloneNode(true));
+        it.appendChild(el("span",null,(b.querySelector("[data-i18n]")||b).textContent));
+        var bd=b.querySelector(".tabbadge"); if(bd) it.appendChild(bd.cloneNode(true));
+        it.addEventListener("click",function(){ close(); b.click(); });
+        menu.appendChild(it);
+      });
+      var r=mb.getBoundingClientRect();
+      menu.style.top=(r.bottom+4)+"px";
+      // anchored to the button's inline-start edge, kept on screen
+      menu.classList.remove("hidden");
+      var w=menu.offsetWidth, rtl=document.documentElement.dir==="rtl";
+      var left= rtl? r.right-w : r.left;
+      menu.style.left=Math.max(8, Math.min(left, innerWidth-w-8))+"px";
+      mb.setAttribute("aria-expanded","true");
+      var first=menu.querySelector("button"); if(first) first.focus();
+    }
+    mb.addEventListener("click",function(e){ e.stopPropagation(); menu.classList.contains("hidden")? open() : close(); });
+    document.addEventListener("click",function(e){ if(!menu.contains(e.target)) close(); });
+    document.addEventListener("keydown",function(e){ if(e.key==="Escape" && !menu.classList.contains("hidden")){ close(); mb.focus(); } });
+    addEventListener("resize", close);
+    tabs.addEventListener("scroll", close, {passive:true});
+    new MutationObserver(sync).observe(tabs,{subtree:true,childList:true,attributes:true,attributeFilter:["class"],characterData:true});
+    sync();
+  })();
 })();
 </script>
 </body>
