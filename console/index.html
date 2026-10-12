@@ -1796,6 +1796,9 @@
   #briefView #brGreet { font-size:26px; font-weight:600; letter-spacing:-.025em; line-height:1.2; }
   #briefView .brhead .sub { font-size:13px; color:var(--muted); margin-top:4px; }
   #briefView .brcap { font-size:13px; font-weight:600; color:var(--ink2); margin:0 0 10px; }
+  #briefView .brstrip .brdelta { font-size:12.5px; margin-top:4px; }
+  #briefView .brstrip .tile .sub { min-width:0; }
+  #briefView .brstrip .tile .brbd, #briefView .brstrip .tile .brweek { overflow-wrap:anywhere; }
   /* the day as ONE strip (Stripe's metric row): cells share hairlines, not
      eight separate shadows */
   #briefView .tiles.brstrip { gap:0; margin-bottom:24px; background:var(--surface);
@@ -3441,7 +3444,7 @@
       brSub:function(d,ago){ return d+" · הנתונים חושבו "+ago+" · כל המספרים על משתמשים אמיתיים בלבד"; },
       brEmpty:"הבריף לא הגיע מהשרת - רענון יעזור, ואם לא, get_morning_brief נכשל (יומן admin-dashboard).",
       brSecWait:"מי מחכה למישהו", brSecDay:"מה קרה ביממה האחרונה", brSecRun:"האם המכונה רצה בלילה", brSecMoney:"קמפיינים ועל השולחן",
-      brAttnT:"דורש טיפול", brRowsMore:function(n){ return "הצג עוד "+n; }, brRowsLess:"הצג פחות",
+      brAttnT:"דורש טיפול", brDeltaCap:"החצים: שינוי מול היממה שלפני", brRowsMore:function(n){ return "הצג עוד "+n; }, brRowsLess:"הצג פחות",
       brSupportT:"המילה האחרונה בשרשור Helpy היא שלהם", brSupportS:"אחרי התשובה האחרונה של הצוות הם כתבו שוב - לפעמים שאלה, לפעמים רק תודה",
       brPendingT:"פניות שמחכות להחלטה", brPendingS:"שכן/ה החליק/ה על בקשה לפני יותר מיממה, ובעל/ת הבקשה עדיין לא אישר/ה ולא דחה/תה",
       brNoOfferT:"בקשות חדשות (יום עד שבוע) שעוד לא קיבלו פנייה", brNoOfferS:"בקשות פעילות בנות יום עד שבוע שאף אחד לא החליק עליהן",
@@ -4390,7 +4393,7 @@
       brSub:function(d,ago){ return d+" · computed "+ago+" · every number is real users only"; },
       brEmpty:"The brief did not arrive - refresh; if it persists, get_morning_brief failed (admin-dashboard log).",
       brSecWait:"Who is waiting on someone", brSecDay:"The last 24 hours", brSecRun:"Did the machine run overnight", brSecMoney:"Campaigns and the desk",
-      brAttnT:"Needs you", brRowsMore:function(n){ return "Show "+n+" more"; }, brRowsLess:"Show less",
+      brAttnT:"Needs you", brDeltaCap:"arrows: change vs the day before", brRowsMore:function(n){ return "Show "+n+" more"; }, brRowsLess:"Show less",
       brSupportT:"They have the last word in the Helpy thread", brSupportS:"They wrote again after the team's last reply - sometimes a question, sometimes just thanks",
       brPendingT:"Offers awaiting a decision", brPendingS:"A neighbour swiped on a request over a day ago and the owner has neither accepted nor declined",
       brNoOfferT:"New requests (1-7 days) with no offer yet", brNoOfferS:"Active requests one to seven days old that nobody swiped on",
@@ -9247,6 +9250,8 @@
 
     // ---- the day in eight tiles ------------------------------------------
     var T=$("brTiles");
+    var cap=document.querySelector("#briefView .brcap");
+    if(cap) cap.textContent=S.brSecDay+" \u00b7 "+S.brDeltaCap;
     // the delta is a signed number inside RTL prose - without isolation
     // "-8" renders as "8-" on the phone; it travels as its own LTR span
     // Hebrew says the change in words: a leading "+" lands after the number in an RTL line
@@ -9266,10 +9271,14 @@
         if(sub) s.appendChild(el("span","brbd",sub));
         if(dl!=null){
           var d0=(val||0)-(prevVal||0);
+          // compact, the way a metric row says it: arrow + amount. The
+          // sentence ("down 4 vs the day before") is the hover, and the strip
+          // caption says once what the arrows compare against
           var wrap=el("span","brdelta "+(d0>0?"up":d0<0?"down":"flat"));
+          wrap.title=dl+" "+S.brVsYest;
           wrap.appendChild(icon(d0>0?"arrowup":d0<0?"arrowdown":"minus",12));
-          var n=el("span",null,dl); n.setAttribute("dir","ltr"); n.style.unicodeBidi="isolate";
-          wrap.appendChild(n); wrap.appendChild(document.createTextNode(" "+S.brVsYest));
+          var n=el("span",null,d0? fmt(Math.abs(d0)) : ""); n.setAttribute("dir","ltr"); n.style.unicodeBidi="isolate";
+          wrap.appendChild(n);
           s.appendChild(wrap);
         }
         s.style.flexWrap="wrap";
