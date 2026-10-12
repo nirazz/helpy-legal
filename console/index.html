@@ -9569,7 +9569,10 @@
     new MutationObserver(function(){
       if(pend) return; pend=true;
       requestAnimationFrame(function(){ pend=false; infoTips(); });
-    }).observe(app,{childList:true,subtree:true,characterData:true});
+    // class/hidden too: a tab switch or an opened section only toggles a
+    // class, and prose can only be measured once it is on screen
+    }).observe(app,{childList:true,subtree:true,characterData:true,
+                    attributes:true,attributeFilter:["class","hidden"]});
   })();
 
   function renderPush(){
