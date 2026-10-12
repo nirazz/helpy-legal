@@ -1985,6 +1985,8 @@
   #tabs .tabmore.cur::after { background:var(--s1); }
   #tabs .tabmore .ico { opacity:.6; }
   #tabs .tabmore.cur .tabcuric { opacity:1; color:var(--ink); }
+  /* where the five tabs drop their icons, the open "more" tab drops its own too */
+  @media (max-width:1499px){ header #tabs .tabmore .tabcuric { display:none; } }
   #tabs .tabmore > svg.ico:not(.tabcuric) { width:12px; height:12px; margin-inline-start:-1px; }
   .tabmoredot { width:7px; height:7px; border-radius:50%; background:var(--warning); }
   .tabmoredot.bad { background:var(--bad-text); }
