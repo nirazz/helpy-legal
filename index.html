@@ -18,6 +18,22 @@
 <link rel="alternate" hreflang="he" href="https://help-y.com/index-he.html">
 <link rel="alternate" hreflang="x-default" href="https://help-y.com/">
 <script src="https://unpkg.com/lucide@1.34.0/dist/umd/lucide.min.js" defer></script>
+<script>
+  // Visitors in Israel (or with a Hebrew browser) land on the Hebrew page.
+  // An explicit "English" click (/?lang=en) is remembered and always wins.
+  (function () {
+    try {
+      var q = location.search;
+      if (/[?&]lang=en(&|$)/.test(q)) { localStorage.setItem('helpy_lang', 'en'); return; }
+      if (localStorage.getItem('helpy_lang') === 'en') return;
+      var tz = (Intl.DateTimeFormat().resolvedOptions().timeZone || '');
+      var langs = navigator.languages || [navigator.language || ''];
+      var hebrew = tz === 'Asia/Jerusalem' || tz === 'Asia/Tel_Aviv' ||
+        langs.some(function (l) { return /^(he|iw)(-|$)/i.test(l); });
+      if (hebrew) location.replace('/index-he.html' + q + location.hash);
+    } catch (e) {}
+  })();
+</script>
 <style>
   @import url('/fonts/fonts.css');
 
@@ -273,6 +289,22 @@
     .footer .badge-row { margin-bottom: 64px; }
   }
 
+  /* ── Phone pass (13.10): brand and language share one bar, readable
+     screenshots, the hero screen is not repeated right below it ── */
+  @media (max-width: 600px) {
+    .lang-switch-top { position: absolute; inset-inline: 0; top: 0; padding: 22px 16px 0; z-index: 1; pointer-events: none; }
+    .lang-switch-top a { pointer-events: auto; font-size: 13px; padding: 6px 10px; }
+    .hero { padding-top: 20px; }
+    .hero-brand { margin-bottom: 24px; }
+    .hero-icon { width: 36px; height: 36px; border-radius: 9px; }
+    .hero h1 { font-size: 20px; }
+    .hero-pills { display: grid; grid-template-columns: repeat(2, max-content); gap: 10px 22px; }
+    .device-shot, .hero-shot, .bilingual-phones .device-shot { width: min(300px, 80vw); }
+    .device-image { border-width: 8px; border-radius: 40px; }
+    #s-browse .device-shot { display: none; }
+    .flow-step h3 { font-size: 17px; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
@@ -298,7 +330,7 @@
 <body>
 
 <div class="lang-switch-top">
-  <a href="/index-he.html">גרסה בעברית →</a>
+  <a href="/index-he.html?lang=he">גרסה בעברית →</a>
 </div>
 
 <div class="progress-bar" id="progressBar"></div>
@@ -614,7 +646,7 @@
     <a href="/terms.html">Terms</a>
     <a href="/delete-account.html">Delete account</a>
     <a href="mailto:support@help-y.com">Contact</a>
-    <a href="/index-he.html">עברית</a>
+    <a href="/index-he.html?lang=he">עברית</a>
   </div>
 
   <p class="copyright">© 2026 Helpy. Made with care for communities everywhere.</p>

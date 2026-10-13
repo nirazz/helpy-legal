@@ -17,6 +17,10 @@
 <link rel="alternate" hreflang="en" href="https://help-y.com/">
 <link rel="alternate" hreflang="x-default" href="https://help-y.com/">
 <script src="https://unpkg.com/lucide@1.34.0/dist/umd/lucide.min.js" defer></script>
+<script>
+  // Choosing Hebrew from the English page undoes a remembered "English".
+  try { if (/[?&]lang=he(&|$)/.test(location.search)) localStorage.removeItem('helpy_lang'); } catch (e) {}
+</script>
 <style>
   @import url('/fonts/fonts.css');
 
@@ -272,6 +276,22 @@
     .footer .badge-row { margin-bottom: 64px; }
   }
 
+  /* ── Phone pass (13.10): brand and language share one bar, readable
+     screenshots, the hero screen is not repeated right below it ── */
+  @media (max-width: 600px) {
+    .lang-switch-top { position: absolute; inset-inline: 0; top: 0; padding: 22px 16px 0; z-index: 1; pointer-events: none; }
+    .lang-switch-top a { pointer-events: auto; font-size: 13px; padding: 6px 10px; }
+    .hero { padding-top: 20px; }
+    .hero-brand { margin-bottom: 24px; }
+    .hero-icon { width: 36px; height: 36px; border-radius: 9px; }
+    .hero h1 { font-size: 20px; }
+    .hero-pills { display: grid; grid-template-columns: repeat(2, max-content); gap: 10px 22px; }
+    .device-shot, .hero-shot, .bilingual-phones .device-shot { width: min(300px, 80vw); }
+    .device-image { border-width: 8px; border-radius: 40px; }
+    #s-browse .device-shot { display: none; }
+    .flow-step h3 { font-size: 17px; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
@@ -297,7 +317,7 @@
 <body>
 
 <div class="lang-switch-top">
-  <a href="/">English version →</a>
+  <a href="/?lang=en">English version →</a>
 </div>
 
 <div class="progress-bar" id="progressBar"></div>
@@ -605,7 +625,7 @@
     <a href="/terms-he.html">תנאי שימוש</a>
     <a href="/delete-account-he.html">מחיקת חשבון</a>
     <a href="mailto:support@help-y.com">צור קשר</a>
-    <a href="/">English</a>
+    <a href="/?lang=en">English</a>
   </div>
 
   <p class="copyright">© 2026 Helpy. נבנה באהבה לקהילות בכל מקום.</p>
