@@ -17,6 +17,10 @@
 <link rel="alternate" hreflang="en" href="https://help-y.com/">
 <link rel="alternate" hreflang="x-default" href="https://help-y.com/">
 <script src="https://unpkg.com/lucide@1.34.0/dist/umd/lucide.min.js" defer></script>
+<script>
+  // Choosing Hebrew from the English page undoes a remembered "English".
+  try { if (/[?&]lang=he(&|$)/.test(location.search)) localStorage.removeItem('helpy_lang'); } catch (e) {}
+</script>
 <style>
   @import url('/fonts/fonts.css');
 
@@ -272,6 +276,60 @@
     .footer .badge-row { margin-bottom: 64px; }
   }
 
+  /* ── Phone pass (13.10): one idea per screen. Brand and language share
+     one bar; each section is heading + one paragraph + its screen (the
+     list under the paragraph repeated it); one rhythm everywhere ── */
+  @media (max-width: 600px) {
+    .lang-switch-top { position: absolute; inset-inline: 0; top: 0; padding: 22px 20px 0; z-index: 1; pointer-events: none; }
+    .lang-switch-top a { pointer-events: auto; font-size: 13px; padding: 6px 10px; }
+    .hero { padding: 20px 20px 56px; gap: 44px; }
+    .hero-brand { margin-bottom: 28px; }
+    .hero-icon { width: 36px; height: 36px; border-radius: 9px; }
+    .hero h1 { font-size: 20px; }
+    .hero .tagline { margin-bottom: 16px; }
+    .hero .sub-tagline { margin-bottom: 24px; }
+    .hero-pills { display: grid; grid-template-columns: repeat(2, max-content); gap: 10px 22px; margin-bottom: 28px; }
+    .badge-row { gap: 10px; }
+    .store-badge { gap: 9px; padding: 10px 12px; }
+    .store-badge .badge-small { white-space: nowrap; }
+
+    .section, .flow-section, .bilingual-section, .safety-section { padding: 56px 20px; }
+    .section-inner, .section:nth-child(even) .section-inner { gap: 32px; }
+    .section-text h2, .flow-section h2, .safety-section h2, .bilingual-section h2 { font-size: 28px; margin-bottom: 12px; }
+    .section-text p.lede, .flow-section .section-sub, .bilingual-section .section-sub,
+    .safety-section .section-sub, .footer .footer-sub { font-size: 16px; line-height: 1.65; margin-bottom: 0; text-wrap: pretty; }
+    .section-text .feature-list { display: none; }
+
+    .device-shot, .hero-shot { width: min(270px, 72vw); }
+    .device-image { border-width: 8px; border-radius: 38px; box-shadow: 0 16px 40px rgba(16,24,40,.12); }
+    /* the hero already shows this screen; on a phone the section would be
+       a lone paragraph, so it goes, and the bands below swap to keep
+       alternating */
+    #s-browse { display: none; }
+    #s-browse ~ .section { background: var(--plane); border-block: 1px solid var(--line); }
+    #s-browse ~ .section:nth-child(even) { background: var(--white); border-block: 0; }
+
+    .flow-section .section-sub { margin-bottom: 36px; }
+    .flow-steps { padding-inline-start: 14px; }
+    .flow-step { padding-bottom: 24px; }
+    .flow-step h3 { font-size: 17px; margin-bottom: 2px; }
+
+    .bilingual-section .section-sub { margin-bottom: 32px; }
+    .bilingual-section { border-top: 1px solid var(--line); }
+    .bilingual-phones { flex-wrap: nowrap; gap: 12px; }
+    .bilingual-phones .device-shot { width: calc(50% - 6px); }
+    .bilingual-phones .device-image { border-width: 5px; border-radius: 24px; }
+
+    .safety-section .section-sub { margin-bottom: 28px; }
+    .safety-card, .safety-card + .safety-card { padding: 18px 0; display: grid; grid-template-columns: 22px 1fr; column-gap: 12px; }
+    .safety-card .icon { margin: 1px 0 0; grid-row: span 2; }
+    .safety-card h3 { margin-bottom: 4px; }
+
+    .footer { padding: 56px 20px 32px; }
+    .footer .footer-sub { margin-bottom: 28px; }
+    .footer .badge-row { margin-bottom: 48px; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
@@ -297,7 +355,7 @@
 <body>
 
 <div class="lang-switch-top">
-  <a href="/">English version →</a>
+  <a href="/?lang=en">English version →</a>
 </div>
 
 <div class="progress-bar" id="progressBar"></div>
@@ -605,7 +663,7 @@
     <a href="/terms-he.html">תנאי שימוש</a>
     <a href="/delete-account-he.html">מחיקת חשבון</a>
     <a href="mailto:support@help-y.com">צור קשר</a>
-    <a href="/">English</a>
+    <a href="/?lang=en">English</a>
   </div>
 
   <p class="copyright">© 2026 Helpy. נבנה באהבה לקהילות בכל מקום.</p>
