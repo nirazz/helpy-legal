@@ -3468,10 +3468,10 @@
       scWinNoData:"עדיין אין נתונים לכל התקופה הזו",
       scChEmpty:"לא נשלח ולא נחסם אף קוד בחלון הזה.",
       scSerSent:"נשלחו", scSerRefused:"נחסמו", scSerOther:"נחסמו - סיבה לא ידועה",
-      scReasons:{ global_brake:"בלם חירום (40 ב-10 דקות)", global_day:"תקרה יומית (60 ביום)",
+      scReasons:{ global_brake:"בלם חירום (40 ב-10 דקות)", global_day:"תקרה יומית לישראל (60 ביום)", global_day_intl:"תקרה יומית לחו״ל (10 ביום)",
         phone_10min:"יותר מ-3 לאותו מספר ב-10 דק'", phone_day:"יותר מ-5 לאותו מספר ביום", user_hour:"יותר מ-3 למשתמש בשעה",
         user_day:"יותר מ-5 למשתמש ביום", user_30d:"יותר מ-8 למשתמש ב-30 יום",
-        user_phones:"יותר מ-5 מספרים ביום", country:"מדינה לא מאושרת",
+        user_phones:"יותר מ-5 מספרים ביום", country:"מדינה לא מאושרת", number_type:"מספר בתשלום (פרימיום)", in_use:"מספר תפוס - לא נשלח", banned:"מספר חסום - לא נשלח", send_failed:"Twilio דחה - לא נשלח",
         attestation_invalid:"אימות מכשיר נכשל", attestation_missing:"חסר אימות מכשיר" },
       scAttTitle:"אימות מכשיר",
       scAttSub:"כל בקשה לקוד נבדקת: האם היא הגיעה מהאפליקציה האמיתית, במכשיר אמיתי.",
@@ -4431,10 +4431,10 @@
       scWinNoData:"Not enough data yet for this whole period",
       scChEmpty:"No code was sent or refused in this window.",
       scSerSent:"Sent", scSerRefused:"Refused", scSerOther:"Refused - reason unknown",
-      scReasons:{ global_brake:"Emergency brake (40 in 10 min)", global_day:"Daily ceiling (60 a day)",
+      scReasons:{ global_brake:"Emergency brake (40 in 10 min)", global_day:"Israel daily ceiling (60 a day)", global_day_intl:"Abroad daily ceiling (10 a day)",
         phone_10min:"More than 3 to one number in 10 min", phone_day:"More than 5 to one number in a day", user_hour:"More than 3 per user in an hour",
         user_day:"More than 5 per user in a day", user_30d:"More than 8 per user in 30 days",
-        user_phones:"More than 5 numbers in a day", country:"Country not allowed",
+        user_phones:"More than 5 numbers in a day", country:"Country not allowed", number_type:"Premium-rate number", in_use:"Number already in use - not sent", banned:"Banned number - not sent", send_failed:"Twilio refused - not sent",
         attestation_invalid:"Device check failed", attestation_missing:"Device check missing" },
       scAttTitle:"Device check",
       scAttSub:"Every code request is checked: did it come from the real app, on a real device.",
@@ -11486,7 +11486,7 @@
   // reasons happen to appear in the window
   var SC_REASONS=["global_brake","global_day","phone_10min","user_hour","user_day",
                   "user_30d","user_phones","country","attestation_invalid","attestation_missing",
-                  "phone_day"];
+                  "phone_day","global_day_intl","number_type","in_use","banned","send_failed"];
   var SC_OUTCOMES=["verified","missing","invalid","unverifiable","not_evaluated"];
   function securityOn(){ var v=$("securityView"); return !!(v && !v.classList.contains("hidden")); }
   // The OTP log only began on 11.10.2026. "in the last 14 days" over four
