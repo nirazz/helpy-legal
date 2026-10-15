@@ -1,0 +1,41 @@
+name: page scripts parse
+
+# A page whose inline script does not parse still renders, but nothing on it
+# works.
+# PR + main: block it before GitHub Pages serves it.
+# Hourly: check what help-y.com actually serves; a failed run emails the owner.
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repo:
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: python3 scripts/check_page_scripts.py
+
+  live:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: >
+          python3 scripts/check_page_scripts.py --url
+          https://help-y.com/console/
+          https://help-y.com/
+          https://help-y.com/index-he.html
