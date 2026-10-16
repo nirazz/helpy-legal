@@ -1896,6 +1896,7 @@
   #briefView .brstrip .tile .sub { margin-top:6px; }
   /* today-so-far: its own line under the tile's detail, a shade quieter */
   #briefView .tile .sub .brtoday { display:block; width:100%; margin-top:2px; opacity:.85; }
+  #briefView .tile .sub .brsame { display:flex; width:100%; margin:0 0 4px; white-space:normal; font-weight:600; }
   #briefView .brstrip .tile .brbd.down { color:var(--bad-text); font-weight:600; }
   #briefView .brstrip .tile .brbd.up { color:var(--good-text); font-weight:600; }
   #briefView .brfoot { font-size:12.5px; color:var(--muted); margin:0 2px 24px; }
@@ -3653,7 +3654,7 @@
       brFootLine:function(a,p,r,b){ return "חשבונות שנמחקו: "+a+" · פוסטים שנמחקו: "+p+" · דיווחים: "+r+" · חסימות: "+b; },
       brMachAllOk:"הכל תקין", brMachIssues:function(n){ return n==="1"? "בעיה אחת" : n+" בעיות"; },
       brShowMoreWork:function(n){ return "עוד "+n+" שמחכים לך"; },
-      brAttnT:"דורש טיפול", tabMore:"עוד", readMore:"הצג עוד", readLess:"הצג פחות", brDeltaCap:"החצים: שינוי מול שלשום", brSecDayOf:function(d){ return "מה קרה אתמול, "+d; }, brToday:function(n){ return "היום עד עכשיו: "+n; }, brSecToday:"היום עד עכשיו", brCapSame:"החצים: מול אתמול עד אותה שעה", brYdayFull:function(n){ return "אתמול כל היום: "+n; }, brVsSame:"מול אתמול עד אותה שעה", brRowsMore:function(n){ return "הצג עוד "+n; }, brRowsLess:"הצג פחות",
+      brAttnT:"דורש טיפול", tabMore:"עוד", readMore:"הצג עוד", readLess:"הצג פחות", brDeltaCap:"החצים: שינוי מול שלשום", brSecDayOf:function(d){ return "מה קרה אתמול, "+d; }, brToday:function(n){ return "היום עד עכשיו: "+n; }, brSecToday:"היום עד עכשיו", brCapSame:"החצים: מול אתמול עד אותה שעה", brYdayFull:function(n){ return "אתמול כל היום: "+n; }, brVsSame:"מול אתמול עד אותה שעה", brSameLine:function(p){ return "אתמול באותה שעה: "+p; }, brRowsMore:function(n){ return "הצג עוד "+n; }, brRowsLess:"הצג פחות",
       brSupportT:"המילה האחרונה בשרשור Helpy היא שלהם", brSupportS:"אחרי התשובה האחרונה של הצוות הם כתבו שוב - לפעמים שאלה, לפעמים רק תודה",
       brPendingT:"פניות שמחכות להחלטה", brPendingS:"שכן/ה החליק/ה על בקשה לפני יותר מיממה, ובעל/ת הבקשה עדיין לא אישר/ה ולא דחה/תה",
       brNoOfferT:"בקשות חדשות (יום עד שבוע) שעוד לא קיבלו פנייה", brNoOfferS:"בקשות פעילות בנות יום עד שבוע שאף אחד לא החליק עליהן",
@@ -4616,7 +4617,7 @@
       brFootLine:function(a,p,r,b){ return "Accounts deleted: "+a+" · posts deleted: "+p+" · reports: "+r+" · blocks: "+b; },
       brMachAllOk:"all fine", brMachIssues:function(n){ return n==="1"? "one issue" : n+" issues"; },
       brShowMoreWork:function(n){ return n+" more waiting for you"; },
-      brAttnT:"Needs you", tabMore:"More", readMore:"Show more", readLess:"Show less", brDeltaCap:"arrows: change vs the day before", brSecDayOf:function(d){ return "Yesterday, "+d; }, brToday:function(n){ return "Today so far: "+n; }, brSecToday:"Today so far", brCapSame:"arrows: vs yesterday up to the same hour", brYdayFull:function(n){ return "Yesterday, all day: "+n; }, brVsSame:"vs yesterday up to the same hour", brRowsMore:function(n){ return "Show "+n+" more"; }, brRowsLess:"Show less",
+      brAttnT:"Needs you", tabMore:"More", readMore:"Show more", readLess:"Show less", brDeltaCap:"arrows: change vs the day before", brSecDayOf:function(d){ return "Yesterday, "+d; }, brToday:function(n){ return "Today so far: "+n; }, brSecToday:"Today so far", brCapSame:"arrows: vs yesterday up to the same hour", brYdayFull:function(n){ return "Yesterday, all day: "+n; }, brVsSame:"vs yesterday up to the same hour", brSameLine:function(p){ return "Yesterday by now: "+p; }, brRowsMore:function(n){ return "Show "+n+" more"; }, brRowsLess:"Show less",
       brSupportT:"They have the last word in the Helpy thread", brSupportS:"They wrote again after the team's last reply - sometimes a question, sometimes just thanks",
       brPendingT:"Offers awaiting a decision", brPendingS:"A neighbour swiped on a request over a day ago and the owner has neither accepted nor declined",
       brNoOfferT:"New requests (1-7 days) with no offer yet", brNoOfferS:"Active requests one to seven days old that nobody swiped on",
@@ -9597,7 +9598,15 @@
       if(!val) x.classList.add("zero");
       if(hint) x.title=hint;
       var v=x.querySelector(".val");
-      if(v && dl!=null){
+      var sameLine=null;
+      if(v && dl!=null && TD){
+        // today vs yesterday-by-now names what it is compared with (Nir 16.10:
+        // a bare "↑ 1" beside 29 read as a riddle); arrow + colour = direction
+        var ds=(val||0)-(prevVal||0);
+        sameLine=el("span","brdelta brsame "+(ds>0?"up":ds<0?"down":"flat"));
+        sameLine.appendChild(icon(ds>0?"arrowup":ds<0?"arrowdown":"minus",12));
+        sameLine.appendChild(el("span",null,S.brSameLine(fmt(prevVal||0))));
+      } else if(v && dl!=null){
         var d0=(val||0)-(prevVal||0);
         var row=el("div","brvrow"); v.parentNode.insertBefore(row,v); row.appendChild(v);
         var wrap=el("span","brdelta "+(d0>0?"up":d0<0?"down":"flat"));
@@ -9607,7 +9616,7 @@
         row.appendChild(wrap);
       }
       var s=x.querySelector(".sub");
-      if(s){ s.textContent=""; if(sub) s.appendChild(el("span","brbd",sub));
+      if(s){ s.textContent=""; if(sameLine) s.appendChild(sameLine); if(sub) s.appendChild(el("span","brbd",sub));
         if(todayVal!=null) s.appendChild(el("span","brbd brtoday",(TD? S.brYdayFull : S.brToday)(fmt(todayVal)))); }
       T.appendChild(x);
       return x;
