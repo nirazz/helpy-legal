@@ -1894,6 +1894,8 @@
   #briefView .brvrow { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
   #briefView .brvrow .brdelta { font-size:12.5px; font-weight:600; }
   #briefView .brstrip .tile .sub { margin-top:6px; }
+  /* today-so-far: its own line under the tile's detail, a shade quieter */
+  #briefView .tile .sub .brtoday { display:block; width:100%; margin-top:2px; opacity:.85; }
   #briefView .brstrip .tile .brbd.down { color:var(--bad-text); font-weight:600; }
   #briefView .brstrip .tile .brbd.up { color:var(--good-text); font-weight:600; }
   #briefView .brfoot { font-size:12.5px; color:var(--muted); margin:0 2px 24px; }
@@ -3641,7 +3643,7 @@
       brGreet:function(h){ return h<12? "בוקר טוב, ניר" : h<18? "צהריים טובים, ניר" : "ערב טוב, ניר"; },
       brSub:function(d,ago){ return d+" · הנתונים חושבו "+ago+" · כל המספרים על משתמשים אמיתיים בלבד"; },
       brEmpty:"הבריף לא הגיע מהשרת - רענון יעזור, ואם לא, get_morning_brief נכשל (יומן admin-dashboard).",
-      brSecWait:"מי מחכה למישהו", brSecDay:"מה קרה ביממה האחרונה", brSecRun:"האם המכונה רצה בלילה", brSecMoney:"קמפיינים ועל השולחן",
+      brSecWait:"מי מחכה למישהו", brSecDay:"מה קרה אתמול", brSecRun:"האם המכונה רצה בלילה", brSecMoney:"קמפיינים ועל השולחן",
       brMachT:"שרת, התראות, קמפיינים ועל השולחן",
       brLedeWork:function(n){ return n==="1"? "דבר אחד מחכה לך." : n+" דברים מחכים לך."; },
       brLedeCalm:"שום דבר לא מחכה לך.",
@@ -3651,7 +3653,7 @@
       brFootLine:function(a,p,r,b){ return "חשבונות שנמחקו: "+a+" · פוסטים שנמחקו: "+p+" · דיווחים: "+r+" · חסימות: "+b; },
       brMachAllOk:"הכל תקין", brMachIssues:function(n){ return n==="1"? "בעיה אחת" : n+" בעיות"; },
       brShowMoreWork:function(n){ return "עוד "+n+" שמחכים לך"; },
-      brAttnT:"דורש טיפול", tabMore:"עוד", readMore:"הצג עוד", readLess:"הצג פחות", brDeltaCap:"החצים: שינוי מול היממה שלפני", brRowsMore:function(n){ return "הצג עוד "+n; }, brRowsLess:"הצג פחות",
+      brAttnT:"דורש טיפול", tabMore:"עוד", readMore:"הצג עוד", readLess:"הצג פחות", brDeltaCap:"החצים: שינוי מול שלשום", brSecDayOf:function(d){ return "מה קרה אתמול, "+d; }, brToday:function(n){ return "היום עד עכשיו: "+n; }, brRowsMore:function(n){ return "הצג עוד "+n; }, brRowsLess:"הצג פחות",
       brSupportT:"המילה האחרונה בשרשור Helpy היא שלהם", brSupportS:"אחרי התשובה האחרונה של הצוות הם כתבו שוב - לפעמים שאלה, לפעמים רק תודה",
       brPendingT:"פניות שמחכות להחלטה", brPendingS:"שכן/ה החליק/ה על בקשה לפני יותר מיממה, ובעל/ת הבקשה עדיין לא אישר/ה ולא דחה/תה",
       brNoOfferT:"בקשות חדשות (יום עד שבוע) שעוד לא קיבלו פנייה", brNoOfferS:"בקשות פעילות בנות יום עד שבוע שאף אחד לא החליק עליהן",
@@ -3663,7 +3665,7 @@
       brDeskT:"על השולחן", brDeskS:"כרטיסי הבקלוג במצב «עכשיו» ו«רוכב על הבילד הבא»",
       brTSignups:"הרשמות", brTSeen:"פתחו את האפליקציה", brTPosts:"פוסטים חדשים", brTSwipes:"סווייפים", brTMsgs:"הודעות בצ'אט",
       brTDone:"עזרות שהושלמו", brTGone:"מחיקות", brTSafety:"בטיחות",
-      brVsYest:"מול היממה שלפני", brReqOff:function(r,o){ return (r==="1"? "בקשה אחת" : r+" בקשות")+" · "+(o==="1"? "הצעה אחת" : o+" הצעות"); },
+      brVsYest:"מול שלשום", brReqOff:function(r,o){ return (r==="1"? "בקשה אחת" : r+" בקשות")+" · "+(o==="1"? "הצעה אחת" : o+" הצעות"); },
       brAccepted:function(n){ return n==="1"? "אחד אושר" : n+" אושרו"; }, brSenders:function(p,r){ return (p==="1"? "אדם אחד" : p+" אנשים")+" · "+(r==="1"? "שיחה אחת" : r+" שיחות"); },
       brNorth:"מדד הצפון · מקבל/ת העזרה סימן/ה שהושלם", brGoneSub:function(a,p){ return (a==="1"? "חשבון אחד" : a+" חשבונות")+" · "+(p==="1"? "פוסט אחד" : p+" פוסטים"); },
       brDone7:function(n,m){ return "7 ימים: "+n+(m!=null? " · שבוע קודם: "+m : ""); },
@@ -3719,9 +3721,9 @@
       brInsDigestDue:"הסיכום היומי יוצא ב-09:00",
       brInsPushFail:function(n){ return n==="1"? "<b>התראה אחת</b> נכשלה ביממה" : "<b>"+n+"</b> התראות נכשלו ביממה"; },
       brInsVer:function(p){ return "<b>"+p+"%</b> מהמשתמשים שנראו השבוע על הגרסה האחרונה"; },
-      brInsQuiet:"יממה שקטה: אף פוסט, סווייף או הודעה",
-      brInsSign:function(n,d){ return (n==="1"? "<b>הרשמה אחת</b>" : "<b>"+n+"</b> הרשמות")+" ביממה ("+(d>0? "עלייה של "+d : d<0? "ירידה של "+(-d) : "ללא שינוי")+" מול היממה שלפני)"; },
-      brInsDone:function(n){ return n==="1"? "<b>עזרה אחת</b> הושלמה ביממה" : "<b>"+n+"</b> עזרות הושלמו ביממה"; },
+      brInsQuiet:"אתמול היה שקט: אף פוסט, סווייף או הודעה",
+      brInsSign:function(n,d){ return (n==="1"? "<b>הרשמה אחת</b>" : "<b>"+n+"</b> הרשמות")+" אתמול ("+(d>0? "עלייה של "+d : d<0? "ירידה של "+(-d) : "ללא שינוי")+" מול שלשום)"; },
+      brInsDone:function(n){ return n==="1"? "<b>עזרה אחת</b> הושלמה אתמול" : "<b>"+n+"</b> עזרות הושלמו אתמול"; },
       brInsAllClear:"כרגע שום דבר לא דורש את תשומת לבך",
       brCalmMore:function(n){ return "כל השאר תקין ("+n+")"; }, brCalmLess:"הסתרת השאר",
       liveStale:"הרענון האוטומטי נכשל", updatedAt:function(t){ return "עודכן ב-"+t; }, themeBtn:{light:"כהה", dark:"בהיר"}, langBtn:"English",
@@ -4604,7 +4606,7 @@
       brGreet:function(h){ return h<12? "Good morning, Nir" : h<18? "Good afternoon, Nir" : "Good evening, Nir"; },
       brSub:function(d,ago){ return d+" · computed "+ago+" · every number is real users only"; },
       brEmpty:"The brief did not arrive - refresh; if it persists, get_morning_brief failed (admin-dashboard log).",
-      brSecWait:"Who is waiting on someone", brSecDay:"The last 24 hours", brSecRun:"Did the machine run overnight", brSecMoney:"Campaigns and the desk",
+      brSecWait:"Who is waiting on someone", brSecDay:"Yesterday", brSecRun:"Did the machine run overnight", brSecMoney:"Campaigns and the desk",
       brMachT:"Server, push, campaigns and the desk",
       brLedeWork:function(n){ return n==="1"? "One thing is waiting for you." : n+" things are waiting for you."; },
       brLedeCalm:"Nothing is waiting for you.",
@@ -4614,7 +4616,7 @@
       brFootLine:function(a,p,r,b){ return "Accounts deleted: "+a+" · posts deleted: "+p+" · reports: "+r+" · blocks: "+b; },
       brMachAllOk:"all fine", brMachIssues:function(n){ return n==="1"? "one issue" : n+" issues"; },
       brShowMoreWork:function(n){ return n+" more waiting for you"; },
-      brAttnT:"Needs you", tabMore:"More", readMore:"Show more", readLess:"Show less", brDeltaCap:"arrows: change vs the day before", brRowsMore:function(n){ return "Show "+n+" more"; }, brRowsLess:"Show less",
+      brAttnT:"Needs you", tabMore:"More", readMore:"Show more", readLess:"Show less", brDeltaCap:"arrows: change vs the day before", brSecDayOf:function(d){ return "Yesterday, "+d; }, brToday:function(n){ return "Today so far: "+n; }, brRowsMore:function(n){ return "Show "+n+" more"; }, brRowsLess:"Show less",
       brSupportT:"They have the last word in the Helpy thread", brSupportS:"They wrote again after the team's last reply - sometimes a question, sometimes just thanks",
       brPendingT:"Offers awaiting a decision", brPendingS:"A neighbour swiped on a request over a day ago and the owner has neither accepted nor declined",
       brNoOfferT:"New requests (1-7 days) with no offer yet", brNoOfferS:"Active requests one to seven days old that nobody swiped on",
@@ -4681,9 +4683,9 @@
       brInsDigestDue:"The daily digest goes out at 09:00",
       brInsPushFail:function(n){ return n==="1"? "<b>One push</b> failed in 24h" : "<b>"+n+"</b> pushes failed in 24h"; },
       brInsVer:function(p){ return "<b>"+p+"%</b> of users seen this week are on the latest version"; },
-      brInsQuiet:"A quiet day: no post, swipe or message",
-      brInsSign:function(n,d){ return "<b>"+n+"</b> "+(n==="1"?"signup":"signups")+" in 24h ("+(d>=0?"+":"")+d+" vs the day before)"; },
-      brInsDone:function(n){ return n==="1"? "<b>One help</b> completed in 24h" : "<b>"+n+"</b> helps completed in 24h"; },
+      brInsQuiet:"A quiet day yesterday: no post, swipe or message",
+      brInsSign:function(n,d){ return "<b>"+n+"</b> "+(n==="1"?"signup":"signups")+" yesterday ("+(d>=0?"+":"")+d+" vs the day before)"; },
+      brInsDone:function(n){ return n==="1"? "<b>One help</b> completed yesterday" : "<b>"+n+"</b> helps completed yesterday"; },
       brInsAllClear:"Nothing needs your attention right now",
       brCalmMore:function(n){ return "Everything else is fine ("+n+")"; }, brCalmLess:"Hide the rest",
       liveStale:"auto refresh failed", updatedAt:function(t){ return "updated "+t; }, themeBtn:{light:"Dark", dark:"Light"}, langBtn:"עברית",
@@ -9572,7 +9574,9 @@
     // ---- the day in eight tiles ------------------------------------------
     var T=$("brTiles");
     var cap=document.querySelector("#briefView .brcap");
-    if(cap) cap.textContent=S.brSecDay+" \u00b7 "+S.brDeltaCap;
+    // the day counted comes from the payload, not from what we think we asked for
+    var BW=B.window||null;
+    if(cap) cap.textContent=(BW&&BW.day? S.brSecDayOf(fmtDay(BW.day)) : S.brSecDay)+" \u00b7 "+S.brDeltaCap;
     // the delta is a signed number inside RTL prose - without isolation
     // "-8" renders as "8-" on the phone; it travels as its own LTR span
     // Hebrew says the change in words: a leading "+" lands after the number in an RTL line
@@ -9581,7 +9585,10 @@
       return (d>=0?"+":"")+fmt(d); };
     // one number, its change beside it (the sentence is the hover), and ONE
     // plain line under it - the investor page's tile, which reads at a glance
-    function t(label,val,sub,hero,dl,prevVal,hint){
+    // Y = today so far (Israel midnight to now): a plain line, never an arrow -
+    // half a day against a whole one reads as a crash
+    var Y=B.today||null;
+    function t(label,val,sub,hero,dl,prevVal,hint,todayVal){
       var x=tile(label, fmt(val)); if(hero) x.classList.add("hero");
       if(!val) x.classList.add("zero");
       if(hint) x.title=hint;
@@ -9596,7 +9603,8 @@
         row.appendChild(wrap);
       }
       var s=x.querySelector(".sub");
-      if(s){ s.textContent=""; if(sub) s.appendChild(el("span","brbd",sub)); }
+      if(s){ s.textContent=""; if(sub) s.appendChild(el("span","brbd",sub));
+        if(todayVal!=null) s.appendChild(el("span","brbd brtoday",S.brToday(fmt(todayVal)))); }
       T.appendChild(x);
       return x;
     }
@@ -9614,11 +9622,12 @@
     } else {
       t(S.brTDone, D.completed, S.brNorth, true);
     }
-    t(S.brTSignups, D.signups, "iOS "+fmt(D.signups_ios)+" · Android "+fmt(D.signups_android), false, delta(D.signups,P.signups), P.signups);
-    t(S.brTSeen, D.seen, "", false, delta(D.seen,P.seen), P.seen);
-    t(S.brTPosts, (D.new_requests||0)+(D.new_offers||0), S.brReqOff(fmt(D.new_requests),fmt(D.new_offers)), false, delta((D.new_requests||0)+(D.new_offers||0),P.posts), P.posts);
-    t(S.brTSwipes, D.swipes, S.brAccepted(fmt(D.accepted)), false, delta(D.swipes,P.swipes), P.swipes);
-    t(S.brTMsgs, D.messages, S.brSenders(fmt(D.chat_senders),fmt(D.chat_rooms)), false, delta(D.messages,P.messages), P.messages);
+    t(S.brTSignups, D.signups, "iOS "+fmt(D.signups_ios)+" · Android "+fmt(D.signups_android), false, delta(D.signups,P.signups), P.signups, null, Y&&Y.signups);
+    // seen for a past day comes from the midnight capture; missing = a dash, no arrow
+    t(S.brTSeen, D.seen, "", false, (D.seen==null||P.seen==null)? null : delta(D.seen,P.seen), P.seen, null, Y&&Y.seen);
+    t(S.brTPosts, (D.new_requests||0)+(D.new_offers||0), S.brReqOff(fmt(D.new_requests),fmt(D.new_offers)), false, delta((D.new_requests||0)+(D.new_offers||0),P.posts), P.posts, null, Y&&Y.posts);
+    t(S.brTSwipes, D.swipes, S.brAccepted(fmt(D.accepted)), false, delta(D.swipes,P.swipes), P.swipes, null, Y&&Y.swipes);
+    t(S.brTMsgs, D.messages, S.brSenders(fmt(D.chat_senders),fmt(D.chat_rooms)), false, delta(D.messages,P.messages), P.messages, null, Y&&Y.messages);
     // deletions and safety are facts to know, not headlines: one muted line,
     // which turns into a warning only when someone was reported
     var ft=$("brFoot");
