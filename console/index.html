@@ -1885,8 +1885,8 @@
   #briefView .brlede { font-size:18px; line-height:1.5; color:var(--ink); margin:10px 0 6px; max-width:62ch;
       text-wrap:pretty; }
   #briefView .brhead .sub { font-size:12.5px; }
-  #briefView .tiles.brstrip { grid-template-columns:repeat(6,minmax(0,1fr)); margin-bottom:8px; }
-  #briefView .brstrip .tile { padding:18px 18px 16px; border-top:0; border-inline-start:1px solid var(--hairline); }
+  #briefView .tiles.brstrip { grid-template-columns:repeat(7,minmax(0,1fr)); margin-bottom:8px; }
+  #briefView .brstrip .tile { padding:16px 12px 14px; border-top:0; border-inline-start:1px solid var(--hairline); }
   #briefView .brstrip .tile:nth-child(4n+1) { border-inline-start:1px solid var(--hairline); }
   #briefView .brstrip .tile:first-child { border-inline-start:0; }
   #briefView .brstrip .tile .val { font-size:32px; line-height:1.1; }
@@ -1914,13 +1914,13 @@
   #briefView .brmachs.warn { color:var(--warning); background:var(--warn-bg); }
   #briefView details.brmach > .sechead:first-of-type { margin-top:12px; }
   @media (max-width:1100px){
-    #briefView .tiles.brstrip { grid-template-columns:repeat(3,minmax(0,1fr)); }
-    #briefView .brstrip .tile:nth-child(3n+1) { border-inline-start:0; }
-    #briefView .brstrip .tile:nth-child(n+4) { border-top:1px solid var(--hairline); }
+    #briefView .tiles.brstrip { grid-template-columns:repeat(4,minmax(0,1fr)); }
+    #briefView .brstrip .tile:nth-child(4n+1) { border-inline-start:0; }
+    #briefView .brstrip .tile:nth-child(n+5) { border-top:1px solid var(--hairline); }
   }
   @media (max-width:720px){
     #briefView .tiles.brstrip { grid-template-columns:repeat(2,minmax(0,1fr)); }
-    #briefView .brstrip .tile:nth-child(3n+1) { border-inline-start:1px solid var(--hairline); }
+    #briefView .brstrip .tile:nth-child(4n+1) { border-inline-start:1px solid var(--hairline); }
     #briefView .brstrip .tile:nth-child(2n+1) { border-inline-start:0; }
     #briefView .brstrip .tile:nth-child(n+3) { border-top:1px solid var(--hairline); }
     #briefView .brstrip .tile .val, #briefView .brstrip .tile.hero .val { font-size:26px; }
@@ -3650,7 +3650,7 @@
       brLedeCalm:"שום דבר לא מחכה לך.",
       brLedeWeek:function(c,p){ return (c==="0"? "ב-7 הימים האחרונים לא הושלמה אף עזרה" : c==="1"? "ב-7 הימים האחרונים הושלמה עזרה אחת" : "ב-7 הימים האחרונים הושלמו "+c+" עזרות")+(p!=null? " (בשבוע שלפני: "+p+")." : "."); },
       brLedeDay:function(s,o){ return "ביממה האחרונה "+(s==="1"? "נרשם/ה שכן/ה חדש/ה" : "נרשמו "+s+" שכנים חדשים")+", ו-"+o+" פתחו את האפליקציה."; },
-      brTDone7:"עזרות שהושלמו · 7 ימים", brPrevWk:function(m){ return "בשבוע שלפני: "+m; },
+      brTDone7:"עזרות שהושלמו · 7 ימים", brTUsers:"משתמשים", brUsersSub:function(n){ return "פתחו השבוע: "+n; }, brUsersTip:"כל החשבונות האמיתיים שלא נמחקו (בלי חשבונות בדיקה). השורה מתחת: כמה מהם פתחו את האפליקציה ב-7 הימים האחרונים", brPrevWk:function(m){ return "בשבוע שלפני: "+m; },
       brFootLine:function(a,p,r,b){ return "חשבונות שנמחקו: "+a+" · פוסטים שנמחקו: "+p+" · דיווחים: "+r+" · חסימות: "+b; },
       brMachAllOk:"הכל תקין", brMachIssues:function(n){ return n==="1"? "בעיה אחת" : n+" בעיות"; },
       brShowMoreWork:function(n){ return "עוד "+n+" שמחכים לך"; },
@@ -4613,7 +4613,7 @@
       brLedeCalm:"Nothing is waiting for you.",
       brLedeWeek:function(c,p){ return (c==="0"? "No help was completed" : c==="1"? "One help was completed" : c+" helps were completed")+" in the last 7 days"+(p!=null? " (week before: "+p+")." : "."); },
       brLedeDay:function(s,o){ return "In the last 24 hours "+(s==="1"? "one new neighbour signed up" : s+" new neighbours signed up")+" and "+o+" opened the app."; },
-      brTDone7:"Helps completed · 7 days", brPrevWk:function(m){ return "week before: "+m; },
+      brTDone7:"Helps completed · 7 days", brTUsers:"Users", brUsersSub:function(n){ return "opened this week: "+n; }, brUsersTip:"Every real account that is not deleted (test accounts excluded). The line under it: how many opened the app in the last 7 days", brPrevWk:function(m){ return "week before: "+m; },
       brFootLine:function(a,p,r,b){ return "Accounts deleted: "+a+" · posts deleted: "+p+" · reports: "+r+" · blocks: "+b; },
       brMachAllOk:"all fine", brMachIssues:function(n){ return n==="1"? "one issue" : n+" issues"; },
       brShowMoreWork:function(n){ return n+" more waiting for you"; },
@@ -9635,6 +9635,11 @@
     } else {
       t(S.brTDone, (TD||D).completed, S.brNorth, true);
     }
+    // the base every other number is a share of (Nir 17.10: "זה חשוב למסך בוקר");
+    // a running total, so no arrow and no yesterday line
+    var FE=B.feed||null;
+    if(FE && FE.live_users!=null)
+      t(S.brTUsers, FE.live_users, FE.seen_7d!=null? S.brUsersSub(fmt(FE.seen_7d)) : "", false, null, null, S.brUsersTip);
     if(TD){
       // today first; the line under each tile is yesterday's whole day (= the 09:00 digest)
       var tp=function(o){ return (o.new_requests||0)+(o.new_offers||0); };
