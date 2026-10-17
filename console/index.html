@@ -736,6 +736,8 @@
   .plain th, .plain td { padding:9px 10px; text-align:start;
                          border-bottom:1px solid var(--grid); }
   .plain tr:last-child th, .plain tr:last-child td { border-bottom:0; }
+  .plain tr.sub th { font-weight:400; padding-inline-start:24px; }
+  .plain tr.sub td { font-weight:400; color:var(--muted); }
   .plain th { color:var(--muted); font-weight:500; font-size:12px; background:var(--surface2);
               border-bottom-color:var(--hairline); }
   .plain td { font-variant-numeric:tabular-nums; font-weight:400; font-size:13.5px; }
@@ -2920,6 +2922,8 @@
       f5:"פרסמו פוסט", f6:"שלחו או קיבלו פנייה", f7:"שלחו הודעה",
       lf1:"חדשים (עד 7 ימים)", lf2:"פעילים בשבוע האחרון", lf3:"רדומים (30+ יום בלי כניסה)", lf4:"סה״כ משתמשים חיים",
       lf2New:function(n){ return "פעילים השבוע, מתוכם חדשים "+n; }, lfRest:"כל השאר",
+      acqAds:"מתוכם הגיעו ממודעות", acqOrg:"מתוכם הגיעו אורגני (חנות, הזמנה, אתר)", acqUnk:"מתוכם מקור לא ידוע",
+      rdAcq:function(ads,org,known,pAds,ios,and){ return " <b>מקור ההגעה:</b> ידוע רק אצל <b>"+known+"</b> משתמשים, ומתוכם <b>"+pAds+"</b> הגיעו ממודעות ("+ads+" מול "+org+" אורגני). לכן שני המספרים, מודעות ואורגני, הם מינימום ולא התמונה המלאה. <b>למה אצל רוב המשתמשים המקור לא ידוע:</b> באנדרואיד, \u2068Google Play\u2069 מעביר לאפליקציה את הקישור שממנו הגיעה ההתקנה, וממנו אנחנו יודעים אם זו מודעה, הזמנה מחבר או חיפוש בחנות. התחלנו לשמור אותו רק מגרסה \u20681.1.22\u2069 (ספטמבר 2026), ולכן <b>"+and+"</b> משתמשי אנדרואיד שהצטרפו לפני כן, או לא פתחו גרסה חדשה מאז, נשארו בלי מקור. באייפון אין דבר כזה בכלל: אפל מנתקת בכוונה, למען פרטיות המשתמשים, את הקשר בין מי שראה מודעה לבין מי שהתקין. \u2068Meta\u2069 מקבלת מאפל רק סיכומים כמו 'הקמפיין הביא כ-12 התקנות השבוע', בלי לדעת מי הם. לכן כל <b>"+ios+"</b> משתמשי האייפון בלי מקור, וזה לא ישתנה. הדרך היחידה לדעת על כולם היא לשאול כל משתמש אחרי ההרשמה איך שמע עלינו."; },
       liq1:"בקשות חדשות", liq2:"קיבלו הצעה תוך יממה", liq3:"קיבלו הצעה בסוף", liq4:"חציון זמן להצעה ראשונה",
       liqMedianTip:"הערך האמצעי: מחצית מהבקשות קיבלו הצעה מהר מזה. עמיד לחריגים, בניגוד לממוצע",
       minutes:"דקות", hours:"שעות", minuteOne:"דקה אחת", hourOne:"שעה אחת", dayOne:"יום אחד",
@@ -3891,6 +3895,8 @@
       f5:"Posted", f6:"Sent or got an approach", f7:"Sent a message",
       lf1:"New (up to 7 days)", lf2:"Active this week", lf3:"Dormant (30+ days)", lf4:"Total live users",
       lf2New:function(n){ return "Active this week, of them new "+n; }, lfRest:"Everyone else",
+      acqAds:"of them came from ads", acqOrg:"of them came organically (store, invite, site)", acqUnk:"of them source unknown",
+      rdAcq:function(ads,org,known,pAds,ios,and){ return " <b>How they found us:</b> known for only <b>"+known+"</b> users, and <b>"+pAds+"</b> of those came from ads ("+ads+" vs "+org+" organic). So both numbers, ads and organic, are floors, not the full picture. <b>Why most users have no source:</b> on Android, Google Play hands the app the link the install came from, which tells us whether it was an ad, an invite from a friend or a store search. We only started saving it in 1.1.22 (September 2026), so the <b>"+and+"</b> Android users who joined before that, or have not opened a newer version since, have none. iPhone has nothing like it: Apple deliberately cuts the link between who saw an ad and who installed, for user privacy. Meta only gets totals from Apple, like 'the campaign brought about 12 installs this week', never who they were. So all <b>"+ios+"</b> iPhone users have no source, and that will not change. The only way to know for everyone is to ask each user after sign-up how they heard about us."; },
       liq1:"New requests", liq2:"Got an offer within 24h", liq3:"Got an offer eventually", liq4:"Median time to first offer",
       liqMedianTip:"The middle value: half the requests got an offer faster. Robust to outliers, unlike the mean",
       minutes:"min", hours:"hours", minuteOne:"1 min", hourOne:"1 hour", dayOne:"1 day",
@@ -7068,14 +7074,29 @@
     lfRows.push([S.lf3,fmt(lfD)]);
     if(lfT-lfA-lfD>0) lfRows.push([S.lfRest,fmt(lfT-lfA-lfD)]);
     lfRows.push([S.lf4,fmt(lfT)]);
+    // How the live users found us, under the total. Same population as the
+    // total (not deleted, not mock), so the three rows add up to it. Most of
+    // the base is "unknown" (all of iOS, Android before 1.1.22): shown, never
+    // folded into organic.
+    var AQ=DATA.acquisition;
+    if(AQ && +AQ.total>0){
+      lfRows.push([S.acqAds,fmt(+AQ.ads||0),"sub"]);
+      lfRows.push([S.acqOrg,fmt(+AQ.organic||0),"sub"]);
+      lfRows.push([S.acqUnk,fmt(+AQ.unknown||0),"sub"]);
+    }
     lfRows.forEach(function(r){
-      var tr=el("tr"); tr.appendChild(el("th",null,r[0])); tr.appendChild(el("td",null,r[1]));
+      var tr=el("tr",r[2]||null); tr.appendChild(el("th",null,r[0])); tr.appendChild(el("td",null,r[1]));
       lt0.appendChild(tr);
     });
     var lch=$("lifecycle"); lch.innerHTML=""; lch.appendChild(lt0);
     if(k.live_users){
       var lfRead=S.rdLifecycle(fmt(lf.dormant_30d), fmt(k.live_users), pct(lf.dormant_30d,k.live_users));
       if((lf.dormant_30d/k.live_users)>0.5) lfRead+=S.recDorm(fmt(lf.dormant_30d));
+      if(AQ && +AQ.total>0){
+        var aqKnown=(+AQ.ads||0)+(+AQ.organic||0);
+        if(aqKnown>0) lfRead+=S.rdAcq(fmt(+AQ.ads||0), fmt(+AQ.organic||0), fmt(aqKnown),
+          pct(+AQ.ads||0,aqKnown), fmt(+AQ.unknown_ios||0), fmt(+AQ.unknown_android||0));
+      }
       panelRead("lifecycle", (lf.dormant_30d/k.live_users)>0.5?"warn":"", lfRead);
     }
 
