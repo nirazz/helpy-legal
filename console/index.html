@@ -2240,6 +2240,7 @@
         <span class="seg mini" id="funnelSeg"><button data-d="14" class="on" data-i18n="d14">14 יום</button><button data-d="30" data-i18n="d30">30 יום</button></span></h2>
         <div class="sub" data-i18n="funnelSub">מה עושה משתמש חדש אחרי ההרשמה</div><div id="funnel"></div></section>
       <section class="panel"><h2 data-i18n="lifecycleTitle">מאזן משתמשים</h2><div class="sub" data-i18n="lifecycleSub">חתך חי של כל המשתמשים הרשומים</div><div id="lifecycle"></div></section>
+      <section class="panel wide"><h2 data-i18n="churnTitle">עומדים לעזוב</h2><div class="sub" data-i18n="churnSub">ציון סיכון לכל מי שנכנס בחודש האחרון · קודם מי שמחכים לו שכנים</div><div id="churnRisk"></div></section>
       <section class="panel wide"><h2 data-i18n="glogTitle">יומן צמיחה · שבוע אחר שבוע</h2><div class="sub" data-i18n="glogSub">מה קרה בכל שבוע, מה השתנה, ומה גרם לזה</div><div id="growthLog"></div></section>
       <!-- the push senders are judged in ONE place, the Notifications tab -->
       <section class="panel wide"><h2 data-i18n="nudgeTitle">מכונת הדחיפות</h2><div id="nudgeEff"></div></section>
@@ -2922,6 +2923,16 @@
       f5:"פרסמו פוסט", f6:"שלחו או קיבלו פנייה", f7:"שלחו הודעה",
       lf1:"חדשים (עד 7 ימים)", lf2:"פעילים בשבוע האחרון", lf3:"רדומים (30+ יום בלי כניסה)", lf4:"סה״כ משתמשים חיים",
       lf2New:function(n){ return "פעילים השבוע, מתוכם חדשים "+n; }, lfRest:"כל השאר",
+      churnTitle:"עומדים לעזוב", churnSub:"ציון סיכון לכל מי שנכנס בחודש האחרון · קודם מי שמחכים לו שכנים",
+      chHigh:"סיכון גבוה", chMed:"סיכון בינוני", chLow:"סיכון נמוך", chWaitUsers:"מתוכם (גבוה + בינוני) מחכים להם שכנים",
+      chUninst:"כנראה מחקו את האפליקציה (לא נספרים בציון)",
+      chColName:"שם", chColSeen:"כניסה אחרונה", chColScore:"ציון", chColWhy:"למה", chColWait:"מחכים לו/ה", chColPost:"פוסט פעיל",
+      chDays:function(n){ return n==0? "היום" : n==1? "אתמול" : "לפני "+n+" ימים"; },
+      chWhy:{no_push:"בלי התראות", quiet_push:"התראות שקטות", "new":"חדש/ה (עד 14 יום)", nothing_open:"אין פוסט או שיחה פתוחה"},
+      chEmpty:"אין כרגע אף אחד בסיכון בינוני או גבוה.",
+      rdChurnPending:function(date){ return "הציון בנוי מכללים פשוטים (ימים בלי כניסה, התראות, ותק, פוסט או שיחה פתוחה) ועדיין <b>לא נבדק</b> מול מה שמשתמשים עשו בפועל. כל לילה נשמר צילום של הציון, ומ-<b>"+date+"</b> יופיע כאן כמה מכל קבוצה חזרו תוך שבוע. אם בסיכון הגבוה לא חוזרים פחות מאשר בנמוך, הכללים לא נכונים ומשנים אותם."; },
+      rdChurnReadout:function(rows){ return "<b>חזרו תוך שבוע מהצילום:</b> "+rows+". אם בסיכון הגבוה חוזרים פחות, הציון עובד."; },
+      chRow:function(name,r,n,p){ return name+": "+r+" מתוך "+n; },
       acqAds:"מתוכם הגיעו ממודעות", acqOrg:"מתוכם הגיעו אורגני (חנות, הזמנה, אתר)", acqUnk:"מתוכם מקור לא ידוע",
       rdAcq:function(ads,org,known,pAds,ios,and){ return " <b>מקור ההגעה:</b> ידוע רק אצל <b>"+known+"</b> משתמשים, ומתוכם <b>"+pAds+"</b> הגיעו ממודעות ("+ads+" מול "+org+" אורגני). לכן שני המספרים, מודעות ואורגני, הם מינימום ולא התמונה המלאה. <b>למה אצל רוב המשתמשים המקור לא ידוע:</b> באנדרואיד, \u2068Google Play\u2069 מעביר לאפליקציה את הקישור שממנו הגיעה ההתקנה, וממנו אנחנו יודעים אם זו מודעה, הזמנה מחבר או חיפוש בחנות. התחלנו לשמור אותו רק מגרסה \u20681.1.22\u2069 (ספטמבר 2026), ולכן <b>"+and+"</b> משתמשי אנדרואיד שהצטרפו לפני כן, או לא פתחו גרסה חדשה מאז, נשארו בלי מקור. באייפון אין דבר כזה בכלל: אפל מנתקת בכוונה, למען פרטיות המשתמשים, את הקשר בין מי שראה מודעה לבין מי שהתקין. \u2068Meta\u2069 מקבלת מאפל רק סיכומים כמו 'הקמפיין הביא כ-12 התקנות השבוע', בלי לדעת מי הם. לכן כל <b>"+ios+"</b> משתמשי האייפון בלי מקור, וזה לא ישתנה. הדרך היחידה לדעת על כולם היא לשאול כל משתמש אחרי ההרשמה איך שמע עלינו."; },
       liq1:"בקשות חדשות", liq2:"קיבלו הצעה תוך יממה", liq3:"קיבלו הצעה בסוף", liq4:"חציון זמן להצעה ראשונה",
@@ -3895,6 +3906,16 @@
       f5:"Posted", f6:"Sent or got an approach", f7:"Sent a message",
       lf1:"New (up to 7 days)", lf2:"Active this week", lf3:"Dormant (30+ days)", lf4:"Total live users",
       lf2New:function(n){ return "Active this week, of them new "+n; }, lfRest:"Everyone else",
+      churnTitle:"About to leave", churnSub:"A risk score for everyone who opened the app in the last month · people with neighbours waiting on them first",
+      chHigh:"High risk", chMed:"Medium risk", chLow:"Low risk", chWaitUsers:"of them (high + medium) have neighbours waiting",
+      chUninst:"Probably uninstalled (not scored)",
+      chColName:"Name", chColSeen:"Last open", chColScore:"Score", chColWhy:"Why", chColWait:"Waiting on them", chColPost:"Live post",
+      chDays:function(n){ return n==0? "today" : n==1? "yesterday" : n+" days ago"; },
+      chWhy:{no_push:"no notifications", quiet_push:"quiet notifications", "new":"new (under 14 days)", nothing_open:"no open post or chat"},
+      chEmpty:"Nobody is at medium or high risk right now.",
+      rdChurnPending:function(date){ return "The score is built from simple rules (days since last open, notifications, account age, an open post or chat) and has <b>not been checked</b> against what people actually did. A snapshot is saved every night, and from <b>"+date+"</b> this panel shows how many in each group came back within a week. If high-risk people do not come back less often than low-risk ones, the rules are wrong and get changed."; },
+      rdChurnReadout:function(rows){ return "<b>Came back within a week of the snapshot:</b> "+rows+". If high risk comes back less often, the score works."; },
+      chRow:function(name,r,n,p){ return name+" "+p+" ("+r+" of "+n+")"; },
       acqAds:"of them came from ads", acqOrg:"of them came organically (store, invite, site)", acqUnk:"of them source unknown",
       rdAcq:function(ads,org,known,pAds,ios,and){ return " <b>How they found us:</b> known for only <b>"+known+"</b> users, and <b>"+pAds+"</b> of those came from ads ("+ads+" vs "+org+" organic). So both numbers, ads and organic, are floors, not the full picture. <b>Why most users have no source:</b> on Android, Google Play hands the app the link the install came from, which tells us whether it was an ad, an invite from a friend or a store search. We only started saving it in 1.1.22 (September 2026), so the <b>"+and+"</b> Android users who joined before that, or have not opened a newer version since, have none. iPhone has nothing like it: Apple deliberately cuts the link between who saw an ad and who installed, for user privacy. Meta only gets totals from Apple, like 'the campaign brought about 12 installs this week', never who they were. So all <b>"+ios+"</b> iPhone users have no source, and that will not change. The only way to know for everyone is to ask each user after sign-up how they heard about us."; },
       liq1:"New requests", liq2:"Got an offer within 24h", liq3:"Got an offer eventually", liq4:"Median time to first offer",
@@ -7099,6 +7120,51 @@
       }
       panelRead("lifecycle", (lf.dormant_30d/k.live_users)>0.5?"warn":"", lfRead);
     }
+
+    // About to leave: rules-based churn score (get_churn_risk). Names and post
+    // titles are user text - textContent only, never innerHTML.
+    var CR=DATA.churn, crh=$("churnRisk");
+    if(crh) try{
+      crh.innerHTML="";
+      if(CR && CR.scored!=null){
+        var ct=el("table","plain");
+        [[S.chHigh,fmt(+CR.high||0)],[S.chMed,fmt(+CR.medium||0)],[S.chLow,fmt(+CR.low||0)],
+         [S.chWaitUsers,fmt(+CR.waiting_users||0),"sub"],[S.chUninst,fmt(+CR.uninstalled||0)]]
+        .forEach(function(r){ var tr=el("tr",r[2]||null); tr.appendChild(el("th",null,r[0])); tr.appendChild(el("td",null,r[1])); ct.appendChild(tr); });
+        crh.appendChild(ct);
+        var ppl=CR.people||[];
+        if(!ppl.length){ crh.appendChild(el("p","sub",S.chEmpty)); }
+        else {
+          var lt=el("table","plain"); lt.style.marginTop="14px";
+          var hr=el("tr");
+          [S.chColName,S.chColSeen,S.chColScore,S.chColWhy,S.chColWait,S.chColPost].forEach(function(h){ hr.appendChild(el("th",null,h)); });
+          lt.appendChild(hr);
+          ppl.forEach(function(u){
+            var tr=el("tr");
+            tr.appendChild(el("td",null,u.name||"-"));
+            tr.appendChild(el("td",null,S.chDays(+u.days_seen||0)));
+            tr.appendChild(el("td",null,String(+u.score||0)));
+            var why=(u.reasons||[]).map(function(k){ return S.chWhy[k]; }).filter(Boolean).join(" · ");
+            tr.appendChild(el("td",null,why||"-"));
+            tr.appendChild(el("td",null,+u.waiting>0? fmt(+u.waiting) : "-"));
+            tr.appendChild(el("td",null,u.post_title||"-"));
+            lt.appendChild(tr);
+          });
+          var wrap=el("div"); wrap.style.overflowX="auto"; wrap.appendChild(lt); crh.appendChild(wrap);
+        }
+        var ro=(CR.readout||[]).filter(function(r){ return +r.n>0; });
+        if(ro.length){
+          var order={high:0,medium:1,low:2}, names={high:S.chHigh,medium:S.chMed,low:S.chLow};
+          ro.sort(function(a,b){ return order[a.bucket]-order[b.bucket]; });
+          panelRead("churnRisk","",S.rdChurnReadout(ro.map(function(r){
+            return S.chRow(names[r.bucket]||escHtml(r.bucket), fmt(+r.returned_7d), fmt(+r.n), pct(+r.returned_7d,+r.n)); }).join(", ")));
+        } else {
+          var fd=CR.first_snapshot? new Date(String(CR.first_snapshot).slice(0,10)+"T00:00:00") : new Date();
+          fd.setDate(fd.getDate()+7);
+          panelRead("churnRisk","",S.rdChurnPending(fmtDay(fd.getFullYear()+"-"+String(fd.getMonth()+1).padStart(2,"0")+"-"+String(fd.getDate()).padStart(2,"0"))));
+        }
+      }
+    }catch(e){ console.error("churn panel failed",e); crh.innerHTML=""; }
 
     // funnel: ordinal sequential ramp (starts at step 250 per the ramp rule)
     var f=segVal("funnelSeg")===30? DATA.funnel_30d : DATA.funnel_14d;
