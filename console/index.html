@@ -793,6 +793,20 @@
   .cside { font-size:11px; color:var(--muted); text-align:left; direction:ltr; white-space:nowrap; }
   .thread { border-top:1px solid var(--grid); padding:16px; display:none; background:var(--plane); }
   .convo.open .thread { display:block; }
+  /* unread: a brand bar on the reading edge, bold names and a dot - visible
+     from across the room, not only as a chip inside the meta row */
+  .convo.unread { border-color:var(--s1); box-shadow:inset 3px 0 0 var(--s1), var(--shadow-sm); }
+  html[dir="rtl"] .convo.unread { box-shadow:inset -3px 0 0 var(--s1), var(--shadow-sm); }
+  .convo.unread .cnames { font-weight:800; }
+  .convo .udot { display:none; width:9px; height:9px; border-radius:50%; background:var(--s1); flex-shrink:0; }
+  .convo.unread .udot { display:block; }
+  .convo.unread .cside { color:var(--s1); font-weight:700; }
+  .newdiv { display:flex; align-items:center; gap:10px; margin:6px 0 10px; color:var(--s1);
+            font-size:11.5px; font-weight:700; }
+  .newdiv::before, .newdiv::after { content:""; flex:1; height:1px; background:var(--s1); opacity:.45; }
+  .readall { all:unset; cursor:pointer; color:var(--s1); font-weight:600; font-size:12.5px;
+             margin-inline-start:10px; text-decoration:underline; text-underline-offset:3px; }
+  .readall:focus-visible { outline:2px solid var(--s1); outline-offset:2px; border-radius:3px; }
   .msg { max-width:72%; margin-bottom:8px; padding:8px 12px; border-radius:14px;
          background:var(--surface); border:1px solid var(--hairline);
          white-space:pre-wrap; word-break:break-word; font-size:13.5px; }
@@ -2335,9 +2349,10 @@
         <label><input type="checkbox" id="hideMock" checked> <span data-i18n="hideMockL">הסתרת חשבונות בדיקה</span></label>
         <label><input type="checkbox" id="onlyOneWay"> <span data-i18n="onlyOneWayL">רק ללא מענה</span></label>
         <label><input type="checkbox" id="onlyPhone"> <span data-i18n="onlyPhoneL">הוחלף בהן טלפון</span></label>
+        <label><input type="checkbox" id="onlyUnread"> <span data-i18n="onlyUnreadL">רק לא נקראו</span></label>
       </span>
     </div>
-    <p class="note" style="margin-bottom:12px"><span id="chatCount"></span> · <span data-i18n="chatNote">מוצג לצורכי פיקוח ובטיחות בלבד · לקריאה בלבד · מספרי טלפון מודגשים</span></p>
+    <p class="note" style="margin-bottom:12px"><span id="chatCount"></span><button type="button" class="readall hidden" id="readAll" data-i18n="readAllL">סימון הכל כנקרא</button> · <span data-i18n="chatNote">מוצג לצורכי פיקוח ובטיחות בלבד · לקריאה בלבד · מספרי טלפון מודגשים</span></p>
     <div id="convoList"></div>
   </div>
 
@@ -2751,7 +2766,12 @@
   // gets a badge. The variable keeps the OLD watermark for the whole session
   // (so the chips stay visible while browsing); localStorage advances when the
   // chat tab is opened, so the next reload starts a fresh baseline.
+  // Since 19.10 the server keeps the read state per admin and per conversation
+  // (DATA.chat_reads = {baseline, reads}), so the laptop and the phone agree and
+  // a conversation counts as read only once it is OPENED. The localStorage
+  // watermark below is the fallback for a load that came back without it.
   var CHAT_SEEN = 0, CHAT_VISITED = false;
+  var OPEN_CONVOS = {};   // match ids expanded on screen: survive the minute re-render
   try { CHAT_SEEN = parseInt(localStorage.getItem("helpy_console_chat_seen") || "0", 10) || 0; } catch (e) {}
   // first ever visit: baseline to "now" so the whole history isn't badged NEW
   if (!CHAT_SEEN) {
@@ -2879,7 +2899,7 @@
       segAll:"הכל", segRequests:"בקשות", segOffers:"הצעות", segCreated:"התאמות",
       segCompleted:"השלמות", segMsgs2:"הודעות", segSenders:"שולחים ייחודיים",
       searchPh:"חיפוש בשם, בפוסט או בתוכן...", hideMockL:"הסתרת חשבונות בדיקה",
-      onlyOneWayL:"רק ללא מענה", onlyPhoneL:"הוחלף בהן טלפון",
+      onlyOneWayL:"רק ללא מענה", onlyPhoneL:"הוחלף בהן טלפון", onlyUnreadL:"רק לא נקראו", readAllL:"סימון הכל כנקרא",
       chatNote:"מוצג לצורכי פיקוח ובטיחות בלבד · לקריאה בלבד · מספרי טלפון מודגשים",
       footerLine:"Helpy Console · הגישה מאובטחת ונרשמת ביומני המערכת",
       loginSub:"קונסול הניהול של Helpy · הגישה למורשים בלבד", loginGoogle:"כניסה עם Google",
@@ -2960,6 +2980,7 @@
       noConvos:"אין שיחות בטווח או בסינון הנוכחי",
       msgsCount:function(n){ return String(n)==="1"? "הודעה אחת" : n+" הודעות"; },
       tagOffer:"הצעה", tagRequest:"בקשה", tagOneway:"ללא מענה", tagOnewayOld:"ללא מענה · ישן", tagMock:"בדיקה", tagNew:"חדש",
+      tagNewN:function(n){ return n===1? "הודעה חדשה" : n+" הודעות חדשות"; }, newDivider:"הודעות חדשות",
       tagPhone:function(d){ return d? "טלפון הוחלף · "+d : "טלפון הוחלף"; },
       tagStatus:{pending:"ממתינה", accepted:"פעילה", completed:"הושלמה", not_completed:"לא יצא לפועל", expired:"פגה", declined:"נדחתה"},
       tagAskedNoAns:"נשאלו אם הושלם · לא ענו", tagAnsGot:"ענו: קיבלו עזרה", tagAnsNotYet:"ענו: עוד לא",
@@ -3863,7 +3884,7 @@
       segAll:"All", segRequests:"Requests", segOffers:"Offers", segCreated:"Matches",
       segCompleted:"Completions", segMsgs2:"Messages", segSenders:"Unique senders",
       searchPh:"Search names, posts or content...", hideMockL:"Hide test accounts",
-      onlyOneWayL:"Unanswered only", onlyPhoneL:"Phone number exchanged",
+      onlyOneWayL:"Unanswered only", onlyPhoneL:"Phone number exchanged", onlyUnreadL:"Unread only", readAllL:"Mark all read",
       chatNote:"Shown for safety monitoring only · read-only · phone numbers highlighted",
       footerLine:"Helpy Console · Access is secured and logged",
       loginSub:"The Helpy admin console · authorized access only", loginGoogle:"Sign in with Google",
@@ -3944,6 +3965,7 @@
       noConvos:"No conversations in this range or filter",
       msgsCount:function(n){ return String(n)==="1"? "1 message" : n+" messages"; },
       tagOffer:"offer", tagRequest:"request", tagOneway:"unanswered", tagOnewayOld:"unanswered · old", tagMock:"test", tagNew:"new",
+      tagNewN:function(n){ return n===1? "1 new message" : n+" new messages"; }, newDivider:"New messages",
       tagPhone:function(d){ return d? "phone shared · "+d : "phone shared"; },
       tagStatus:{pending:"pending", accepted:"active", completed:"completed", not_completed:"fell through", expired:"expired", declined:"declined"},
       tagAskedNoAns:"asked if it happened · no answer", tagAnsGot:"answered: got help", tagAnsNotYet:"answered: not yet",
@@ -5307,10 +5329,14 @@
     if(v==="chat"){
       // visiting the chat tab advances the stored watermark (next reload starts
       // clean) and clears the tab counter; the in-session chips stay visible
+      // server read state: the number stays until each conversation is opened.
+      // Fallback (no server state): the old per-browser watermark.
       CHAT_VISITED=true;
-      try{ localStorage.setItem("helpy_console_chat_seen",String(Date.now())); }catch(e){}
-      var tb=document.querySelector('#tabs button[data-v="chat"] .tabbadge');
-      if(tb) tb.remove();
+      if(!chatSynced()){
+        try{ localStorage.setItem("helpy_console_chat_seen",String(Date.now())); }catch(e){}
+        var tb=document.querySelector('#tabs button[data-v="chat"] .tabbadge');
+        if(tb) tb.remove();
+      }
     }
     // a brief-only payload (first paint) has nothing the other tabs read; the
     // full load renders them, and arch - rendered only here - right after it
@@ -7455,6 +7481,42 @@
     return (parts[0]||"?").charAt(0)+((parts[1]||"").charAt(0)||"");
   }
   var PHONE_RE=/(0\d[\d -]{7,11}\d|\+972[\d -]{8,12}\d)/;
+  function chatLastAt(c){ return new Date(c.messages[c.messages.length-1].at).getTime(); }
+  function chatSynced(){ return !!(DATA && DATA.chat_reads && DATA.chat_reads.baseline); }
+  function chatReadAt(c){
+    if(!chatSynced()) return CHAT_SEEN;
+    var R=DATA.chat_reads, b=new Date(R.baseline).getTime();
+    var r=R.reads && R.reads[c.match_id] ? new Date(R.reads[c.match_id]).getTime() : 0;
+    return Math.max(b, r);
+  }
+  function chatUnreadN(c){
+    if(c.mock) return 0;
+    var t=chatReadAt(c);
+    return c.messages.filter(function(m){ return new Date(m.at).getTime()>t; }).length;
+  }
+  // the tab number and the mark-all button, from the WHOLE list (filters do
+  // not hide unread work from the counter)
+  function paintChatUnread(){
+    var n=(DATA && DATA.conversations||[]).filter(function(c){ return chatUnreadN(c)>0; }).length;
+    var tabBtn=document.querySelector('#tabs button[data-v="chat"]');
+    if(tabBtn){
+      var oldBadge=tabBtn.querySelector(".tabbadge"); if(oldBadge) oldBadge.remove();
+      if(n>0 && (chatSynced() || !CHAT_VISITED)) tabBtn.appendChild(el("span","tabbadge",String(n)));
+    }
+    var ra=$("readAll"); if(ra) ra.classList.toggle("hidden", !(chatSynced() && n>0));
+  }
+  function markChatRead(c, box){
+    if(!chatSynced() || chatUnreadN(c)===0) return;
+    var at=c.messages[c.messages.length-1].at;
+    DATA.chat_reads.reads=DATA.chat_reads.reads||{};
+    DATA.chat_reads.reads[c.match_id]=at;      // optimistic: the next load confirms
+    box.classList.remove("unread");
+    var t=box.querySelector(".tag.new"); if(t) t.remove();
+    paintChatUnread();
+    relayCall("chat_read",{match_id:c.match_id, at:at}).catch(function(e){
+      console.error("chat_read failed", e);   // the next load restores the truth
+    });
+  }
   function renderChat(){
     (function(){
       var C=(DATA && DATA.chat_stats)||{}, rows=[];
@@ -7472,7 +7534,7 @@
     })();
     var q=($("chatSearch").value||"").trim();
     var hideMock=$("hideMock").checked, onlyOneWay=$("onlyOneWay").checked,
-        onlyPhone=$("onlyPhone").checked,
+        onlyPhone=$("onlyPhone").checked, onlyUnread=$("onlyUnread").checked,
         typeSel=document.querySelector("#chatTypeSeg button.on").getAttribute("data-t");
     var dh=$("drillHost"); dh.innerHTML="";
     if(drill.category){
@@ -7490,6 +7552,7 @@
     var list=(DATA.conversations||[]).filter(function(c){
       if(hideMock && c.mock) return false;
       if(onlyOneWay && c.two_way) return false;
+      if(onlyUnread && chatUnreadN(c)===0) return false;
       if(typeSel!=="all" && c.post_type!==typeSel) return false;
       if(drill.category && c.category!==drill.category) return false;
       if(onlyPhone && !PHONE[c.match_id] && !c.messages.some(function(m){ return PHONE_RE.test(m.content); })) return false;
@@ -7504,14 +7567,7 @@
     $("chatCount").textContent=S.chatShowing(fmt(list.length),fmt(total));
     // unread badge on the chat tab: threads whose LAST message is newer than
     // the previous visit's watermark (mocks excluded - they are hidden anyway)
-    var newCount=(DATA.conversations||[]).filter(function(c){
-      return !c.mock && new Date(c.messages[c.messages.length-1].at).getTime()>CHAT_SEEN;
-    }).length;
-    var tabBtn=document.querySelector('#tabs button[data-v="chat"]');
-    if(tabBtn){
-      var oldBadge=tabBtn.querySelector(".tabbadge"); if(oldBadge) oldBadge.remove();
-      if(newCount>0 && !CHAT_VISITED) tabBtn.appendChild(el("span","tabbadge",String(newCount)));
-    }
+    paintChatUnread();
     // chat images arrive as signed URLs beside the payload (the bucket is
     // private); merge into the thread by match + message timestamp
     var IMG={};
@@ -7521,8 +7577,10 @@
     var host=$("convoList"); host.innerHTML="";
     if(!list.length){ emptyState(host,S.noConvos,"msg"); return; }
     list.forEach(function(c){
-      var box=el("div","convo");
+      var unreadN=chatUnreadN(c), readAt=chatReadAt(c);
+      var box=el("div","convo"+(unreadN>0?" unread":"")+(OPEN_CONVOS[c.match_id]?" open":""));
       var btn=el("button");
+      btn.appendChild(el("span","udot"));
       var avs=el("div","avatars");
       [c.helper.name,c.requester.name].forEach(function(nm){
         avs.appendChild(el("span","av",initials(nm)));
@@ -7540,8 +7598,7 @@
       var pt=el("span"); pt.appendChild(el("bdi",null,c.post_title)); meta.appendChild(pt);
       meta.appendChild(el("span",null,S.msgsCount(fmt(c.msg_count))));
       meta.appendChild(el("span","tag",c.post_type==="offer"?S.tagOffer:S.tagRequest));
-      var lastMs=new Date(c.messages[c.messages.length-1].at).getTime();
-      if(lastMs>CHAT_SEEN) meta.appendChild(el("span","tag new",S.tagNew));
+      if(unreadN>0) meta.appendChild(el("span","tag new", chatSynced()? S.tagNewN(unreadN) : S.tagNew));
       if(!c.two_way){
         // red only while the silence is still rescuable - an unanswered chat
         // from three weeks ago is history, not an alarm (8 of 13 rows were
@@ -7574,8 +7631,12 @@
       btn.appendChild(main);
       btn.appendChild(el("span","cside",fmtTime(c.messages[c.messages.length-1].at)));
       box.appendChild(btn);
-      var th=el("div","thread");
+      var th=el("div","thread"), divDone=false;
       c.messages.forEach(function(m){
+        // WhatsApp's line: where the unread part starts
+        if(unreadN>0 && !divDone && new Date(m.at).getTime()>readAt){
+          divDone=true; th.appendChild(el("div","newdiv",S.newDivider));
+        }
         var b=el("div","msg "+(m.from_helper?"helper":"requester"));
         b.appendChild(el("div","who",m.sender));
         if(m.content){ var body=el("div"); markPhones(body,m.content); b.appendChild(body); }
@@ -7589,7 +7650,13 @@
         th.appendChild(b);
       });
       box.appendChild(th);
-      btn.addEventListener("click",function(){ box.classList.toggle("open"); });
+      btn.setAttribute("aria-expanded", OPEN_CONVOS[c.match_id]? "true":"false");
+      btn.addEventListener("click",function(){
+        var open=box.classList.toggle("open");
+        btn.setAttribute("aria-expanded", open? "true":"false");
+        if(open){ OPEN_CONVOS[c.match_id]=true; markChatRead(c, box); }
+        else delete OPEN_CONVOS[c.match_id];
+      });
       host.appendChild(box);
     });
   }
@@ -12582,8 +12649,17 @@
     document.querySelectorAll("#tabs button").forEach(function(b){ b.classList.toggle("on", b===btn); });
     switchTab(h);
   })();
-  ["chatSearch","hideMock","onlyOneWay","onlyPhone"].forEach(function(id){
+  ["chatSearch","hideMock","onlyOneWay","onlyPhone","onlyUnread"].forEach(function(id){
     $(id).addEventListener("input",renderChat);
+  });
+  $("readAll").addEventListener("click",function(){
+    if(!chatSynced()) return;
+    var btn=this; btn.disabled=true;
+    relayCall("chat_read_all",{}).then(function(st){
+      if(st && st.baseline) DATA.chat_reads=st;
+      renderChat();
+    }).catch(function(e){ console.error("chat_read_all failed", e); })
+      .then(function(){ btn.disabled=false; });
   });
 
   // side rail: click to jump, scrollspy highlights the section in view
