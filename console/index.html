@@ -7652,9 +7652,24 @@
       box.appendChild(th);
       btn.setAttribute("aria-expanded", OPEN_CONVOS[c.match_id]? "true":"false");
       btn.addEventListener("click",function(){
-        var open=box.classList.toggle("open");
+        var open=!box.classList.contains("open");
+        if(open){
+          // one conversation open at a time: opening this one closes the rest
+          host.querySelectorAll(".convo.open").forEach(function(o){
+            o.classList.remove("open");
+            var ob=o.querySelector(":scope > button"); if(ob) ob.setAttribute("aria-expanded","false");
+          });
+          OPEN_CONVOS={};
+        }
+        box.classList.toggle("open", open);
         btn.setAttribute("aria-expanded", open? "true":"false");
-        if(open){ OPEN_CONVOS[c.match_id]=true; markChatRead(c, box); }
+        if(open){
+          OPEN_CONVOS[c.match_id]=true; markChatRead(c, box);
+          // a long thread closing ABOVE this row pulls it up past the header:
+          // bring the row back to the top of what is visible
+          var hdr=$("hdr"), top=box.getBoundingClientRect().top, off=(hdr? hdr.offsetHeight : 0)+8;
+          if(top<off) window.scrollBy({top:top-off, behavior:"smooth"});
+        }
         else delete OPEN_CONVOS[c.match_id];
       });
       host.appendChild(box);
