@@ -2812,20 +2812,25 @@
       sfFresh:function(iosD,andD){ return "טריות הנתונים: iOS עד "+iosD+" · Android עד "+andD+" · המספרים נמשכים ידנית מדוחות החנויות"; },
       emptyStore:"נתוני החנויות עדיין לא נטענו",
       tabAds:"קמפיינים",
-      maTitle:"קמפיינים · Meta", maSub:"הוצאה והתקנות מהקמפיינים מול כל ההרשמות במסד (מודעות + אורגני) · נמשך חי מ-Meta בכל רענון של הדף",
-      maDailyTitle:"יום אחר יום", maDailySub:"מה הוצאנו בכל יום, כמה התקנות Meta ייחסה לעצמה, וכמה אנשים באמת נרשמו באותו יום",
+      maTitle:"קמפיינים · Meta", maSub:"הוצאה והתקנות מהקמפיינים מול ההרשמות ממודעות במסד · אנדרואיד: רק מי שהגיע/ה ממודעה · אייפון: כל ההרשמות (אין שיוך) · נמשך חי מ-Meta בכל רענון של הדף",
+      maDailyTitle:"יום אחר יום", maDailySub:"מה הוצאנו בכל יום, כמה התקנות Meta ייחסה לעצמה, וכמה הרשמות הביאו המודעות באותו יום (באייפון: כל ההרשמות)",
       maChartTitle:"כמה עלתה כל הרשמה, יום אחר יום",
-      maChartSub:"הוצאה על מודעות באותו יום, חלקי כל ההרשמות באותו יום (ממודעות ואורגני) · מתחת ל-25 ש״ח להרשמה זה טוב · ההוצאה וההרשמות עצמן בטבלה למטה",
-      maSeriesSpend:"הוצאה", maSeriesSignups:"כל ההרשמות", maSeriesCost:"עלות להרשמה",
+      maChartSub:"הוצאה על מודעות באותו יום, חלקי ההרשמות ממודעות באותו יום (באייפון: כל ההרשמות, אין שיוך) · מתחת ל-25 ש״ח להרשמה זה טוב · ההוצאה וההרשמות עצמן בטבלה למטה",
+      maSeriesSpend:"הוצאה", maSeriesSignups:"הרשמות ממודעות", maSeriesCost:"עלות להרשמה",
       maFilterOn:function(p){ return "מסונן ל-"+p+" · לחיצה חוזרת על הכרטיס מבטלת"; },
       maFilterHint:"לחיצה על כרטיס פלטפורמה מסננת את הגרף ואת הטבלה",
       maNoSplit:"⚠️ ההרשמות בתצוגה המסוננת הן של כל החשבון - פילוח לפי פלטפורמה עדיין לא זמין בשרת",
+      maNoAttr:"⚠️ השיוך למודעות לא זמין כרגע, אז נספרות כל ההרשמות (כולל אורגניות) והעלות נראית זולה מהאמת",
+      maPlatCps:"עלות להרשמה",
+      maPlatCpsTipAnd:"ההוצאה על אנדרואיד חלקי מי שנרשם/ה באנדרואיד והגיע/ה ממודעה (לפי מקור ההתקנה). בטווח של שבוע מלא זה אותו מספר כמו בסיכום הבוקר",
+      maPlatCpsTipAndAll:"ההוצאה על אנדרואיד חלקי כל ההרשמות באנדרואיד - השיוך למודעות לא זמין כרגע",
+      maPlatCpsTipIos:"ההוצאה על אייפון חלקי כל ההרשמות באייפון. אפל לא מאפשרת לדעת מי הגיע/ה ממודעה, אז העלות האמיתית גבוהה יותר. בטווח של שבוע מלא זה אותו מספר כמו בסיכום הבוקר",
       maWinDays:function(n){ return n+" ימים"; },
       maToday:"היום עד עכשיו",
-      maTodayNote:function(inst,su){ return inst+" התקנות (Meta) · "+su+" הרשמות (כולן)"; },
+      maTodayNote:function(inst,su){ return inst+" התקנות (Meta) · "+su+" הרשמות ממודעות"; },
       maTileSpend:"הוצאה · {maw}",
       maAvgDay:function(x){ return "ממוצע "+x+" ליום"; },
-      maTileSignups:"כל ההרשמות (מודעות + אורגני) · {maw}",
+      maTileSignups:"הרשמות ממודעות · {maw}",
       maTileSignupsNote:function(inst){ return "מטא ייחסה לעצמה "+inst+" התקנות בלבד"; },
       maCostTarget:"היעד: מתחת ל-₪25 להרשמה",
       maPaceTitle:"קצב הוצאה יומי",
@@ -2834,15 +2839,15 @@
       maPlatCtr:"CTR", maPlatCpc:"עלות לקליק", maPlatInst:"התקנות (Meta)",
       maCtrStrong:"קריאייטיב חזק", maCtrOk:"קריאייטיב סביר", maCtrWeak:"קריאייטיב חלש",
       maCtrBands:function(hi,lo){ return "לפי \u2068CTR\u2069: מ-"+hi+"% ומעלה חזק · "+lo+"% עד "+hi+"% סביר · מתחת ל-"+lo+"% חלש"; },
-      maCost:"עלות משוקללת להרשמה · {maw}",
-      maCostTip:"כל ההוצאה בימים המלאים שבטווח שנבחר חלקי כל ההרשמות באותם ימים. כולל הרשמות אורגניות, ולכן זו עלות מעורבת - אבל זה המדד הכן ביותר שיש, כי מטא מפספסת התקנות (פרטיות של אפל + ייחוס שבור באנדרואיד)",
+      maCost:"עלות להרשמה ממודעות · {maw}",
+      maCostTip:"כל ההוצאה בימים המלאים שבטווח חלקי ההרשמות ממודעות באותם ימים - אותו חישוב כמו בסיכום הבוקר. אנדרואיד: רק מי שהגיע/ה ממודעה (לפי מקור ההתקנה). אייפון: אפל לא מאפשרת לדעת מי הגיע/ה ממודעה, אז נספרות כל ההרשמות, ולכן העלות האמיתית באייפון גבוהה יותר. לא נשענים על ההתקנות שמטא מייחסת לעצמה, כי היא מפספסת אותן",
       maCtrTip:"CTR = כמה מתוך מי שראו את המודעה הקליקו עליה (מתחת ל-1% = קריאייטיב חלש) · קליק = כמה עולה בממוצע כל הקלקה",
-      maColDay:"יום", maSpend:"הוצאה", maInstalls:"התקנות (Meta)", maSignups:"כל ההרשמות",
+      maColDay:"יום", maSpend:"הוצאה", maInstalls:"התקנות (Meta)", maSignups:"הרשמות ממודעות",
       maInstallsTip:"התקנות שמטא מצליחה לייחס לקמפיין. באייפון אפל מסתירה חלק (מנגנון SKAN) ובאנדרואיד הייחוס אצלנו שבור - המספר תמיד נמוך מהאמת. את הנפח האמיתי מודדים בעמודת ההרשמות",
       maPartial:"חלקי",
       maFresh:function(at){ var t=new Date(at); return "נמשך מ-Meta ברגע טעינת הדף ("+t.toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Jerusalem"})+") · מתעדכן בכל רענון"; },
       maTzFallback:"⚠️ ההרשמות מוצגות לפי ימי UTC ולא לפי שעון ישראל, כך שהרשמות מאוחרות בערב עשויות להופיע ביום הקודם",
-      rdMeta:function(win,sp,su,cost,inst){ return win+": הוצאה של <b>"+sp+"</b>, <b>"+su+"</b> הרשמות (מודעות + אורגני) = <b>"+cost+"</b> להרשמה. מטא מייחסת לעצמה רק "+inst+" התקנות - תת-ספירה מובנית, שופטים לפי ההרשמות. מתחת ל-₪25 להרשמה אפשר לשקול הגדלת תקציב; מעל ₪35 - לבדוק קריאייטיב וטירגוט."; },
+      rdMeta:function(win,sp,su,cost,inst){ return win+": הוצאה של <b>"+sp+"</b>, <b>"+su+"</b> הרשמות ממודעות = <b>"+cost+"</b> להרשמה (באייפון נספרות כל ההרשמות, כי אין שיוך). מטא מייחסת לעצמה רק "+inst+" התקנות - תת-ספירה מובנית, שופטים לפי ההרשמות. מתחת ל-₪25 להרשמה אפשר לשקול הגדלת תקציב; מעל ₪35 - לבדוק קריאייטיב וטירגוט."; },
       emptyMeta:"נתוני Meta לא נטענו הפעם - הקמפיינים עצמם לא נעצרו, רק המשיכה לדשבורד נכשלה (אם זה חוזר: לבדוק את תוקף הטוקן)",
       postsTitle:"פוסטים", postsSub:"בקשות עזרה מול הצעות עזרה",
       matchesTitle:"התאמות והשלמות", matchesSub:"התאמות חדשות מול עזרות שסומנו כהושלמו",
@@ -3167,7 +3172,7 @@
         return "<b>"+p+"</b> מהפניות על הצעות נענו ("+a+" מתוך "+all+")."; },
       clInsSenders:function(n){ return "<b>"+n+"</b> אנשים שונים כתבו הודעה בחלון הזה."; },
       maInsCost:function(c,su,spend){
-        return "עלות משוקללת להרשמה: <b>"+c+"</b> ("+su+" הרשמות, מודעות + אורגני, על "+spend+"). מחושב על הרשמות במסד, לא על ההתקנות שמטא מייחסת."; },
+        return "עלות להרשמה ממודעות: <b>"+c+"</b> ("+su+" הרשמות על "+spend+"). אנדרואיד: רק מי שהגיע/ה ממודעה; אייפון: כל ההרשמות, כי אין שיוך. מחושב על הרשמות במסד, לא על ההתקנות שמטא מייחסת."; },
       maInsAttrib:function(inst,su){
         return "מטא ייחסה <b>"+inst+"</b> התקנות מול <b>"+su+"</b> הרשמות במסד - הפער הזה הוא הסיבה שהוורדיקט לא נשען על המספרים שלה."; },
       blInsOverdue:function(n,names){ return n==="1" ? "פריט <b>אחד</b> עבר את התאריך שנקבע לו: "+names+"." : "<b>"+n+"</b> פריטים עברו את התאריך שנקבע להם: "+names+"."; },
@@ -3740,7 +3745,7 @@
       brVerLine:function(on,tot){ return "<b>"+on+"</b> מתוך "+tot+" שנראו השבוע כבר עליה"; },
       brVerNote:"נספר לפי הגרסה שכל אחד/ת פתח/ה לאחרונה - מי שעדכן/ה ועוד לא פתח/ה את האפליקציה עדיין נספר/ת על הישנה.",
       brAdsDay:function(d){ return "היום הישראלי האחרון שנסגר · "+d; },
-      brAdsSpend:"הוצאה", brAdsSignups:"הרשמות (מכל המקורות)", brAdsCost:"הוצאה לכל הרשמה",
+      brAdsSpend:"הוצאה", brAdsSignups:"הרשמות ממודעות", brAdsCost:"עלות להרשמה",
       brAds7:function(spend,su,cost){ return "7 ימים מלאים: ₪"+spend+" · "+(su==="1"? "הרשמה אחת" : su+" הרשמות")+" · "+(cost!=null? "₪"+cost+" להרשמה" : "-"); },
       brAdsNone:"נתוני Meta לא נטענו בטעינה הזו - הלשונית קמפיינים תמשוך אותם ברענון.",
       brDeskNone:"אין כרטיסים במצב «עכשיו» או «בילד הבא».", brDeskGo:"לבקלוג", brDue:"יעד",
@@ -3798,20 +3803,25 @@
       sfFresh:function(iosD,andD){ return "Data freshness: iOS through "+iosD+" · Android through "+andD+" · figures are pulled manually from the stores' reports"; },
       emptyStore:"Store data not loaded yet",
       tabAds:"Campaigns",
-      maTitle:"Meta campaigns", maSub:"Campaign spend and installs against all database signups (ads + organic) · pulled live from Meta on every page refresh",
-      maDailyTitle:"Day by day", maDailySub:"What we spent each day, how many installs Meta attributed to itself, and how many people actually signed up that day",
+      maTitle:"Meta campaigns", maSub:"Campaign spend and installs against database signups from ads · Android: only users who came from an ad · iOS: every signup (no attribution) · pulled live from Meta on every page refresh",
+      maDailyTitle:"Day by day", maDailySub:"What we spent each day, how many installs Meta attributed to itself, and how many signups the ads brought that day (iOS: every signup)",
       maChartTitle:"What each signup cost, day by day",
-      maChartSub:"Ad spend that day divided by every signup that day (ads and organic) · under ₪25 a signup is good · spend and signups themselves are in the table below",
-      maSeriesSpend:"Spend", maSeriesSignups:"All signups", maSeriesCost:"Cost per signup",
+      maChartSub:"Ad spend that day divided by that day's signups from ads (iOS: every signup, no attribution) · under ₪25 a signup is good · spend and signups themselves are in the table below",
+      maSeriesSpend:"Spend", maSeriesSignups:"Signups from ads", maSeriesCost:"Cost per signup",
       maFilterOn:function(p){ return "filtered to "+p+" · click the card again to clear"; },
       maFilterHint:"click a platform card to filter the chart and the table",
       maNoSplit:"⚠️ signups in the filtered view are account-wide - the per-platform split is not live on the server yet",
+      maNoAttr:"⚠️ ad attribution is unavailable right now, so every signup counts (organic included) and the cost reads cheaper than it is",
+      maPlatCps:"Cost per signup",
+      maPlatCpsTipAnd:"Android spend divided by Android signups who came from an ad (by install source). Over a full week this is the same number as the morning digest",
+      maPlatCpsTipAndAll:"Android spend divided by every Android signup - ad attribution is unavailable right now",
+      maPlatCpsTipIos:"iOS spend divided by every iOS signup. Apple does not reveal who came from an ad, so the real cost is higher. Over a full week this is the same number as the morning digest",
       maWinDays:function(n){ return n+" days"; },
       maToday:"Today so far",
-      maTodayNote:function(inst,su){ return inst+" Meta installs · "+su+" signups (all)"; },
+      maTodayNote:function(inst,su){ return inst+" Meta installs · "+su+" signups from ads"; },
       maTileSpend:"Spend · {maw}",
       maAvgDay:function(x){ return "avg "+x+"/day"; },
-      maTileSignups:"All signups (ads + organic) · {maw}",
+      maTileSignups:"Signups from ads · {maw}",
       maTileSignupsNote:function(inst){ return "Meta claimed only "+inst+" installs"; },
       maCostTarget:"target: under ₪25 per signup",
       maPaceTitle:"Daily spend pace",
@@ -3820,15 +3830,15 @@
       maPlatCtr:"CTR", maPlatCpc:"Cost per click", maPlatInst:"Meta installs",
       maCtrStrong:"Strong creative", maCtrOk:"Acceptable creative", maCtrWeak:"Weak creative",
       maCtrBands:function(hi,lo){ return "By CTR: "+hi+"% and up strong · "+lo+"-"+hi+"% acceptable · under "+lo+"% weak"; },
-      maCost:"Blended cost per signup · {maw}",
-      maCostTip:"All spend over the full days in the selected range divided by all signups in those days. Organic signups included, so it's a blended cost - but it's the honest number, because Meta misses installs (Apple privacy + our broken Android attribution)",
+      maCost:"Cost per signup from ads · {maw}",
+      maCostTip:"All spend over the full days in range divided by signups from ads in those days - the same calculation as the morning digest. Android: only users who came from an ad (by install source). iOS: Apple does not reveal who came from an ad, so every signup counts and the real iOS cost is higher. Meta's own install counts are not used, because Meta misses installs",
       maCtrTip:"CTR = share of people who clicked after seeing the ad (under 1% = weak creative) · click = average cost per click",
-      maColDay:"Day", maSpend:"Spend", maInstalls:"Meta installs", maSignups:"All signups",
+      maColDay:"Day", maSpend:"Spend", maInstalls:"Meta installs", maSignups:"Signups from ads",
       maInstallsTip:"Installs Meta manages to attribute to the campaign. Apple hides part of them (SKAN) and our Android attribution is broken - always an undercount. Real volume lives in the signups column",
       maPartial:"partial",
       maFresh:function(at){ var t=new Date(at); return "Pulled from Meta at page load ("+t.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Jerusalem"})+") · refreshes with every reload"; },
       maTzFallback:"⚠️ Signups are bucketed by UTC days rather than Israel time, so late-evening signups may show on the previous day",
-      rdMeta:function(win,sp,su,cost,inst){ return "Over "+win+": <b>"+sp+"</b> spent, <b>"+su+"</b> signups (ads + organic) = <b>"+cost+"</b> per signup. Meta attributes only "+inst+" installs to itself - a built-in undercount, judge by signups. Under ₪25 per signup a budget raise is on the table; over ₪35, review creative and targeting."; },
+      rdMeta:function(win,sp,su,cost,inst){ return "Over "+win+": <b>"+sp+"</b> spent, <b>"+su+"</b> signups from ads = <b>"+cost+"</b> per signup (iOS counts every signup, since there is no attribution). Meta attributes only "+inst+" installs to itself - a built-in undercount, judge by signups. Under ₪25 per signup a budget raise is on the table; over ₪35, review creative and targeting."; },
       emptyMeta:"Meta data didn't load this time - the campaigns themselves are untouched, only the dashboard pull failed (if it repeats, check the token's validity)",
       postsTitle:"Posts", postsSub:"Help requests vs. help offers",
       matchesTitle:"Matches & completions", matchesSub:"New matches vs. helps marked completed",
@@ -4152,7 +4162,7 @@
         return "<b>"+p+"</b> of approaches on offers were answered ("+a+" of "+all+")."; },
       clInsSenders:function(n){ return "<b>"+n+"</b> distinct people wrote a message in this window."; },
       maInsCost:function(c,su,spend){
-        return "Blended cost per signup: <b>"+c+"</b> ("+su+" signups, ads + organic, on "+spend+"). Computed on database signups, not on Meta-attributed installs."; },
+        return "Cost per signup from ads: <b>"+c+"</b> ("+su+" signups on "+spend+"). Android: only users who came from an ad; iOS: every signup, since there is no attribution. Computed on database signups, not on Meta-attributed installs."; },
       maInsAttrib:function(inst,su){
         return "Meta attributed <b>"+inst+"</b> installs against <b>"+su+"</b> signups in the database - that gap is why the verdict does not lean on Meta's numbers."; },
       blInsOverdue:function(n,names){ return n==="1" ? "<b>One</b> item is past its own date: "+names+"." : "<b>"+n+"</b> items are past their own date: "+names+"."; },
@@ -4716,7 +4726,7 @@
       brVerLine:function(on,tot){ return "<b>"+on+"</b> of "+tot+" seen this week are on it"; },
       brVerNote:"Counted by the version each person last opened - someone who updated but has not opened the app since still counts on the old one.",
       brAdsDay:function(d){ return "Last closed Israeli day · "+d; },
-      brAdsSpend:"Spend", brAdsSignups:"Signups (all sources)", brAdsCost:"Spend per signup",
+      brAdsSpend:"Spend", brAdsSignups:"Signups from ads", brAdsCost:"Cost per signup",
       brAds7:function(spend,su,cost){ return "7 full days: ₪"+spend+" · "+su+(su==="1"?" signup":" signups")+" · "+(cost!=null? "₪"+cost+" per signup" : "-"); },
       brAdsNone:"Meta data was not pulled on this load - the Campaigns tab fetches it on refresh.",
       brDeskNone:"No cards in \"now\" or \"next build\".", brDeskGo:"To the backlog", brDue:"due",
@@ -6312,6 +6322,28 @@
   // spend / real DB signups - the same rule as the daily report.
   // the campaigns tab owns its own window, independent of the metrics range
   var META_DAYS=7, META_CAMP=null;
+  // ONE rule for "signups the ads bought", shared by the campaigns tab and the
+  // morning brief, and identical to the 09:00 digest (daily-metrics, #461):
+  //   android = acquisition_source meta_ads (android_ads)
+  //   ios     = every iOS signup - Apple gives no attribution, so a floor
+  //   null    = the account: iOS + Android-from-ads
+  // Without android_ads on EVERY row (older RPC, partial payload) it falls back
+  // to all signups, and callers must say so on screen (adAttrOk).
+  function adAttrOk(rows){
+    return !!(rows && rows.length) && rows.every(function(r){ return typeof r.android_ads==="number" && r.ios!==undefined; });
+  }
+  function adSignupsOf(r, plat, attr){
+    if(!r) return 0;
+    if(r.ios===undefined) return r.signups||0;          // no platform split at all
+    if(plat==="android") return attr? (r.android_ads||0) : (r.android||0);
+    if(plat==="ios") return r.ios||0;
+    return attr? (r.ios||0)+(r.android_ads||0) : (r.signups||0);
+  }
+  // iOS FIRST, everywhere a campaign name is turned into a platform, so a card
+  // and the filter it sets can never disagree
+  function metaPlatOf(name){
+    return /ios/i.test(name||"")? "ios" : (/android/i.test(name||"")? "android" : null);
+  }
   // FULL days, said on the label: the metrics tab counts "30 days" including
   // today's partial day, this tab excludes it (spend and sign-ups must cover
   // the same hours), so the same words showed 410 there and 406 here (audit 12.10)
@@ -6362,33 +6394,33 @@
     // calendar (Asia/Jerusalem), which shifted every late-evening signup onto
     // the previous day. Fall back to the shared series only if the RPC failed,
     // and say so rather than quietly showing a mis-joined number.
-    var suBy={}, suTz=true, suSplit=false;
+    var suBy={}, suTz=true, suSplit=false, suAttr=false;
     if(MA.signups && MA.signups.length){
-      suSplit = MA.signups[0].ios !== undefined;
+      suSplit = MA.signups.every(function(r){ return r.ios !== undefined; });
+      suAttr = adAttrOk(MA.signups);
       MA.signups.forEach(function(r){ suBy[String(r.d).slice(0,10)]=r; });
     } else {
       suTz=false;
       (DATA.signups_by_day||[]).forEach(function(r){ suBy[String(r.d).slice(0,10)]={signups:r.total||0}; });
     }
-    // suOf() answers "how many real signups on this day, on the side of the
-    // funnel currently in view" - platform-split when a card is selected, and
-    // it falls back to the whole account (labelled) if the older RPC shape is
-    // still deployed
-    function suOf(d){
-      var r=suBy[d]; if(!r) return 0;
-      if(!platKey || !suSplit) return r.signups||0;
-      return r[platKey]||0;
-    }
+    // suOf() answers "how many signups did the ads buy on this day, on the
+    // side of the funnel currently in view". ONE rule, shared with the 09:00
+    // digest (daily-metrics, PR #461), so both surfaces print the same price:
+    //   Android = signups whose acquisition_source is meta_ads (android_ads);
+    //   iOS     = every iOS signup - Apple gives no attribution, so the iOS
+    //             cost is a floor and the copy says so;
+    //   account = iOS + Android-from-ads (Android organic/invite are known NOT
+    //             to be ad signups, so they no longer dilute the price).
+    // Falls back to all signups (labelled) if the older RPC shape is deployed.
+    function suPlat(d,plat){ return adSignupsOf(suBy[d], plat, suAttr); }
+    function suOf(d){ return suPlat(d, platKey); }
     // a platform filter narrows the DAY series and the tiles; the platform
     // cards themselves always show every platform, or there would be no way
     // back to the one you filtered away
     var campIds={}, campName={};
     MA.daily.forEach(function(r){ campIds[r.cid]=1; campName[r.cid]=r.name; });
     if(META_CAMP && !campIds[META_CAMP]) META_CAMP=null; // the window may not contain it
-    var platKey = META_CAMP
-      ? (/ios/i.test(campName[META_CAMP]||"") ? "ios"
-        : /android/i.test(campName[META_CAMP]||"") ? "android" : null)
-      : null;
+    var platKey = META_CAMP ? metaPlatOf(campName[META_CAMP]) : null;
     var byDay={};
     MA.daily.forEach(function(r){
       var d=byDay[r.d]||(byDay[r.d]={spend:0,installs:0});
@@ -6475,8 +6507,8 @@
     var grid=el("div","platgrid");
     Object.keys(byCamp).forEach(function(cid){
       var c=byCamp[cid];
-      var isAnd=/android/i.test(c.name);
-      var plat=/ios/i.test(c.name)? "iOS" : (isAnd? "Android" : c.name);
+      var cPlat=metaPlatOf(c.name), isAnd=(cPlat==="android");
+      var plat=cPlat==="ios"? "iOS" : (isAnd? "Android" : c.name);
       var ctr=c.imp? 100*c.clicks/c.imp : null;
       var card=el("div","platcard clickable");
       card.style.setProperty("--pc", isAnd? "var(--s3)" : "var(--s1)");
@@ -6521,16 +6553,29 @@
              (ctr==null||!ctrMax)? null : Math.max(3, 100*ctr/ctrMax));
       metric(S.maPlatCpc, c.clicks? ils(c.spend/c.clicks,2) : "-", S.maCtrTip);
       metric(S.maPlatInst, fmt(c.installs), S.maInstallsTip);
+      // the platform's own cost per signup over the same full days - the very
+      // number the morning digest prints for this platform
+      // spend of EVERY campaign on this platform over this platform's signups -
+      // the digest's formula, so two campaigns on one platform cannot each
+      // claim the whole platform's signups
+      if(suSplit && cPlat){
+        var pSpend=0;
+        Object.keys(byCamp).forEach(function(k){ if(metaPlatOf(byCamp[k].name)===cPlat) pSpend+=byCamp[k].spend; });
+        var cSu=full.reduce(function(a,d){ return a+suPlat(d, cPlat); },0);
+        metric(S.maPlatCps, cSu? ils(pSpend/cSu,1) : "-",
+               isAnd? (suAttr? S.maPlatCpsTipAnd : S.maPlatCpsTipAndAll) : S.maPlatCpsTipIos);
+      }
       card.appendChild(pm);
       grid.appendChild(card);
     });
     host.appendChild(grid);
     host.appendChild(el("div","note",S.maFresh(MA.fetched_at)+(suTz? "" : " \u00B7 "+S.maTzFallback)
-      +(META_CAMP && (!platKey || !suSplit)? " \u00B7 "+S.maNoSplit : "")));
+      +(META_CAMP && (!platKey || !suSplit)? " \u00B7 "+S.maNoSplit : "")
+      +(!suAttr? " \u00B7 "+S.maNoAttr : "")));
     if(capHost){
       var onCamp=META_CAMP? byCamp[META_CAMP] : null;
       capHost.textContent = onCamp
-        ? S.maFilterOn(/ios/i.test(onCamp.name)? "iOS" : (/android/i.test(onCamp.name)? "Android" : onCamp.name))
+        ? S.maFilterOn(metaPlatOf(onCamp.name)==="ios"? "iOS" : (metaPlatOf(onCamp.name)==="android"? "Android" : onCamp.name))
         : S.maFilterHint;
     }
     // spend bars and real signups share the day axis but not the unit, so the
@@ -9988,7 +10033,10 @@
     else {
       var yd=brIL(Date.now()-86400000);
       var spendOn=function(d){ return MA.daily.filter(function(r){ return String(r.d).slice(0,10)===d; }).reduce(function(a,r){ return a+(r.spend||0); },0); };
-      var suOn=function(d){ var r=(MA.signups||[]).filter(function(x){ return String(x.d).slice(0,10)===d; })[0]; return r? (r.signups||0) : 0; };
+      // signups the ads bought - adSignupsOf(), the campaigns tab's and the
+      // digest's one rule
+      var brAttr=adAttrOk(MA.signups);
+      var suOn=function(d){ return adSignupsOf((MA.signups||[]).filter(function(x){ return String(x.d).slice(0,10)===d; })[0], null, brAttr); };
       var sp=spendOn(yd), su=suOn(yd);
       ah.appendChild(el("div","brday",S.brAdsDay(fmtDay(yd))));
       var sr=el("div","brstat");
@@ -10001,6 +10049,7 @@
       var s7=0, u7=0;
       for(var i=1;i<=7;i++){ var d=brIL(Date.now()-i*86400000); s7+=spendOn(d); u7+=suOn(d); }
       ah.appendChild(el("div","brnote",S.brAds7(s7.toFixed(0), fmt(u7), u7? (s7/u7).toFixed(1) : null)));
+      if(!brAttr) ah.appendChild(el("div","brnote",S.maNoAttr));
     }
 
     // ---- on the desk ---------------------------------------------------------------
