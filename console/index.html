@@ -2748,6 +2748,7 @@
     <section class="panel" style="opacity:1;transform:none">
       <h2 id="lkTitle"></h2>
       <div class="sub" id="lkSub"></div>
+      <input type="search" id="lkSearch" class="lksearch" autocomplete="off">
       <div id="lkBody"></div>
     </section>
   </div>
@@ -10650,63 +10651,82 @@
   // Pages Claude published for Nir + tools he opens often. The list comes from
   // admin-dashboard (links.ts) after sign-in - never written into this public
   // page. Only https links are drawn; every string goes in as text.
-  var LINKS=null, LINKS_ERR=null, LINKS_Q="";
+  var LINKS=null, LINKS_ERR=null, LINKS_SEQ=0, LINKS_WIRED=false;
+  function linksOn(){ var v=$("linksView"); return !!(v && !v.classList.contains("hidden")); }
+  // fetched on every visit to the tab (one small read), so a page published
+  // while the console sat open shows up the next time the tab is opened
   function loadLinks(){
     renderLinks();
-    if(LINKS) return;
-    relayCall("links",{}).then(function(d){ LINKS=d; LINKS_ERR=null; renderLinks(); })
-      .catch(function(e){ LINKS_ERR=e.message; renderLinks(); });
+    // the #links deep link switches tabs before the session is restored;
+    // bootLoad kicks this again once it is
+    if(!SESSION || !SESSION.access_token) return;
+    var seq=++LINKS_SEQ;
+    relayCall("links",{}).then(function(d){
+      if(seq!==LINKS_SEQ) return;
+      LINKS=d; LINKS_ERR=null; renderLinks();
+    }).catch(function(e){
+      if(seq!==LINKS_SEQ) return;
+      LINKS_ERR=e.message; renderLinks();
+    });
   }
   function renderLinks(){
-    var he=LANG==="he", host=$("lkBody"); if(!host) return;
+    var he=LANG==="he", host=$("lkBody"), q=$("lkSearch"); if(!host || !q) return;
     var t=$("lkTitle");
-    t.textContent = he ? "קישורים" : "Links";
+    t.textContent = S.tabLinks;
     t.insertBefore(icon("link",17), t.firstChild); t.classList.add("withico");
+    var last = LINKS && LINKS.updated ? fmtLkDate(LINKS.updated) : "";
     $("lkSub").textContent = he
-      ? "דפים ש-Claude הכין לך וכלים שאתה פותח הרבה · דף חדש נכנס לכאן לבד ברגע שהוא מתפרסם · נפתח בלשונית חדשה"+(LINKS&&LINKS.updated?" · אחרון: "+fmtLkDate(LINKS.updated):"")
-      : "Pages Claude made for you and tools you open often · a new page lands here on its own when published · opens in a new tab"+(LINKS&&LINKS.updated?" · latest: "+fmtLkDate(LINKS.updated):"");
+      ? "דפים שהוכנו בשבילך וכלים שאתה פותח הרבה · דף חדש נכנס לכאן לבד ברגע שהוא מתפרסם · נפתח בלשונית חדשה"+(last?" · אחרון: "+last:"")
+      : "Pages made for you and tools you open often · a new page lands here on its own when published · opens in a new tab"+(last?" · latest: "+last:"");
+    q.placeholder = he ? "חיפוש קישור" : "Search links";
+    if(!LINKS_WIRED){ LINKS_WIRED=true; q.addEventListener("input", function(){ drawLinks(); }); }
+    q.hidden = !LINKS;
     host.innerHTML="";
     if(!LINKS){
       host.appendChild(el("div","sub", LINKS_ERR ? (he?"לא נטען: ":"Could not load: ")+LINKS_ERR : (he?"טוען...":"Loading...")));
       return;
     }
-    if(LINKS.partial) host.appendChild(el("div","sub", he?"רשימת הדפים לא נטענה כרגע - מוצגים רק הכלים":"The page list did not load - showing tools only"));
-    var q=document.createElement("input"); q.type="search"; q.className="lksearch";
-    q.placeholder = he ? "חיפוש קישור" : "Search links"; q.value=LINKS_Q;
-    host.appendChild(q);
-    var grid=el("div","lkgrid"); host.appendChild(grid);
-    function draw(){
-      grid.innerHTML="";
-      var needle=LINKS_Q.trim().toLowerCase(), shown=0;
-      (LINKS.groups||[]).forEach(function(g){
-        var items=(g.items||[]).filter(function(it){
-          if(!/^https:\/\//.test(String(it.url||""))) return false;
-          if(!needle) return true;
-          return [it.he,it.en,it.dh,it.de].join(" ").toLowerCase().indexOf(needle)>=0;
-        });
-        if(!items.length) return;
-        var box=el("div","lkgrp");
-        var h=el("h3",null,he?g.he:g.en); h.appendChild(el("span","n","· "+items.length)); box.appendChild(h);
-        items.forEach(function(it){
-          var a=el("a","lkrow"); a.href=it.url; a.target="_blank"; a.rel="noopener noreferrer";
-          var tx=el("span","lktx");
-          tx.appendChild(el("span","lkt", he?it.he:it.en));
-          var d=he?it.dh:it.de; if(d) tx.appendChild(el("span","lkd",d));
-          a.appendChild(tx);
-          if(it.date) a.appendChild(el("span","lkdate",fmtLkDate(it.date)));
-          a.appendChild(icon("link",13));
-          box.appendChild(a); shown++;
-        });
-        grid.appendChild(box);
-      });
-      if(!shown) grid.appendChild(el("div","sub", he?"אין קישור כזה":"No matching link"));
-    }
-    q.addEventListener("input",function(){ LINKS_Q=q.value; draw(); });
-    draw();
+    if(LINKS.partial) host.appendChild(el("div","sub", he?"רשימת הדפים לא נטענה במלואה":"The page list did not fully load"));
+    if(LINKS.capped>0) host.appendChild(el("div","sub", he
+      ? "שים לב: "+LINKS.capped+" דפים חדשים לא נכנסו לרשימה ביממה האחרונה כי הגיעה למכסה"
+      : "Note: "+LINKS.capped+" new pages were not added in the last day because the list hit its cap"));
+    var grid=el("div","lkgrid"); grid.id="lkGrid"; host.appendChild(grid);
+    drawLinks();
   }
+  function drawLinks(){
+    var he=LANG==="he", grid=$("lkGrid"), q=$("lkSearch"); if(!grid || !LINKS) return;
+    grid.innerHTML="";
+    var needle=(q.value||"").trim().toLowerCase(), shown=0;
+    (LINKS.groups||[]).forEach(function(g){
+      var items=(g.items||[]).filter(function(it){
+        if(!/^https:\/\//.test(String(it.url||""))) return false;
+        if(!needle) return true;
+        return [it.he,it.en,it.dh,it.de].join(" ").toLowerCase().indexOf(needle)>=0;
+      });
+      if(!items.length) return;
+      var box=el("div","lkgrp");
+      var h=el("h3",null,he?g.he:g.en); h.appendChild(el("span","n","· "+items.length)); box.appendChild(h);
+      items.forEach(function(it){
+        var a=el("a","lkrow"); a.href=it.url; a.target="_blank"; a.rel="noopener noreferrer";
+        var tx=el("span","lktx");
+        tx.appendChild(el("span","lkt", he?(it.he||it.en):(it.en||it.he)));
+        var d=he?it.dh:it.de; if(d) tx.appendChild(el("span","lkd",d));
+        a.appendChild(tx);
+        if(it.date) a.appendChild(el("span","lkdate",fmtLkDate(it.date)));
+        a.appendChild(icon("link",13));
+        box.appendChild(a); shown++;
+      });
+      grid.appendChild(box);
+    });
+    if(!shown) grid.appendChild(el("div","sub", needle
+      ? (he?"אין קישור כזה":"No matching link")
+      : (he?"אין עדיין קישורים":"No links yet")));
+  }
+  // DD.MM this year, DD.MM.YY otherwise
   function fmtLkDate(s){
     var m=String(s).match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    return m ? m[3]+"."+m[2] : String(s);
+    if(!m) return String(s);
+    return m[3]+"."+m[2]+(Number(m[1])===new Date().getFullYear()?"":"."+m[1].slice(2));
   }
 
   function renderPublicPages(){
@@ -12858,6 +12878,7 @@
       if(infraOn() && !BK) loadBackups();
       if(expensesOn() && !EXP) loadExpenses();
       if(securityOn() && !SEC) loadSecurity();
+      if(linksOn() && !LINKS) loadLinks();
       if(DATA || bootLoading) return;
       bootLoading=true;
       // brief FIRST, the full load after it: fired together, the brief's one
