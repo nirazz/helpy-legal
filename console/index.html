@@ -519,6 +519,22 @@
   .publine + .publine { border-top:1px solid var(--grid); }
   .publine .lbl { flex:1; font-size:13px; color:var(--ink); }
   .pubchips { display:flex; flex-wrap:wrap; gap:8px; }
+  .lkgrid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:28px 32px; margin-top:8px; }
+  @media (max-width:880px){ .lkgrid{ grid-template-columns:1fr; } }
+  .lkgrp h3 { font-size:14px; font-weight:700; margin:0 0 6px; }
+  .lkgrp h3 .n { color:var(--muted); font-weight:400; margin-inline-start:4px; }
+  .lkrow { display:flex; align-items:center; gap:10px; padding:9px 0; border-top:1px solid var(--hairline);
+    color:var(--ink); text-decoration:none; min-width:0; }
+  .lkrow:hover .lkt { text-decoration:underline; }
+  .lkrow .lktx { flex:1; min-width:0; }
+  .lkrow .lkt { font-size:13.5px; font-weight:600; display:block; overflow-wrap:anywhere; }
+  .lkrow .lkd { font-size:12px; color:var(--muted); display:block; }
+  .lkrow .lkdate { font-size:12px; color:var(--muted); white-space:nowrap; font-variant-numeric:tabular-nums; }
+  .lkrow svg { flex:none; color:var(--muted); }
+  .lksearch { width:100%; max-width:320px; margin:4px 0 8px; border:1px solid var(--hairline);
+    background:var(--surface); color:var(--ink); padding:8px 12px; border-radius:8px; font:inherit;
+    box-shadow:var(--shadow-sm); outline:none; }
+  .lksearch:focus { border-color:var(--s1); box-shadow:var(--ring); }
   .pubchip { display:inline-flex; align-items:center; gap:6px; font-size:12.5px;
              color:var(--ink2); text-decoration:none; background:var(--surface);
              border:1px solid var(--hairline); border-radius:8px; padding:5px 11px;
@@ -2104,6 +2120,7 @@
     <button data-v="chat" data-ic="msg"><span data-i18n="tabChat">צ'אט</span></button>
     <button data-v="push" data-ic="bell"><span data-i18n="tabPush">התראות</span></button>
     <button data-v="backlog" data-ic="box"><span data-i18n="tabBacklog">בקלוג</span></button>
+    <button data-v="links" data-ic="link"><span data-i18n="tabLinks">קישורים</span></button>
     <button data-v="infra" data-ic="server"><span data-i18n="tabInfra">שרת</span></button>
     <button data-v="security" data-ic="shieldok"><span data-i18n="tabSecurity">אבטחה</span></button>
     <button data-v="arch" data-ic="layers"><span data-i18n="tabArch">ארכיטקטורה</span></button>
@@ -2724,6 +2741,14 @@
       <h2 data-i18n="pnErrTitle">כשלים במסירה</h2>
       <div class="sub" id="pnErrSubLine" data-i18n="pnErrSub"></div>
       <div id="pnErrors"></div>
+    </section>
+  </div>
+
+  <div id="linksView" class="hidden">
+    <section class="panel" style="opacity:1;transform:none">
+      <h2 id="lkTitle"></h2>
+      <div class="sub" id="lkSub"></div>
+      <div id="lkBody"></div>
     </section>
   </div>
 
@@ -3359,6 +3384,7 @@
       blGateTip:"פריט אבטחה או תשתית. בכוונה בלי ציון – הוא תנאי לשחרור, לא תכונה שמתחרה על אותו מקום ברשימה",
       blNone:"אין פריטים במצב הזה",
       tabArch:"ארכיטקטורה",
+      tabLinks:"קישורים",
       // server tab. Latin tokens (CPU, IO, swap) are isolated with U+2068/U+2069
       // so a number beside them can never be pulled into their run
       tabInfra:"שרת",
@@ -4348,6 +4374,7 @@
       blGateTip:"A security or infrastructure item. Deliberately unscored \u2013 it is a condition for shipping, not a feature competing for the same slot in the list",
       blNone:"Nothing in this status",
       tabArch:"Architecture",
+      tabLinks:"Links",
       tabInfra:"Server",
       ifOk:"The server is within its normal range - every measure is below its alert line.",
       ifDown:function(list){ return "<b>Over the line:</b> "+list+". If it keeps up, it is time to upgrade the machine."; },
@@ -5330,6 +5357,7 @@
     $("archView").classList.toggle("hidden",v!=="arch");
     $("adsView").classList.toggle("hidden",v!=="ads");
     $("backlogView").classList.toggle("hidden",v!=="backlog");
+    $("linksView").classList.toggle("hidden",v!=="links");
     $("pushView").classList.toggle("hidden",v!=="push");
     $("infraView").classList.toggle("hidden",v!=="infra");
     $("expensesView").classList.toggle("hidden",v!=="expenses");
@@ -5363,6 +5391,7 @@
     if(v==="expenses"){ renderExpenses(); loadExpenses(); }
     // and the security tab
     if(v==="security"){ renderSecurity(); loadSecurity(); }
+    if(v==="links") loadLinks();
     // EVERY tab with a chart, not just metrics: a chart initialised while its
     // view was display:none measures zero width and stays a 100px sliver
     // forever. This guard was written when metrics owned the only charts; the
@@ -10617,6 +10646,68 @@
       ["docs.html","תיעוד מוצר","Product docs","2026-04-29"]
      ]}
   ];
+  // ---- links tab ---------------------------------------------------------
+  // Pages Claude published for Nir + tools he opens often. The list comes from
+  // admin-dashboard (links.ts) after sign-in - never written into this public
+  // page. Only https links are drawn; every string goes in as text.
+  var LINKS=null, LINKS_ERR=null, LINKS_Q="";
+  function loadLinks(){
+    renderLinks();
+    if(LINKS) return;
+    relayCall("links",{}).then(function(d){ LINKS=d; LINKS_ERR=null; renderLinks(); })
+      .catch(function(e){ LINKS_ERR=e.message; renderLinks(); });
+  }
+  function renderLinks(){
+    var he=LANG==="he", host=$("lkBody"); if(!host) return;
+    var t=$("lkTitle");
+    t.textContent = he ? "קישורים" : "Links";
+    t.insertBefore(icon("link",17), t.firstChild); t.classList.add("withico");
+    $("lkSub").textContent = he
+      ? "דפים ש-Claude הכין לך וכלים שאתה פותח הרבה · נפתח בלשונית חדשה"+(LINKS&&LINKS.updated?" · הרשימה עודכנה "+fmtLkDate(LINKS.updated):"")
+      : "Pages Claude made for you and tools you open often · opens in a new tab"+(LINKS&&LINKS.updated?" · list updated "+fmtLkDate(LINKS.updated):"");
+    host.innerHTML="";
+    if(!LINKS){
+      host.appendChild(el("div","sub", LINKS_ERR ? (he?"לא נטען: ":"Could not load: ")+LINKS_ERR : (he?"טוען...":"Loading...")));
+      return;
+    }
+    var q=document.createElement("input"); q.type="search"; q.className="lksearch";
+    q.placeholder = he ? "חיפוש קישור" : "Search links"; q.value=LINKS_Q;
+    host.appendChild(q);
+    var grid=el("div","lkgrid"); host.appendChild(grid);
+    function draw(){
+      grid.innerHTML="";
+      var needle=LINKS_Q.trim().toLowerCase(), shown=0;
+      (LINKS.groups||[]).forEach(function(g){
+        var items=(g.items||[]).filter(function(it){
+          if(!/^https:\/\//.test(String(it.url||""))) return false;
+          if(!needle) return true;
+          return [it.he,it.en,it.dh,it.de].join(" ").toLowerCase().indexOf(needle)>=0;
+        });
+        if(!items.length) return;
+        var box=el("div","lkgrp");
+        var h=el("h3",null,he?g.he:g.en); h.appendChild(el("span","n","· "+items.length)); box.appendChild(h);
+        items.forEach(function(it){
+          var a=el("a","lkrow"); a.href=it.url; a.target="_blank"; a.rel="noopener noreferrer";
+          var tx=el("span","lktx");
+          tx.appendChild(el("span","lkt", he?it.he:it.en));
+          var d=he?it.dh:it.de; if(d) tx.appendChild(el("span","lkd",d));
+          a.appendChild(tx);
+          if(it.date) a.appendChild(el("span","lkdate",fmtLkDate(it.date)));
+          a.appendChild(icon("link",13));
+          box.appendChild(a); shown++;
+        });
+        grid.appendChild(box);
+      });
+      if(!shown) grid.appendChild(el("div","sub", he?"אין קישור כזה":"No matching link"));
+    }
+    q.addEventListener("input",function(){ LINKS_Q=q.value; draw(); });
+    draw();
+  }
+  function fmtLkDate(s){
+    var m=String(s).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    return m ? m[3]+"."+m[2] : String(s);
+  }
+
   function renderPublicPages(){
     var host=$("pubPages"); if(!host) return;
     var he=LANG==="he";
@@ -12681,6 +12772,7 @@
     // when no dashboard payload has arrived yet
     renderBacklog();
     try{ renderPublicPages(); }catch(e){ console.error("renderPublicPages failed",e); }
+    try{ renderLinks(); }catch(e){ console.error("renderLinks failed",e); }
     // the server tab keeps its own payload; repaint it only where it is seen
     // (switchTab repaints it on the way in otherwise)
     if(infraOn()){ try{ renderInfra(); }catch(e){ console.error("renderInfra failed",e); }
@@ -12988,7 +13080,7 @@
   // selects #tabs button[data-v=...], and segWire bound them at init) - they
   // are only hidden from the strip; the menu items click them.
   (function(){
-    var MORE=["expenses","push","backlog","infra","security","arch"];
+    var MORE=["expenses","push","backlog","links","infra","security","arch"];
     var tabs=document.getElementById("tabs"); if(!tabs) return;
     MORE.forEach(function(v){ var b=tabs.querySelector('button[data-v="'+v+'"]'); if(b) b.classList.add("inmore"); });
     var mb=document.createElement("button"); mb.type="button"; mb.className="tabmore";
