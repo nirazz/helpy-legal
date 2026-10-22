@@ -10656,7 +10656,9 @@
   // fetched on every visit to the tab (one small read), so a page published
   // while the console sat open shows up the next time the tab is opened
   function loadLinks(){
-    renderLinks();
+    // first visit: draw "loading"; later visits keep the list on screen while
+    // the fresh copy loads (no clear-and-rebuild flicker)
+    if(!LINKS) renderLinks();
     // the #links deep link switches tabs before the session is restored;
     // bootLoad kicks this again once it is
     if(!SESSION || !SESSION.access_token) return;
@@ -10686,10 +10688,13 @@
       host.appendChild(el("div","sub", LINKS_ERR ? (he?"לא נטען: ":"Could not load: ")+LINKS_ERR : (he?"טוען...":"Loading...")));
       return;
     }
+    if(LINKS_ERR) host.appendChild(el("div","sub", he
+      ? "הרשימה לא התרעננה ("+LINKS_ERR+") - מוצגת הגרסה הקודמת"
+      : "The list did not refresh ("+LINKS_ERR+") - showing the previous copy"));
     if(LINKS.partial) host.appendChild(el("div","sub", he?"רשימת הדפים לא נטענה במלואה":"The page list did not fully load"));
     if(LINKS.capped>0) host.appendChild(el("div","sub", he
-      ? "שים לב: "+LINKS.capped+" דפים חדשים לא נכנסו לרשימה ביממה האחרונה כי הגיעה למכסה"
-      : "Note: "+LINKS.capped+" new pages were not added in the last day because the list hit its cap"));
+      ? (LINKS.capped===1 ? "שים לב: דף חדש אחד לא נכנס" : "שים לב: "+LINKS.capped+" דפים חדשים לא נכנסו")+" ביממה האחרונה, כי הרשימה הגיעה למכסה"
+      : "Note: "+(LINKS.capped===1 ? "1 new page was" : LINKS.capped+" new pages were")+" not added in the last day because the list hit its cap"));
     var grid=el("div","lkgrid"); grid.id="lkGrid"; host.appendChild(grid);
     drawLinks();
   }
@@ -10701,7 +10706,7 @@
       var items=(g.items||[]).filter(function(it){
         if(!/^https:\/\//.test(String(it.url||""))) return false;
         if(!needle) return true;
-        return [it.he,it.en,it.dh,it.de].join(" ").toLowerCase().indexOf(needle)>=0;
+        return [it.he,it.en,it.dh,it.de].filter(Boolean).join(" ").toLowerCase().indexOf(needle)>=0;
       });
       if(!items.length) return;
       var box=el("div","lkgrp");
