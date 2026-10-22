@@ -10663,13 +10663,14 @@
     t.textContent = he ? "קישורים" : "Links";
     t.insertBefore(icon("link",17), t.firstChild); t.classList.add("withico");
     $("lkSub").textContent = he
-      ? "דפים ש-Claude הכין לך וכלים שאתה פותח הרבה · נפתח בלשונית חדשה"+(LINKS&&LINKS.updated?" · הרשימה עודכנה "+fmtLkDate(LINKS.updated):"")
-      : "Pages Claude made for you and tools you open often · opens in a new tab"+(LINKS&&LINKS.updated?" · list updated "+fmtLkDate(LINKS.updated):"");
+      ? "דפים ש-Claude הכין לך וכלים שאתה פותח הרבה · דף חדש נכנס לכאן לבד ברגע שהוא מתפרסם · נפתח בלשונית חדשה"+(LINKS&&LINKS.updated?" · אחרון: "+fmtLkDate(LINKS.updated):"")
+      : "Pages Claude made for you and tools you open often · a new page lands here on its own when published · opens in a new tab"+(LINKS&&LINKS.updated?" · latest: "+fmtLkDate(LINKS.updated):"");
     host.innerHTML="";
     if(!LINKS){
       host.appendChild(el("div","sub", LINKS_ERR ? (he?"לא נטען: ":"Could not load: ")+LINKS_ERR : (he?"טוען...":"Loading...")));
       return;
     }
+    if(LINKS.partial) host.appendChild(el("div","sub", he?"רשימת הדפים לא נטענה כרגע - מוצגים רק הכלים":"The page list did not load - showing tools only"));
     var q=document.createElement("input"); q.type="search"; q.className="lksearch";
     q.placeholder = he ? "חיפוש קישור" : "Search links"; q.value=LINKS_Q;
     host.appendChild(q);
