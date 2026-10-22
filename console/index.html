@@ -10692,6 +10692,9 @@
       ? "הרשימה לא התרעננה ("+LINKS_ERR+") - מוצגת הגרסה הקודמת"
       : "The list did not refresh ("+LINKS_ERR+") - showing the previous copy"));
     if(LINKS.partial) host.appendChild(el("div","sub", he?"רשימת הדפים לא נטענה במלואה":"The page list did not fully load"));
+    if(LINKS.bad_keys>0) host.appendChild(el("div","sub", he
+      ? "שים לב: "+(LINKS.bad_keys===1?"ניסיון אחד":LINKS.bad_keys+" ניסיונות")+" להוסיף קישור עם מפתח שגוי ביממה האחרונה. אם דפים חדשים לא מופיעים, המפתח במחשב לא תואם לשרת"
+      : "Note: "+(LINKS.bad_keys===1?"1 attempt":LINKS.bad_keys+" attempts")+" to add a link with a wrong key in the last day. If new pages are missing, the laptop key does not match the server"));
     if(LINKS.capped>0) host.appendChild(el("div","sub", he
       ? (LINKS.capped===1 ? "שים לב: דף חדש אחד לא נכנס" : "שים לב: "+LINKS.capped+" דפים חדשים לא נכנסו")+" ביממה האחרונה, כי הרשימה הגיעה למכסה"
       : "Note: "+(LINKS.capped===1 ? "1 new page was" : LINKS.capped+" new pages were")+" not added in the last day because the list hit its cap"));
