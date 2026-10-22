@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Helpy - Accessibility Statement</title>
+<link rel="icon" href="/app-icon-512.png">
+<link rel="apple-touch-icon" href="/app-icon-512.png">
+    <link rel="stylesheet" href="/fonts/fonts.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; color: #1d1d1f; background: #fff; -webkit-font-smoothing: antialiased; }
+
+        .hero { padding: 80px 24px 60px; text-align: center; background: #fafafa; border-bottom: 1px solid #f0f0f0; }
+        .hero-badge { display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: #4f46e5; background: #eef2ff; padding: 6px 14px; border-radius: 20px; margin-bottom: 20px; }
+        .hero h1 { font-size: 40px; font-weight: 700; letter-spacing: -0.025em; color: #1d1d1f; margin-bottom: 12px; }
+        .hero p { font-size: 15px; color: #6e6e73; }
+
+        .nav { display: flex; justify-content: center; gap: 32px; padding: 0 24px; border-bottom: 1px solid #f0f0f0; position: sticky; top: 0; z-index: 10; backdrop-filter: blur(20px); background: rgba(255,255,255,0.8); }
+        .nav a { color: #6e6e73; text-decoration: none; font-size: 13px; font-weight: 500; padding: 16px 0; border-bottom: 2px solid transparent; transition: all 0.2s; }
+        .nav a:hover { color: #1d1d1f; }
+        .nav a.active { color: #1d1d1f; border-bottom-color: #4f46e5; }
+
+        .lang-switch { text-align: center; padding: 12px 24px; background: #fff; border-bottom: 1px solid #f0f0f0; }
+        .lang-switch a { font-size: 13px; color: #4f46e5; text-decoration: none; font-weight: 500; }
+        .lang-switch a:hover { text-decoration: underline; }
+
+        .content { max-width: 680px; margin: 0 auto; padding: 64px 24px 100px; }
+        .section { margin-bottom: 48px; }
+        .section h2 { font-size: 24px; font-weight: 600; letter-spacing: -0.02em; color: #1d1d1f; margin-bottom: 20px; }
+        .section p { font-size: 15px; line-height: 1.75; color: #424245; margin-bottom: 14px; }
+        .section ul { margin: 14px 0; padding-left: 0; list-style: none; }
+        .section ul li { font-size: 15px; line-height: 1.75; color: #424245; padding: 2px 0 2px 24px; position: relative; }
+        .section ul li::before { content: ''; position: absolute; left: 0; top: 15px; width: 6px; height: 6px; background: #4f46e5; border-radius: 50%; }
+        .section ul li strong { color: #1d1d1f; font-weight: 600; }
+        .section a { color: #4f46e5; text-decoration: none; }
+        .section a:hover { text-decoration: underline; }
+        .divider { height: 1px; background: #f0f0f0; margin: 48px 0; }
+
+        .steps { background: #fafafa; border-radius: 16px; padding: 32px; margin: 24px 0; }
+        .steps ol { padding-left: 20px; }
+        .steps ol li { font-size: 15px; line-height: 1.75; color: #424245; padding: 8px 0; }
+        .steps ol li::marker { color: #4f46e5; font-weight: 600; }
+
+        .btn { display: inline-block; font-family: inherit; font-size: 15px; font-weight: 600; color: #fff !important; background: #4f46e5; padding: 14px 32px; border-radius: 12px; text-decoration: none !important; transition: background 0.2s; margin-top: 8px; }
+        .btn:hover { background: #4f46e5; color: #fff !important; text-decoration: none !important; }
+
+        .footer { text-align: center; padding: 40px 24px; background: #fafafa; border-top: 1px solid #f0f0f0; }
+        .footer-logo { font-size: 15px; font-weight: 600; color: #1d1d1f; margin-bottom: 4px; }
+        .footer-tagline { font-size: 13px; color: #6e6e73; margin-bottom: 20px; }
+        .footer-links { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
+        .footer-links a { font-size: 13px; color: #4f46e5; text-decoration: none; }
+        .footer-links a:hover { text-decoration: underline; }
+            /* Visual system (Stripe-docs reading style): Inter for Latin and numerals,
+           Heebo for Hebrew, ink on white, hairlines, brand indigo for links only. */
+        :root { --ink:#0f1115; --ink2:#3f4551; --muted:#6b7280; --line:#e3e5e9; --plane:#f6f7f9; --brand:#4f46e5; }
+        body { font-family: "Inter","Heebo",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+               font-feature-settings:"cv11","ss03"; color:var(--ink); -moz-osx-font-smoothing:grayscale; }
+        ::selection { background:rgba(79,70,229,0.16); }
+        :focus-visible { outline:2px solid var(--brand); outline-offset:3px; border-radius:4px; }
+        .hero { background:var(--plane); border-bottom:1px solid var(--line); padding:72px 24px 52px; }
+        /* the label above the title: kept for screen readers, not drawn */
+        .hero-badge { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);
+                      clip-path:inset(50%); white-space:nowrap; padding:0; margin:0; }
+        .hero h1 { font-size:44px; font-weight:700; letter-spacing:-0.03em; color:var(--ink); line-height:1.1; text-wrap:balance; }
+        .hero p { font-size:15px; color:var(--muted); font-variant-numeric:tabular-nums; }
+        .nav { background:#fff; backdrop-filter:none; -webkit-backdrop-filter:none; border-bottom:1px solid var(--line); gap:28px; }
+        .nav a { color:var(--ink2); font-size:14px; padding:15px 0; transition:color .15s ease, border-color .15s ease; }
+        .nav a:hover { color:var(--ink); }
+        .nav a.active { color:var(--ink); font-weight:600; border-bottom-color:var(--ink); }
+        .lang-switch { border-bottom:0; padding:20px 24px 0; }
+        .lang-switch a { font-size:14px; color:var(--ink2); padding:6px 12px; border:1px solid var(--line); border-radius:8px; display:inline-block; }
+        .lang-switch a:hover { color:var(--ink); border-color:#cfd3da; text-decoration:none; }
+        .content { max-width:700px; padding:56px 24px 112px; }
+        .section { margin-bottom:0; }
+        .section h2 { font-size:22px; font-weight:600; letter-spacing:-0.02em; color:var(--ink); margin-bottom:16px; text-wrap:balance; }
+        .section h3 { color:var(--ink); letter-spacing:-0.01em; }
+        .section p, .section ul li, .steps ol li { font-size:16px; line-height:1.75; color:var(--ink2); }
+        .section ul li::before { background:#9ca3af; width:5px; height:5px; top:13px; }
+        .section ul li strong, .section p strong { color:var(--ink); }
+        .section a { color:var(--brand); text-decoration:underline; text-decoration-color:rgba(79,70,229,.35); text-underline-offset:3px; }
+        .section a:hover { text-decoration-color:var(--brand); }
+        .divider { background:var(--line); margin:40px 0; }
+        .callout { background:#fef3f2; border:1px solid #fbd5d1; border-radius:10px; padding:18px 20px; }
+        .callout p { color:#912018; }
+        .steps { background:var(--plane); border:1px solid var(--line); border-radius:10px; padding:24px 28px; }
+        .steps ol li::marker { color:var(--ink); }
+        .btn { background:var(--brand); border-radius:8px; padding:12px 24px; box-shadow:0 1px 2px rgba(16,24,40,.12); }
+        .btn:hover { background:#3730a3; }
+        .footer { background:var(--plane); border-top:1px solid var(--line); padding:40px 24px 48px; }
+        .footer-logo { color:var(--ink); }
+        .footer-tagline { color:var(--muted); }
+        .footer-links a { color:var(--ink2); }
+        .footer-links a:hover { color:var(--brand); text-decoration:none; }
+        @media (max-width:600px) {
+            .hero { padding:52px 16px 40px; }
+            .hero h1 { font-size:34px; }
+            .nav { gap:20px; padding:0 16px; overflow-x:auto; justify-content:flex-start; scrollbar-width:none; }
+            .nav a { white-space:nowrap; flex-shrink:0; }
+            .content { padding:40px 16px 88px; }
+            .lang-switch { padding:16px 16px 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <span class="hero-badge">Accessibility</span>
+        <h1>Accessibility Statement</h1>
+        <p>Last updated October 22, 2026</p>
+    </div>
+    <nav class="nav">
+        <a href="/">Home</a>
+        <a href="/privacy.html">Privacy</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/delete-account.html">Delete Account</a>
+    </nav>
+    <div class="lang-switch">
+        <a href="/accessibility-he.html" lang="he" hreflang="he">גרסה בעברית →</a>
+    </div>
+    <main class="content">
+        <div class="section">
+            <h2>About Helpy</h2>
+            <p>Helpy is a free community app that connects neighbors who need a hand with neighbors who can lend one. We want everyone to be able to use it, including people with disabilities, and we keep working on it.</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section">
+            <h2>The standard we aim for</h2>
+            <p>We aim to meet Israeli Standard IS 5568 at level AA, which is based on the WCAG 2.0 guidelines, in both the app and this website (help-y.com). We don't claim that every screen meets every requirement today. Below is what we have done so far, and what we haven't yet.</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section">
+            <h2>What we have done</h2>
+            <h3>In the app</h3>
+            <ul>
+                <li>Every button shown only as an icon, with no words, has a label that screen readers announce (VoiceOver on iOS, TalkBack on Android).</li>
+                <li>In most pop-up windows, screen-reader focus stays inside the window until you close it.</li>
+                <li>The app is available in Hebrew and English, with a full right-to-left layout in Hebrew.</li>
+                <li>There is a dark mode.</li>
+            </ul>
+            <h3>On the website</h3>
+            <ul>
+                <li>The site is made of simple pages with ordered headings, a declared language and text direction on every page, and text descriptions for images.</li>
+                <li>The pages are built to read well on a phone, and you can enlarge the text with your browser's zoom.</li>
+                <li>The site uses no cookies and no trackers.</li>
+            </ul>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section">
+            <h2>What isn't there yet</h2>
+            <ul>
+                <li>Moving between cards in the feed is mainly done by swiping. You can also use the buttons under the card.</li>
+                <li>We haven't yet tested screen-reader support on every screen of the app.</li>
+                <li>We are still improving color contrast.</li>
+            </ul>
+            <p>If something gets in your way, we'd like to hear about it. That is how we know what to fix first.</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section">
+            <h2>Contact us about accessibility</h2>
+            <!-- TODO(Nir): accessibility coordinator name/phone if required -->
+            <p>Ran into an accessibility problem in the app or on the website? Email us at <a href="mailto:support@help-y.com?subject=Accessibility">support@help-y.com</a>. To help us sort it out, please tell us:</p>
+            <ul>
+                <li>what the problem is</li>
+                <li>which screen or page it happened on</li>
+                <li>which device and operating system you use, and any assistive technology (for example, a screen reader)</li>
+            </ul>
+            <p>We aim to respond within a reasonable time.</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section">
+            <h2>Updates to this statement</h2>
+            <p>This statement was last updated on October 22, 2026.</p>
+        </div>
+    </main>
+    <footer class="footer">
+        <div class="footer-logo">Helpy</div>
+        <div class="footer-tagline">Neighbors Helping Neighbors</div>
+        <div class="footer-links">
+            <a href="/privacy.html">Privacy</a>
+            <a href="/terms.html">Terms</a>
+            <a href="/delete-account.html">Delete Account</a>
+            <a href="/accessibility.html">Accessibility</a>
+            <a href="mailto:support@help-y.com">Contact</a>
+            <a href="https://www.facebook.com/profile.php?id=61588709264545" target="_blank" rel="noopener">Facebook</a>
+            <a href="https://www.instagram.com/helpy.community/" target="_blank" rel="noopener">Instagram</a>
+        </div>
+    </footer>
+</body>
+</html>
