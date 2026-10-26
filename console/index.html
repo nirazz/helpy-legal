@@ -8795,7 +8795,7 @@
      dE:"Small server code running close to the user. Everything the client must not be trusted with lives here: sending notifications and emails, phone verification, moderation, founder alerts, server and crash monitoring, and this console's own API. Every limit they enforce lives in the database - never in function memory, which resets on every boot."},
     {id:"cron", col:"auto", c:"--s2",
      he:"משימות מתוזמנות", en:"Scheduled jobs",
-     shH:"pg_cron · 49 משימות (47 פעילות)", shE:"pg_cron · 49 jobs (47 active)",
+     shH:"pg_cron · 50 משימות (48 פעילות)", shE:"pg_cron · 50 jobs (48 active)",
      dH:"שעון בתוך המסד שמפעיל משימות לפי לוח זמנים: תזכורות, סגירת התאמות שנתקעו, הורדת פוסטים שבעליהם לא ענו למייל, השלמת שמות ערים, דוח יומי. הדחיפות מוגבלות ל-10:00-19:00 בישראל; משימות התחזוקה רצות מסביב לשעון - בריאות השרת וקריסות כל 5 דקות, שליחה חוזרת של קריאות שלא יצאו, כלב שמירה כל שעה, קבלות, פרסום דירוגים, ניקוי האחסון, מחיקת יומנים לפי כללי השמירה, הסיכום של 06:00 UTC וסנכרון גרסה.",
      dE:"A clock inside the database firing jobs on a schedule: reminders, closing stalled matches, taking down posts whose owners never answered the email, filling in city names, the daily digest. Push senders keep to 10:00-19:00 Israel; the maintenance jobs run around the clock - server health and crashes every 5 min, re-sending calls that never left, watchdog hourly, receipts, rating publish, the storage sweep, pruning logs by their retention rules, the 06:00 UTC digest and version sync."},
     {id:"nudge", col:"auto", c:"--s2",
