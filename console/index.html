@@ -2312,7 +2312,7 @@
     <div class="sechead" id="secRetention" style="--sec-c:var(--s7)" data-i18n="secRetentionT">שימור ואיכות הפעלה</div>
     <div class="grid2">
       <section class="panel"><h2 data-i18n="statesTitle">מצבי משתמש · השבוע</h2><div class="sub" data-i18n="statesSub">מודל Duolingo: מאיפה הגיעו הפעילים של השבוע</div><div id="userStates"></div></section>
-      <section class="panel"><h2 data-i18n="repeatTitle">חזרה לבקש שוב</h2><div class="sub" data-i18n="repeatSub">בקשה שנייה תוך 90 יום - עדות ה-PMF החזקה ביותר במרקטפלייס</div><div id="repeatRate"></div></section>
+      <section class="panel"><h2 data-i18n="repeatTitle">חזרה לבקש שוב</h2><div class="sub" data-i18n="repeatSub">בקשה שנייה תוך 90 יום, רק אצל מי שעברו לו/ה 90 יום מהבקשה הראשונה - עדות ה-PMF החזקה ביותר במרקטפלייס</div><div id="repeatRate"></div></section>
     </div>
     <section class="panel">
       <h2 data-i18n="retTitle">עקומת שימור</h2>
@@ -3045,7 +3045,7 @@
       statesTitle:"מצבי משתמש · השבוע", statesSub:"מודל Duolingo: מאיפה הגיעו הפעילים של השבוע",
       stNew:"חדשים", stCurrent:"ממשיכים", stReact:"חזרו (1-4 שבועות)", stResurr:"קמו לתחייה (30+ יום)",
       stCaption:"החישוב מבוסס על פעולות שנרשמו במערכת - פוסטים, הודעות והתאמות. מי שרק פתח את האפליקציה בלי לעשות דבר נספר כ״קם לתחייה״.",
-      repeatTitle:"חזרה לבקש שוב", repeatSub:"בקשה שנייה תוך 90 יום - עדות ה-PMF החזקה ביותר במרקטפלייס",
+      repeatTitle:"חזרה לבקש שוב", repeatSub:"בקשה שנייה תוך 90 יום, רק אצל מי שעברו לו/ה 90 יום מהבקשה הראשונה - עדות ה-PMF החזקה ביותר במרקטפלייס", repSmall:function(n){ return " <b>מדגם קטן ("+n+" מבקשים) - אינדיקציה בלבד, לא מסקנה.</b>"; },
       repRequesters:"מבקשים ייחודיים אי-פעם", repRepeat:"חזרו לבקש תוך 90 יום", repRate:"שיעור החזרה, מול יעד 35%",
       repTip:"אחוז מהמבקשים שפרסמו בקשה שנייה תוך 90 יום מהראשונה. 35% הוא הרף שמצוטט כשער להתרחבות",
       happyTitle:"עזרות שהושלמו · מאז ההשקה", happy45:"מתוכן דורגו 4-5 כוכבים",
@@ -4050,7 +4050,7 @@
       statesTitle:"User states · this week", statesSub:"Duolingo model: where this week's actives came from",
       stNew:"New", stCurrent:"Current", stReact:"Reactivated (1-4 weeks)", stResurr:"Resurrected (30+ days)",
       stCaption:"Computed from committed evidence (posts, messages, matches) - passive openers count as \"resurrected\"",
-      repeatTitle:"Came back to ask again", repeatSub:"A second request within 90 days - the strongest PMF evidence in a marketplace",
+      repeatTitle:"Came back to ask again", repeatSub:"A second request within 90 days, only among requesters whose first request is 90+ days old - the strongest PMF evidence in a marketplace", repSmall:function(n){ return " <b>Small sample ("+n+" requesters) - a signal, not a conclusion.</b>"; },
       repRequesters:"Distinct requesters ever", repRepeat:"Asked again within 90 days", repRate:"Repeat rate, vs the 35% gate",
       repTip:"Share of requesters who posted a second request within 90 days of their first. 35% is the cited expansion gate",
       happyTitle:"Completed helps · all time", happy45:"of them rated 4-5 stars",
@@ -6187,7 +6187,7 @@
         if(util<40) rows.push(["bad",S.insSupplyUtil(util,fmt(SU.active_offers-SU.engaged_30d),winLabel()),scrollToEl("supplyHealth")]);
       }
       var RP=R.repeat||{};
-      if(RP.requesters>=20){
+      if(RP.requesters>=50){
         var rp=Math.round(100*RP.repeated_90d/RP.requesters);
         rows.push([rp<35?"warn":"good",S.insRepeat(rp,fmt(RP.repeated_90d),fmt(RP.requesters)),scrollToEl("repeatRate")]);
       }
@@ -6878,8 +6878,10 @@
     rr.appendChild(rt2);
     if(RP.requesters){
       var repRead=S.rdRepeat(rpct, fmt(RP.repeated_90d), fmt(RP.requesters));
-      if(rpct<35) repRead+=S.recRepeat;
-      panelRead("repeatRate", rpct<35?"warn":"good", repRead);
+      var rpSmall=RP.requesters<50;   // no verdicts from n<50 (CLAUDE.md)
+      if(rpSmall) repRead+=S.repSmall(fmt(RP.requesters));
+      else if(rpct<35) repRead+=S.recRepeat;
+      panelRead("repeatRate", rpSmall?"":(rpct<35?"warn":"good"), repRead);
     }
   }
 
