@@ -3370,7 +3370,7 @@
       psDaysN:"{n} ימים", psDay1:"יום", psToday:"היום",
       psClosedLbl:"נסגר", psLiveLbl:"חי",
       psByOwner:"נמחק בידי הבעלים", psClosedInstead:"נסגר במקום להימחק",
-      psEmptyData:"רשימת הכרטיסים לא נטענה. רענון יביא אותה",
+      psTrunc:function(a,b){ return "מוצגים "+a+" מתוך "+b+" פוסטים - הטבלה גדלה מעבר לתקרת המשיכה, ולכן המספרים כאן נמוכים מהאמת."; }, psEmptyData:"רשימת הכרטיסים לא נטענה. רענון יביא אותה",
       tabBacklog:"בקלוג",
       blUpd:"עודכן ידנית", blUpdToday:"היום", blUpdYday:"אתמול",
       blUpdAgo:"לפני {n} ימים", blUpdStale:"ייתכן שאינו מעודכן",
@@ -4374,7 +4374,7 @@
       psDaysN:"{n} days", psDay1:"1 day", psToday:"today",
       psClosedLbl:"closed", psLiveLbl:"live",
       psByOwner:"deleted by the owner", psClosedInstead:"closed instead of deleted",
-      psEmptyData:"The card list did not load. A refresh will fetch it",
+      psTrunc:function(a,b){ return "Showing "+a+" of "+b+" posts - the table has outgrown the fetch limit, so the numbers here undercount."; }, psEmptyData:"The card list did not load. A refresh will fetch it",
       tabBacklog:"Backlog",
       blUpd:"Updated by hand", blUpdToday:"today", blUpdYday:"yesterday",
       blUpdAgo:"{n} days ago", blUpdStale:"may be out of date",
@@ -4822,6 +4822,12 @@
     var d=RANGE;
     if(LANG==="he") return d===7?"שבוע":d===14?"שבועיים":d===180?"חצי שנה":d+" יום";
     return d===7?"week":d===14?"2 weeks":d===180?"half year":d+" days";
+  }
+  // chat_stats is counted over the last RANGE days ending now, also on a custom
+  // range - so the label names that window, never the custom dates
+  function chatWin(v){
+    var lbl = CUSTOM ? (LANG==="he" ? RANGE+" הימים האחרונים" : "last "+RANGE+" days") : winLabel();
+    return v.split("{win}").join(lbl);
   }
   function withWin(v){ return v.indexOf("{win}")>-1 ? v.split("{win}").join(winLabel()) : v; }
   function applyChrome(){
@@ -7628,13 +7634,13 @@
       if(C.convos_30d){
         var tw=Math.round(100*(C.two_way_30d||0)/C.convos_30d);
         rows.push([tw<50?"bad":tw<70?"warn":"good",
-          withWin(S.clInsTwoWay(tw+"%", fmt(C.two_way_30d), fmt(C.convos_30d)))]);
+          chatWin(S.clInsTwoWay(tw+"%", fmt(C.two_way_30d), fmt(C.convos_30d)))]);
       }
       if(C.offer_convos){
         var oa=Math.round(100*(C.offer_answered||0)/C.offer_convos);
-        rows.push([oa<60?"bad":"good", withWin(S.clInsOfferAns(oa+"%", fmt(C.offer_answered), fmt(C.offer_convos)))]);
+        rows.push([oa<60?"bad":"good", chatWin(S.clInsOfferAns(oa+"%", fmt(C.offer_answered), fmt(C.offer_convos)))]);
       }
-      if(C.senders_window!=null) rows.push(["info", withWin(S.clInsSenders(fmt(C.senders_window)))]);
+      if(C.senders_window!=null) rows.push(["info", chatWin(S.clInsSenders(fmt(C.senders_window)))]);
       insightsInto("clInsights", rows);
     })();
     var q=($("chatSearch").value||"").trim();
@@ -7934,6 +7940,9 @@
     var P = (D && D.posts) || [];
     ["psSummary","psCount"].forEach(function(id){ var h=$(id); if(h) h.innerHTML=""; });
     if(!D){ emptyState(host,S.psEmptyData,"file"); return; }
+    // the fetch has a ceiling: say so the day the table outgrows it, rather
+    // than count a truncated list as if it were the marketplace
+    if(D.total && P.length < D.total) host.appendChild(el("div","note",S.psTrunc(fmt(P.length), fmt(D.total))));
 
     // summary strip: the four numbers that answer "what is out there right now",
     // counted over REAL posts only - a test fixture must not move a number Nir
@@ -9445,6 +9454,8 @@
     completion_nudge:       {he:"איך הלך עם העזרה?",           en:"How did the help go?"},
     reengagement:           {he:"חזרה אחרי היעדרות",           en:"Come-back nudge"},
     unanswered_message:     {he:"מחכים לתשובה ממך",            en:"Someone is waiting for you"},
+    // the effectiveness readout still names this sender by its old key
+    unanswered_nudge:       {he:"מחכים לתשובה ממך",            en:"Someone is waiting for you"},
     activation_nudge:       {he:"יום אחרי ההרשמה",             en:"Day-after-signup nudge"},
     offer_owner_nudge:      {he:"ההצעה שלך באוויר - הצצה בבקשות", en:"Your offer is live - look at requests"},
     silent_room_nudge:      {he:"שיחה פתוחה בלי אף הודעה",     en:"An open chat with no message"},
@@ -9811,13 +9822,15 @@
     // the store's newest version, not app_config's: sync_latest_version holds
     // Android back until 30% of users run it (the update banner), so on a
     // staged release config lags the store. Newest of config and any version
-    // seen on 3+ users this week, compared as numbers (1.1.10 > 1.1.9).
+    // seen on 10+ Android users this week, compared as numbers (1.1.10 > 1.1.9).
     var verNum=function(v){ return String(v||"").split(".").map(function(x){ return parseInt(x,10)||0; }); };
     var verGt=function(a,b){ var x=verNum(a), y=verNum(b);
       for(var i=0;i<Math.max(x.length,y.length);i++){ if((x[i]||0)!==(y[i]||0)) return (x[i]||0)>(y[i]||0); } return false; };
     var latestBy={}; (V.config||[]).forEach(function(c){ latestBy[c.p]=c.latest; });
+    // Android only (staged rollout); iOS config follows the store, and a
+    // TestFlight build seen on a few testers must never count as "latest".
     (V.seen_7d||[]).forEach(function(r){
-      if((r.n||0)>=3 && r.v && (!latestBy[r.p] || verGt(r.v, latestBy[r.p]))) latestBy[r.p]=r.v;
+      if(r.p==="android" && (r.n||0)>=10 && r.v && (!latestBy[r.p] || verGt(r.v, latestBy[r.p]))) latestBy[r.p]=r.v;
     });
     var onLatest=(V.seen_7d||[]).filter(function(r){ return latestBy[r.p] && r.v===latestBy[r.p]; })
                    .reduce(function(a,r){ return a+(r.n||0); },0);
@@ -11208,7 +11221,8 @@
   var EX_CATS=["infra","ads","stores","domain","ai","sms","tools","other"];
   var EX_SB_LIMIT=25;  // USD - mirrored from the Supabase spend cap
   // [name, category, currency, cadence, free?] - a pick pre-fills the rest of a NEW form;
-  // free?=1 = a vendor on a free plan or not spending now: offered in the form, never listed as missing
+  // free?=1 = a vendor on a free plan or not spending now: offered in the form, never listed as missing.
+  // Remove the flag the day that vendor starts charging (ChatGPT Ads: when the campaigns resume).
   var EX_SUGGEST=[
     ["Supabase Pro","infra","USD","monthly"], ["Apple Developer","stores","USD","yearly"],
     ["Google Play","stores","USD","one_time"], ["Twilio","sms","USD","monthly"],
