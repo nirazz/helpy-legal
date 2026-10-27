@@ -2312,7 +2312,7 @@
     <div class="sechead" id="secRetention" style="--sec-c:var(--s7)" data-i18n="secRetentionT">שימור ואיכות הפעלה</div>
     <div class="grid2">
       <section class="panel"><h2 data-i18n="statesTitle">מצבי משתמש · השבוע</h2><div class="sub" data-i18n="statesSub">מודל Duolingo: מאיפה הגיעו הפעילים של השבוע</div><div id="userStates"></div></section>
-      <section class="panel"><h2 data-i18n="repeatTitle">חזרה לבקש שוב</h2><div class="sub" data-i18n="repeatSub">בקשה שנייה תוך 90 יום - עדות ה-PMF החזקה ביותר במרקטפלייס</div><div id="repeatRate"></div></section>
+      <section class="panel"><h2 data-i18n="repeatTitle">חזרה לבקש שוב</h2><div class="sub" data-i18n="repeatSub">בקשה שנייה תוך 90 יום, רק אצל מי שעברו לו/ה 90 יום מהבקשה הראשונה - עדות ה-PMF החזקה ביותר במרקטפלייס</div><div id="repeatRate"></div></section>
     </div>
     <section class="panel">
       <h2 data-i18n="retTitle">עקומת שימור</h2>
@@ -2830,15 +2830,15 @@
       sfOld:function(n){ return "הנתונים בני "+n+" ימים - ההורדות כאן ישנות מהחשבונות שלידן, אז היחסים בין השורות לא מדויקים עד המשיכה הבאה מדוחות החנויות"; },
       sfMetaDl:function(i,a){ return "iOS "+i+" · Android "+a+" · המקור: דוחות ההתקנה של אפל וגוגל. אפל סופרת רק מכשירים שאישרו שיתוף נתונים, אז צד ה-iOS הוא רצפה - המספר האמיתי גבוה יותר"; },
       sfMetaRm:function(i,a,ap){ return "iOS "+i+" · Android "+a+" ("+ap+" מההתקנות) · אנדרואיד נמדד במלואו; ההסרות ב-iOS מדווחות רק ממכשירי opt-in, אז היחס האמיתי שם כנראה גבוה מהנראה"; },
-      sfMetaHold:function(i,a){ return "iOS ~"+i+" (הערכה: התקנות פחות הסרות) · Android "+a+" (בסיס מכשירים שנמדד ישירות אצל גוגל)"; },
+      sfMetaHold:function(i,a){ return "iOS כ-"+i+" (הערכה: התקנות פחות הסרות) · Android "+a+" (בסיס מכשירים שנמדד ישירות אצל גוגל)"; },
       sfMetaAcc:function(i,a,u){ return "iOS "+i+" · Android "+a+" · "+u+" ותיקים ללא שיוך פלטפורמה · חשבון נוצר רק אחרי כניסה ראשונה, ונשאר קיים גם אם האפליקציה הוסרה - לכן מונים 'חיים' לפי כניסות בפועל, לא לפי חשבונות"; },
       sfMetaAlive30:function(i,a){ return "iOS "+i+" · Android "+a+" · לפי חותמת last_seen_at שהשרת מטביע בכל פתיחת אפליקציה - מקור האמת לפעילות"; },
       sfMetaAlive7:function(i,a){ return "iOS "+i+" · Android "+a+" · הליבה הפעילה באמת של הרשת"; },
       rdStore:function(dl,hold,ever,acc,m30,w7,p30){ return "מתוך <b>"+dl+"</b> הורדות, כ-<b>"+hold+"</b> מכשירים עדיין מחזיקים באפליקציה; <b>"+ever+"</b> אנשים נרשמו אי-פעם, מהם נותרו <b>"+acc+"</b> חשבונות חיים, ומהם <b>"+m30+"</b> נכנסו בחודש האחרון ("+p30+" מכלל ההורדות) ו-<b>"+w7+"</b> בשבוע האחרון. הסרת אפליקציה אינה מוחקת חשבון - לכן שכבת ה'חיים' נמדדת לפי כניסות, לא לפי מצבת החשבונות."; },
-      sfFresh:function(iosD,andD){ return "טריות הנתונים: iOS עד "+iosD+" · Android עד "+andD+" · המספרים נמשכים ידנית מדוחות החנויות"; },
+      sfFresh:function(iosD,andD){ return "טריות הנתונים: iOS עד "+iosD+" · Android עד "+andD+" · המספרים נמשכים אוטומטית פעם ביום מדוחות החנויות (בגוגל באיחור של כמה ימים)"; },
       emptyStore:"נתוני החנויות עדיין לא נטענו",
       tabAds:"קמפיינים",
-      maTitle:"קמפיינים · Meta", maSub:"הוצאה והתקנות מהקמפיינים מול ההרשמות ממודעות במסד · אנדרואיד: רק מי שהגיע/ה ממודעה · אייפון: כל ההרשמות (אין שיוך) · נמשך חי מ-Meta בכל רענון של הדף",
+      maTitle:"קמפיינים · Meta", maSub:"הוצאה והתקנות מהקמפיינים מול ההרשמות ממודעות במסד · אנדרואיד: רק מי שהגיע/ה ממודעה · אייפון: כל ההרשמות (אין שיוך) · בלי חשבונות שנמחקו מאז, ולכן לפעמים אחת או שתיים פחות מטאב בוקר · נמשך חי מ-Meta בכל רענון של הדף",
       maDailyTitle:"יום אחר יום", maDailySub:"מה הוצאנו בכל יום, כמה התקנות Meta ייחסה לעצמה, וכמה הרשמות הביאו המודעות באותו יום (באייפון: כל ההרשמות)",
       maChartTitle:"כמה עלתה כל הרשמה, יום אחר יום",
       maChartSub:"הוצאה על מודעות באותו יום, חלקי ההרשמות ממודעות באותו יום (באייפון: כל ההרשמות, אין שיוך) · מתחת ל-25 ש״ח להרשמה זה טוב · ההוצאה וההרשמות עצמן בטבלה למטה",
@@ -2869,7 +2869,7 @@
       maCostTip:"כל ההוצאה בימים המלאים שבטווח חלקי ההרשמות ממודעות באותם ימים - אותו חישוב כמו בסיכום הבוקר. אנדרואיד: רק מי שהגיע/ה ממודעה (לפי מקור ההתקנה). אייפון: אפל לא מאפשרת לדעת מי הגיע/ה ממודעה, אז נספרות כל ההרשמות, ולכן העלות האמיתית באייפון גבוהה יותר. לא נשענים על ההתקנות שמטא מייחסת לעצמה, כי היא מפספסת אותן",
       maCtrTip:"CTR = כמה מתוך מי שראו את המודעה הקליקו עליה (מתחת ל-1% = קריאייטיב חלש) · קליק = כמה עולה בממוצע כל הקלקה",
       maColDay:"יום", maSpend:"הוצאה", maInstalls:"התקנות (Meta)", maSignups:"הרשמות ממודעות",
-      maInstallsTip:"התקנות שמטא מצליחה לייחס לקמפיין. באייפון אפל מסתירה חלק (מנגנון SKAN) ובאנדרואיד הייחוס אצלנו שבור - המספר תמיד נמוך מהאמת. את הנפח האמיתי מודדים בעמודת ההרשמות",
+      maInstallsTip:"התקנות שמטא מצליחה לייחס לקמפיין. באייפון אפל מסתירה חלק (מנגנון SKAN), ובאנדרואיד מטא מקבלת את ההתקנה אבל עדיין לא את כולן - המספר נמוך מהאמת. את הנפח האמיתי מודדים בעמודת ההרשמות",
       maPartial:"חלקי",
       maFresh:function(at){ var t=new Date(at); return "נמשך מ-Meta ברגע טעינת הדף ("+t.toLocaleTimeString("he-IL",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Jerusalem"})+") · מתעדכן בכל רענון"; },
       maTzFallback:"⚠️ ההרשמות מוצגות לפי ימי UTC ולא לפי שעון ישראל, כך שהרשמות מאוחרות בערב עשויות להופיע ביום הקודם",
@@ -2953,8 +2953,8 @@
       tileHero:"עזרות שהושלמו · {win}",
       tileHeroTip:"המדד הצפוני של Helpy: עזרות שמקבל/ת העזרה סימנו שבוצעו בפועל",
       tileSignups:"הרשמות · {win}", serPlatOther:"פלטפורמה לא ידועה", covNote:function(n,d){ return "הנתונים מכסים "+n+" ימים בלבד · מאז "+d; },
-      tileActive:"פעילים היום · עכשיו",
-      tileActiveTip:"משתמשים שפתחו את האפליקציה היום, לפי חותמת last_seen_at שהשרת מטביע פעם בשעה",
+      tileActive:"פעילים ב-24 השעות האחרונות",
+      tileActiveTip:"משתמשים שפתחו את האפליקציה ב-24 השעות האחרונות, לפי חותמת last_seen_at שהשרת מטביע פעם בשעה. בטאב בוקר ״היום״ הוא יום קלנדרי בשעון ישראל, ולכן המספר שם נמוך יותר",
       tileActiveNote:function(w,m){ return "שבוע: "+w+" · חודש: "+m; },
       tileStick:"דביקות WAU/MAU · עכשיו",
       tileStickTip:"MAU = Monthly Active Users (נכנסו בחודש האחרון) · WAU = Weekly Active Users (נכנסו בשבוע האחרון). דביקות = היחס ביניהם: איזה חלק ממשתמשי החודש חזרו גם השבוע. המדד ההוגן לאפליקציה אפיזודית כמו Helpy - פותחים אותה כשצריך עזרה, לא כל יום. יעד סביר: 40-50%",
@@ -3026,7 +3026,7 @@
       insDormant:function(n,t){ return "<b>"+n+"</b> מתוך "+t+" המשתמשים רדומים (לא נראו 30+ יום) - קהל לרה-אקטיבציה"; },
       grain:"רזולוציה", gAuto:"אוטו", gDaily:"יומי", gWeekly:"שבועי",
       retTitle:"עקומת שימור",
-      retSub:"אחוז שחוזרים יום / שבוע / חודש אחרי ההרשמה (קוהורטות בשלות בלבד) · המקווקו = בנצ'מרק אפליקציות חברתיות",
+      retSub:"אחוז שנכנסו שוב לפחות יום / שבוע / חודש אחרי ההרשמה, בכל זמן מאז (קוהורטות בשלות בלבד) · המקווקו = בנצ'מרק אפליקציות חברתיות, שנמדד אחרת ולכן להשוואה גסה בלבד",
       retOurs:"Helpy", retBench:"בנצ'מרק (25/10/5%)",
       showCohorts:"הצגת טבלת הקוהורטות המלאה + איכות הפעלה", hideCohorts:"הסתרת הטבלה",
       liqTarget:"יעד",
@@ -3045,7 +3045,7 @@
       statesTitle:"מצבי משתמש · השבוע", statesSub:"מודל Duolingo: מאיפה הגיעו הפעילים של השבוע",
       stNew:"חדשים", stCurrent:"ממשיכים", stReact:"חזרו (1-4 שבועות)", stResurr:"קמו לתחייה (30+ יום)",
       stCaption:"החישוב מבוסס על פעולות שנרשמו במערכת - פוסטים, הודעות והתאמות. מי שרק פתח את האפליקציה בלי לעשות דבר נספר כ״קם לתחייה״.",
-      repeatTitle:"חזרה לבקש שוב", repeatSub:"בקשה שנייה תוך 90 יום - עדות ה-PMF החזקה ביותר במרקטפלייס",
+      repeatTitle:"חזרה לבקש שוב", repeatSub:"בקשה שנייה תוך 90 יום, רק אצל מי שעברו לו/ה 90 יום מהבקשה הראשונה - עדות ה-PMF החזקה ביותר במרקטפלייס", repSmall:function(n){ return " <b>מדגם קטן ("+n+" מבקשים) - אינדיקציה בלבד, לא מסקנה.</b>"; },
       repRequesters:"מבקשים ייחודיים אי-פעם", repRepeat:"חזרו לבקש תוך 90 יום", repRate:"שיעור החזרה, מול יעד 35%",
       repTip:"אחוז מהמבקשים שפרסמו בקשה שנייה תוך 90 יום מהראשונה. 35% הוא הרף שמצוטט כשער להתרחבות",
       happyTitle:"עזרות שהושלמו · מאז ההשקה", happy45:"מתוכן דורגו 4-5 כוכבים",
@@ -3168,7 +3168,7 @@
       intelOther:function(p,n){ return "<b>"+p+"%</b> מהפוסטים (<b>"+n+"</b>) נכנסים ל״אחר״. כשקטגוריית ״אחר״ גדולה כל כך, זה סימן שהטקסונומיה לא מכסה את מה שאנשים באמת רוצים לבקש."; },
       intelThin:"אין עדיין מספיק בקשות כדי לזהות אשכול ביקוש מובהק. המספרים כאן יתחדדו ככל שיצטברו בקשות.",
       densTitle:"צפיפות שכנים סביב בקשה",
-      densSub:"כמה שכנים היו יכולים באמת לראות את הבקשה, מול הסיכוי שהיא נענתה",
+      densSub:"כמה שכנים היו יכולים באמת לראות את הבקשה, מול הסיכוי שהיא נענתה · 90 הימים האחרונים",
       densBand:"שכנים בטווח", densReqs:"בקשות", densAny:"קיבלו הצעה", dens24:"תוך 24 שעות",
       densTip:"שכן נספר רק אם רדיוס החיפוש שלו מכסה את הבקשה, יש לו טוקן התראות, והוא פתח את האפליקציה ב-30 הימים האחרונים - כלומר מישהו שבאמת יכול היה לראות אותה",
       densAvgAns:"ממוצע שכנים · בקשות שנענו", densAvgSil:"ממוצע שכנים · בקשות ששתקו",
@@ -3193,10 +3193,10 @@
       psInsCity:function(city,share,cities){
         return "הכרטיסים החיים פרוסים על <b>"+cities+"</b> ערים; הגדולה שבהן, "+city+", היא "+share+" מהם."; },
       clInsTwoWay:function(p,tw,all){
-        return "<b>"+p+"</b> מהשיחות דו-כיווניות ("+tw+" מתוך "+all+"). שיחה חד-כיוונית היא התאמה שלא הפכה לכלום."; },
+        return "<b>"+p+"</b> מהשיחות דו-כיווניות ("+tw+" מתוך "+all+"). שיחה חד-כיוונית היא התאמה שלא הפכה לכלום. החלון: {win} (טווח הדף, לא טווח הרשימה למטה)."; },
       clInsOfferAns:function(p,a,all){
-        return "<b>"+p+"</b> מהפניות על הצעות נענו ("+a+" מתוך "+all+")."; },
-      clInsSenders:function(n){ return "<b>"+n+"</b> אנשים שונים כתבו הודעה בחלון הזה."; },
+        return "<b>"+p+"</b> מהפניות על הצעות נענו ("+a+" מתוך "+all+") · {win}."; },
+      clInsSenders:function(n){ return "<b>"+n+"</b> אנשים שונים כתבו הודעה בחלון הזה ({win})."; },
       maInsCost:function(c,su,spend){
         return "עלות להרשמה ממודעות: <b>"+c+"</b> ("+su+" הרשמות על "+spend+"). אנדרואיד: רק מי שהגיע/ה ממודעה; אייפון: כל ההרשמות, כי אין שיוך. מחושב על הרשמות במסד, לא על ההתקנות שמטא מייחסת."; },
       maInsAttrib:function(inst,su){
@@ -3271,7 +3271,7 @@
                (dead==="0" ? "כל "+total+" השולחים מביאים תוצאה כלשהי."
                            : dead+" מתוך "+total+" השולחים מתחת ל-10%.");
       },
-      pnTileSent:"התראות שנשלחו אי פעם", pnTileRate:"שיעור הצלחה\u00a0· כל הזמן",
+      pnTileSent:"התראות יזומות שנבדקו · כל הזמן", pnTileRate:"שיעור הצלחה\u00a0· כל הזמן",
       pnTileBest:"השולח הכי חזק\u00a0· תוך 7 ימים", pnTileDead:"מתחת ל-10% - מועמדים לכיבוי",
       pnTileDeadNone:"אין - כל השולחים ב-10% ומעלה",
       pnBandWorks:"עובד · 40% ומעלה", pnBandWeak:"חלש · 15%-39%", pnBandDead:"לא עובד · מתחת ל-15%",
@@ -3284,7 +3284,7 @@
       pnOutAnswered:"ענו על השאלה", pnOutRating:"השאירו דירוג", pnOutMessage:"נכתבה הודעה בשיחה",
       pnOutOffer:"הפוסט קיבל הצעה", pnOutDecided:"ההצעות הוכרעו", pnOutPosted:"פרסמו פוסט",
       pnOutEngaged:"חזרו לפעול בשיחה", pnOutBadge:"ראו את התג", pnOutOpened:"פתחו את האפליקציה",
-      pnOutActed:"עשו משהו - פוסט, החלקה או הודעה",
+      pnOutActed:"עשו משהו - פוסט, החלקה או הודעה", pnOutReached:"פנו על הפוסט", pnOutDetails:"הוסיפו פירוט להצעה",
       pnQReasons:"ולמה \"עוד לא\"",
       pnQStill:"עדיין מתאמים", pnQNoResp:"לא קיבלו מענה", pnQNoNeed:"כבר לא צריך",
       pnQOwed:"ענו מההתראה, טרם נשאלו למה",
@@ -3370,7 +3370,7 @@
       psDaysN:"{n} ימים", psDay1:"יום", psToday:"היום",
       psClosedLbl:"נסגר", psLiveLbl:"חי",
       psByOwner:"נמחק בידי הבעלים", psClosedInstead:"נסגר במקום להימחק",
-      psEmptyData:"רשימת הכרטיסים לא נטענה. רענון יביא אותה",
+      psTrunc:function(a,b){ return "מוצגים "+a+" מתוך "+b+" פוסטים - הטבלה גדלה מעבר לתקרת המשיכה, ולכן המספרים כאן נמוכים מהאמת."; }, psEmptyData:"רשימת הכרטיסים לא נטענה. רענון יביא אותה",
       tabBacklog:"בקלוג",
       blUpd:"עודכן ידנית", blUpdToday:"היום", blUpdYday:"אתמול",
       blUpdAgo:"לפני {n} ימים", blUpdStale:"ייתכן שאינו מעודכן",
@@ -3390,7 +3390,7 @@
       // so a number beside them can never be pulled into their run
       tabInfra:"שרת",
       ifOk:"השרת בטווח התקין - כל המדדים מתחת לסף ההתראה.",
-      ifDown:function(list){ return "<b>חריגה:</b> "+list+". כשזה נמשך, זה הזמן לשדרג את המכונה."; },
+      ifDown:function(list){ return "<b>חריגה:</b> "+list+". כשזה נמשך, קודם מקלים על העומס. שרת גדול מ-⁨Micro⁩ עובר את התקציב."; },
       ifSince:function(t){ return "מאז "+t; },
       ifNoMon:"עוד אין מצב מהבדיקה האוטומטית - הוא יופיע אחרי הדגימות הראשונות.",
       ifMonCpu:"⁨CPU⁩", ifMonMem:"זיכרון", ifMonDisk:"דיסק", ifMonConn:"חיבורים למסד",
@@ -3442,7 +3442,7 @@
         ["חיבורים","כמה חיבורים פתוחים למסד מתוך התקרה. כשמגיעים לתקרה, בקשות חדשות נכשלות והמשתמשים רואים שגיאות."],
         ["⁨IO⁩","כמה הדיסק עסוק. גבוה לאורך זמן אומר שאילתות כבדות או זיכרון שלא מספיק."]
       ],
-      ifExBottom:"<b>מתי לשדרג:</b> ⁨CPU⁩ מעל 80% לאורך זמן או חיבורים קרובים לתקרה = זמן לשדרג את המכונה. קפיצה של כמה דקות לא מצדיקה שדרוג, מגמה של כמה ימים כן.",
+      ifExBottom:"<b>מתי לשדרג:</b> ⁨CPU⁩ מעל 80% לאורך זמן או חיבורים קרובים לתקרה = קודם מקלים על העומס (משימות רקע, עדכונים חיים), ורק אז שוקלים שדרוג. השרת כבר ב-⁨Micro⁩, הגודל האחרון שנכנס בתקציב. קפיצה של כמה דקות לא מצדיקה שינוי, מגמה של כמה ימים כן.",
       ifMonBudget:"גודל השרת ותקציב ⁦$25⁩",
       // backups + data retention (server tab, its own call "backups"). Latin
       // names isolated; one number per line in every fact list
@@ -3511,8 +3511,9 @@
         notification_log:["יומן התראות פוש","איזו התראה נשלחה למי ומתי"],
         cron_runs:["היסטוריית משימות מתוזמנות","מתי כל משימה מתוזמנת רצה, והאם הצליחה"],
         http_responses:["תשובות שרת פנימיות","התשובות לקריאות שהשרת שולח לעצמו"],
-        backup_runs:["יומן הגיבויים","כל ריצה של הגיבוי החיצוני והתוצאה שלה"] },
-      bkFoot:"נתוני המשתמשים עצמם (פרופילים, פוסטים, שיחות) נשמרים עד שהמשתמש מוחק את החשבון, ואז נמחקים גם מהגיבויים תוך 90 יום לכל היותר.",
+        backup_runs:["יומן הגיבויים","כל ריצה של הגיבוי החיצוני והתוצאה שלה"],
+        account_deletion_holds:["חשבונות שנמחקו - 30 יום לשחזור","מה שצריך כדי לשחזר חשבון שנמחק אם המשתמש/ת מתחרט/ת - נמחק סופית אחרי 30 יום"] },
+      bkFoot:"נתוני המשתמשים עצמם (פרופילים, פוסטים, שיחות) נשמרים עד שהמשתמש/ת מוחק/ת את החשבון. אחרי מחיקה יש 30 יום לשחזר אותו, ואז המחיקה סופית. מהגיבויים הכל נמחק תוך 90 יום לכל היותר.",
       bkMonOffsite:"גיבוי חיצוני שבועי", bkMonRet:"מחיקת נתונים ישנים",
       // security tab. Latin tokens (iOS, Android, country codes, ids) are
       // isolated with U+2068/U+2069; one number per line wherever a Hebrew
@@ -3525,7 +3526,7 @@
       scVMonDown:function(nm, since){ return "מוניטור "+nm+" למטה"+(since ? ", מאז "+since : "")+"."; },
       scVAbuse:function(list){ return "הצפה עכשיו - עבר את התקרה: "+list+"."; },
       scVHolds:function(n){ return n===1 ? "פוסט אחד מחכה להחלטה שלך." : "<b>"+n+"</b> פוסטים מחכים להחלטה שלך."; },
-      scVInvalid:function(n){ return "אימות מכשיר פסול - חשד לבוט. שליחות כאלה בחלון: <b>"+n+"</b>"; },
+      scVInvalid:function(n){ return "אימות המכשיר נכשל. שליחות כאלה בחלון: <b>"+n+"</b>. באייפון כרגע כל האימותים נכשלים בגלל תקלה אצלנו, כך שזה לא סימן לבוט."; },
       scTSent:"קודים שנשלחו", scTRefused:"קודים שנחסמו", scTAttest:"אימות מכשיר",
       scTHolds:"פוסטים שמחכים להחלטה", scTBans:"משתמשים חסומים",
       scInDays:function(d){ return "ב-"+d+" הימים האחרונים"; },
@@ -3553,7 +3554,7 @@
       scAttSub:"כל בקשה לקוד נבדקת: האם היא הגיעה מהאפליקציה האמיתית, במכשיר אמיתי.",
       scAttEmpty:"עוד אין שליחות עם תוצאת בדיקה בחלון הזה.",
       scOutcomes:{ verified:"אומת - האפליקציה האמיתית", missing:"בלי אימות (גרסה ישנה)",
-        invalid:"פסול - חשד לבוט", unverifiable:"לא ניתן לבדוק", not_evaluated:"לפני שהבדיקה עלתה" },
+        invalid:"האימות נכשל", unverifiable:"לא ניתן לבדוק", not_evaluated:"לפני שהבדיקה עלתה" },
       scPlat:{ ios:"⁨iOS⁩", android:"⁨Android⁩", unknown:"לא ידוע" },
       scAttRow:function(p){ return "אומתו: "+p; },
       scAttRowNone:"עוד לא נבדק",
@@ -3584,7 +3585,7 @@
       scBanSub:"חשבונות שנחסמו, החדשים למעלה. מעל הטבלה: מה קרה בחלון.",
       scBanEmpty:"אין משתמשים חסומים.",
       scReports:"דיווחים ממשתמשים",
-      scModKinds:{ "content_flagged:llm":"סומנו בסינון האוטומטי", admin_ban:"חסימות ידניות",
+      scModKinds:{ "content_flagged:llm":"סומנו בסינון האוטומטי", "admin_matches_cancelled:founder":"שיחות שביטלת", admin_ban:"חסימות ידניות",
         admin_unban:"ביטולי חסימה", admin_hide:"הסתרות ידניות", admin_restore:"החזרות ידניות", "content_review_pending:llm":"נבדקו בסינון האוטומטי", client_blocked:"נעצרו בטופס לפני פרסום", "content_flagged:founder":"הוסתרו על ידך", content_approved:"אושרו", "content_approved:manual_review":"אושרו בבדיקה ידנית", admin_content_removed:"תוכן הוסר ידנית", founder_closed_matches:"שיחות שסגרת", "content_rejected:founder":"נדחו על ידך", content_rejected:"נדחו", "content_flagged:held":"נעצרו לבדיקה" },
       scColReason:"סיבה", scColWhen:"מתי", scRevoked:"החסימה בוטלה",
       scSecGd:"פריצות והגנות",
@@ -3604,7 +3605,17 @@
         S14:"מספר טלפון מאומת שייך לחשבון אחד", S15:"יומן ניסיונות הפריצה סגור ופעיל",
         S16:"תמונה שנשלחה בצ'אט לא ניתנת למחיקה",
         S17:"אי אפשר למחוק פוסט עם הצעות, ואיתו צ'אט ודירוגים",
-        S18:"אי אפשר למחוק פרופיל ולשחרר את הטלפון המאומת" },
+        S18:"אי אפשר למחוק פרופיל ולשחרר את הטלפון המאומת",
+        S19:"כל המגבלות על שליחת קודי ⁨SMS⁩ עדיין בתוקף", S20:"טבלת המובילים לא חושפת מיקום מדויק",
+        S21:"רשימות ניקוי התמונות סגורות למשתמשים", S22:"רק התאמה שאושרה יכולה להסתיים",
+        S23:"התראה על חריגה ממכסת הפניות לא ניתנת להצפה", S24:"אי אפשר לבדוק מי חסם את מי בין אחרים",
+        S25:"פוסטים סגורים ומוסתרים לא גלויים לכולם", S26:"בדיקות קוד האימות מוגבלות וסגורות למשתמשים",
+        S27:"הפיד מסנן חסימות ומגביל כמות ומרחק", S28:"קודים נשלחים רק למדינות מאושרות, ושיחות רק לישראל",
+        S29:"רק מי שפרסם/ה הצעה רואה עד מתי היא מושהית", S30:"משתמשים יכולים רק לקרוא את מתגי הפיצ׳רים",
+        S31:"עדכונים חיים: כל אחד מקבל רק את הערוץ שלו ואת הפיד", S32:"הסיבה לסגירת שיחה גלויה רק לצוות",
+        S33:"הקישורים בקונסול ומפתח ההוספה שלהם רק בשרת", S34:"נתוני השחזור של חשבון שנמחק נשמרים רק בשרת",
+        S35:"רק בעל/ת החשבון רואה עד מתי הוא מושהה", S36:"יומן הקודים שנחסמו נכתב רק בשרת",
+        S37:"סיכום המשתמש החדש בטלגרם נשלח רק מהשרת" },
       scBrkTitle:"ניסיונות כניסה לניהול",
       scBrkSub:"חשבונות שנחסמו בכניסה לקונסול או בשליחת הודעות בשם האפליקציה. כל ניסיון מגיע גם לטלגרם.",
       scBrkWin:function(d){ return d+" ימים אחרונים"; },
@@ -3830,10 +3841,10 @@
       sfMetaAlive30:function(i,a){ return "iOS "+i+" · Android "+a+" · from the last_seen_at stamp the server writes on every app open - the source of truth for activity"; },
       sfMetaAlive7:function(i,a){ return "iOS "+i+" · Android "+a+" · the genuinely active core of the network"; },
       rdStore:function(dl,hold,ever,acc,m30,w7,p30){ return "Of <b>"+dl+"</b> downloads, about <b>"+hold+"</b> devices still hold the app; <b>"+ever+"</b> people ever signed up, <b>"+acc+"</b> accounts remain live, and of those <b>"+m30+"</b> opened the app in the last month ("+p30+" of all downloads) and <b>"+w7+"</b> in the last week. Uninstalling does not delete an account - so the 'alive' layers are measured from opens, never from the account roster."; },
-      sfFresh:function(iosD,andD){ return "Data freshness: iOS through "+iosD+" · Android through "+andD+" · figures are pulled manually from the stores' reports"; },
+      sfFresh:function(iosD,andD){ return "Data freshness: iOS through "+iosD+" · Android through "+andD+" · figures are pulled automatically every day from the stores' reports (Google lags a few days)"; },
       emptyStore:"Store data not loaded yet",
       tabAds:"Campaigns",
-      maTitle:"Meta campaigns", maSub:"Campaign spend and installs against database signups from ads · Android: only users who came from an ad · iOS: every signup (no attribution) · pulled live from Meta on every page refresh",
+      maTitle:"Meta campaigns", maSub:"Campaign spend and installs against database signups from ads · Android: only users who came from an ad · iOS: every signup (no attribution) · excludes accounts deleted since, so it can read one or two below the brief · pulled live from Meta on every page refresh",
       maDailyTitle:"Day by day", maDailySub:"What we spent each day, how many installs Meta attributed to itself, and how many signups the ads brought that day (iOS: every signup)",
       maChartTitle:"What each signup cost, day by day",
       maChartSub:"Ad spend that day divided by that day's signups from ads (iOS: every signup, no attribution) · under ₪25 a signup is good · spend and signups themselves are in the table below",
@@ -3864,7 +3875,7 @@
       maCostTip:"All spend over the full days in range divided by signups from ads in those days - the same calculation as the morning digest. Android: only users who came from an ad (by install source). iOS: Apple does not reveal who came from an ad, so every signup counts and the real iOS cost is higher. Meta's own install counts are not used, because Meta misses installs",
       maCtrTip:"CTR = share of people who clicked after seeing the ad (under 1% = weak creative) · click = average cost per click",
       maColDay:"Day", maSpend:"Spend", maInstalls:"Meta installs", maSignups:"Signups from ads",
-      maInstallsTip:"Installs Meta manages to attribute to the campaign. Apple hides part of them (SKAN) and our Android attribution is broken - always an undercount. Real volume lives in the signups column",
+      maInstallsTip:"Installs Meta manages to attribute to the campaign. Apple hides part of them (SKAN); on Android Meta now receives installs, but not all of them - so this is an undercount. Real volume lives in the signups column",
       maPartial:"partial",
       maFresh:function(at){ var t=new Date(at); return "Pulled from Meta at page load ("+t.toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Jerusalem"})+") · refreshes with every reload"; },
       maTzFallback:"⚠️ Signups are bucketed by UTC days rather than Israel time, so late-evening signups may show on the previous day",
@@ -3947,8 +3958,8 @@
       tileHero:"Helps completed · {win}",
       tileHeroTip:"Helpy's north star: helps the receiver marked as actually done",
       tileSignups:"Signups · {win}", serPlatOther:"Unknown platform", covNote:function(n,d){ return "Data covers only "+n+" days · since "+d; },
-      tileActive:"Active today · now",
-      tileActiveTip:"Users who opened the app today, by the hourly server-side last_seen_at stamp",
+      tileActive:"Active · last 24h",
+      tileActiveTip:"Users who opened the app in the last 24 hours, by the hourly server-side last_seen_at stamp. The brief's \u201ctoday\u201d is the Israel calendar day, so its number is lower",
       tileActiveNote:function(w,m){ return "week: "+w+" · month: "+m; },
       tileStick:"WAU/MAU stickiness · now",
       tileStickTip:"MAU = Monthly Active Users · WAU = Weekly Active Users. Stickiness is their ratio: what share of the month's users came back this week. The fair measure for an episodic app like Helpy - opened when help is needed, not daily. A sane aspiration: 40-50%",
@@ -4020,7 +4031,7 @@
       insDormant:function(n,t){ return "<b>"+n+"</b> of "+t+" users are dormant (unseen 30+ days) - a reactivation audience"; },
       grain:"Grain", gAuto:"Auto", gDaily:"Daily", gWeekly:"Weekly",
       retTitle:"Retention curve",
-      retSub:"% returning a day / week / month after signup (mature cohorts only) · dashed = social-app benchmark",
+      retSub:"% who opened again at least a day / week / month after signup, at any point since (mature cohorts only) · dashed = social-app benchmark, measured differently, so a rough comparison only",
       retOurs:"Helpy", retBench:"Benchmark (25/10/5%)",
       showCohorts:"Show the full cohort table + activation quality", hideCohorts:"Hide the table",
       liqTarget:"target",
@@ -4039,7 +4050,7 @@
       statesTitle:"User states · this week", statesSub:"Duolingo model: where this week's actives came from",
       stNew:"New", stCurrent:"Current", stReact:"Reactivated (1-4 weeks)", stResurr:"Resurrected (30+ days)",
       stCaption:"Computed from committed evidence (posts, messages, matches) - passive openers count as \"resurrected\"",
-      repeatTitle:"Came back to ask again", repeatSub:"A second request within 90 days - the strongest PMF evidence in a marketplace",
+      repeatTitle:"Came back to ask again", repeatSub:"A second request within 90 days, only among requesters whose first request is 90+ days old - the strongest PMF evidence in a marketplace", repSmall:function(n){ return " <b>Small sample ("+n+" requesters) - a signal, not a conclusion.</b>"; },
       repRequesters:"Distinct requesters ever", repRepeat:"Asked again within 90 days", repRate:"Repeat rate, vs the 35% gate",
       repTip:"Share of requesters who posted a second request within 90 days of their first. 35% is the cited expansion gate",
       happyTitle:"Completed helps · all time", happy45:"of them rated 4-5 stars",
@@ -4162,7 +4173,7 @@
       intelOther:function(p,n){ return "<b>"+p+"%</b> of posts (<b>"+n+"</b>) land in \"other\". An \"other\" bucket that large is a sign the taxonomy does not cover what people actually want to ask for."; },
       intelThin:"Not enough requests yet to identify a clear demand cluster. These numbers sharpen as requests accumulate.",
       densTitle:"Neighbour density around a request",
-      densSub:"How many neighbours could genuinely have seen it, against the odds it was answered",
+      densSub:"How many neighbours could genuinely have seen it, against the odds it was answered · last 90 days",
       densBand:"Neighbours in range", densReqs:"Requests", densAny:"Got an offer", dens24:"Within 24h",
       densTip:"A neighbour counts only if their search radius covers the request, they hold a push token, and they opened the app in the last 30 days - someone who could actually have seen it",
       densAvgAns:"Avg neighbours · answered requests", densAvgSil:"Avg neighbours · silent requests",
@@ -4187,10 +4198,10 @@
       psInsCity:function(city,share,cities){
         return "Live cards are spread across <b>"+cities+"</b> cities; the largest, "+city+", is "+share+" of them."; },
       clInsTwoWay:function(p,tw,all){
-        return "<b>"+p+"</b> of conversations are two-way ("+tw+" of "+all+"). A one-way conversation is a match that became nothing."; },
+        return "<b>"+p+"</b> of conversations are two-way ("+tw+" of "+all+"). A one-way conversation is a match that became nothing. Window: {win} (the page range, not the list range below)."; },
       clInsOfferAns:function(p,a,all){
-        return "<b>"+p+"</b> of approaches on offers were answered ("+a+" of "+all+")."; },
-      clInsSenders:function(n){ return "<b>"+n+"</b> distinct people wrote a message in this window."; },
+        return "<b>"+p+"</b> of approaches on offers were answered ("+a+" of "+all+") · {win}."; },
+      clInsSenders:function(n){ return "<b>"+n+"</b> distinct people wrote a message in this window ({win})."; },
       maInsCost:function(c,su,spend){
         return "Cost per signup from ads: <b>"+c+"</b> ("+su+" signups on "+spend+"). Android: only users who came from an ad; iOS: every signup, since there is no attribution. Computed on database signups, not on Meta-attributed installs."; },
       maInsAttrib:function(inst,su){
@@ -4264,7 +4275,7 @@
                (dead==="0" ? "All "+total+" senders bring some result."
                            : dead+" of "+total+" senders are under 10%.");
       },
-      pnTileSent:"Notifications ever sent", pnTileRate:"Success rate\u00a0· all time",
+      pnTileSent:"Nudges measured · all time", pnTileRate:"Success rate\u00a0· all time",
       pnTileBest:"Strongest sender\u00a0· within 7 days", pnTileDead:"Under 10% - candidates to switch off",
       pnTileDeadNone:"none - every sender is at 10% or more",
       pnBandWorks:"Works · 40% and up", pnBandWeak:"Weak · 15%-39%", pnBandDead:"Not working · under 15%",
@@ -4277,7 +4288,7 @@
       pnOutAnswered:"answered the question", pnOutRating:"left a rating", pnOutMessage:"a message was written",
       pnOutOffer:"the post got an offer", pnOutDecided:"offers were decided", pnOutPosted:"posted",
       pnOutEngaged:"acted in the chat again", pnOutBadge:"saw the badge", pnOutOpened:"opened the app",
-      pnOutActed:"did anything - posted, swiped or wrote",
+      pnOutActed:"did anything - posted, swiped or wrote", pnOutReached:"reached out on the post", pnOutDetails:"added detail to the offer",
       pnQReasons:"and why \"not yet\"",
       pnQStill:"still coordinating", pnQNoResp:"got no response", pnQNoNeed:"no longer needed",
       pnQOwed:"answered from the banner, not yet asked why",
@@ -4363,7 +4374,7 @@
       psDaysN:"{n} days", psDay1:"1 day", psToday:"today",
       psClosedLbl:"closed", psLiveLbl:"live",
       psByOwner:"deleted by the owner", psClosedInstead:"closed instead of deleted",
-      psEmptyData:"The card list did not load. A refresh will fetch it",
+      psTrunc:function(a,b){ return "Showing "+a+" of "+b+" posts - the table has outgrown the fetch limit, so the numbers here undercount."; }, psEmptyData:"The card list did not load. A refresh will fetch it",
       tabBacklog:"Backlog",
       blUpd:"Updated by hand", blUpdToday:"today", blUpdYday:"yesterday",
       blUpdAgo:"{n} days ago", blUpdStale:"may be out of date",
@@ -4381,7 +4392,7 @@
       tabLinks:"Links",
       tabInfra:"Server",
       ifOk:"The server is within its normal range - every measure is below its alert line.",
-      ifDown:function(list){ return "<b>Over the line:</b> "+list+". If it keeps up, it is time to upgrade the machine."; },
+      ifDown:function(list){ return "<b>Over the line:</b> "+list+". If it keeps up, lighten the load first: a server larger than Micro breaks the budget."; },
       ifSince:function(t){ return "since "+t; },
       ifNoMon:"No status from the automatic check yet - it appears after the first samples.",
       ifMonCpu:"CPU", ifMonMem:"memory", ifMonDisk:"disk", ifMonConn:"database connections",
@@ -4433,7 +4444,7 @@
         ["Connections","How many connections are open to the database, out of the ceiling. At the ceiling new requests fail and users see errors."],
         ["IO","How busy the disk is. High for a long time means heavy queries or not enough memory."]
       ],
-      ifExBottom:"<b>When to upgrade:</b> CPU above 80% for a long stretch, or connections near the ceiling = time to upgrade the machine. A few minutes of spike does not justify an upgrade, a trend over several days does.",
+      ifExBottom:"<b>When to upgrade:</b> CPU above 80% for a long stretch, or connections near the ceiling = first lighten the load (background jobs, live updates), only then consider an upgrade. The server is already on Micro, the largest size inside the budget. A few minutes of spike does not justify a change, a trend over several days does.",
       ifMonBudget:"Server size vs the $25 budget",
       bkSec:"Backups and data retention",
       bkLoading:"Loading the backup status...",
@@ -4500,8 +4511,9 @@
         notification_log:["Push notification log","Which push went to whom, and when"],
         cron_runs:["Scheduled job history","When each scheduled job ran, and whether it worked"],
         http_responses:["Internal call responses","Replies to calls the server makes to itself"],
-        backup_runs:["Backup log","Every off-site backup run and its result"] },
-      bkFoot:"The users' own data (profiles, posts, chats) is kept until the user deletes the account, and is then deleted from the backups too within 90 days at most.",
+        backup_runs:["Backup log","Every off-site backup run and its result"],
+        account_deletion_holds:["Deleted accounts - 30 days to restore","What restoring a deleted account needs if the person changes their mind - erased for good after 30 days"] },
+      bkFoot:"The users' own data (profiles, posts, chats) is kept until the account is deleted. After a deletion there are 30 days to restore it, then it is final. Everything is gone from the backups within 90 days at most.",
       bkMonOffsite:"Weekly off-site backup", bkMonRet:"Old-data deletion",
       // security tab
       tabSecurity:"Security",
@@ -4512,7 +4524,7 @@
       scVMonDown:function(nm, since){ return "Monitor "+nm+" is down"+(since ? ", since "+since : "")+"."; },
       scVAbuse:function(list){ return "Flood right now - over the ceiling: "+list+"."; },
       scVHolds:function(n){ return n===1 ? "One post is waiting for your decision." : "<b>"+n+"</b> posts are waiting for your decision."; },
-      scVInvalid:function(n){ return "Failed device checks - likely a bot. Such sends in the window: <b>"+n+"</b>"; },
+      scVInvalid:function(n){ return "Failed device checks. Such sends in the window: <b>"+n+"</b>. On iPhone every check fails for now, because of a fault on our side, so this is not a bot signal."; },
       scTSent:"Codes sent", scTRefused:"Codes refused", scTAttest:"Device check",
       scTHolds:"Posts awaiting a decision", scTBans:"Banned users",
       scInDays:function(d){ return "in the last "+d+" days"; },
@@ -4540,7 +4552,7 @@
       scAttSub:"Every code request is checked: did it come from the real app, on a real device.",
       scAttEmpty:"No sends with a check result in this window yet.",
       scOutcomes:{ verified:"Verified - the real app", missing:"No check (older version)",
-        invalid:"Failed - likely a bot", unverifiable:"Could not be checked", not_evaluated:"Before the check went live" },
+        invalid:"Check failed", unverifiable:"Could not be checked", not_evaluated:"Before the check went live" },
       scPlat:{ ios:"iOS", android:"Android", unknown:"Unknown" },
       scAttRow:function(p){ return "verified: "+p; },
       scAttRowNone:"not checked yet",
@@ -4571,7 +4583,7 @@
       scBanSub:"Banned accounts, newest first. Above the table: what happened in the window.",
       scBanEmpty:"No banned users.",
       scReports:"User reports",
-      scModKinds:{ "content_flagged:llm":"Flagged by the automatic filter", admin_ban:"Manual bans",
+      scModKinds:{ "content_flagged:llm":"Flagged by the automatic filter", "admin_matches_cancelled:founder":"Chats you cancelled", admin_ban:"Manual bans",
         admin_unban:"Bans lifted", admin_hide:"Manual hides", admin_restore:"Manual restores", "content_review_pending:llm":"Checked by the automatic filter", client_blocked:"Stopped in the form before posting", "content_flagged:founder":"Hidden by you", content_approved:"Approved", "content_approved:manual_review":"Approved on manual review", admin_content_removed:"Content removed manually", founder_closed_matches:"Chats you closed", "content_rejected:founder":"Rejected by you", content_rejected:"Rejected", "content_flagged:held":"Held for review" },
       scColReason:"Reason", scColWhen:"When", scRevoked:"ban lifted",
       scSecGd:"Break-ins and guards",
@@ -4591,7 +4603,17 @@
         S14:"A verified phone belongs to one account", S15:"The break-in log is closed and working",
         S16:"A photo sent in a chat cannot be deleted",
         S17:"A post with offers cannot be deleted, nor its chat and ratings",
-        S18:"A profile cannot be deleted, nor its verified phone freed" },
+        S18:"A profile cannot be deleted, nor its verified phone freed",
+        S19:"Every SMS-code limit is still in place", S20:"The leaderboard shows no exact location",
+        S21:"Photo clean-up lists closed to users", S22:"Only an accepted match can be completed",
+        S23:"The over-limit alert on offers cannot be flooded", S24:"Nobody can look up blocks between other people",
+        S25:"Closed and hidden posts are not readable by everyone", S26:"Code checks are limited and closed to users",
+        S27:"The feed filters blocks and caps page size and distance", S28:"Codes go to approved countries only, calls to Israel only",
+        S29:"Only the offer's owner sees when its pause ends", S30:"Users can only read feature switches",
+        S31:"Live updates: everyone gets only their own channel and the feed", S32:"Why a chat was closed is seen by the team only",
+        S33:"Console links and their key live on the server only", S34:"A deleted account's restore data stays on the server",
+        S35:"Only the account owner sees when a pause ends", S36:"The refused-code log is written by the server only",
+        S37:"The new-user Telegram summary is sent by the server only" },
       scBrkTitle:"Admin access attempts",
       scBrkSub:"Accounts refused at the console or when sending messages as the app. Every attempt also reaches Telegram.",
       scBrkWin:function(d){ return "last "+d+" days"; },
@@ -4800,6 +4822,12 @@
     var d=RANGE;
     if(LANG==="he") return d===7?"שבוע":d===14?"שבועיים":d===180?"חצי שנה":d+" יום";
     return d===7?"week":d===14?"2 weeks":d===180?"half year":d+" days";
+  }
+  // chat_stats is counted over the last RANGE days ending now, also on a custom
+  // range - so the label names that window, never the custom dates
+  function chatWin(v){
+    var lbl = CUSTOM ? (LANG==="he" ? RANGE+" הימים האחרונים" : "last "+RANGE+" days") : winLabel();
+    return v.split("{win}").join(lbl);
   }
   function withWin(v){ return v.indexOf("{win}")>-1 ? v.split("{win}").join(winLabel()) : v; }
   function applyChrome(){
@@ -6165,7 +6193,7 @@
         if(util<40) rows.push(["bad",S.insSupplyUtil(util,fmt(SU.active_offers-SU.engaged_30d),winLabel()),scrollToEl("supplyHealth")]);
       }
       var RP=R.repeat||{};
-      if(RP.requesters>=20){
+      if(RP.requesters>=50){
         var rp=Math.round(100*RP.repeated_90d/RP.requesters);
         rows.push([rp<35?"warn":"good",S.insRepeat(rp,fmt(RP.repeated_90d),fmt(RP.requesters)),scrollToEl("repeatRate")]);
       }
@@ -6308,7 +6336,7 @@
                 : Math.max(0,(and.installs||0)-(and.uninstalls||0));
     var hold=iosHold+andHold;
     var ramp=[tok("--seq250"),tok("--seq400"),tok("--seq550"),tok("--seq700")];
-    // Downloads are a frozen manual snapshot, accounts are live: once the
+    // Downloads are pulled once a day (lagging), accounts are live: once the
     // accounts outgrow it, "123% of downloads" and "a gap of 0" are artefacts
     // of the two clocks, so those rows lose the percentage and say why.
     var ever=(A.live||0)+(A.deleted||0);
@@ -6354,7 +6382,7 @@
   // ---- Meta Ads campaigns: live spend/installs vs real signups -------------
   // payload.meta_ads is pulled fresh from the Graph API on every console load.
   // Meta-attributed installs UNDERCOUNT by construction (Apple SKAN + our
-  // broken Android attribution), so the efficiency verdict is computed on
+  // incomplete Android attribution), so the efficiency verdict is computed on
   // spend / real DB signups - the same rule as the daily report.
   // the campaigns tab owns its own window, independent of the metrics range
   var META_DAYS=7, META_CAMP=null;
@@ -6856,8 +6884,10 @@
     rr.appendChild(rt2);
     if(RP.requesters){
       var repRead=S.rdRepeat(rpct, fmt(RP.repeated_90d), fmt(RP.requesters));
-      if(rpct<35) repRead+=S.recRepeat;
-      panelRead("repeatRate", rpct<35?"warn":"good", repRead);
+      var rpSmall=RP.requesters<50;   // no verdicts from n<50 (CLAUDE.md)
+      if(rpSmall) repRead+=S.repSmall(fmt(RP.requesters));
+      else if(rpct<35) repRead+=S.recRepeat;
+      panelRead("repeatRate", rpSmall?"":(rpct<35?"warn":"good"), repRead);
     }
   }
 
@@ -7604,13 +7634,13 @@
       if(C.convos_30d){
         var tw=Math.round(100*(C.two_way_30d||0)/C.convos_30d);
         rows.push([tw<50?"bad":tw<70?"warn":"good",
-          S.clInsTwoWay(tw+"%", fmt(C.two_way_30d), fmt(C.convos_30d))]);
+          chatWin(S.clInsTwoWay(tw+"%", fmt(C.two_way_30d), fmt(C.convos_30d)))]);
       }
       if(C.offer_convos){
         var oa=Math.round(100*(C.offer_answered||0)/C.offer_convos);
-        rows.push([oa<60?"bad":"good", S.clInsOfferAns(oa+"%", fmt(C.offer_answered), fmt(C.offer_convos))]);
+        rows.push([oa<60?"bad":"good", chatWin(S.clInsOfferAns(oa+"%", fmt(C.offer_answered), fmt(C.offer_convos)))]);
       }
-      if(C.senders_window!=null) rows.push(["info", S.clInsSenders(fmt(C.senders_window))]);
+      if(C.senders_window!=null) rows.push(["info", chatWin(S.clInsSenders(fmt(C.senders_window)))]);
       insightsInto("clInsights", rows);
     })();
     var q=($("chatSearch").value||"").trim();
@@ -7910,12 +7940,15 @@
     var P = (D && D.posts) || [];
     ["psSummary","psCount"].forEach(function(id){ var h=$(id); if(h) h.innerHTML=""; });
     if(!D){ emptyState(host,S.psEmptyData,"file"); return; }
+    // the fetch has a ceiling: say so the day the table outgrows it, rather
+    // than count a truncated list as if it were the marketplace
+    if(D.total && P.length < D.total) host.appendChild(el("div","note",S.psTrunc(fmt(P.length), fmt(D.total))));
 
     // summary strip: the four numbers that answer "what is out there right now",
     // counted over REAL posts only - a test fixture must not move a number Nir
     // reads as the state of the marketplace. Counted client-side rather than
     // from the server totals for exactly that reason; the array is the whole
-    // table while it stays under the fetch limit (180 of 500 today).
+    // table while it stays under the fetch limit (561 of 2000 on 27.10).
     var R=P.filter(function(p){ return !(p.is_mock||p.owner_mock); });
 
     // ---- what needs attention, computed from the real cards ----------------
@@ -8748,13 +8781,13 @@
     {id:"app", col:"client", c:"--s1",
      he:"אפליקציית Helpy", en:"Helpy app",
      shE:"React Native · Expo · iOS + Android", shH:"React Native · Expo · iOS + אנדרואיד",
-     dH:"אפליקציה אחת בקוד אחד לשתי הפלטפורמות. כל מסך (עיון, פרסום, צ׳אט, פרופיל) מדבר ישירות מול Supabase - אין שרת אפליקציה משלנו באמצע.",
-     dE:"One codebase for both platforms. Every screen (browse, post, chat, profile) talks straight to Supabase - there is no app server of ours in between."},
+     dH:"אפליקציה אחת בקוד אחד לשתי הפלטפורמות. כל מסך (עיון, פרסום, צ׳אט, פרופיל) מדבר ישירות מול Supabase - אין שרת אפליקציה משלנו באמצע. בכל פתיחה האפליקציה קוראת דגלים מהשרת, כך שאפשר לכבות פיצ׳ר שכבר בחנות בלי גרסה חדשה.",
+     dE:"One codebase for both platforms. Every screen (browse, post, chat, profile) talks straight to Supabase - there is no app server of ours in between. On every launch the app reads flags from the server, so a feature already in the store can be switched off without a new build."},
     {id:"cache", col:"client", c:"--s7",
      he:"מטמון מקומי", en:"On-device cache",
      shH:"AsyncStorage · Keychain/Keystore", shE:"AsyncStorage · Keychain/Keystore",
-     dH:"שומר את הפרופיל, הפיד האחרון, טיוטת פוסט שלא נשלח, דגלים חד-פעמיים והעדפות על המכשיר, כדי שהאפליקציה תצייר מסך מיד בפתיחה ושום טקסט לא ילך לאיבוד בקריסה. מגרסה 1.1.28 כרטיס הכניסה עצמו עובר לכספת המאובטחת של המכשיר (Keychain / Keystore) במקום האחסון הרגיל.",
-     dE:"Keeps the profile, the last feed, an unsent post draft, one-time flags and preferences on the device, so the app paints a screen at once and no typed text is lost to a crash. From 1.1.28 the sign-in session itself moves into the device's secure store (Keychain / Keystore) instead of plain storage."},
+     dH:"שומר את הפרופיל, הפיד האחרון, טיוטת פוסט שלא נשלח, דגלים חד-פעמיים והעדפות על המכשיר, כדי שהאפליקציה תצייר מסך מיד בפתיחה ושום טקסט לא ילך לאיבוד בקריסה. מאז גרסה 1.1.28 כרטיס הכניסה עצמו שמור בכספת המאובטחת של המכשיר (Keychain / Keystore) ולא באחסון הרגיל.",
+     dE:"Keeps the profile, the last feed, an unsent post draft, one-time flags and preferences on the device, so the app paints a screen at once and no typed text is lost to a crash. Since 1.1.28 the sign-in session itself lives in the device's secure store (Keychain / Keystore), not plain storage."},
     {id:"auth", col:"gate", c:"--s3",
      he:"אימות זהות", en:"Identity",
      shH:"Supabase Auth · JWT", shE:"Supabase Auth · JWT",
@@ -8767,24 +8800,24 @@
      dE:"Separate from sign-in: before offering help or posting, a one-time code is sent by SMS or a voice call. It is the anti-abuse gate, and a banned phone cannot register again. Since the 09.10 SMS incident every send and every code check is claimed in the database first: limits per person, per number, per day and system-wide, plus a country allowlist. Each send also records a device attestation - log-only for now, it blocks nothing."},
     {id:"rls", col:"gate", c:"--s8",
      he:"הרשאות שורה", en:"Row-level security",
-     shH:"RLS · על כל טבלה", shE:"RLS · on every table",
-     dH:"החוקים שמחליטים איזו שורה כל משתמש רשאי לראות או לשנות, ונאכפים במסד הנתונים עצמו - לא באפליקציה. גם אם מישהו יכתוב לקוח משלו, הוא לא יעקוף אותם. בפרופילים ובפוסטים ההרשאה היא גם לפי עמודה: מיקום מדויק ופרטים אישיים סגורים לאחרים. 28 חוקי אבטחה קבועים נבדקים בכל סגירת סשן ומוצגים בלשונית האבטחה.",
-     dE:"The rules deciding which row each user may read or change, enforced in the database itself - not in the app. Even a hand-rolled client cannot get around them. Profiles and posts are also locked per column: exact location and personal details stay closed to others. 28 standing security guards are checked at every session close and shown in the security tab."},
+     shH:"RLS · על כל טבלה של Helpy", shE:"RLS · on every Helpy table",
+     dH:"החוקים שמחליטים איזו שורה כל משתמש רשאי לראות או לשנות, ונאכפים במסד הנתונים עצמו - לא באפליקציה. גם אם מישהו יכתוב לקוח משלו, הוא לא יעקוף אותם. בפרופילים ובפוסטים ההרשאה היא גם לפי עמודה: מיקום מדויק ופרטים אישיים סגורים לאחרים. 37 חוקי אבטחה קבועים נבדקים בכל סגירת סשן ומוצגים בלשונית האבטחה.",
+     dE:"The rules deciding which row each user may read or change, enforced in the database itself - not in the app. Even a hand-rolled client cannot get around them. Profiles and posts are also locked per column: exact location and personal details stay closed to others. 37 standing security guards are checked at every session close and shown in the security tab."},
     {id:"db", col:"core", c:"--s1",
      he:"מסד הנתונים", en:"The database",
      shH:"PostgreSQL", shE:"PostgreSQL",
-     dH:"הלב. שבע טבלאות ליבה תחת RLS - פרופילים, פוסטים, התאמות, הודעות, דירוגים, דיווחים וחסימות - ועוד 47 טבלאות תפעוליות (יומן התראות, מצב המוניטורים, הודעות מערכת, מכסות ויומני אבטחה, אירועי מודרציה, היסטוריית מדדים ודגימות שרת, גיבויים, הוצאות, הגדרות גרסה). כל כתיבה רגישה עוברת דרך פונקציה אחת אטומית ולא דרך הלקוח.",
-     dE:"The heart. Seven core tables under RLS - profiles, posts, matches, messages, ratings, reports and blocks - plus 47 operational tables (notification log, monitor state, system messages, limits and security logs, moderation events, metrics history and server samples, backups, expenses, version config). Every sensitive write goes through one atomic function, never straight from the client."},
+     dH:"הלב. שבע טבלאות ליבה תחת RLS - פרופילים, פוסטים, התאמות, הודעות, דירוגים, דיווחים וחסימות - ועוד 57 טבלאות תפעוליות (יומן התראות, מצב המוניטורים, הודעות מערכת, מכסות ויומני אבטחה, אירועי מודרציה, דגלי פיצ׳רים, חשבונות שנמחקו בתקופת החרטה, היסטוריית מדדים ודגימות שרת, גיבויים, הוצאות, הגדרות גרסה). כל כתיבה רגישה עוברת דרך פונקציה אחת אטומית ולא דרך הלקוח.",
+     dE:"The heart. Seven core tables under RLS - profiles, posts, matches, messages, ratings, reports and blocks - plus 57 operational tables (notification log, monitor state, system messages, limits and security logs, moderation events, feature flags, accounts deleted but still restorable, metrics history and server samples, backups, expenses, version config). Every sensitive write goes through one atomic function, never straight from the client."},
     {id:"rpc", col:"core", c:"--s7",
      he:"פונקציות מסד", en:"Database functions",
      shH:"RPC · SECURITY DEFINER", shE:"RPC · SECURITY DEFINER",
-     dH:"פעולה מורכבת (יצירת התאמה, סגירת פוסט, מחיקת חשבון) רצה כפונקציה אחת בתוך המסד, כך שהיא או מצליחה כולה או נכשלת כולה - ולא משאירה חצי מצב.",
-     dE:"A compound action (create a match, close a post, delete an account) runs as one function inside the database, so it either fully succeeds or fully fails - never half-done."},
+     dH:"פעולה מורכבת (יצירת התאמה, סגירת פוסט, מחיקת חשבון) רצה כפונקציה אחת בתוך המסד, כך שהיא או מצליחה כולה או נכשלת כולה - ולא משאירה חצי מצב. מחיקת חשבון ניתנת לביטול במשך 30 יום: מה שנדרש לשחזור נשמר בצד השרת בלבד, ונמחק סופית ביום ה-30. השהיית חשבון מסתירה את כל הפוסטים ועוצרת תזכורות עד שהיא מסתיימת לבד.",
+     dE:"A compound action (create a match, close a post, delete an account) runs as one function inside the database, so it either fully succeeds or fully fails - never half-done. Account deletion can be undone for 30 days: what restore needs is kept server-side only and purged on day 30. Pausing an account hides every post and stops reminders until the pause ends on its own."},
     {id:"realtime", col:"core", c:"--s3",
      he:"עדכון חי", en:"Realtime",
      shH:"WebSocket", shE:"WebSocket",
-     dH:"מנוי חי על שינויים: הודעה שנכתבת מופיעה אצל הצד השני בלי לרענן. מוגבל לעמודות מסוימות כדי שלא ידלוף מידע דרך הערוץ.",
-     dE:"A live subscription to changes: a message written appears on the other side without a refresh. Limited to specific columns so nothing leaks through the channel."},
+     dH:"מנוי חי: הודעה שנכתבת מופיעה אצל הצד השני בלי לרענן. מגרסה 1.1.29 טריגר במסד משדר כל שינוי לערוץ פרטי - ערוץ אחד לפיד וערוץ לכל משתמש/ת, שרק הוא/היא יכול/ה להאזין לו; פוסט מוחזק לא משודר בכלל. גרסאות ישנות עדיין מאזינות לשינויים בטבלה, מוגבלים לעמודות מסוימות.",
+     dE:"A live subscription: a message written appears on the other side without a refresh. From 1.1.29 a database trigger broadcasts each change to a private channel - one for the feed, one per user that only that user can join; a held post is never broadcast. Older versions still listen to table changes, limited to specific columns."},
     {id:"storage", col:"core", c:"--s5",
      he:"אחסון קבצים", en:"File storage",
      shH:"Storage buckets", shE:"Storage buckets",
@@ -8792,19 +8825,19 @@
      dE:"Avatars and post photos. Chat images sit in a private bucket reachable only through an expiring signed link - never a public URL. A nightly sweep (03:20 UTC) deletes files of deleted accounts and photos no post holds any more, and checks new photos carry no GPS location."},
     {id:"edge", col:"core", c:"--s2",
      he:"פונקציות קצה", en:"Edge functions",
-     shH:"Deno · 28 פונקציות", shE:"Deno · 28 functions",
+     shH:"Deno · 30 פונקציות", shE:"Deno · 30 functions",
      dH:"קוד שרת קטן שרץ קרוב למשתמש. כאן יושבת כל עבודה שאסור לתת ללקוח: שליחת התראות ומיילים, אימות טלפון, מודרציה, התראות מייסד, ניטור השרת והקריסות, וה-API של הקונסולה הזו. כל מכסה או הגבלה שלהן נשמרת במסד - לא בזיכרון הפונקציה, שמתאפס בכל הפעלה.",
      dE:"Small server code running close to the user. Everything the client must not be trusted with lives here: sending notifications and emails, phone verification, moderation, founder alerts, server and crash monitoring, and this console's own API. Every limit they enforce lives in the database - never in function memory, which resets on every boot."},
     {id:"cron", col:"auto", c:"--s2",
      he:"משימות מתוזמנות", en:"Scheduled jobs",
      shH:"pg_cron · 50 משימות (48 פעילות)", shE:"pg_cron · 50 jobs (48 active)",
-     dH:"שעון בתוך המסד שמפעיל משימות לפי לוח זמנים: תזכורות, סגירת התאמות שנתקעו, הורדת פוסטים שבעליהם לא ענו למייל, השלמת שמות ערים, דוח יומי. הדחיפות מוגבלות ל-10:00-19:00 בישראל; משימות התחזוקה רצות מסביב לשעון - בריאות השרת וקריסות כל 5 דקות, שליחה חוזרת של קריאות שלא יצאו, כלב שמירה כל שעה, קבלות, פרסום דירוגים, ניקוי האחסון, מחיקת יומנים לפי כללי השמירה, הסיכום של 06:00 UTC וסנכרון גרסה.",
-     dE:"A clock inside the database firing jobs on a schedule: reminders, closing stalled matches, taking down posts whose owners never answered the email, filling in city names, the daily digest. Push senders keep to 10:00-19:00 Israel; the maintenance jobs run around the clock - server health and crashes every 5 min, re-sending calls that never left, watchdog hourly, receipts, rating publish, the storage sweep, pruning logs by their retention rules, the 06:00 UTC digest and version sync."},
+     dH:"שעון בתוך המסד שמפעיל משימות לפי לוח זמנים: תזכורות, סגירת התאמות שנתקעו, הורדת פוסטים שבעליהם לא ענו למייל, השלמת שמות ערים, חיבור בקשות תקועות להצעות, הודעת מסע משתמש חדש לטלגרם כחצי שעה אחרי ההרשמה, דוח יומי. הדחיפות מוגבלות ל-10:00-19:00 בישראל; משימות התחזוקה רצות מסביב לשעון - בריאות השרת וקריסות כל 5 דקות, שליחה חוזרת של קריאות שלא יצאו, כלב שמירה כל שעה, קבלות, פרסום דירוגים, ניקוי האחסון, מחיקת יומנים לפי כללי השמירה, מחיקה סופית של חשבון 30 יום אחרי בקשת המחיקה, ניקוי פוסטים של חשבונות שנמחקו, תמונת מצב לילית של סיכון נטישה, הסיכום של 06:00 UTC וסנכרון גרסה.",
+     dE:"A clock inside the database firing jobs on a schedule: reminders, closing stalled matches, taking down posts whose owners never answered the email, filling in city names, connecting stuck requests to offers, a new-user journey message to Telegram about half an hour after sign-up, the daily digest. Push senders keep to 10:00-19:00 Israel; the maintenance jobs run around the clock - server health and crashes every 5 min, re-sending calls that never left, watchdog hourly, receipts, rating publish, the storage sweep, pruning logs by their retention rules, final deletion of an account 30 days after it asked, scrubbing deleted accounts' posts, a nightly churn-risk snapshot, the 06:00 UTC digest and version sync."},
     {id:"nudge", col:"auto", c:"--s2",
      he:"שכבת התזכורות", en:"Nudge layer",
      shH:"re-engage + 5 פונקציות משלהן", shE:"re-engage + 5 own functions",
-     dH:"מחליטה מי מקבל תזכורת ומתי. רוב הענפים ב-re-engage; חמישה קרונים חיים בפונקציות משלהם: silent-room-nudge, nearby-request-alert, phone-completion-check, helper-badge-announce, stuck-chat-question. חסם קשיח: הודעה שיווקית אחת לשבוע לאדם, בהסכמה בלבד, ונתפסת במסד לפני השליחה כדי ששני שולחים לא ישלחו באותה דקה; הודעות תפעוליות (מישהו ענה לך) אינן מוגבלות.",
-     dE:"Decides who gets a nudge and when. Most branches live in re-engage; five crons run in their own functions: silent-room-nudge, nearby-request-alert, phone-completion-check, helper-badge-announce, stuck-chat-question. Hard cap: one marketing message per person per week, consent only, claimed in the database before sending so two senders cannot both fire in the same minute; operational messages (someone replied to you) are not capped."},
+     dH:"מחליטה מי מקבל תזכורת ומתי. רוב הענפים ב-re-engage; חמישה קרונים חיים בפונקציות משלהם: silent-room-nudge, nearby-request-alert, phone-completion-check, helper-badge-announce, stuck-request-rescue (חיבור בקשה תקועה להצעה מתאימה). stuck-chat-question מופעלת ידנית בלבד. חסם קשיח: הודעה שיווקית אחת לשבוע לאדם, בהסכמה בלבד, ונתפסת במסד לפני השליחה כדי ששני שולחים לא ישלחו באותה דקה. חריג אחד: לדחיפת החיבור יש מכסה שבועית משלה. הודעות תפעוליות (מישהו ענה לך) אינן מוגבלות, וחשבון מושהה לא מקבל תזכורות.",
+     dE:"Decides who gets a nudge and when. Most branches live in re-engage; five crons run in their own functions: silent-room-nudge, nearby-request-alert, phone-completion-check, helper-badge-announce, stuck-request-rescue (matching a stuck request to a nearby offer). stuck-chat-question is run by hand only. Hard cap: one marketing message per person per week, consent only, claimed in the database before sending so two senders cannot both fire in the same minute. One exception: the rescue push has its own weekly cap. Operational messages (someone replied to you) are not capped, and a paused account gets no reminders."},
     {id:"moderation", col:"auto", c:"--s8",
      he:"מודרציה", en:"Moderation",
      shH:"מסנן מילים + מודל שפה", shE:"Word filter + language model",
@@ -8828,8 +8861,8 @@
     {id:"llm", col:"out", c:"--s8",
      he:"מודל שפה", en:"Language model",
      shH:"Claude Haiku", shE:"Claude Haiku",
-     dH:"קורא פוסט חדש ומחליט אם הוא מזיק. בנוי להיכשל לכיוון המתירני: אם הוא לא זמין או לא בטוח - הפוסט עולה (חוץ מבנפח חריג, ראו מודרציה). טקסט הפוסט לא יכול לשכנע אותו לשנות את ההחלטה: הוא עטוף בתגיות עם סיומת אקראית שפוסט לא יכול לסגור.",
-     dE:"Reads a new post and decides whether it is harmful. Built to fail permissive: if it is unavailable or unsure, the post goes live (except at abnormal volume, see Moderation). The post's own text cannot talk it out of a verdict: it is wrapped in tags with a random suffix a post cannot close."},
+     dH:"קורא פוסט חדש ומחליט אם הוא מזיק. בנוי להיכשל לכיוון המתירני: אם הוא לא זמין או לא בטוח - הפוסט עולה (חוץ מבנפח חריג, ראו מודרציה). טקסט הפוסט לא יכול לשכנע אותו לשנות את ההחלטה: הוא עטוף בתגיות עם סיומת אקראית שפוסט לא יכול לסגור. שימוש שני: לפני דחיפת חיבור, הוא בודק אם ההצעה באמת מתאימה לבקשה (עד 50 בדיקות ביממה).",
+     dE:"Reads a new post and decides whether it is harmful. Built to fail permissive: if it is unavailable or unsure, the post goes live (except at abnormal volume, see Moderation). The post's own text cannot talk it out of a verdict: it is wrapped in tags with a random suffix a post cannot close. A second use: before a rescue push, it checks whether the offer really fits the request (at most 50 checks a day)."},
     {id:"geo", col:"out", c:"--s5",
      he:"שירותי מפה", en:"Map services",
      shH:"Photon · Nominatim", shE:"Photon · Nominatim",
@@ -8838,8 +8871,8 @@
     {id:"ops", col:"out", c:"--s2",
      he:"ניטור והתראות", en:"Monitoring & alerts",
      shH:"Sentry · PostHog · Telegram", shE:"Sentry · PostHog · Telegram",
-     dH:"קריסות, מדדי שימוש, והתראות מיידיות למייסד על אירוע חשוב - הרשמה, התאמה, הודעה בצ׳אט, דיווח, חסימה או מחיקת פוסט חי. בנוסף: כל קריסה בגרסה חנותית, שרת שמתקרב לתקרת הזיכרון, ניסיון כניסה לקונסולה או נפח חריג של שליחות. כל סוג התראה מוגבל בקצב במסד, ומבול מתקבל כסיכום אחד.",
-     dE:"Crashes, usage metrics, and instant founder alerts on anything important - a signup, a match, a chat message, a report, a block or a live post deleted. Also: every crash in a store build, a server nearing its memory ceiling, a refused console sign-in or an abnormal volume of sends. Each alert type is rate-limited in the database, and a flood arrives as one summary."},
+     dH:"קריסות, מדדי שימוש, והתראות מיידיות למייסד על אירוע חשוב - הרשמה, התאמה, הודעה בצ׳אט, דיווח, חסימה או מחיקת פוסט חי. בנוסף: כל קריסה בגרסה חנותית, שרת שמתקרב לתקרת הזיכרון, ניסיון כניסה לקונסולה או נפח חריג של שליחות. כל סוג התראה מוגבל בקצב במסד, ומבול מתקבל כסיכום אחד. ההתראות מתחלקות לשני ערוצים: דחוף (צריך לפעול) ושוטף. על כל משתמש/ת חדש/ה מגיעה הודעה אחת עם כל שלבי הכניסה, כחצי שעה אחרי ההרשמה.",
+     dE:"Crashes, usage metrics, and instant founder alerts on anything important - a signup, a match, a chat message, a report, a block or a live post deleted. Also: every crash in a store build, a server nearing its memory ceiling, a refused console sign-in or an abnormal volume of sends. Each alert type is rate-limited in the database, and a flood arrives as one summary. Alerts split into two chats: urgent (someone has to act) and routine. Every new user also gets one message with each onboarding step, about half an hour after sign-up."},
     {id:"web", col:"out", c:"--s7",
      he:"אתר help-y.com", en:"help-y.com",
      shH:"דפי שיתוף · מסמכים · קונסולה · על GitHub Pages", shE:"Share pages · legal · console · on GitHub Pages",
@@ -8853,8 +8886,13 @@
     {id:"attest", col:"out", c:"--s3",
      he:"אימות מכשיר", en:"Device attestation",
      shH:"App Attest · Play Integrity", shE:"App Attest · Play Integrity",
-     dH:"אפל וגוגל מעידים שבקשת קוד הגיעה מהאפליקציה האמיתית במכשיר אמיתי ולא מסקריפט. בשלב הזה העדות רק נרשמת ליד כל שליחה ולא חוסמת דבר; הצד באפליקציה מגיע בגרסה 1.1.28, ורק אחרי מדידה יוחלט אם לאכוף.",
-     dE:"Apple and Google vouch that a code request came from the real app on a real device, not a script. For now the verdict is only recorded beside each send and blocks nothing; the app side ships in 1.1.28, and enforcement is decided only after measuring."},
+     dH:"אפל וגוגל מעידים שבקשת קוד הגיעה מהאפליקציה האמיתית במכשיר אמיתי ולא מסקריפט. בשלב הזה העדות רק נרשמת ליד כל שליחה ולא חוסמת דבר; הצד באפליקציה קיים מגרסה 1.1.28, ורק אחרי מדידה יוחלט אם לאכוף.",
+     dE:"Apple and Google vouch that a code request came from the real app on a real device, not a script. For now the verdict is only recorded beside each send and blocks nothing; the app side is live since 1.1.28, and enforcement is decided only after measuring."},
+    {id:"meta", col:"out", c:"--s5",
+     he:"מודעות Meta", en:"Meta ads",
+     shH:"Facebook · Instagram", shE:"Facebook · Instagram",
+     dH:"האפליקציה מדווחת ל-Meta על התקנה, הרשמה, פוסט והתאמה - רק בהסכמה למעקב. באנדרואיד השרת מפענח מאיזו מודעה הגיעה ההתקנה ושומר את המודעה, לא את האדם. הדוח היומי והקונסולה מושכים מ-Meta את ההוצאה על הקמפיינים.",
+     dE:"The app tells Meta about an install, a sign-up, a post and a match - only with tracking consent. On Android the server decodes which ad brought the install and keeps the ad, not the person. The daily digest and this console pull campaign spend from Meta."},
     {id:"gh", col:"out", c:"--s7",
      he:"גיבוי ונתוני חנויות", en:"Backup & store data",
      shH:"GitHub Actions", shE:"GitHub Actions",
@@ -8872,8 +8910,8 @@
   var NOTIF_GROUPS={
     edge:[
       {he:"מיידיות - נשלחות ברגע שקורה משהו", en:"Instant - sent the moment something happens",
-       noteH:"תפעוליות: הן נוגעות למה שאתה עצמך עשית באפליקציה, ולכן אינן מוגבלות במכסה ואינן דורשות הסכמה שיווקית.",
-       noteE:"Operational: they concern something you did in the app yourself, so they are never capped and need no marketing consent.",
+       noteH:"תפעוליות: הן נוגעות למה שאתה עצמך עשית באפליקציה, ולכן אינן מוגבלות במכסה ואינן דורשות הסכמה שיווקית - מלבד urgent_nearby (למטה), שהיא שיווקית. חמש ההתראות שנוצרות מהחלקה (new_offer, new_interest, new_join, offer_interest, offer_chat_opened) לא נשלחות בין 22:00 ל-07:00 שעון ישראל - הן נזרקות ולא נדחות; הפנייה מחכה באפליקציה, ותזכורת הבוקר מטפלת בה. למי שאין טוקן התראות, פנייה חדשה או הודעה בצ'אט מגיעות במייל במקום.",
+       noteE:"Operational: they concern something you did in the app yourself, so they are never capped and need no marketing consent - except urgent_nearby (below), which is marketing. The five swipe pushes (new_offer, new_interest, new_join, offer_interest, offer_chat_opened) are not sent 22:00-07:00 Israel time - dropped, not delayed; the approach waits in the app and the morning reminder picks it up. A recipient with no push token gets a new approach or chat message by email instead.",
        items:[
         {k:"new_offer", kind:"op",
          tH:"!הצעת עזרה חדשה", bH:"{שם} הציע/ה לעזור עם \"{כותרת הפוסט}\"",
@@ -8923,8 +8961,8 @@
         {k:"request_closed", kind:"op",
          tH:"הבקשה נסגרה", bH:"\"{כותרת הפוסט}\" כבר לא זמינה. המשך/י לגלוש!",
          tE:"Request Closed", bE:"\"{post title}\" is no longer available. Keep browsing!",
-         wH:"הפוסט נסגר או נמחק בזמן שהפנייה שלך עדיין המתינה להחלטה. נשלחת כדי שלא תמתין/י לתשובה שלא תגיע.",
-         wE:"The post was closed or deleted while your approach was still waiting. Sent so nobody waits for an answer that will never come."},
+         wH:"הפוסט נסגר או נמחק בזמן שהפנייה שלך עדיין המתינה להחלטה. נשלחת כדי שלא תמתין/י לתשובה שלא תגיע. וגם כששיחה שנפתחה מיד על פוסט הצעה, ועוד לא נכתבה בה הודעה, נסגרת עם הפוסט.",
+         wE:"The post was closed or deleted while your approach was still waiting. Sent so nobody waits for an answer that will never come. Also when an offer-post chat that opened instantly, with no message yet, is closed together with the post."},
         {k:"match_not_completed", kind:"op",
          tH:"עדכון", bH:"\"{כותרת הפוסט}\" נסגר בלי שהעזרה יצאה לפועל.",
          tE:"Update", bE:"\"{post title}\" was closed - the help didn't end up happening.",
@@ -8955,11 +8993,11 @@
          tE:"New Rating!", bE:"{name} rated you {n} stars",
          wH:"כשדירוג שקיבלת מתפרסם. מאז 1.1.25 הדירוג דו-כיווני ועיוור: הוא מתפרסם כששני הצדדים דירגו, או אחרי 7 ימים.",
          wE:"When a rating you received becomes public. Since 1.1.25 rating is two-way and blind: it publishes once both sides have rated, or after 7 days."},
-        {k:"urgent_nearby", kind:"op",
+        {k:"urgent_nearby", kind:"mk",
          tH:"!דרושה עזרה דחופה בקרבתך", bH:"{כותרת הבקשה}",
          tE:"Urgent Help Needed Nearby!", bE:"{request title}",
-         wH:"פורסמה בקשה בדחיפות גבוהה בתוך רדיוס החיפוש שלך (עד 25 ק\"מ). רק בקשות - הצעות עזרה לעולם אינן דחופות.",
-         wE:"A high-urgency request was posted inside your own search radius (capped at 25 km). Requests only - a help offer is never urgent."},
+         wH:"פורסמה בקשה בדחיפות גבוהה עד 5 ק\"מ ממך (או בתוך רדיוס החיפוש שלך, אם הוא קטן יותר), בשעתיים הראשונות שלה. רק בקשות - הצעת עזרה לעולם אינה דחופה. למרות שהיא מיידית, היא שיווקית: דורשת הסכמה שיווקית, לא לטוקן ארעי ולא לחשבון מושהה, רק בין 07:00 ל-23:00 שעון ישראל (מחוץ לחלון היא לא נשלחת בכלל), ולכל היותר אחת ביום לאדם. היא לא צורכת את המכסה השבועית - כל הערך שלה הוא בזמן.",
+         wE:"A high-urgency request was posted within 5 km of you (or inside your own search radius, if that is smaller), in its first two hours. Requests only - a help offer is never urgent. Instant, but marketing: it needs marketing consent, never goes to a provisional token or a paused account, sends only 07:00-23:00 Israel time (outside that window it is dropped, not delayed), and at most one per person per day. It does not use the weekly quota - its whole value is timing."},
         {k:"helpy_admin_reply", kind:"op",
          tH:"הודעה חדשה בצ'אט של Helpy", bH:"{שם} כתב/ה לך",
          tE:"New message in Helpy Chat", bE:"{name} wrote to you",
@@ -8969,8 +9007,8 @@
     ],
     nudge:[
       {he:"תפעוליות מתוזמנות - על משהו שכבר קורה לך", en:"Scheduled operational - about something already under way",
-       noteH:"נוגעות לשיחה או להתאמה קיימת שלך, ולכן אינן נספרות במכסה השבועית. כולן נשלחות בין 10:00 ל-19:00 שעון ישראל.",
-       noteE:"They concern a conversation or match of your own, so they never consume the weekly quota. All send between 10:00 and 19:00 Israel time.",
+       noteH:"נוגעות לשיחה או להתאמה קיימת שלך, ולכן אינן נספרות במכסה השבועית. כולן נשלחות בין 10:00 ל-19:00 שעון ישראל. חשבון מושהה לא מקבל את תזכורות הפנייה הממתינה, השיחה השקטה וההודעה שלא נענתה.",
+       noteE:"They concern a conversation or match of your own, so they never consume the weekly quota. All send between 10:00 and 19:00 Israel time. A paused account gets no pending-offer, silent-room or unanswered-message reminder.",
        items:[
         {k:"pending_offer_reminder", cadH:"פעם ביום · 11:00", cadE:"daily · 11:00 IL", kind:"op",
          tH:"מישהו רוצה לעזור לך",
@@ -9000,7 +9038,7 @@
          tH:"נפגשתם?", bH:"אם {שם} עזר/ה – סמנו שהושלם ודרגו",
          tE:"Did you meet up?", bE:"If {name} helped out, mark it done and leave a rating",
          wH:"שיחה מאושרת ששקטה בין יום ל-14 יום. פעם אחת לכל התאמה, ורק למי שקיבל/ה את העזרה - הוא זה שיכול לסמן ולדרג. כששקטו כמה שיחות עם שכנים שונים, הגוף הופך ל«אם מישהו מהשכנים עזר – סמנו שהושלם ודרגו» במקום לרשימת שמות.",
-         wE:"An accepted match that has been quiet for one to fourteen days. Once per match, and only to the receiver - they are the one who can mark it done and rate."},
+         wE:"An accepted match that has been quiet for one to fourteen days. Once per match, and only to the receiver - they are the one who can mark it done and rate. When several chats with different neighbours went quiet, the body becomes \u201cIf one of your neighbours helped out, mark it done and leave a rating\u201d."},
         {k:"phone_completion_check", cadH:"שעתי", cadE:"hourly", kind:"op",
          tH:"איך הלך עם העזרה?", bH:"אם נעזרתם - סמנו שהושלם ודרגו. זה מה שבונה אמון בשכונה",
          tE:"How did it go?", bE:"If the help happened, mark it complete and leave a rating - that's what builds neighborhood trust",
@@ -9009,8 +9047,8 @@
         {k:"helper_completion_check", cadH:"שעתי", cadE:"hourly", kind:"op",
          tH:"הצלחת לעזור?", bH:"אם העזרה קרתה, ספרו לנו כאן - נבקש מהשכן/ה לאשר",
          tE:"Did you manage to help?", bE:"If the help happened, tell us here - we'll ask your neighbour to confirm",
-         wH:"אותו רגע כמו «איך הלך עם העזרה?» (48 שעות אחרי החלפת טלפון), אבל למי שעזר/ה. «כן, עזרתי» לא מסמן/ת שהעזרה הושלמה - הוא שולח למקבל/ת העזרה בקשה לאשר, ורק האישור שלו/ה משלים. רק למי שכבר פתח/ה גרסה 1.1.25 ומעלה.",
-         wE:"The same moment as \u201cHow did it go?\u201d (48h after a phone exchange), sent to the giver. \u201cYes, I helped\u201d does not complete anything - it asks the receiver to confirm, and only their yes completes. Only to givers who have opened 1.1.25 or later."},
+         wH:"אותו רגע כמו «איך הלך עם העזרה?» (48 שעות אחרי החלפת טלפון), אבל למי שעזר/ה. «כן, עזרתי» לא מסמן/ת שהעזרה הושלמה - הוא שולח למקבל/ת העזרה בקשה לאשר, ורק האישור שלו/ה משלים. רק למי שכבר פתח/ה גרסה 1.1.25 ומעלה. כשממתינות כמה שיחות כאלה יחד נשלחת דחיפה אחת: «ספרו לנו בכל שיחה אם העזרה קרתה - נבקש מהשכנים לאשר».",
+         wE:"The same moment as \u201cHow did it go?\u201d (48h after a phone exchange), sent to the giver. \u201cYes, I helped\u201d does not complete anything - it asks the receiver to confirm, and only their yes completes. Only to givers who have opened 1.1.25 or later. With several such chats at once, one push goes out: \u201cTell us in each chat whether the help happened - we'll ask your neighbours to confirm\u201d."},
         {k:"helper_says_helped", cadH:"בכל תשובה", cadE:"per answer", kind:"op",
          tH:"קיבלת את העזרה?", bH:"{שם} אומר/ת שעזר/ה לך. זה נכון?",
          tE:"Did you get help?", bE:"{name} says they helped you. Is that right?",
@@ -9028,31 +9066,31 @@
          wE:"Once in the life of an account, to whoever offered help before the helper badge existed. The message names the badge and where it shows - a ring around the profile photo (until 15.10 it only said \"something is waiting inside\"). The thread message goes to everyone, but the push is marketing in every respect: it requires marketing consent, skips provisional tokens, honours the pooled 7-day cap and consumes it. Two days of app quiet first, and any Helpy-thread exchange in the last 24h defers to a later run."}
        ]},
       {he:"שיווקיות - הזמנה לחזור", en:"Marketing - an invitation to come back",
-       noteH:"חסם קשיח: הודעה שיווקית אחת לאדם בשבוע, מכל השולחים יחד. רק בהסכמה, רק 10:00-19:00, ורק לחשבון בן שלושה ימים לפחות - שלושת הימים הראשונים שייכים לתזכורת ההפעלה בלבד.",
-       noteE:"Hard cap: one marketing message per person per week, across every sender combined. Consent only, 10:00-19:00 only, and only for an account at least three days old - the first three days belong to the activation nudge alone.",
+       noteH:"חסם קשיח: הודעה שיווקית אחת לאדם בשבוע, מכל השולחים יחד. רק בהסכמה, רק 10:00-19:00, ורק לחשבון בן שלושה ימים לפחות - שלושת הימים הראשונים שייכים לתזכורת ההפעלה בלבד. חשבון מושהה לא מקבל אף אחת מהן.",
+       noteE:"Hard cap: one marketing message per person per week, across every sender combined. Consent only, 10:00-19:00 only, and only for an account at least three days old - the first three days belong to the activation nudge alone. A paused account gets none of them.",
        items:[
         {k:"nearby_request_alert", cadH:"שעתי", cadE:"hourly", kind:"mk",
          tH:"שכן/ה באזור מחפש/ת עזרה", bH:"\"{כותרת הפוסט}\" · {מרחק}",
          tE:"A neighbour nearby needs a hand", bE:"\"{post title}\" · {distance}",
-         wH:"בקשה חדשה - עד 24 שעות - נפתחה בתוך רדיוס החיפוש שלך. הכותרת לפי הקטגוריה: פעילות - \"שכן/ה באזור מחפש/ת שותף/ה לפעילות\"; השאלה - \"שכן/ה באזור צריך/ה משהו בהשאלה\"; מסירה - \"שכן/ה באזור מחפש/ת משהו שאולי יש לך\"; כל השאר - הכותרת שלמעלה. נרשם ביומן ההתראות בתור `urgent_nearby`.",
-         wE:"A fresh request - under 24 hours old - opened inside your search radius. The title follows the category: activity - \"A neighbour nearby is looking for company\"; borrow - \"A neighbour nearby needs to borrow something\"; giveaway - \"A neighbour nearby is looking for something you might have\"; everything else - the title above. Logged in notification_log as `urgent_nearby`."},
+         wH:"בקשה חדשה - עד 24 שעות - נפתחה בתוך רדיוס החיפוש שלך. הכותרת לפי הקטגוריה: פעילות - \"שכן/ה באזור מחפש/ת שותף/ה לפעילות\"; השאלה - \"שכן/ה באזור צריך/ה משהו בהשאלה\"; מסירה - \"שכן/ה באזור מחפש/ת משהו שאולי יש לך\"; כל השאר - הכותרת שלמעלה. נרשם ביומן ההתראות בתור `urgent_nearby`. הרדיוס מוגבל ל-25 ק\"מ, והיא נשלחת רק למי שסימן/ה את הקטגוריה כתחום שבו הוא/היא עוזר/ת או שכבר הציע/ה עזרה בעבר. עד 27.10 היא נרשמה ביומן תחת urgent_nearby, ולכן הספירות שלה מאותה תקופה נמצאות שם.",
+         wE:"A fresh request - under 24 hours old - opened inside your search radius. The title follows the category: activity - \"A neighbour nearby is looking for company\"; borrow - \"A neighbour nearby needs to borrow something\"; giveaway - \"A neighbour nearby is looking for something you might have\"; everything else - the title above. Logged in notification_log as `urgent_nearby`. Radius capped at 25 km, and sent only to people who marked that category as one they help with, or who have offered help before. Until 27.10 it was logged as urgent_nearby, so its counts from that period sit there."},
         {k:"offer_rescue", cadH:"שעתי", cadE:"hourly", kind:"mk",
          tH:"בקשה באזור שמתאימה להצעה שלך", bH:"\"{כותרת הבקשה}\" · {מרחק}",
          tE:"A request nearby that fits your offer", bE:"\"{request title}\" · {distance}",
-         wH:"בקשה שעברו עליה 24 שעות עד 14 יום בלי אף הצעה, ושבעליה נכנס/ה לאפליקציה בשבוע האחרון. נשלחת לעד שני שכנים שיש להם הצעה פעילה באותה קטגוריה בטווח של עד 10 ק\"מ - קודם מי שנכנס/ה לאחרונה, אחר כך הקרוב/ה. פעם אחת לכל בקשה. קטגוריית \"אחר\" לא נכללת. חריגה מהמכסה המשותפת (החלטת ניר, 25.10): היא עוסקת בהצעה של הנמען/ת עצמו/ה, ולכן יש לה מכסה משלה - אחת לשבוע לאדם - והיא לא צורכת את ההודעה השיווקית השבועית. ההסכמה השיווקית, השעות והגיל המינימלי של החשבון חלים עליה כרגיל. נרשם ביומן ההתראות בתור `offer_rescue`.",
-         wE:"A request 24 hours to 14 days old with no offer at all, whose owner opened the app in the last week. Sent to up to two neighbours with a live offer in the same category within 10 km - recently active first, then the closest. Once per request. The \"other\" category is left out. Exception to the shared cap (Nir, 25.10): it is about the recipient's own offer, so it has its own cap - one a week per person - and does not use up the weekly marketing message. Marketing consent, the hours and the minimum account age apply as usual. Logged in notification_log as `offer_rescue`."},
+         wH:"בקשה שעברו עליה 24 שעות עד 14 יום בלי אף הצעה, ושבעליה נכנס/ה לאפליקציה בשבוע האחרון. נשלחת לעד שני שכנים שיש להם הצעה פעילה באותה קטגוריה בטווח של עד 10 ק\"מ - קודם הקרובים ביותר, ורק מי שנכנס/ה לאפליקציה ב-14 הימים האחרונים. לפני שליחה בינה מלאכותית בודקת שההצעה באמת מתאימה לבקשה (כן/לא, עם תקרה יומית); כשהבדיקה כבויה הכותרת היא «בקשה באזור באותו תחום כמו ההצעה שלך». פעם אחת לכל בקשה. קטגוריית \"אחר\" לא נכללת. חריגה מהמכסה המשותפת (החלטת ניר, 25.10): היא עוסקת בהצעה של הנמען/ת עצמו/ה, ולכן יש לה מכסה משלה - אחת לשבוע לאדם - והיא לא צורכת את ההודעה השיווקית השבועית. ההסכמה השיווקית, השעות והגיל המינימלי של החשבון חלים עליה כרגיל. נרשם ביומן ההתראות בתור `offer_rescue`.",
+         wE:"A request 24 hours to 14 days old with no offer at all, whose owner opened the app in the last week. Sent to up to two neighbours with a live offer in the same category within 10 km - closest first, and only owners who opened the app in the last 14 days. Before sending, an AI yes/no check confirms the offer really fits the request (with a daily cap); with the check off the title is \u201cA request nearby in the same area as your offer\u201d. Once per request. The \"other\" category is left out. Exception to the shared cap (Nir, 25.10): it is about the recipient's own offer, so it has its own cap - one a week per person - and does not use up the weekly marketing message. Marketing consent, the hours and the minimum account age apply as usual. Logged in notification_log as `offer_rescue`."},
         {k:"never_acted", cadH:"תזכורת הפעלה · שעתי", cadE:"activation · hourly", kind:"mk",
          tH:"השכנים שלך כבר כאן", bH:"שכנים מבקשים ומציעים עזרה ממש לידך - הצצה קטנה?",
          tE:"Your neighbors are already here", bE:"Neighbors are asking for and offering help right nearby - take a peek?",
-         wH:"נרשמת לפני 24 עד 72 שעות ועדיין לא עשית דבר, ויש לפחות 3 בקשות פתוחות בתוך הרדיוס שלך - אחרת ההצצה שמובטחת תמצא פיד ריק. בכוונה אינה ממליצה על בקשה מסוימת - מוקדם מדי לדעת מה מתאים לך. נרשם ביומן ההתראות בתור `activation_nudge`.",
-         wE:"You signed up 24 to 72 hours ago and have done nothing yet, and at least 3 open requests sit inside your radius - otherwise the promised peek finds an empty feed. It deliberately recommends no specific post - too early to know what suits you. Logged in notification_log as `activation_nudge`."},
+         wH:"נרשמת לפני 24 עד 72 שעות ועדיין לא עשית דבר, ויש לפחות 3 בקשות פתוחות בתוך הרדיוס שלך - אחרת ההצצה שמובטחת תמצא פיד ריק. בכוונה אינה ממליצה על בקשה מסוימת - מוקדם מדי לדעת מה מתאים לך. נרשם ביומן ההתראות בתור `activation_nudge`. 10% קבוצת ביקורת.",
+         wE:"You signed up 24 to 72 hours ago and have done nothing yet, and at least 3 open requests sit inside your radius - otherwise the promised peek finds an empty feed. It deliberately recommends no specific post - too early to know what suits you. Logged in notification_log as `activation_nudge`. 10% control group."},
         {k:"inactive_users", cadH:"שעתי", cadE:"hourly", kind:"mk",
          tH:"שכן/ה צריך/ה עזרה בקרבתך",
          bH:"בקשה: \"{כותרת הפוסט}\"",
          tE:"A neighbor needs your help nearby",
          bE:"\"{post title}\"",
-         wH:"14 יום בלי התאמה ובלי פוסט, ורק למי שמסומן זמין. מעבר למכסה השבועית המשותפת יש לה שעון משלה - 7 ימים מהתזכורת הקודמת מהסוג הזה - והרדיוס הוא רדיוס החיפוש של המשתמש/ת כפי שהוא, בלי תקרת 25 ק\"מ. נרשם ביומן ההתראות בתור `reengagement`. כשהפוסט הקרוב ביותר הוא הצעה, הכותרת הופכת ל«שכן/ה מציע/ה עזרה בקרבתך» והגוף פותח ב«הצעה:» במקום ב«בקשה:» - אחרת ההתראה מבטיחה בקשה ומראה הצעה. וכשאין פוסט קרוב כלל, הגוף הוא «שווה הצצה בבקשות האחרונות». ניסוי נוסח (מ-26.10, אישור ניר): בעברית, כשהפוסט הקרוב הוא בקשה, הכותרת היא אחת משלוש - A «שכן/ה צריך/ה עזרה בקרבתך» (המקורית), B «בקשה מהשכונה שלך», C «יש לך דקה לעזור לשכן/ה?» - ונוסח שנפתח יותר מקבל יותר שליחות אוטומטית; הנוסח נרשם ביומן ההתראות, ודוח שבועי מגיע לטלגרם.",
-         wE:"Fourteen days with no match and no post, and only to users marked available. Beyond the pooled weekly cap it keeps its own clock - 7 days since the previous nudge of this kind - and the radius is the user's own search radius as set, with no 25 km cap. Logged in notification_log as `reengagement`. When the nearest post is an offer the title becomes \u201cA neighbor is offering help nearby\u201d - otherwise the notification promises a request and shows an offer. With no nearby post at all the body is \u201cCheck out the latest requests\u201d. Wording test (from 26.10, Nir approved): in Hebrew, when the nearest post is a request, the title is one of three - A (the original), B \u201cA request from your neighbourhood\u201d, C \u201cGot a minute to help a neighbour?\u201d - and the wording that gets opened more is sent more often, automatically; the wording is recorded in the notification log and a weekly report goes to Telegram."},
+         wH:"14 יום בלי התאמה ובלי פוסט, ורק למי שמסומן זמין. מעבר למכסה השבועית המשותפת יש לה שעון משלה - 7 ימים מהתזכורת הקודמת מהסוג הזה - והרדיוס הוא רדיוס החיפוש של המשתמש/ת כפי שהוא, בלי תקרת 25 ק\"מ. נרשם ביומן ההתראות בתור `reengagement`. כשהפוסט הקרוב ביותר הוא הצעה, הכותרת הופכת ל«שכן/ה מציע/ה עזרה בקרבתך» והגוף פותח ב«הצעה:» במקום ב«בקשה:» - אחרת ההתראה מבטיחה בקשה ומראה הצעה. וכשאין פוסט קרוב כלל, הגוף הוא «שווה הצצה בבקשות האחרונות». ניסוי נוסח (מ-26.10, אישור ניר): בעברית, כשהפוסט הקרוב הוא בקשה, הכותרת היא אחת משלוש - A «שכן/ה צריך/ה עזרה בקרבתך» (המקורית), B «בקשה מהשכונה שלך», C «יש לך דקה לעזור לשכן/ה?» - ונוסח שנפתח יותר מקבל יותר שליחות אוטומטית; הנוסח נרשם ביומן ההתראות, ודוח שבועי מגיע לטלגרם. 10% קבוצת ביקורת.",
+         wE:"Fourteen days with no match and no post, and only to users marked available. Beyond the pooled weekly cap it keeps its own clock - 7 days since the previous nudge of this kind - and the radius is the user's own search radius as set, with no 25 km cap. Logged in notification_log as `reengagement`. When the nearest post is an offer the title becomes \u201cA neighbor is offering help nearby\u201d - otherwise the notification promises a request and shows an offer. With no nearby post at all the body is \u201cCheck out the latest requests\u201d. Wording test (from 26.10, Nir approved): in Hebrew, when the nearest post is a request, the title is one of three - A (the original), B \u201cA request from your neighbourhood\u201d, C \u201cGot a minute to help a neighbour?\u201d - and the wording that gets opened more is sent more often, automatically; the wording is recorded in the notification log and a weekly report goes to Telegram. 10% control group."},
         {k:"no_offer_request", cadH:"שעתי", cadE:"hourly", kind:"mk",
          tH:"שכן/ה עדיין מחכה לעזרה",
          bH:"\"{כותרת הפוסט}\" - אפשר לעזור?",
@@ -9065,23 +9103,23 @@
          bH:"{N} שכנים חדשים הצטרפו באזורך החודש. שווה הצצה - אולי מחכה לך שם מישהו.",
          tE:"Your request is still live",
          bE:"{N} new neighbors joined near you this month. Worth a look - someone may be waiting.",
-         wH:"פוסט פעיל שבוע ומעלה שלא קיבל אף פנייה, ורק אם באמת הצטרפו לפחות עשרה שכנים חדשים באזור - אחרת אין מה לבשר. בהצעה: «ההצעה שלך עדיין פעילה». מעבר ל-30 יום הנוסח מפסיק לבשר ומתחיל לשאול - «הבקשה שלך עדיין רלוונטית?», והגוף אומר כמה זמן היא כבר באוויר ומציע לרענן או לסגור - כי \"עדיין פעילה!\" על צורך בן חודשיים נשמע אבסורדי, והתשובה הכנה (לסגור) צריכה להיות על השולחן.",
-         wE:"A post live for a week or more with no approach, and only if at least ten new neighbours really did join nearby - otherwise there is no news to tell. On an offer: \u201cYour offer is still live\u201d. Past 30 days the wording stops announcing and starts asking - \u201cIs your request still relevant?\u201d with \u201cIt has been live for {N} days\u2026 worth refreshing or closing\u201d - because \"still live!\" about a two-month-old need reads as absurd, and the honest answer (close it) belongs on the table."},
+         wH:"פוסט פעיל שבוע ומעלה שלא קיבל אף פנייה, ורק אם באמת הצטרפו לפחות עשרה שכנים חדשים באזור - אחרת אין מה לבשר. בהצעה: «ההצעה שלך עדיין פעילה». מעבר ל-30 יום הנוסח מפסיק לבשר ומתחיל לשאול - «הבקשה שלך עדיין רלוונטית?», והגוף אומר כמה זמן היא כבר באוויר ומציע לרענן או לסגור - כי \"עדיין פעילה!\" על צורך בן חודשיים נשמע אבסורדי, והתשובה הכנה (לסגור) צריכה להיות על השולחן. 10% קבוצת ביקורת.",
+         wE:"A post live for a week or more with no approach, and only if at least ten new neighbours really did join nearby - otherwise there is no news to tell. On an offer: \u201cYour offer is still live\u201d. Past 30 days the wording stops announcing and starts asking - \u201cIs your request still relevant?\u201d with \u201cIt has been live for {N} days\u2026 worth refreshing or closing\u201d - because \"still live!\" about a two-month-old need reads as absurd, and the honest answer (close it) belongs on the table. 10% control group."},
         {k:"unswiped_offer_owner", cadH:"שעתי", cadE:"hourly", kind:"mk",
          tH:"ההצעה שלך באוויר", bH:"בינתיים {N} שכנים מבקשים עזרה באזורך - שווה הצצה",
          tE:"Your offer is live", bE:"Meanwhile {N} neighbors nearby are asking for help - worth a look",
-         wH:"פרסמת הצעת עזרה לפני שלושה ימים ומעלה ועדיין לא החלקת על אף בקשה, ויש לפחות 3 בקשות פתוחות בתוך הרדיוס שלך - המספר בגוף הוא הספירה הזו. נרשם ביומן ההתראות בתור `offer_owner_nudge`.",
-         wE:"You posted a help offer three or more days ago and have not swiped on a single request, and at least 3 open requests sit inside your radius - the number in the body is that count. Logged in notification_log as `offer_owner_nudge`."},
+         wH:"פרסמת הצעת עזרה לפני שלושה ימים ומעלה ועדיין לא החלקת על אף בקשה, ויש לפחות 3 בקשות פתוחות בתוך הרדיוס שלך - המספר בגוף הוא הספירה הזו. נרשם ביומן ההתראות בתור `offer_owner_nudge`. 10% קבוצת ביקורת.",
+         wE:"You posted a help offer three or more days ago and have not swiped on a single request, and at least 3 open requests sit inside your radius - the number in the body is that count. Logged in notification_log as `offer_owner_nudge`. 10% control group."},
         {k:"offer_details_nudge", cadH:"שעתי", cadE:"hourly", kind:"mk",
          tH:"עוד שורה אחת להצעה שלך", bH:"כתוב/י מה כן ומה לא - ושכנים יפנו רק עם מה שמתאים לך",
          tE:"One more line for your offer", bE:"Say what you do and what you don't - so neighbors only ask for what fits",
          wH:"הצעת עזרה שפורסמה לפני יום עד 30 יום בלי שורת פירוט, ועוד אף אחד לא פנה אליה. פעם אחת לכל הצעה; מי שיש לו/ה כמה הצעות כאלה מקבל/ת פוש אחד. הלחיצה פותחת את עורך ההצעה עם הסמן בשדה הפירוט. נשלח רק לגרסה 1.1.27 ומעלה. 10% קבוצת ביקורת.",
          wE:"A help offer published 1-30 days ago with no details line, that nobody has approached yet. Once per offer; an owner with several such offers gets one push. The tap opens the offer editor with the cursor in the details field. Sent only to 1.1.27 and later. 10% control group."},
-        {k:"weekly_digest", cadH:"ימי ראשון", cadE:"Sundays", kind:"mk",
+        {k:"weekly_digest", cadH:"מושהה", cadE:"paused", kind:"mk",
          tH:"סיכום שבועי מהשכונה שלך", bH:"📍 השבוע באזורך: {N} בקשות חדשות, {N} הצעות עזרה, {N} שכנים קיבלו עזרה. בוא/י לראות!",
          tE:"Your weekly neighborhood update", bE:"📍 This week near you: {N} new requests, {N} help offers, {N} neighbors helped. Come see what's new!",
-         wH:"פעם בשבוע, ורק אם באמת קרה משהו באזור שראוי לספר עליו.",
-         wE:"Once a week, and only if something worth telling actually happened nearby."}
+         wH:"מושהית - הקרון כבוי מאז 27.09 (החלטת ניר: המספרים עדיין לא חיוביים). כשהיא פעילה: פעם בשבוע, ורק אם באמת קרה משהו באזור שראוי לספר עליו.",
+         wE:"Paused - the cron has been off since 27.09 (Nir: the numbers are not positive yet). When on: once a week, and only if something worth telling actually happened nearby."}
        ]},
       {he:"ידנית", en:"By hand",
        noteH:"לא אוטומטית - נכתבת ונשלחת מהקונסולה.",
@@ -9090,20 +9128,20 @@
         {k:"system_broadcast", cadH:"ידני", cadE:"by hand", kind:"mk",
          tH:"{שם השולח/ת} מ-Helpy", bH:"{הטקסט שנכתב בשידור}",
          tE:"{sender label} מ-Helpy", bE:"{the text written in the broadcast}",
-         wH:"שידור לקהל נבחר. הכותרת היא «{שם השולח/ת} מ-Helpy» (למשל «ניר מ-Helpy») וכשלא נבחר שולח - סתם «Helpy»; הגוף הוא הטקסט שנכתב, קטום לאורך הדחיפה. מגיעה גם כהודעה בשיחת Helpy הרשמית, כך שהיא ממתינה גם למי שאין לו התראות. הדחיפה מכבדת הסכמה שיווקית, אבל בכוונה אינה צורכת את המכסה השבועית - שידור הוא נדיר ובכתב יד, ולשרוף עליו את המכסה היה משתיק את כל השכבה האוטומטית לשבוע. נרשם ביומן ההתראות בתור `helpy_message`.",
-         wE:"A broadcast to a chosen audience. The title is “{sender label} מ-Helpy” (e.g. “ניר מ-Helpy” - the Hebrew form even for an English-app recipient) and plain “Helpy” when no sender is chosen; the body is the written text, truncated to push length. It also lands as a message in the official Helpy thread, so it waits even for someone with no notifications. The push respects marketing consent but deliberately does not consume the weekly quota - a broadcast is rare and hand-written, and spending the quota on it would silence the whole automated layer for a week. Logged in notification_log as `helpy_message`."}
+         wH:"שידור לקהל נבחר. הכותרת היא «{שם השולח/ת} מ-Helpy» (למשל «ניר מ-Helpy») וכשלא נבחר שולח - סתם «Helpy»; הגוף הוא הטקסט שנכתב, קטום לאורך הדחיפה. מגיעה גם כהודעה בשיחת Helpy הרשמית, כך שהיא ממתינה גם למי שאין לו התראות. הדחיפה מכבדת הסכמה שיווקית, אבל בכוונה אינה צורכת את המכסה השבועית - שידור הוא נדיר ובכתב יד, ולשרוף עליו את המכסה היה משתיק את כל השכבה האוטומטית לשבוע. נרשם ביומן ההתראות בתור `helpy_message`. תשובה ישירה למשתמש/ת אחד/ת, או שליחה שסומנה כתפעולית, לא בודקת הסכמה שיווקית. חשבון מושהה לא מקבל את הדחיפה. כשנכתב גם נוסח באנגלית, מי שהאפליקציה שלו/ה באנגלית מקבל/ת אותו.",
+         wE:"A broadcast to a chosen audience. The title is “{sender label} מ-Helpy” (e.g. “ניר מ-Helpy” - the Hebrew form even for an English-app recipient) and plain “Helpy” when no sender is chosen; the body is the written text, truncated to push length. It also lands as a message in the official Helpy thread, so it waits even for someone with no notifications. The push respects marketing consent but deliberately does not consume the weekly quota - a broadcast is rare and hand-written, and spending the quota on it would silence the whole automated layer for a week. Logged in notification_log as `helpy_message`. A direct reply to one user, or a send marked transactional, skips the marketing-consent check. A paused account gets no push. When an English text is written too, English-app recipients get it."}
        ]}
     ],
     moderation:[
       {he:"בדיקת תוכן - נשלחות מהמסד ישירות", en:"Content moderation - sent by the database directly",
-       noteH:"לא עוברות דרך אף פונקציית קצה: פונקציית המסד send_user_push() שולחת אותן ישר ל-Expo. לכן אין להן type במטען (הקשה פותחת את האפליקציה ולא מסך מסוים), הן לא נרשמות ב-notification_log, אין להן קידומת RTL, ואין שער הסכמה או שעות - הודעה על הפוסט שלך היא תפעולית ומגיעה בכל שעה.",
-       noteE:"They pass through no edge function: the database function send_user_push() posts them straight to Expo. So they carry no type in the payload (a tap opens the app, not a specific screen), they are never written to notification_log, they carry no RTL prefix, and there is no consent or hour gate - a message about your own post is operational and arrives at any hour.",
+       noteH:"לא עוברות דרך אף פונקציית קצה: פונקציית המסד send_user_push() שולחת אותן ישר ל-Expo. לכן אין להן type במטען (הקשה פותחת את האפליקציה ולא מסך מסוים), הן לא נרשמות ב-notification_log, אין להן קידומת RTL (מלבד «ממתין לבדיקה», שכן נושאת אותה), ואין שער הסכמה או שעות - הודעה על הפוסט שלך היא תפעולית ומגיעה בכל שעה.",
+       noteE:"They pass through no edge function: the database function send_user_push() posts them straight to Expo. So they carry no type in the payload (a tap opens the app, not a specific screen), they are never written to notification_log, they carry no RTL prefix (except pending-review, which does), and there is no consent or hour gate - a message about your own post is operational and arrives at any hour.",
        items:[
         {k:"moderation_pending", kind:"op",
          tH:"הפרסום שלך ממתין לבדיקה", bH:"הפרסום שלך הוסתר זמנית לבדיקה בעקבות דיווחים מהקהילה. נבדוק ונעדכן.",
          tE:"Your post is pending review", bE:"Your post was temporarily hidden for review following community reports. We will review it.",
-         wH:"הפוסט הוסתר לבדיקה. שלושה גופים לפי הסיבה: דיווחים מהקהילה - הנוסח למעלה; תוכן מזיק (שנאה, מיני, אלימות, תמונה לא הולמת) - «נראה שהפרסום כולל תוכן שאינו הולם את כללי הקהילה של Helpy. הפרות חוזרות עלולות להוביל לחסימת החשבון.»; חשד מסחרי - «נראה שהפרסום כולל מכירה, שירות בתשלום או מספר טלפון - אלה אסורים ב-Helpy. עזרה בין שכנים היא ללא תשלום. הפרות חוזרות עלולות להוביל לחסימת החשבון.». נשלחת לבעל/ת הפוסט בשפת האפליקציה.",
-         wE:"The post was hidden for review. Three bodies by cause: community reports - the wording above; harmful content (hate, sexual, violence, inappropriate image) - “It looks like your post includes content that does not meet Helpy's community guidelines. Repeated violations may lead to account suspension.”; commercial suspicion - “It looks like your post includes a sale, paid service or phone number - these are not allowed on Helpy. Neighborly help is free. Repeated violations may lead to account suspension.”. Sent to the post owner in their app language."},
+         wH:"הפוסט הוסתר לבדיקה. חמישה גופים לפי הסיבה: דיווחים מהקהילה - הנוסח למעלה; פוסט שמוחזק לבדיקה לפני שעלה - «הפרסום יופיע לשכנים אחרי בדיקה קצרה. נעדכן כאן כשהוא יעלה.»; תוכן מזיק (שנאה, מיני, אלימות, תמונה לא הולמת) - «נראה שהפרסום כולל תוכן שאינו הולם את כללי הקהילה של Helpy. הפרות חוזרות עלולות להוביל לחסימת החשבון.»; חשד מסחרי - «נראה שהפרסום כולל מכירה, שירות בתשלום, גיוס לעבודה או מספר טלפון - אלה אסורים ב-Helpy. עזרה בין שכנים היא ללא תשלום. הפרות חוזרות עלולות להוביל לחסימת החשבון.»; והסתרה ידנית מכפתורי הטלגרם - עם כותרת משלה, «הפוסט שלך הוסתר», והגוף «הפוסט לא מתאים לכללי הקהילה של Helpy. הפרות חוזרות עלולות להוביל לחסימת החשבון.» (לא הולם) או «ב-Helpy אין מכירה, שירות בתשלום, גיוס לעבודה או פרסום עסקי. עזרה בין שכנים היא בחינם. הפרות חוזרות עלולות להוביל לחסימת החשבון.» (מסחרי). נשלחת לבעל/ת הפוסט בשפת האפליקציה, ואותו טקסט נכתב גם כהודעה בשיחת Helpy.",
+         wE:"The post was hidden for review. Five bodies by cause: community reports - the wording above; a post held for review before it went live - “Your post will appear to neighbors after a quick check. We'll let you know here when it's live.”; harmful content (hate, sexual, violence, inappropriate image) - “It looks like your post includes content that does not meet Helpy's community guidelines. Repeated violations may lead to account suspension.”; commercial suspicion - “It looks like your post includes a sale, paid service, hiring or a phone number - these are not allowed on Helpy. Neighborly help is free. Repeated violations may lead to account suspension.”; and a hide from the Telegram buttons - with its own title, “Your post was hidden”, and the body “The post does not meet Helpy's community guidelines. Repeated violations may lead to account suspension.” (inappropriate) or “Helpy has no sales, paid services, hiring or business promotion. Help between neighbors is free. Repeated violations may lead to account suspension.” (commercial). Sent to the post owner in their app language, and the same text lands as a message in the Helpy thread."},
         {k:"moderation_approved", kind:"op",
          tH:"הפרסום שלך אושר ✅", bH:"בדקנו את הפרסום והוא עומד בכללי הקהילה - הוא מופיע עכשיו לשכנים.",
          tE:"Your post was approved ✅", bE:"We reviewed your post and it meets the community guidelines - it is now visible to neighbors.",
@@ -9123,7 +9161,8 @@
     ["rls","db"],["db","rpc"],["db","realtime"],["db","edge"],["cron","edge"],
     ["cron","db"],["edge","expo"],["edge","llm"],["edge","ops"],["edge","geo"],
     ["nudge","edge"],["moderation","edge"],["web","edge"],
-    ["edge","email"],["phone","attest"],["app","attest"],["gh","db"],["gh","storage"]
+    ["edge","email"],["phone","attest"],["app","attest"],["gh","db"],["gh","storage"],
+    ["app","edge"],["app","meta"],["edge","meta"]
   ];
   var ARCH_FLOWS=[
     {id:"signup", he:"הרשמה", en:"Sign-up",
@@ -9192,8 +9231,8 @@
            en:"Simple local storage on the device itself that survives closing the app. Cleared on sign-out."},
     "Supabase":{he:"הפלטפורמה שמאחדת את מסד הנתונים, האימות, האחסון והפונקציות - התשתית שעליה Helpy רץ.",
            en:"The platform bundling the database, auth, storage and functions - the infrastructure Helpy runs on."},
-    "Claude Haiku":{he:"מודל שפה קטן ומהיר שקורא פוסט חדש ומחליט אם יש בו תוכן מזיק.",
-           en:"A small, fast language model that reads a new post and judges whether it contains harmful content."},
+    "Claude Haiku":{he:"מודל שפה קטן ומהיר: קורא פוסט חדש ומחליט אם יש בו תוכן מזיק, ובודק אם הצעה מתאימה לבקשה תקועה.",
+           en:"A small, fast language model: reads a new post for harmful content, and checks whether an offer fits a stuck request."},
     "Photon":{he:"שירות מפה שמשלים כתובת תוך כדי הקלדה. שום דבר שהוקלד אינו נשמר אצלנו.",
            en:"A map service completing an address as you type. Nothing typed is stored by us."},
     "Nominatim":{he:"שירות שממיר נקודת ציון לשם עיר. משמש להשלמת שם העיר על פוסט.",
@@ -9202,8 +9241,8 @@
            en:"A system reporting app crashes and errors in real time."},
     "PostHog":{he:"מערכת ניתוח שימוש - אילו מסכים נצפו ואילו פעולות בוצעו, ללא תוכן אישי.",
            en:"A product-analytics system - which screens were seen and which actions taken, with no personal content."},
-    "Telegram":{he:"הערוץ שדרכו נשלחות התראות מיידיות למייסד על אירוע חשוב במערכת.",
-           en:"The channel carrying instant founder alerts about anything important in the system."},
+    "Telegram":{he:"הערוצים שדרכם נשלחות התראות מיידיות למייסד: ערוץ דחוף למה שצריך לפעול עליו, וערוץ שוטף לכל השאר.",
+           en:"The channels carrying instant founder alerts: an urgent chat for what needs action, and a routine chat for the rest."},
     "Expo Push":{he:"השירות שמעביר התראה מהשרת שלנו אל מסך הנעילה של המכשיר.",
            en:"The service carrying a notification from our server to the device's lock screen."},
     "Twilio":{he:"הספק ששולח את קוד האימות ב-SMS או בשיחה קולית.",
@@ -9396,7 +9435,8 @@
     step();
   }
   // ---- notifications: what happened to every push we sent -----------------
-  // The log behind this tab is written by all seven senders (log_push_batch).
+  // The log behind this tab is written by all nine edge-function senders (log_push_batch);
+  // the moderation pushes go straight from the DB and are not logged.
   // "Reached the device" is the Expo RECEIPT, harvested ~15 minutes after the
   // send - the only thing in the system that knows a push actually arrived. A
   // ticket alone only says Expo ACCEPTED it, and that distinction is exactly
@@ -9413,9 +9453,11 @@
     // has one whose title is generic ("צוות Helpy") and would tell a reader nothing
     completion_nudge:       {he:"איך הלך עם העזרה?",           en:"How did the help go?"},
     reengagement:           {he:"חזרה אחרי היעדרות",           en:"Come-back nudge"},
+    unanswered_message:     {he:"מחכים לתשובה ממך",            en:"Someone is waiting for you"},
+    // the effectiveness readout still names this sender by its old key
     unanswered_nudge:       {he:"מחכים לתשובה ממך",            en:"Someone is waiting for you"},
     activation_nudge:       {he:"יום אחרי ההרשמה",             en:"Day-after-signup nudge"},
-    offer_owner_nudge:      {he:"בעל/ת הצעה שלא הגיב/ה",       en:"Offer owner who never replied"},
+    offer_owner_nudge:      {he:"ההצעה שלך באוויר - הצצה בבקשות", en:"Your offer is live - look at requests"},
     silent_room_nudge:      {he:"שיחה פתוחה בלי אף הודעה",     en:"An open chat with no message"},
     stuck_chat_question:    {he:"הודעה שנשארה בלי מענה - הכל בסדר?", en:"An unanswered message - everything okay?"},
     helper_badge:           {he:"תג עוזר/ת נפתח",              en:"Helper badge unlocked"},
@@ -9428,7 +9470,7 @@
     helpy_message:          {he:"הודעה מצוות Helpy",            en:"Message from the Helpy team"},
     match_completed:        {he:"העזרה שלך הגיעה",              en:"Your help landed"},
     helper_completion_check:{he:"הצלחת לעזור? (לעוזר/ת)",       en:"Did you manage to help? (giver)"},
-    no_offer_request:       {he:"הבקשה שלך בלי הצעות",          en:"Your request has no offers"},
+    no_offer_request:       {he:"שכן/ה עדיין מחכה לעזרה",        en:"A neighbour is still waiting for help"},
     helpy_admin_reply:      {he:"שכן/ה כתב/ה לצוות",            en:"Someone wrote to the team"},
     // the catalogue calls all three of these "עדכון" - identical rows are worse
     // than unnamed ones, because they look like a duplicate rather than a gap
@@ -9479,7 +9521,7 @@
     return ({answered:S.pnOutAnswered, rating_left:S.pnOutRating, message_sent:S.pnOutMessage,
              offer_received:S.pnOutOffer, offer_decided:S.pnOutDecided, posted:S.pnOutPosted,
              engaged:S.pnOutEngaged, badge_seen:S.pnOutBadge, app_opened:S.pnOutOpened,
-             acted_at_all:S.pnOutActed})[o] || o;
+             acted_at_all:S.pnOutActed, reached_out:S.pnOutReached, details_added:S.pnOutDetails})[o] || o;
   }
   function pushRateCell(acted, sent, weak){
     var pctv = sent? Math.round(100*acted/sent) : 0;
@@ -9777,7 +9819,19 @@
     if(D.completed) ins.push(["good", S.brInsDone(fmt(D.completed)), "brTiles"]);
     ins.push(["info", S.brInsSign(fmt(D.signups||0), (D.signups||0)-(P.signups||0)), "brTiles"]);
     var seen7=(V.seen_7d||[]).reduce(function(a,r){ return a+(r.n||0); },0);
+    // the store's newest version, not app_config's: sync_latest_version holds
+    // Android back until 30% of users run it (the update banner), so on a
+    // staged release config lags the store. Newest of config and any version
+    // seen on 10+ Android users this week, compared as numbers (1.1.10 > 1.1.9).
+    var verNum=function(v){ return String(v||"").split(".").map(function(x){ return parseInt(x,10)||0; }); };
+    var verGt=function(a,b){ var x=verNum(a), y=verNum(b);
+      for(var i=0;i<Math.max(x.length,y.length);i++){ if((x[i]||0)!==(y[i]||0)) return (x[i]||0)>(y[i]||0); } return false; };
     var latestBy={}; (V.config||[]).forEach(function(c){ latestBy[c.p]=c.latest; });
+    // Android only (staged rollout); iOS config follows the store, and a
+    // TestFlight build seen on a few testers must never count as "latest".
+    (V.seen_7d||[]).forEach(function(r){
+      if(r.p==="android" && (r.n||0)>=10 && r.v && (!latestBy[r.p] || verGt(r.v, latestBy[r.p]))) latestBy[r.p]=r.v;
+    });
     var onLatest=(V.seen_7d||[]).filter(function(r){ return latestBy[r.p] && r.v===latestBy[r.p]; })
                    .reduce(function(a,r){ return a+(r.n||0); },0);
     if(seen7) ins.push(["info", S.brInsVer(Math.round(100*onLatest/seen7)), "brPush"]);
@@ -10608,15 +10662,17 @@
      whyH:"אלה חייבים להיות פתוחים: המשתמשים, אפל וגוגל מגיעים אליהם.",
      whyE:"These must stay open: users, Apple and Google all link to them.",
      pages:[
-      ["index-he.html","דף הבית","Home page (Hebrew)","2026-09-15"],
-      ["index.html","דף הבית באנגלית","Home page","2026-09-15"],
-      ["terms-he.html","תנאי שימוש","Terms (Hebrew)","2026-08-20"],
-      ["terms.html","תנאי שימוש באנגלית","Terms of Service","2026-08-20"],
-      ["privacy-he.html","מדיניות פרטיות","Privacy (Hebrew)","2026-09-16"],
-      ["privacy.html","מדיניות פרטיות באנגלית","Privacy Policy","2026-09-16"],
-      ["delete-account-he.html","מחיקת חשבון","Delete account (Hebrew)","2026-08-20"],
-      ["delete-account.html","מחיקת חשבון באנגלית","Delete account","2026-08-20"],
-      ["console/","הקונסול - מסך כניסה בלבד","Console - sign-in screen only","2026-09-17"]
+      ["index-he.html","דף הבית","Home page (Hebrew)","2026-10-22"],
+      ["index.html","דף הבית באנגלית","Home page","2026-10-22"],
+      ["terms-he.html","תנאי שימוש","Terms (Hebrew)","2026-10-22"],
+      ["terms.html","תנאי שימוש באנגלית","Terms of Service","2026-10-22"],
+      ["privacy-he.html","מדיניות פרטיות","Privacy (Hebrew)","2026-10-26"],
+      ["privacy.html","מדיניות פרטיות באנגלית","Privacy Policy","2026-10-26"],
+      ["delete-account-he.html","מחיקת חשבון","Delete account (Hebrew)","2026-10-22"],
+      ["delete-account.html","מחיקת חשבון באנגלית","Delete account","2026-10-22"],
+      ["accessibility-he.html","הצהרת נגישות","Accessibility (Hebrew)","2026-10-22"],
+      ["accessibility.html","הצהרת נגישות באנגלית","Accessibility statement","2026-10-22"],
+      ["console/","הקונסול - מסך כניסה בלבד","Console - sign-in screen only","2026-10-27"]
      ]},
     {id:"docs", he:"מסמכי מוצר", en:"Product documents",
      whyH:"נכתבו במרץ. נפתחים רק מכאן, אחרי כניסה.",
@@ -10809,6 +10865,7 @@
     {he:"תנאי שימוש", en:"Terms", links:[["terms-he.html","עברית","Hebrew"],["terms.html","אנגלית","English"]]},
     {he:"מדיניות פרטיות", en:"Privacy", links:[["privacy-he.html","עברית","Hebrew"],["privacy.html","אנגלית","English"]]},
     {he:"מחיקת חשבון", en:"Delete account", links:[["delete-account-he.html","עברית","Hebrew"],["delete-account.html","אנגלית","English"]]},
+    {he:"הצהרת נגישות", en:"Accessibility", links:[["accessibility-he.html","עברית","Hebrew"],["accessibility.html","אנגלית","English"]]},
     {he:"הקונסול (מסך כניסה בלבד)", en:"Console (sign-in screen only)", links:[["console/","פתיחה","Open"]]}
   ];
   function renderArch(){
@@ -11163,14 +11220,16 @@
   var EX_RATE=null;   // {usd, eur, busy, err}: the exchange-rate editor
   var EX_CATS=["infra","ads","stores","domain","ai","sms","tools","other"];
   var EX_SB_LIMIT=25;  // USD - mirrored from the Supabase spend cap
-  // [name, category, currency, cadence] - a pick pre-fills the rest of a NEW form
+  // [name, category, currency, cadence, free?] - a pick pre-fills the rest of a NEW form;
+  // free?=1 = a vendor on a free plan or not spending now: offered in the form, never listed as missing.
+  // Remove the flag the day that vendor starts charging (ChatGPT Ads: when the campaigns resume).
   var EX_SUGGEST=[
     ["Supabase Pro","infra","USD","monthly"], ["Apple Developer","stores","USD","yearly"],
     ["Google Play","stores","USD","one_time"], ["Twilio","sms","USD","monthly"],
-    ["Anthropic","ai","USD","monthly"], ["ChatGPT Ads","ads","ILS","monthly"],
-    ["Expo","tools","USD","monthly"], ["Sentry","tools","USD","monthly"],
-    ["PostHog","tools","USD","monthly"], ["דומיין help-y.com","domain","USD","yearly"],
-    ["GitHub","tools","USD","monthly"]
+    ["Anthropic","ai","USD","monthly"], ["ChatGPT Ads","ads","ILS","monthly",1],
+    ["Expo","tools","USD","monthly"], ["Sentry","tools","USD","monthly",1],
+    ["PostHog","tools","USD","monthly",1], ["דומיין help-y.com","domain","USD","yearly"],
+    ["GitHub","tools","USD","monthly",1]
   ];
   function expensesOn(){ var v=$("expensesView"); return !!(v && !v.classList.contains("hidden")); }
   function loadExpenses(){
@@ -11523,6 +11582,7 @@
     var have=exLedgerRows().map(function(r){ return String(r.vendor||"").trim().toLowerCase(); })
       .filter(function(s){ return s.length>=3; });
     var miss=EX_SUGGEST.filter(function(s){
+      if(s[4]) return false;
       var n=s[0].toLowerCase(), first=n.split(" ")[0];
       return !have.some(function(h){
         return h.indexOf(n)>=0 || n.indexOf(h)>=0 || (first.length>=4 && h.indexOf(first)===0) ||
@@ -12507,7 +12567,7 @@
       // nobody is looking at; the previous pull is carried forward instead.
       body:JSON.stringify({days:fetchDays,chatDays:chatDays,window:RANGE,
                            metaDays: wantMeta? META_DAYS : 0,
-                           postsLimit: wantPosts? 500 : 0,
+                           postsLimit: wantPosts? 2000 : 0,
                            // always pulled: unlike Meta this is a local indexed
                            // aggregate, and stale delivery numbers are exactly
                            // the thing this tab exists to prevent
