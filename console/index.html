@@ -3003,7 +3003,7 @@
       instDef:function(k,R){
         if(k==="certain_installed") return "פתחו את האפליקציה "+this.instDays(R.opened_days);
         if(k==="probe_confirmed_installed") return "לא פתחו לאחרונה. נשלחה בדיקה שקטה שהגיעה בהצלחה "+this.instRange(R)+", ומאז אין סימן מחיקה";
-        if(k==="probably_installed") return "יש התראות פעילות, ועוד אין בדיקה שקטה שהגיעה בהצלחה "+this.instRange(R);
+        if(k==="probably_installed") return "יש התראות פעילות, ועוד אין בדיקה שקטה שהגיעה בהצלחה לאחרונה";
         if(k==="unknown") return "לא פתחו לאחרונה, ואין לנו שום דרך לשלוח להם התראה";
         return "\u2068Apple\u2069 או גוגל דחו התראה למכשיר (המכשיר לא רשום יותר), ומאז לא פתחו את האפליקציה";
       },
@@ -4038,7 +4038,7 @@
       instDef:function(k,R){
         if(k==="certain_installed") return "Opened the app "+this.instDays(R.opened_days);
         if(k==="probe_confirmed_installed") return "Not opened lately. A silent check sent "+this.instRange(R)+" was delivered, with no sign of removal since";
-        if(k==="probably_installed") return "Push is active, but no silent check sent "+this.instRange(R)+" has been delivered";
+        if(k==="probably_installed") return "Push is active, but no silent check has been delivered lately";
         if(k==="unknown") return "Not opened lately, and we have no way to send them a notification";
         return "Apple or Google refused a push to the device (it is no longer registered), and they have not opened the app since";
       },
