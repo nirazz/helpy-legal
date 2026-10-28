@@ -372,9 +372,12 @@
                  transition:flex-grow .6s cubic-bezier(.2,.8,.2,1); }
   .seglegend { display:flex; flex-wrap:wrap; gap:6px 16px; font-size:12.5px;
                color:var(--ink2); margin-bottom:4px; }
-  .seglegend i { width:9px; height:9px; border-radius:3px; display:inline-block;
+  .seglegend i, .swatch { width:9px; height:9px; border-radius:3px; display:inline-block;
                  margin-inline-end:6px; vertical-align:-1px; }
   .seglegend b { color:var(--ink); font-variant-numeric:tabular-nums; }
+  /* the installs table: the name leads, its definition is quieter (not .sub) */
+  .instname { font-weight:600; }
+  .instdef { font-size:12px; margin:0; font-weight:400; color:var(--muted); line-height:1.4; }
   /* Depth the Apple way: material, light and elevation - NOT 3D chart geometry
      (3D distorts value reading; NN/g lists it as a dashboard anti-pattern).
      Panels sit on layered light: a specular top edge, a soft cast shadow, and
@@ -2271,6 +2274,9 @@
         <span class="seg mini" id="funnelSeg"><button data-d="14" class="on" data-i18n="d14">14 יום</button><button data-d="30" data-i18n="d30">30 יום</button></span></h2>
         <div class="sub" data-i18n="funnelSub">מה עושה משתמש חדש אחרי ההרשמה</div><div id="funnel"></div></section>
       <section class="panel"><h2 data-i18n="lifecycleTitle">מאזן משתמשים</h2><div class="sub" data-i18n="lifecycleSub">חתך חי של כל המשתמשים הרשומים</div><div id="lifecycle"></div></section>
+      <!-- who still has the app (get_install_status, every load): five buckets
+           from our own data + the store numbers with their date -->
+      <section class="panel wide"><h2 data-i18n="instTitle">התקנות</h2><div class="sub" data-i18n="instSub">מי עדיין מחזיק/ה באפליקציה, לפי מה שאנחנו יודעים בוודאות על כל משתמש/ת</div><div id="installs"></div></section>
       <section class="panel wide"><h2 data-i18n="churnTitle">עומדים לעזוב</h2><div class="sub" data-i18n="churnSub">ציון סיכון לכל מי שנכנס בחודש האחרון · קודם מי שמחכים לו שכנים</div><div id="churnRisk"></div></section>
       <section class="panel wide"><h2 data-i18n="glogTitle">יומן צמיחה · שבוע אחר שבוע</h2><div class="sub" data-i18n="glogSub">מה קרה בכל שבוע, מה השתנה, ומה גרם לזה</div><div id="growthLog"></div></section>
       <!-- the push senders are judged in ONE place, the Notifications tab -->
@@ -2984,6 +2990,34 @@
       rdChurnPending:function(date){ return "הציון בנוי מכללים פשוטים (ימים בלי כניסה, התראות, ותק, פוסט או שיחה פתוחה) ועדיין <b>לא נבדק</b> מול מה שמשתמשים עשו בפועל. כל לילה נשמר צילום של הציון, ומ-<b>"+date+"</b> יופיע כאן כמה מכל קבוצה חזרו תוך שבוע. אם בסיכון הגבוה לא חוזרים פחות מאשר בנמוך, הכללים לא נכונים ומשנים אותם."; },
       rdChurnReadout:function(rows){ return "<b>חזרו תוך שבוע מהצילום:</b> "+rows+". אם בסיכון הגבוה חוזרים פחות, הציון עובד."; },
       chRow:function(name,r,n,p){ return name+": "+r+" מתוך "+n; },
+      instTitle:"התקנות", instSub:"מי עדיין מחזיק/ה באפליקציה, לפי מה שאנחנו יודעים בוודאות על כל משתמש/ת",
+      instName:{ certain_installed:"מותקנת בוודאות", probe_confirmed_installed:"נבדקה, אין סימן מחיקה",
+                 probably_installed:"כנראה מותקנת", unknown:"לא ידוע", certain_removed:"נמחקה" },
+      // the numbers come from install_status.rules, so the words match the server
+      instDays:function(n){ return n===1? "ביום האחרון" : "ב-"+n+" הימים האחרונים"; },
+      instRange:function(R){ // settle_hours..fresh_days -> "לפני 2 עד 7 ימים"
+        var lo=R.settle_hours%24===0? R.settle_hours/24 : null;
+        var from= lo===null? R.settle_hours+" שעות" : lo===1? "יום" : String(lo);
+        return "לפני "+from+" עד "+R.fresh_days+" ימים";
+      },
+      instDef:function(k,R){
+        if(k==="certain_installed") return "פתחו את האפליקציה "+this.instDays(R.opened_days);
+        if(k==="probe_confirmed_installed") return "לא פתחו לאחרונה. נשלחה בדיקה שקטה שהגיעה בהצלחה "+this.instRange(R)+", ומאז אין סימן מחיקה";
+        if(k==="probably_installed") return "יש התראות פעילות, ועוד אין בדיקה שקטה שהגיעה בהצלחה לאחרונה";
+        if(k==="unknown") return "לא פתחו לאחרונה, ואין לנו שום דרך לשלוח להם התראה";
+        return "\u2068Apple\u2069 או גוגל דחו התראה למכשיר (המכשיר לא רשום יותר), ומאז לא פתחו את האפליקציה";
+      },
+      instColState:"מצב", instColAll:"כולם", instColIos:"אייפון", instColAnd:"אנדרואיד", instColNone:"בלי פלטפורמה",
+      instTotal:"סה״כ משתמשים חיים",
+      instStoreLink:function(d){ return "ההורדות וההסרות לפי החנויות, נכון ל-"+d+": בלוח «מהחנות ועד פעילות»"; },
+      instAge:function(min){
+        if(min<2) return "עודכן עכשיו";
+        if(min<60) return "עודכן לפני "+min+" דקות";
+        var h=Math.floor(min/60); if(h<24) return h===1? "עודכן לפני שעה" : h===2? "עודכן לפני שעתיים" : "עודכן לפני "+h+" שעות";
+        var d=Math.floor(h/24); return d===1? "עודכן לפני יום" : d===2? "עודכן לפני יומיים" : "עודכן לפני "+d+" ימים";
+      },
+      instHonest:"אף אפליקציה לא יכולה לדעת ברגע אמת שמחקו אותה: הטלפון לא מודיע על כך. החנויות מדווחות באיחור של כמה ימים, ולכן המספרים למעלה הם מה שהנתונים שלנו מוכיחים עכשיו. המספרים של החנויות, עם התאריך שלהם, בלוח «מהחנות ועד פעילות».",
+      instEmpty:"עוד אין נתוני התקנות.",
       acqAds:"מתוכם הגיעו ממודעות", acqOrg:"מתוכם הגיעו אורגני (חנות, הזמנה, אתר)", acqUnk:"מתוכם מקור לא ידוע",
       rdAcq:function(ads,org,known,pAds,ios,and){ return " <b>מקור ההגעה:</b> ידוע רק אצל <b>"+known+"</b> משתמשים, ומתוכם <b>"+pAds+"</b> הגיעו ממודעות ("+ads+" מול "+org+" אורגני). לכן שני המספרים, מודעות ואורגני, הם מינימום ולא התמונה המלאה. <b>למה אצל רוב המשתמשים המקור לא ידוע:</b> באנדרואיד, \u2068Google Play\u2069 מעביר לאפליקציה את הקישור שממנו הגיעה ההתקנה, וממנו אנחנו יודעים אם זו מודעה, הזמנה מחבר או חיפוש בחנות. התחלנו לשמור אותו רק מגרסה \u20681.1.22\u2069 (ספטמבר 2026), ולכן <b>"+and+"</b> משתמשי אנדרואיד שהצטרפו לפני כן, או לא פתחו גרסה חדשה מאז, נשארו בלי מקור. באייפון אין דבר כזה בכלל: אפל מנתקת בכוונה, למען פרטיות המשתמשים, את הקשר בין מי שראה מודעה לבין מי שהתקין. \u2068Meta\u2069 מקבלת מאפל רק סיכומים כמו 'הקמפיין הביא כ-12 התקנות השבוע', בלי לדעת מי הם. לכן כל <b>"+ios+"</b> משתמשי האייפון בלי מקור, וזה לא ישתנה. הדרך היחידה לדעת על כולם היא לשאול כל משתמש אחרי ההרשמה איך שמע עלינו."; },
       liq1:"בקשות חדשות", liq2:"קיבלו הצעה תוך יממה", liq3:"קיבלו הצעה בסוף", liq4:"חציון זמן להצעה ראשונה",
@@ -3512,6 +3546,7 @@
         cron_runs:["היסטוריית משימות מתוזמנות","מתי כל משימה מתוזמנת רצה, והאם הצליחה"],
         http_responses:["תשובות שרת פנימיות","התשובות לקריאות שהשרת שולח לעצמו"],
         backup_runs:["יומן הגיבויים","כל ריצה של הגיבוי החיצוני והתוצאה שלה"],
+        liveness_probe_sends:["בדיקות התקנה שקטות","כל בדיקה שקטה שנשלחה ומה ענו עליה, כדי לדעת מי עדיין מחזיק/ה באפליקציה - נמחק אחרי 14 יום"],
         urgent_push_claims:["פוש דחוף - מי קיבל היום","מי קיבל/ה פוש על בקשה דחופה ב-24 השעות האחרונות, כדי שלא יקבלו יותר מאחד ביום - נמחק אחרי יומיים"],
         account_deletion_holds:["חשבונות שנמחקו - 30 יום לשחזור","מה שצריך כדי לשחזר חשבון שנמחק אם המשתמש/ת מתחרט/ת - נמחק סופית אחרי 30 יום"] },
       bkFoot:"נתוני המשתמשים עצמם (פרופילים, פוסטים, שיחות) נשמרים עד שהמשתמש/ת מוחק/ת את החשבון. אחרי מחיקה יש 30 יום לשחזר אותו, ואז המחיקה סופית. מהגיבויים הכל נמחק תוך 90 יום לכל היותר.",
@@ -3634,7 +3669,8 @@
       scMonNames:{ cron_delivery:"קריאות קרון לפונקציות", outbox:"שיגור חוזר של קריאות",
         cron_jobs:"פקודות קרון", push_tickets:"כרטיסי פוש", daily_digest:"הסיכום היומי",
         push_auth:"התראות פוש", founder_alerts:"התראות טלגרם", moderate_post:"סינון תוכן אוטומטי",
-        abuse_volume:"הצפה בפעולות משתמשים", cap_headroom:"תקרות יומיות נגד הצפה" },
+        abuse_volume:"הצפה בפעולות משתמשים", cap_headroom:"תקרות יומיות נגד הצפה",
+        attestation_ios:"אימות מכשיר באייפון", attestation_android:"אימות מכשיר באנדרואיד", attestation_platform:"אימות מכשיר: זיהוי פלטפורמה" },
       scNowTitle:"עכשיו",
       scNowSub:"כמה פעולות נעשו ממש עכשיו, מול התקרה שמעליה נכנס בלם.",
       scNowEmpty:"אין מונים פעילים כרגע.",
@@ -3775,7 +3811,7 @@
                  offsite_backup:"גיבוי חיצוני" },
       brTabBadge:function(n){ return n==="1"? "דבר אחד מחכה לך בבוקר" : n+" דברים מחכים לך בבוקר"; },
       brAllUp:function(n){ return "כל "+n+" הבדיקות תקינות"; }, brRestUp:function(n){ return "עוד "+n+" תקינות"; }, brShowChecks:"הצגת כולן", brHideChecks:"הסתרה",
-      brCheck:function(x){ return (this.brChecks && this.brChecks[x]) || String(x||"").replace(/_/g," "); },
+      brCheck:function(x){ return (this.brChecks && this.brChecks[x]) || MON_NAMES()[x] || String(x||"").replace(/_/g," "); },
       brCron:"משימות מתוזמנות שהגיעו לשרת", brCronLine:function(ok,to,dns,from,to2){ return "<b>"+ok+"</b> עברו · <b>"+to+"</b> איטיות (אין תשובה תוך 5 שניות) · <b>"+dns+"</b> אבדו לפני שיצאו<br><span class=\"brwin\">בין "+from+" ל-"+to2+"</span>"; },
       brCronNote:"קריאה איטית בדרך כלל עדיין מריצה את המשימה - השרת רק הפסיק לחכות לתשובה. קריאה שאבדה לפני שיצאה מעולם לא עזבה את השרת.",
       brDigest:"הסיכום של 09:00", brDigestOk:function(t){ return "נשלח היום ב-"+t; }, brDigestMissing:"עוד לא נשלח היום (היה אמור לצאת ב-09:00)", brDigestDue:"יוצא ב-09:00",
@@ -3990,6 +4026,33 @@
       rdChurnPending:function(date){ return "The score is built from simple rules (days since last open, notifications, account age, an open post or chat) and has <b>not been checked</b> against what people actually did. A snapshot is saved every night, and from <b>"+date+"</b> this panel shows how many in each group came back within a week. If high-risk people do not come back less often than low-risk ones, the rules are wrong and get changed."; },
       rdChurnReadout:function(rows){ return "<b>Came back within a week of the snapshot:</b> "+rows+". If high risk comes back less often, the score works."; },
       chRow:function(name,r,n,p){ return name+" "+p+" ("+r+" of "+n+")"; },
+      instTitle:"Installs", instSub:"Who still has the app, by what we know for certain about each user",
+      instName:{ certain_installed:"Installed for sure", probe_confirmed_installed:"Checked, no sign of removal",
+                 probably_installed:"Probably installed", unknown:"Unknown", certain_removed:"Removed" },
+      instDays:function(n){ return n===1? "in the last day" : "in the last "+n+" days"; },
+      instRange:function(R){
+        var lo=R.settle_hours%24===0? R.settle_hours/24 : null;
+        var from= lo===null? R.settle_hours+" hours" : String(lo);
+        return from+" to "+R.fresh_days+" days ago";
+      },
+      instDef:function(k,R){
+        if(k==="certain_installed") return "Opened the app "+this.instDays(R.opened_days);
+        if(k==="probe_confirmed_installed") return "Not opened lately. A silent check sent "+this.instRange(R)+" was delivered, with no sign of removal since";
+        if(k==="probably_installed") return "Push is active, but no silent check has been delivered lately";
+        if(k==="unknown") return "Not opened lately, and we have no way to send them a notification";
+        return "Apple or Google refused a push to the device (it is no longer registered), and they have not opened the app since";
+      },
+      instColState:"State", instColAll:"All", instColIos:"iPhone", instColAnd:"Android", instColNone:"No platform",
+      instTotal:"Total live users",
+      instStoreLink:function(d){ return "Downloads and uninstalls according to the stores, as of "+d+": in the \u201cFrom store to activity\u201d panel"; },
+      instAge:function(min){
+        if(min<2) return "Updated just now";
+        if(min<60) return "Updated "+min+" minutes ago";
+        var h=Math.floor(min/60); if(h<24) return h===1? "Updated an hour ago" : "Updated "+h+" hours ago";
+        var d=Math.floor(h/24); return d===1? "Updated a day ago" : "Updated "+d+" days ago";
+      },
+      instHonest:"No app can know the moment it is deleted: the phone does not tell it. The stores report a few days late, so the numbers above are what our own data proves right now. The store numbers, with their date, are in the \u201cFrom store to activity\u201d panel.",
+      instEmpty:"No install data yet.",
       acqAds:"of them came from ads", acqOrg:"of them came organically (store, invite, site)", acqUnk:"of them source unknown",
       rdAcq:function(ads,org,known,pAds,ios,and){ return " <b>How they found us:</b> known for only <b>"+known+"</b> users, and <b>"+pAds+"</b> of those came from ads ("+ads+" vs "+org+" organic). So both numbers, ads and organic, are floors, not the full picture. <b>Why most users have no source:</b> on Android, Google Play hands the app the link the install came from, which tells us whether it was an ad, an invite from a friend or a store search. We only started saving it in 1.1.22 (September 2026), so the <b>"+and+"</b> Android users who joined before that, or have not opened a newer version since, have none. iPhone has nothing like it: Apple deliberately cuts the link between who saw an ad and who installed, for user privacy. Meta only gets totals from Apple, like 'the campaign brought about 12 installs this week', never who they were. So all <b>"+ios+"</b> iPhone users have no source, and that will not change. The only way to know for everyone is to ask each user after sign-up how they heard about us."; },
       liq1:"New requests", liq2:"Got an offer within 24h", liq3:"Got an offer eventually", liq4:"Median time to first offer",
@@ -4513,6 +4576,7 @@
         cron_runs:["Scheduled job history","When each scheduled job ran, and whether it worked"],
         http_responses:["Internal call responses","Replies to calls the server makes to itself"],
         backup_runs:["Backup log","Every off-site backup run and its result"],
+        liveness_probe_sends:["Silent install checks","Every silent check we sent and what came back, to know who still has the app - erased after 14 days"],
         urgent_push_claims:["Urgent push - who got one today","Who got an urgent-request push in the last 24 hours, so nobody gets more than one a day - erased after two days"],
         account_deletion_holds:["Deleted accounts - 30 days to restore","What restoring a deleted account needs if the person changes their mind - erased for good after 30 days"] },
       bkFoot:"The users' own data (profiles, posts, chats) is kept until the account is deleted. After a deletion there are 30 days to restore it, then it is final. Everything is gone from the backups within 90 days at most.",
@@ -4633,7 +4697,8 @@
       scMonNames:{ cron_delivery:"Cron calls to functions", outbox:"Call re-delivery",
         cron_jobs:"Cron jobs", push_tickets:"Push tickets", daily_digest:"Daily digest",
         push_auth:"Push notifications", founder_alerts:"Telegram alerts", moderate_post:"Automatic content filter",
-        abuse_volume:"Flood of user actions", cap_headroom:"Daily anti-abuse caps" },
+        abuse_volume:"Flood of user actions", cap_headroom:"Daily anti-abuse caps",
+        attestation_ios:"Device check on iPhone", attestation_android:"Device check on Android", attestation_platform:"Device check: platform detection" },
       scNowTitle:"Right now",
       scNowSub:"How many actions are happening right now, against the ceiling where a brake kicks in.",
       scNowEmpty:"No active counters right now.",
@@ -4772,7 +4837,7 @@
                  offsite_backup:"Off-site backup" },
       brTabBadge:function(n){ return n==="1"? "One thing is waiting in the brief" : n+" things are waiting in the brief"; },
       brAllUp:function(n){ return "All "+n+" checks OK"; }, brRestUp:function(n){ return n+" more OK"; }, brShowChecks:"Show all", brHideChecks:"Hide",
-      brCheck:function(x){ return (this.brChecks && this.brChecks[x]) || String(x||"").replace(/_/g," "); },
+      brCheck:function(x){ return (this.brChecks && this.brChecks[x]) || MON_NAMES()[x] || String(x||"").replace(/_/g," "); },
       brCron:"Scheduled jobs reaching the server", brCronLine:function(ok,to,dns,from,to2){ return "<b>"+ok+"</b> got through · <b>"+to+"</b> slow (no answer in 5s) · <b>"+dns+"</b> lost before sending<br><span class=\"brwin\">"+from+"-"+to2+"</span>"; },
       brCronNote:"A slow call usually still runs the job - the server just stopped waiting for the answer. A call lost before sending never left the server.",
       brDigest:"The 09:00 digest", brDigestOk:function(t){ return "sent today at "+t; }, brDigestMissing:"not sent yet today (due at 09:00)", brDigestDue:"goes out at 09:00",
@@ -6804,27 +6869,7 @@
     var totalU=parts.reduce(function(a,p){ return a+(+p[1]||0); },0);
     if(!totalU){ emptyState(us,S.emptyStates,"refresh"); }
     else {
-      // legend above, one proportional bar below - a share is read by LENGTH
-      var lg=el("div","seglegend");
-      parts.forEach(function(p){
-        if(!p[1]) return;
-        var it=el("span");
-        var sw=el("i"); sw.style.background=p[2]; it.appendChild(sw);
-        it.appendChild(document.createTextNode(p[0]+" "));
-        var b=el("b",null,fmt(p[1])+" ("+pct(p[1],totalU)+")");
-        it.appendChild(b);
-        lg.appendChild(it);
-      });
-      us.appendChild(lg);
-      var bar=el("div","segbar");
-      parts.forEach(function(p){
-        if(!p[1]) return;
-        var seg=el("span"); seg.style.background=p[2];
-        seg.style.flexGrow=p[1]; seg.style.flexBasis="0";
-        seg.title=p[0]+": "+fmt(p[1])+" ("+pct(p[1],totalU)+")";
-        bar.appendChild(seg);
-      });
-      us.appendChild(bar);
+      segBarInto(us, parts, totalU);
       us.appendChild(el("p","note",S.stCaption));
       panelRead("userStates", (ST.new_u/totalU)>0.5?"warn":"",
         S.rdStates(pct(ST.new_u,totalU), pct(ST.current_u,totalU)));
@@ -7079,6 +7124,89 @@
     }
   }
 
+  // A share read by LENGTH: legend above, one proportional bar below.
+  // parts = [[label, count, colour], ...]; zero parts are left out of both.
+  function segBarInto(host, parts, total){
+    var lg=el("div","seglegend"), bar=el("div","segbar");
+    parts.forEach(function(p){
+      if(!p[1]) return;
+      var it=el("span"), sw=el("i","swatch"); sw.style.background=p[2]; it.appendChild(sw);
+      it.appendChild(document.createTextNode(p[0]+" "));
+      it.appendChild(el("b",null,fmt(p[1])+" ("+pct(p[1],total)+")"));
+      lg.appendChild(it);
+      var seg=el("span"); seg.style.background=p[2];
+      seg.style.flexGrow=p[1]; seg.style.flexBasis="0";
+      seg.title=p[0]+": "+fmt(p[1])+" ("+pct(p[1],total)+")";
+      bar.appendChild(seg);
+    });
+    host.appendChild(lg); host.appendChild(bar);
+  }
+  // ── Installs ────────────────────────────────────────────────────────────
+  // Buckets from DATA.install_status (thresholds and words from its .rules),
+  // store numbers from DATA.store_funnel.stores (one copy of them), the
+  // "updated" line from as_of, refreshed by the 5-second ticker.
+  // Set when a FULL, successful load that asked for install_status came back
+  // without it (a server from before the feature); cleared 10 minutes later so
+  // a deploy in between is picked up without a reload.
+  var INST_OFF_AT=0;
+  function instOff(){ return INST_OFF_AT>0 && Date.now()-INST_OFF_AT < 10*60000; }
+  var INST_ORDER=["certain_installed","probe_confirmed_installed","probably_installed","unknown","certain_removed"];
+  function instAgeLine(){
+    var n=$("instAge"), I=DATA && DATA.install_status;
+    if(!n || !I || !I.as_of) return;
+    var t=new Date(I.as_of).getTime(); if(!isFinite(t)) { n.textContent=""; return; }
+    n.textContent=S.instAge(Math.max(0,Math.floor((Date.now()-t)/60000)));
+  }
+  function renderInstalls(){
+    var host=$("installs"); if(!host) return;
+    host.innerHTML="";
+    var I=DATA && DATA.install_status, T=I && I.total, R=I && I.rules;
+    // every threshold the copy prints must be a real number, or nothing is said
+    var num=function(v){ return typeof v==="number" && isFinite(v) && v>0; };
+    if(!T || !R || !(+T.real_users>0) || !num(R.opened_days) || !num(R.settle_hours) || !num(R.fresh_days)){
+      emptyState(host,S.instEmpty,"users"); return;
+    }
+    var P=I.platforms||{}, hasNone=P.unknown && +P.unknown.real_users>0;
+    var cols=[tok("--s3"),tok("--s5"),tok("--s1"),tok("--meas"),tok("--s8")];
+    segBarInto(host, INST_ORDER.map(function(k,i){ return [S.instName[k], +T[k]||0, cols[i]]; }), +T.real_users);
+    // one bucket per row, its plain definition under the name (wraps on a phone)
+    var t=el("table","plain"), hr=el("tr");
+    var heads=[S.instColState,S.instColAll,S.instColIos,S.instColAnd]; if(hasNone) heads.push(S.instColNone);
+    heads.forEach(function(h){ hr.appendChild(el("th",null,h)); });
+    t.appendChild(hr);
+    var cell=function(pf,k){ var r=P[pf]; return fmt(r? +r[k]||0 : 0); };
+    var row=function(th,k){
+      var tr=el("tr"); tr.appendChild(th);
+      tr.appendChild(el("td",null,fmt(+T[k]||0)));
+      tr.appendChild(el("td",null,cell("ios",k)));
+      tr.appendChild(el("td",null,cell("android",k)));
+      if(hasNone) tr.appendChild(el("td",null,cell("unknown",k)));
+      t.appendChild(tr);
+    };
+    INST_ORDER.forEach(function(k,i){
+      var th=el("th"); th.style.whiteSpace="normal";
+      var nm=el("div","instname"), sw=el("i","swatch"); sw.style.background=cols[i];
+      nm.appendChild(sw); nm.appendChild(document.createTextNode(S.instName[k]));
+      th.appendChild(nm); th.appendChild(el("p","instdef",S.instDef(k,R)));
+      row(th,k);
+    });
+    row(el("th",null,S.instTotal),"real_users");
+    var wrap=el("div"); wrap.style.overflowX="auto"; wrap.appendChild(t); host.appendChild(wrap);
+    // the store numbers live in one panel ("מהחנות ועד פעילות"): point to it
+    // with the oldest of the two report dates, never repeat them here
+    var ST=(DATA.store_funnel && DATA.store_funnel.stores)||{};
+    var dates=["ios","android"].map(function(k){ return ST[k] && ST[k].data_through; }).filter(Boolean).sort();
+    if(dates.length && $("storeFunnel")){
+      var sl=el("button","linklike",S.instStoreLink(fmtDay(dates[0])));
+      sl.style.marginTop="12px"; sl.style.textAlign="start";
+      sl.addEventListener("click",function(){ $("storeFunnel").scrollIntoView({behavior:"smooth",block:"start"}); });
+      host.appendChild(sl);
+    }
+    var age=el("p","note"); age.id="instAge"; host.appendChild(age);
+    instAgeLine();
+    host.appendChild(el("p","note",S.instHonest));
+  }
+
   function renderMetrics(){
     var k=DATA.kpis, dl=DATA.deltas||{};
     renderInsights();
@@ -7260,6 +7388,14 @@
           pct(+AQ.ads||0,aqKnown), fmt(+AQ.unknown_ios||0), fmt(+AQ.unknown_android||0));
       }
       panelRead("lifecycle", (lf.dormant_30d/k.live_users)>0.5?"warn":"", lfRead);
+    }
+
+    // Installs (get_install_status): five buckets that add up to every live
+    // user, then the store numbers with their own date. Isolated: a bad
+    // payload empties this panel only.
+    try{ renderInstalls(); }catch(e){
+      console.error("renderInstalls failed",e);
+      var ih=$("installs"); if(ih){ ih.innerHTML=""; emptyState(ih,S.instEmpty,"users"); }
     }
 
     // About to leave: rules-based churn score (get_churn_risk). Names and post
@@ -8840,7 +8976,7 @@
      dE:"Small server code running close to the user. Everything the client must not be trusted with lives here: sending notifications and emails, phone verification, moderation, founder alerts, server and crash monitoring, and this console's own API. Every limit they enforce lives in the database - never in function memory, which resets on every boot."},
     {id:"cron", col:"auto", c:"--s2",
      he:"משימות מתוזמנות", en:"Scheduled jobs",
-     shH:"pg_cron · 50 משימות (48 פעילות)", shE:"pg_cron · 50 jobs (48 active)",
+     shH:"pg_cron · 52 משימות (50 פעילות)", shE:"pg_cron · 52 jobs (50 active)",
      dH:"שעון בתוך המסד שמפעיל משימות לפי לוח זמנים: תזכורות, סגירת התאמות שנתקעו, הורדת פוסטים שבעליהם לא ענו למייל, השלמת שמות ערים, חיבור בקשות תקועות להצעות, הודעת מסע משתמש חדש לטלגרם כחצי שעה אחרי ההרשמה, דוח יומי. הדחיפות מוגבלות ל-10:00-19:00 בישראל; משימות התחזוקה רצות מסביב לשעון - בריאות השרת וקריסות כל 5 דקות, שליחה חוזרת של קריאות שלא יצאו, כלב שמירה כל שעה, קבלות, פרסום דירוגים, ניקוי האחסון, מחיקת יומנים לפי כללי השמירה, מחיקה סופית של חשבון 30 יום אחרי בקשת המחיקה, ניקוי פוסטים של חשבונות שנמחקו, תמונת מצב לילית של סיכון נטישה, הסיכום של 06:00 UTC וסנכרון גרסה.",
      dE:"A clock inside the database firing jobs on a schedule: reminders, closing stalled matches, taking down posts whose owners never answered the email, filling in city names, connecting stuck requests to offers, a new-user journey message to Telegram about half an hour after sign-up, the daily digest. Push senders keep to 10:00-19:00 Israel; the maintenance jobs run around the clock - server health and crashes every 5 min, re-sending calls that never left, watchdog hourly, receipts, rating publish, the storage sweep, pruning logs by their retention rules, final deletion of an account 30 days after it asked, scrubbing deleted accounts' posts, a nightly churn-risk snapshot, the 06:00 UTC digest and version sync."},
     {id:"nudge", col:"auto", c:"--s2",
@@ -12527,6 +12663,7 @@
       : S.updatedAt(new Date(lastLoadTs).toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit",timeZone:"Asia/Jerusalem"}));
     g.title = S.updatedAgo(s);
     g.classList.toggle("stale", !!staleSince);
+    try{ instAgeLine(); }catch(e){}
   }
   setInterval(updateTicker,5000);
 
@@ -12558,6 +12695,12 @@
     var wantPosts = !autoTick || !DATA || !DATA.posts ||
                     (onAds && onAds.getAttribute("data-v")==="posts");
     var carryPosts = wantPosts? null : DATA.posts;
+    // install status (opt-in, installs:1): the last answer is carried until
+    // it is 10+ minutes old (its "updated" line keeps ageing from as_of); a
+    // server that answered without it is not asked again this session
+    var instAsOf = DATA && DATA.install_status && new Date(DATA.install_status.as_of).getTime();
+    var wantInst = !instOff() && (!instAsOf || !isFinite(instAsOf) || Date.now()-instAsOf >= 10*60000);
+    var carryInst = wantInst? null : (DATA && DATA.install_status) || null;
     var hdrs={"content-type":"application/json"};
     if(SESSION && SESSION.access_token) hdrs["authorization"]="Bearer "+SESSION.access_token;
     // a request that never settles used to leave the page in a silent
@@ -12578,6 +12721,7 @@
       body:JSON.stringify({days:fetchDays,chatDays:chatDays,window:RANGE,
                            metaDays: wantMeta? META_DAYS : 0,
                            postsLimit: wantPosts? 2000 : 0,
+                           installs: wantInst? 1 : 0,
                            // always pulled: unlike Meta this is a local indexed
                            // aggregate, and stale delivery numbers are exactly
                            // the thing this tab exists to prevent
@@ -12596,6 +12740,10 @@
     }).then(function(d){
       if(carryMeta && !d.meta_ads) d.meta_ads=carryMeta;
       if(carryPosts && !d.posts) d.posts=carryPosts;
+      // back off only on a full successful load that lacks it (never on a
+      // partial payload or an error - those prove nothing about the server)
+      if(wantInst && !d.install_status && !d.partial && !d.error) INST_OFF_AT=Date.now();
+      if(carryInst && !d.install_status) d.install_status=carryInst;
       if(d.backlog){ BACKLOG=(d.backlog.items||[]).filter(Boolean); BL_UPDATED=d.backlog.updated||null; }
       var wasPartial=!!(DATA && DATA.partial);
       DATA=d;
