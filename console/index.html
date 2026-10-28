@@ -7145,7 +7145,11 @@
   // Buckets from DATA.install_status (thresholds and words from its .rules),
   // store numbers from DATA.store_funnel.stores (one copy of them), the
   // "updated" line from as_of, refreshed by the 5-second ticker.
-  var INST_OFF=false; // set once the server answered a request without install_status
+  // Set when a FULL, successful load that asked for install_status came back
+  // without it (a server from before the feature); cleared 10 minutes later so
+  // a deploy in between is picked up without a reload.
+  var INST_OFF_AT=0;
+  function instOff(){ return INST_OFF_AT>0 && Date.now()-INST_OFF_AT < 10*60000; }
   var INST_ORDER=["certain_installed","probe_confirmed_installed","probably_installed","unknown","certain_removed"];
   function instAgeLine(){
     var n=$("instAge"), I=DATA && DATA.install_status;
@@ -8964,7 +8968,7 @@
      dE:"Small server code running close to the user. Everything the client must not be trusted with lives here: sending notifications and emails, phone verification, moderation, founder alerts, server and crash monitoring, and this console's own API. Every limit they enforce lives in the database - never in function memory, which resets on every boot."},
     {id:"cron", col:"auto", c:"--s2",
      he:"משימות מתוזמנות", en:"Scheduled jobs",
-     shH:"pg_cron · 50 משימות (48 פעילות)", shE:"pg_cron · 50 jobs (48 active)",
+     shH:"pg_cron · 52 משימות (50 פעילות)", shE:"pg_cron · 52 jobs (50 active)",
      dH:"שעון בתוך המסד שמפעיל משימות לפי לוח זמנים: תזכורות, סגירת התאמות שנתקעו, הורדת פוסטים שבעליהם לא ענו למייל, השלמת שמות ערים, חיבור בקשות תקועות להצעות, הודעת מסע משתמש חדש לטלגרם כחצי שעה אחרי ההרשמה, דוח יומי. הדחיפות מוגבלות ל-10:00-19:00 בישראל; משימות התחזוקה רצות מסביב לשעון - בריאות השרת וקריסות כל 5 דקות, שליחה חוזרת של קריאות שלא יצאו, כלב שמירה כל שעה, קבלות, פרסום דירוגים, ניקוי האחסון, מחיקת יומנים לפי כללי השמירה, מחיקה סופית של חשבון 30 יום אחרי בקשת המחיקה, ניקוי פוסטים של חשבונות שנמחקו, תמונת מצב לילית של סיכון נטישה, הסיכום של 06:00 UTC וסנכרון גרסה.",
      dE:"A clock inside the database firing jobs on a schedule: reminders, closing stalled matches, taking down posts whose owners never answered the email, filling in city names, connecting stuck requests to offers, a new-user journey message to Telegram about half an hour after sign-up, the daily digest. Push senders keep to 10:00-19:00 Israel; the maintenance jobs run around the clock - server health and crashes every 5 min, re-sending calls that never left, watchdog hourly, receipts, rating publish, the storage sweep, pruning logs by their retention rules, final deletion of an account 30 days after it asked, scrubbing deleted accounts' posts, a nightly churn-risk snapshot, the 06:00 UTC digest and version sync."},
     {id:"nudge", col:"auto", c:"--s2",
@@ -12687,7 +12691,7 @@
     // it is 10+ minutes old (its "updated" line keeps ageing from as_of); a
     // server that answered without it is not asked again this session
     var instAsOf = DATA && DATA.install_status && new Date(DATA.install_status.as_of).getTime();
-    var wantInst = !INST_OFF && (!instAsOf || !isFinite(instAsOf) || Date.now()-instAsOf >= 10*60000);
+    var wantInst = !instOff() && (!instAsOf || !isFinite(instAsOf) || Date.now()-instAsOf >= 10*60000);
     var carryInst = wantInst? null : (DATA && DATA.install_status) || null;
     var hdrs={"content-type":"application/json"};
     if(SESSION && SESSION.access_token) hdrs["authorization"]="Bearer "+SESSION.access_token;
@@ -12728,7 +12732,9 @@
     }).then(function(d){
       if(carryMeta && !d.meta_ads) d.meta_ads=carryMeta;
       if(carryPosts && !d.posts) d.posts=carryPosts;
-      if(wantInst && !d.install_status) INST_OFF=true; // server without it: back off
+      // back off only on a full successful load that lacks it (never on a
+      // partial payload or an error - those prove nothing about the server)
+      if(wantInst && !d.install_status && !d.partial && !d.error) INST_OFF_AT=Date.now();
       if(carryInst && !d.install_status) d.install_status=carryInst;
       if(d.backlog){ BACKLOG=(d.backlog.items||[]).filter(Boolean); BL_UPDATED=d.backlog.updated||null; }
       var wasPartial=!!(DATA && DATA.partial);
