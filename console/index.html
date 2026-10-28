@@ -8525,8 +8525,8 @@
      dH:"הקוד כבר מוזג. אין עדכון אוויר, אז זה מחכה לאישור החנויות",
      dE:"already merged. No OTA, so it waits for store review", c:"var(--s2)"},
     {id:"next",  he:"בתור",           en:"Queued",
-     dH:"מדורג לפי RICE, ופריטי שער לפי סדר החשיבות",
-     dE:"ranked by RICE, gates by importance", c:"var(--s1)"},
+     dH:"לפי עדיפות (P0 קודם), ובתוך כל עדיפות לפי RICE",
+     dE:"by priority (P0 first), then RICE within each", c:"var(--s1)"},
     {id:"done",  he:"הושלם",          en:"Done",
      dH:"הגלים האחרונים, כדי שיהיה ברור מה כבר לא צריך לחזור אליו",
      dE:"the recent waves, so it is clear what needs no revisiting", c:"var(--s5)"},
@@ -8683,19 +8683,20 @@
     function riceKey(it){ return it.rice==null ? -1 : it.rice; }
     // P0..P3 from the backlog file (28.10); a card with no level sorts after P3
     function priKey(it){ var m=/^P([0-3])$/.exec(it.pri||""); return m ? +m[1] : 4; }
+    function blIsOpen(it){ var s=blSt(it); return s!=="done" && s!=="kill"; }
     rows.sort(function(a,b){
-      if(BL_SORT==="rice") return riceKey(b)-riceKey(a) || order[blSt(a)]-order[blSt(b)];
-      if(BL_SORT==="eff")  return a.eff-b.eff || order[blSt(a)]-order[blSt(b)];
+      // RICE and effort are one ranked list on purpose; priority breaks ties
+      if(BL_SORT==="rice") return riceKey(b)-riceKey(a) || priKey(a)-priKey(b) || order[blSt(a)]-order[blSt(b)];
+      if(BL_SORT==="eff")  return a.eff-b.eff || priKey(a)-priKey(b) || order[blSt(a)]-order[blSt(b)];
       // areas keep the order BL_CAT declares - growth first, design last -
       // rather than alphabetical, which would differ per language and put the
       // smallest concern at the top in one of them
       if(BL_SORT==="cat")  return catOrder[a.cat]-catOrder[b.cat]
-                                  || order[blSt(a)]-order[blSt(b)] || riceKey(b)-riceKey(a);
-      // within "act now", the items that are past their date come first
-      // inside a bucket: past-due first, then priority (P0 first), then RICE -
-      // an unscored P1 gate must never sort below a scored P3 feature
-      return order[blSt(a)]-order[blSt(b)] || (blPastDue(b)?1:0)-(blPastDue(a)?1:0)
-             || priKey(a)-priKey(b) || riceKey(b)-riceKey(a) || a.eff-b.eff;
+                                  || order[blSt(a)]-order[blSt(b)] || priKey(a)-priKey(b) || riceKey(b)-riceKey(a);
+      // inside a bucket: priority first (P0 first), past-due breaks ties, then
+      // RICE - an unscored P1 gate never sorts below a scored P3 feature
+      return order[blSt(a)]-order[blSt(b)] || priKey(a)-priKey(b)
+             || (blPastDue(b)?1:0)-(blPastDue(a)?1:0) || riceKey(b)-riceKey(a) || a.eff-b.eff;
     });
 
     if(!rows.length){ host.appendChild(el("p","blempty",S.blNone)); return; }
@@ -8736,11 +8737,12 @@
       // the status chip is redundant under its own heading, so it appears only
       // where the list is not grouped by status
       if(BL_SORT!=="pri") chips.appendChild(el("span",null,T(blStatus(blSt(it)))));
-      if(it.pri && blSt(it)!=="done" && blSt(it)!=="kill") chips.appendChild(el("span",null,it.pri));
+      var open=blIsOpen(it);
+      if(open && priKey(it)<4) chips.appendChild(el("span",null,"P"+priKey(it)));
       if(BL_SORT!=="cat") chips.appendChild(el("span",null,T(BL_CAT[it.cat])));
       if(blPastDue(it)) chips.appendChild(el("span","due",S.blPastDue));
       // a finished card carries no deadline
-      if(it.due && blSt(it)!=="done" && blSt(it)!=="kill") chips.appendChild(el("span","due",blDue(it.due)));
+      if(it.due && open) chips.appendChild(el("span","due",blDue(it.due)));
       if(chips.childNodes.length) main.appendChild(chips);
       card.appendChild(main);
 
