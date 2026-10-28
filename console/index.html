@@ -807,6 +807,7 @@
   .tabbadge { display:inline-block; margin-inline-start:6px; min-width:18px; padding:0 5px;
     border-radius:9px; background:var(--s1); color:#fff; font-size:11px; font-weight:600;
     line-height:18px; text-align:center; font-variant-numeric:tabular-nums; }
+  .msg audio.chataudio { display:block; width:min(260px,100%); height:36px; margin-top:6px; }
   .msg img.chatimg { display:block; max-width:min(240px,100%); max-height:260px;
     border-radius:10px; margin-top:6px; border:1px solid var(--hairline); }
   .cside { font-size:11px; color:var(--muted); text-align:left; direction:ltr; white-space:nowrap; }
@@ -3045,7 +3046,7 @@
       noConvos:"אין שיחות בטווח או בסינון הנוכחי",
       msgsCount:function(n){ return String(n)==="1"? "הודעה אחת" : n+" הודעות"; },
       tagOffer:"הצעה", tagRequest:"בקשה", tagOneway:"ללא מענה", tagOnewayOld:"ללא מענה · ישן", tagMock:"בדיקה", tagNew:"חדש",
-      tagNewN:function(n){ return n===1? "הודעה חדשה" : n+" הודעות חדשות"; }, newDivider:"הודעות חדשות",
+      tagNewN:function(n){ return n===1? "הודעה חדשה" : n+" הודעות חדשות"; }, newDivider:"הודעות חדשות", voiceMsg:"הודעה קולית",
       tagPhone:function(d){ return d? "טלפון הוחלף · "+d : "טלפון הוחלף"; },
       tagStatus:{pending:"ממתינה", accepted:"פעילה", completed:"הושלמה", not_completed:"לא יצא לפועל", expired:"פגה", declined:"נדחתה"},
       tagAskedNoAns:"נשאלו אם הושלם · לא ענו", tagAnsGot:"ענו: קיבלו עזרה", tagAnsNotYet:"ענו: עוד לא",
@@ -4082,7 +4083,7 @@
       noConvos:"No conversations in this range or filter",
       msgsCount:function(n){ return String(n)==="1"? "1 message" : n+" messages"; },
       tagOffer:"offer", tagRequest:"request", tagOneway:"unanswered", tagOnewayOld:"unanswered · old", tagMock:"test", tagNew:"new",
-      tagNewN:function(n){ return n===1? "1 new message" : n+" new messages"; }, newDivider:"New messages",
+      tagNewN:function(n){ return n===1? "1 new message" : n+" new messages"; }, newDivider:"New messages", voiceMsg:"Voice message",
       tagPhone:function(d){ return d? "phone shared · "+d : "phone shared"; },
       tagStatus:{pending:"pending", accepted:"active", completed:"completed", not_completed:"fell through", expired:"expired", declined:"declined"},
       tagAskedNoAns:"asked if it happened · no answer", tagAnsGot:"answered: got help", tagAnsNotYet:"answered: not yet",
@@ -7832,6 +7833,11 @@
     (DATA.chat_images||[]).forEach(function(x){
       IMG[x.match_id+"|"+new Date(x.at).getTime()]=x.url;
     });
+    // voice messages (28.10): signed like the images, played in the thread
+    var AUD={};
+    (DATA.chat_audio||[]).forEach(function(x){
+      AUD[x.match_id+"|"+new Date(x.at).getTime()]=x.url;
+    });
     var host=$("convoList"); host.innerHTML="";
     if(!list.length){ emptyState(host,S.noConvos,"msg"); return; }
     list.forEach(function(c){
@@ -7903,6 +7909,13 @@
           var im=el("img","chatimg");
           im.src=iurl; im.loading="lazy"; im.alt="";
           b.appendChild(im);
+        }
+        var aurl=AUD[c.match_id+"|"+new Date(m.at).getTime()];
+        if(aurl){
+          var au=document.createElement("audio");
+          au.className="chataudio"; au.controls=true; au.preload="none"; au.src=aurl;
+          au.setAttribute("aria-label",S.voiceMsg);
+          b.appendChild(au);
         }
         b.appendChild(el("div","when",fmtTime(m.at)));
         th.appendChild(b);
@@ -9139,8 +9152,8 @@
          wH:"מי שעזר/ה סימן/ה \"סיים\" על בקשה שעדיין פתוחה. נשלחת לבעל/ת הבקשה: רק הוא/היא סוגר/ת אותה. הלחיצה פותחת את \"הפוסטים שלי\" על הבקשה.",
          wE:"The helper tapped Complete on a request that is still live. Sent to the requester: only they close it. The tap opens My posts on that request."},
         {k:"new_message", kind:"op",
-         tH:"{שם השולח/ת}", bH:"מאה התווים הראשונים של ההודעה · או \"📷 תמונה\" אם נשלחה תמונה בלבד",
-         tE:"{sender name}", bE:"The first 100 characters of the message · or \"📷 Photo\" for an image-only message",
+         tH:"{שם השולח/ת}", bH:"מאה התווים הראשונים של ההודעה · או \"📷 תמונה\" אם נשלחה תמונה בלבד · או \"🎤 הודעה קולית\"",
+         tE:"{sender name}", bE:"The first 100 characters of the message · or \"📷 Photo\" for an image-only message · or \"🎤 Voice message\"",
          wH:"כל הודעה בצ'אט, מיד. זו ההתראה היחידה שמציגה תוכן שכתב משתמש - ולכן היא נעצרת במאה תווים.",
          wE:"Every chat message, instantly. This is the only notification that shows user-written content - which is why it stops at 100 characters."},
         {k:"rating_received", kind:"op",
