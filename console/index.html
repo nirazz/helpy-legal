@@ -2271,6 +2271,9 @@
         <span class="seg mini" id="funnelSeg"><button data-d="14" class="on" data-i18n="d14">14 יום</button><button data-d="30" data-i18n="d30">30 יום</button></span></h2>
         <div class="sub" data-i18n="funnelSub">מה עושה משתמש חדש אחרי ההרשמה</div><div id="funnel"></div></section>
       <section class="panel"><h2 data-i18n="lifecycleTitle">מאזן משתמשים</h2><div class="sub" data-i18n="lifecycleSub">חתך חי של כל המשתמשים הרשומים</div><div id="lifecycle"></div></section>
+      <!-- who still has the app (get_install_status, every load): five buckets
+           from our own data + the store numbers with their date -->
+      <section class="panel wide"><h2 data-i18n="instTitle">התקנות</h2><div class="sub" data-i18n="instSub">מי עדיין מחזיק/ה באפליקציה, לפי מה שאנחנו יודעים בוודאות על כל משתמש/ת</div><div id="installs"></div></section>
       <section class="panel wide"><h2 data-i18n="churnTitle">עומדים לעזוב</h2><div class="sub" data-i18n="churnSub">ציון סיכון לכל מי שנכנס בחודש האחרון · קודם מי שמחכים לו שכנים</div><div id="churnRisk"></div></section>
       <section class="panel wide"><h2 data-i18n="glogTitle">יומן צמיחה · שבוע אחר שבוע</h2><div class="sub" data-i18n="glogSub">מה קרה בכל שבוע, מה השתנה, ומה גרם לזה</div><div id="growthLog"></div></section>
       <!-- the push senders are judged in ONE place, the Notifications tab -->
@@ -2984,6 +2987,21 @@
       rdChurnPending:function(date){ return "הציון בנוי מכללים פשוטים (ימים בלי כניסה, התראות, ותק, פוסט או שיחה פתוחה) ועדיין <b>לא נבדק</b> מול מה שמשתמשים עשו בפועל. כל לילה נשמר צילום של הציון, ומ-<b>"+date+"</b> יופיע כאן כמה מכל קבוצה חזרו תוך שבוע. אם בסיכון הגבוה לא חוזרים פחות מאשר בנמוך, הכללים לא נכונים ומשנים אותם."; },
       rdChurnReadout:function(rows){ return "<b>חזרו תוך שבוע מהצילום:</b> "+rows+". אם בסיכון הגבוה חוזרים פחות, הציון עובד."; },
       chRow:function(name,r,n,p){ return name+": "+r+" מתוך "+n; },
+      instTitle:"התקנות", instSub:"מי עדיין מחזיק/ה באפליקציה, לפי מה שאנחנו יודעים בוודאות על כל משתמש/ת",
+      instB:{ certain_installed:["מותקנת בוודאות","פתחו את האפליקציה ב-14 הימים האחרונים"],
+              probe_confirmed_installed:["נבדקה, אין סימן מחיקה","לא פתחו לאחרונה. שלחנו לטלפון בדיקה שקטה, והטלפון לא החזיר שהאפליקציה נמחקה"],
+              probably_installed:["כנראה מותקנת","לא פתחו לאחרונה. אפשר לשלוח להם התראות, אבל עוד לא נבדקו"],
+              unknown:["לא ידוע","לא פתחו לאחרונה, ואין לנו שום דרך לשלוח להם התראה"],
+              certain_removed:["נמחקה","החנות החזירה לנו שהאפליקציה כבר לא בטלפון, ומאז הם לא פתחו אותה"] },
+      instColState:"מצב", instColAll:"כולם", instColIos:"אייפון", instColAnd:"אנדרואיד", instColNone:"בלי פלטפורמה",
+      instTotal:"סה״כ משתמשים חיים",
+      instStoreT:function(d){ return "לפי החנויות, נכון ל-"+d; },
+      instStoreIos:"אייפון", instStoreAnd:"אנדרואיד",
+      instDl:"הורדות", instRm:"הסרות", instRmIos:"מחיקות (רק ממכשירים ששיתפו נתונים עם אפל, לכן זה מינימום)",
+      instActive:"מכשירים שהאפליקציה מותקנת בהם",
+      instNow:"עודכן עכשיו", instAgo:function(m){ return "עודכן לפני "+m+" דקות"; },
+      instHonest:"אף אפליקציה לא יכולה לדעת ברגע אמת שמחקו אותה: הטלפון לא מודיע על כך. החנויות מדווחות באיחור של כמה ימים, ולכן המספרים למעלה הם מה שהנתונים שלנו מוכיחים עכשיו, והמספרים של החנויות מופיעים לידם עם התאריך שלהם.",
+      instEmpty:"עוד אין נתוני התקנות.",
       acqAds:"מתוכם הגיעו ממודעות", acqOrg:"מתוכם הגיעו אורגני (חנות, הזמנה, אתר)", acqUnk:"מתוכם מקור לא ידוע",
       rdAcq:function(ads,org,known,pAds,ios,and){ return " <b>מקור ההגעה:</b> ידוע רק אצל <b>"+known+"</b> משתמשים, ומתוכם <b>"+pAds+"</b> הגיעו ממודעות ("+ads+" מול "+org+" אורגני). לכן שני המספרים, מודעות ואורגני, הם מינימום ולא התמונה המלאה. <b>למה אצל רוב המשתמשים המקור לא ידוע:</b> באנדרואיד, \u2068Google Play\u2069 מעביר לאפליקציה את הקישור שממנו הגיעה ההתקנה, וממנו אנחנו יודעים אם זו מודעה, הזמנה מחבר או חיפוש בחנות. התחלנו לשמור אותו רק מגרסה \u20681.1.22\u2069 (ספטמבר 2026), ולכן <b>"+and+"</b> משתמשי אנדרואיד שהצטרפו לפני כן, או לא פתחו גרסה חדשה מאז, נשארו בלי מקור. באייפון אין דבר כזה בכלל: אפל מנתקת בכוונה, למען פרטיות המשתמשים, את הקשר בין מי שראה מודעה לבין מי שהתקין. \u2068Meta\u2069 מקבלת מאפל רק סיכומים כמו 'הקמפיין הביא כ-12 התקנות השבוע', בלי לדעת מי הם. לכן כל <b>"+ios+"</b> משתמשי האייפון בלי מקור, וזה לא ישתנה. הדרך היחידה לדעת על כולם היא לשאול כל משתמש אחרי ההרשמה איך שמע עלינו."; },
       liq1:"בקשות חדשות", liq2:"קיבלו הצעה תוך יממה", liq3:"קיבלו הצעה בסוף", liq4:"חציון זמן להצעה ראשונה",
@@ -3634,7 +3652,8 @@
       scMonNames:{ cron_delivery:"קריאות קרון לפונקציות", outbox:"שיגור חוזר של קריאות",
         cron_jobs:"פקודות קרון", push_tickets:"כרטיסי פוש", daily_digest:"הסיכום היומי",
         push_auth:"התראות פוש", founder_alerts:"התראות טלגרם", moderate_post:"סינון תוכן אוטומטי",
-        abuse_volume:"הצפה בפעולות משתמשים", cap_headroom:"תקרות יומיות נגד הצפה" },
+        abuse_volume:"הצפה בפעולות משתמשים", cap_headroom:"תקרות יומיות נגד הצפה",
+        attestation_ios:"אימות מכשיר באייפון", attestation_android:"אימות מכשיר באנדרואיד", attestation_platform:"אימות מכשיר: פלטפורמה חסרה" },
       scNowTitle:"עכשיו",
       scNowSub:"כמה פעולות נעשו ממש עכשיו, מול התקרה שמעליה נכנס בלם.",
       scNowEmpty:"אין מונים פעילים כרגע.",
@@ -3772,6 +3791,7 @@
                  abuse_volume:"הצפה בפעולות", cap_headroom:"תקרות יומיות", data_retention:"מחיקת נתונים ישנים",
                  infra_compute_budget:"גודל השרת ותקציב", infra_connections:"חיבורים למסד",
                  infra_cpu:"מעבד", infra_disk:"דיסק", infra_memory:"זיכרון",
+                 attestation_ios:"אימות מכשיר באייפון", attestation_android:"אימות מכשיר באנדרואיד", attestation_platform:"אימות מכשיר: פלטפורמה חסרה",
                  offsite_backup:"גיבוי חיצוני" },
       brTabBadge:function(n){ return n==="1"? "דבר אחד מחכה לך בבוקר" : n+" דברים מחכים לך בבוקר"; },
       brAllUp:function(n){ return "כל "+n+" הבדיקות תקינות"; }, brRestUp:function(n){ return "עוד "+n+" תקינות"; }, brShowChecks:"הצגת כולן", brHideChecks:"הסתרה",
@@ -3990,6 +4010,21 @@
       rdChurnPending:function(date){ return "The score is built from simple rules (days since last open, notifications, account age, an open post or chat) and has <b>not been checked</b> against what people actually did. A snapshot is saved every night, and from <b>"+date+"</b> this panel shows how many in each group came back within a week. If high-risk people do not come back less often than low-risk ones, the rules are wrong and get changed."; },
       rdChurnReadout:function(rows){ return "<b>Came back within a week of the snapshot:</b> "+rows+". If high risk comes back less often, the score works."; },
       chRow:function(name,r,n,p){ return name+" "+p+" ("+r+" of "+n+")"; },
+      instTitle:"Installs", instSub:"Who still has the app, by what we know for certain about each user",
+      instB:{ certain_installed:["Installed for sure","Opened the app in the last 14 days"],
+              probe_confirmed_installed:["Checked, no sign of removal","Not opened lately. We sent the phone a silent check and it did not report the app as removed"],
+              probably_installed:["Probably installed","Not opened lately. We can still reach them by push, but they have not been checked yet"],
+              unknown:["Unknown","Not opened lately, and we have no way to send them a notification"],
+              certain_removed:["Removed","The store told us the app is no longer on the phone, and they have not opened it since"] },
+      instColState:"State", instColAll:"All", instColIos:"iPhone", instColAnd:"Android", instColNone:"No platform",
+      instTotal:"Total live users",
+      instStoreT:function(d){ return "According to the stores, as of "+d; },
+      instStoreIos:"iPhone", instStoreAnd:"Android",
+      instDl:"Downloads", instRm:"Uninstalls", instRmIos:"Deletions (only from devices that share data with Apple, so a floor)",
+      instActive:"Devices with the app installed",
+      instNow:"Updated just now", instAgo:function(m){ return "Updated "+m+" minutes ago"; },
+      instHonest:"No app can know the moment it is deleted: the phone does not tell it. The stores report a few days late, so the numbers above are what our own data proves right now, and the store numbers sit beside them with their date.",
+      instEmpty:"No install data yet.",
       acqAds:"of them came from ads", acqOrg:"of them came organically (store, invite, site)", acqUnk:"of them source unknown",
       rdAcq:function(ads,org,known,pAds,ios,and){ return " <b>How they found us:</b> known for only <b>"+known+"</b> users, and <b>"+pAds+"</b> of those came from ads ("+ads+" vs "+org+" organic). So both numbers, ads and organic, are floors, not the full picture. <b>Why most users have no source:</b> on Android, Google Play hands the app the link the install came from, which tells us whether it was an ad, an invite from a friend or a store search. We only started saving it in 1.1.22 (September 2026), so the <b>"+and+"</b> Android users who joined before that, or have not opened a newer version since, have none. iPhone has nothing like it: Apple deliberately cuts the link between who saw an ad and who installed, for user privacy. Meta only gets totals from Apple, like 'the campaign brought about 12 installs this week', never who they were. So all <b>"+ios+"</b> iPhone users have no source, and that will not change. The only way to know for everyone is to ask each user after sign-up how they heard about us."; },
       liq1:"New requests", liq2:"Got an offer within 24h", liq3:"Got an offer eventually", liq4:"Median time to first offer",
@@ -4633,7 +4668,8 @@
       scMonNames:{ cron_delivery:"Cron calls to functions", outbox:"Call re-delivery",
         cron_jobs:"Cron jobs", push_tickets:"Push tickets", daily_digest:"Daily digest",
         push_auth:"Push notifications", founder_alerts:"Telegram alerts", moderate_post:"Automatic content filter",
-        abuse_volume:"Flood of user actions", cap_headroom:"Daily anti-abuse caps" },
+        abuse_volume:"Flood of user actions", cap_headroom:"Daily anti-abuse caps",
+        attestation_ios:"Device check on iPhone", attestation_android:"Device check on Android", attestation_platform:"Device check: platform missing" },
       scNowTitle:"Right now",
       scNowSub:"How many actions are happening right now, against the ceiling where a brake kicks in.",
       scNowEmpty:"No active counters right now.",
@@ -4769,6 +4805,7 @@
                  abuse_volume:"Abuse volume", cap_headroom:"Daily caps", data_retention:"Data retention",
                  infra_compute_budget:"Server size and budget", infra_connections:"DB connections",
                  infra_cpu:"CPU", infra_disk:"Disk", infra_memory:"Memory",
+                 attestation_ios:"Device check on iPhone", attestation_android:"Device check on Android", attestation_platform:"Device check: platform missing",
                  offsite_backup:"Off-site backup" },
       brTabBadge:function(n){ return n==="1"? "One thing is waiting in the brief" : n+" things are waiting in the brief"; },
       brAllUp:function(n){ return "All "+n+" checks OK"; }, brRestUp:function(n){ return n+" more OK"; }, brShowChecks:"Show all", brHideChecks:"Hide",
@@ -7079,6 +7116,76 @@
     }
   }
 
+  // ── Installs ────────────────────────────────────────────────────────────
+  // Every number comes from DATA.install_status; the "updated" line is derived
+  // from its as_of, the store line from each row's data_through.
+  var INST_ORDER=["certain_installed","probe_confirmed_installed","probably_installed","unknown","certain_removed"];
+  function instDate(d){ // "2026-10-23" -> "23.10" (he) / "23 Oct" (en)
+    var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(d||"")); if(!m) return "-";
+    if(LANG==="he") return (+m[3])+"."+m[2];
+    return new Date(Date.UTC(+m[1],+m[2]-1,+m[3])).toLocaleDateString("en-GB",{day:"numeric",month:"short",timeZone:"UTC"});
+  }
+  function renderInstalls(){
+    var host=$("installs"); if(!host) return;
+    host.innerHTML="";
+    var I=DATA && DATA.install_status, T=I && I.total;
+    if(!T || !(+T.real_users>0)){ emptyState(host,S.instEmpty,"users"); return; }
+    var P=I.platforms||{}, hasNone=P.unknown && +P.unknown.real_users>0;
+    var cols=[tok("--s3"),tok("--s5"),tok("--s1"),tok("--meas"),tok("--s8")];
+    // legend above, one proportional bar below - a share is read by LENGTH
+    var lg=el("div","seglegend"), bar=el("div","segbar");
+    INST_ORDER.forEach(function(k,i){
+      var n=+T[k]||0; if(!n) return;
+      var it=el("span"), sw=el("i"); sw.style.background=cols[i]; it.appendChild(sw);
+      it.appendChild(document.createTextNode(S.instB[k][0]+" "));
+      it.appendChild(el("b",null,fmt(n)+" ("+pct(n,+T.real_users)+")"));
+      lg.appendChild(it);
+      var seg=el("span"); seg.style.background=cols[i]; seg.style.flexGrow=n; seg.style.flexBasis="0";
+      seg.title=S.instB[k][0]+": "+fmt(n)+" ("+pct(n,+T.real_users)+")";
+      bar.appendChild(seg);
+    });
+    host.appendChild(lg); host.appendChild(bar);
+    // the table: one bucket per row, its plain definition under the name
+    var t=el("table","plain"), hr=el("tr");
+    var heads=[S.instColState,S.instColAll,S.instColIos,S.instColAnd]; if(hasNone) heads.push(S.instColNone);
+    heads.forEach(function(h){ hr.appendChild(el("th",null,h)); });
+    t.appendChild(hr);
+    var cell=function(pf,k){ var r=P[pf]; return fmt(r? +r[k]||0 : 0); };
+    INST_ORDER.forEach(function(k,i){
+      var tr=el("tr"), th=el("th");
+      var nm=el("div"); var sw=el("i"); sw.style.cssText="display:inline-block;width:9px;height:9px;border-radius:3px;margin-inline-end:6px;background:"+cols[i];
+      nm.appendChild(sw); nm.appendChild(document.createTextNode(S.instB[k][0]));
+      th.appendChild(nm); th.appendChild(el("div","sub",S.instB[k][1]));
+      tr.appendChild(th);
+      tr.appendChild(el("td",null,fmt(+T[k]||0)));
+      tr.appendChild(el("td",null,cell("ios",k)));
+      tr.appendChild(el("td",null,cell("android",k)));
+      if(hasNone) tr.appendChild(el("td",null,cell("unknown",k)));
+      t.appendChild(tr);
+    });
+    var tt=el("tr");
+    tt.appendChild(el("th",null,S.instTotal)); tt.appendChild(el("td",null,fmt(+T.real_users)));
+    tt.appendChild(el("td",null,cell("ios","real_users"))); tt.appendChild(el("td",null,cell("android","real_users")));
+    if(hasNone) tt.appendChild(el("td",null,cell("unknown","real_users")));
+    t.appendChild(tt);
+    var wrap=el("div"); wrap.style.overflowX="auto"; wrap.appendChild(t); host.appendChild(wrap);
+    // the stores: one block per platform, one number per line, its own date
+    var ST=I.store||{};
+    [["android",S.instStoreAnd],["ios",S.instStoreIos]].forEach(function(pp){
+      var r=ST[pp[0]]; if(!r) return;
+      var h=el("p","sub",pp[1]+" · "+S.instStoreT(instDate(r.data_through))); h.style.marginTop="14px"; h.style.fontWeight="600";
+      host.appendChild(h);
+      var st=el("table","plain");
+      statRow(st,S.instDl,fmt(r.installs));
+      if(r.uninstalls!=null) statRow(st, pp[0]==="ios"? S.instRmIos : S.instRm, fmt(r.uninstalls));
+      if(r.active_devices!=null) statRow(st,S.instActive,fmt(r.active_devices));
+      host.appendChild(st);
+    });
+    var age=I.as_of? Math.max(0,Math.floor((Date.now()-new Date(I.as_of).getTime())/60000)) : null;
+    if(age!=null && isFinite(age)) host.appendChild(el("p","note", age<2? S.instNow : S.instAgo(fmt(age))));
+    host.appendChild(el("p","note",S.instHonest));
+  }
+
   function renderMetrics(){
     var k=DATA.kpis, dl=DATA.deltas||{};
     renderInsights();
@@ -7261,6 +7368,11 @@
       }
       panelRead("lifecycle", (lf.dormant_30d/k.live_users)>0.5?"warn":"", lfRead);
     }
+
+    // Installs (get_install_status): five buckets that add up to every live
+    // user, then the store numbers with their own date. Isolated: a bad
+    // payload empties this panel only.
+    try{ renderInstalls(); }catch(e){ console.error("renderInstalls failed",e); }
 
     // About to leave: rules-based churn score (get_churn_risk). Names and post
     // titles are user text - textContent only, never innerHTML.
