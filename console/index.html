@@ -3547,6 +3547,7 @@
         cron_runs:["היסטוריית משימות מתוזמנות","מתי כל משימה מתוזמנת רצה, והאם הצליחה"],
         http_responses:["תשובות שרת פנימיות","התשובות לקריאות שהשרת שולח לעצמו"],
         backup_runs:["יומן הגיבויים","כל ריצה של הגיבוי החיצוני והתוצאה שלה"],
+        liveness_probe_runs:["ריצות בדיקת ההתקנה","מפתח לכל ריצה יומית, כדי ששליחה חוזרת של אותה ריצה לא תבדוק אנשים פעמיים - נמחק אחרי 14 יום"],
         liveness_probe_sends:["בדיקות התקנה שקטות","כל בדיקה שקטה שנשלחה ומה ענו עליה, כדי לדעת מי עדיין מחזיק/ה באפליקציה - נמחק אחרי 14 יום"],
         urgent_push_claims:["פוש דחוף - מי קיבל היום","מי קיבל/ה פוש על בקשה דחופה ב-24 השעות האחרונות, כדי שלא יקבלו יותר מאחד ביום - נמחק אחרי יומיים"],
         account_deletion_holds:["חשבונות שנמחקו - 30 יום לשחזור","מה שצריך כדי לשחזר חשבון שנמחק אם המשתמש/ת מתחרט/ת - נמחק סופית אחרי 30 יום"] },
@@ -4578,6 +4579,7 @@
         cron_runs:["Scheduled job history","When each scheduled job ran, and whether it worked"],
         http_responses:["Internal call responses","Replies to calls the server makes to itself"],
         backup_runs:["Backup log","Every off-site backup run and its result"],
+        liveness_probe_runs:["Install check runs","One key per daily run, so a re-sent run never checks people twice - erased after 14 days"],
         liveness_probe_sends:["Silent install checks","Every silent check we sent and what came back, to know who still has the app - erased after 14 days"],
         urgent_push_claims:["Urgent push - who got one today","Who got an urgent-request push in the last 24 hours, so nobody gets more than one a day - erased after two days"],
         account_deletion_holds:["Deleted accounts - 30 days to restore","What restoring a deleted account needs if the person changes their mind - erased for good after 30 days"] },
@@ -6091,7 +6093,12 @@
     {d:"2026-07-29", he:"מיקוד ת\"א", en:"TLV-only ads"},
     {d:"2026-07-30", he:"גרסה 1.1.15", en:"v1.1.15"},
     {d:"2026-08-04", he:"גרסה 1.1.18", en:"v1.1.18"},
-    {d:"2026-08-16", he:"גל נאדג'ים", en:"nudge wave"}
+    {d:"2026-08-16", he:"גל נאדג'ים", en:"nudge wave"},
+    {d:"2026-09-06", he:"גרסה 1.1.21", en:"v1.1.21"},
+    {d:"2026-09-18", he:"גרסה 1.1.23", en:"v1.1.23"},
+    {d:"2026-10-08", he:"גרסה 1.1.27", en:"v1.1.27"},
+    {d:"2026-10-17", he:"גרסה 1.1.28", en:"v1.1.28"},
+    {d:"2026-10-26", he:"גרסה 1.1.29", en:"v1.1.29"}
   ];
   function annotMarks(rows){
     if(!rows.length) return [];
@@ -8949,13 +8956,13 @@
     {id:"rls", col:"gate", c:"--s8",
      he:"הרשאות שורה", en:"Row-level security",
      shH:"RLS · על כל טבלה של Helpy", shE:"RLS · on every Helpy table",
-     dH:"החוקים שמחליטים איזו שורה כל משתמש רשאי לראות או לשנות, ונאכפים במסד הנתונים עצמו - לא באפליקציה. גם אם מישהו יכתוב לקוח משלו, הוא לא יעקוף אותם. בפרופילים ובפוסטים ההרשאה היא גם לפי עמודה: מיקום מדויק ופרטים אישיים סגורים לאחרים. 37 חוקי אבטחה קבועים נבדקים בכל סגירת סשן ומוצגים בלשונית האבטחה.",
-     dE:"The rules deciding which row each user may read or change, enforced in the database itself - not in the app. Even a hand-rolled client cannot get around them. Profiles and posts are also locked per column: exact location and personal details stay closed to others. 37 standing security guards are checked at every session close and shown in the security tab."},
+     dH:"החוקים שמחליטים איזו שורה כל משתמש רשאי לראות או לשנות, ונאכפים במסד הנתונים עצמו - לא באפליקציה. גם אם מישהו יכתוב לקוח משלו, הוא לא יעקוף אותם. בפרופילים ובפוסטים ההרשאה היא גם לפי עמודה: מיקום מדויק ופרטים אישיים סגורים לאחרים. 40 חוקי אבטחה קבועים נבדקים בכל סגירת סשן ומוצגים בלשונית האבטחה.",
+     dE:"The rules deciding which row each user may read or change, enforced in the database itself - not in the app. Even a hand-rolled client cannot get around them. Profiles and posts are also locked per column: exact location and personal details stay closed to others. 40 standing security guards are checked at every session close and shown in the security tab."},
     {id:"db", col:"core", c:"--s1",
      he:"מסד הנתונים", en:"The database",
      shH:"PostgreSQL", shE:"PostgreSQL",
-     dH:"הלב. שבע טבלאות ליבה תחת RLS - פרופילים, פוסטים, התאמות, הודעות, דירוגים, דיווחים וחסימות - ועוד 57 טבלאות תפעוליות (יומן התראות, מצב המוניטורים, הודעות מערכת, מכסות ויומני אבטחה, אירועי מודרציה, דגלי פיצ׳רים, חשבונות שנמחקו בתקופת החרטה, היסטוריית מדדים ודגימות שרת, גיבויים, הוצאות, הגדרות גרסה). כל כתיבה רגישה עוברת דרך פונקציה אחת אטומית ולא דרך הלקוח.",
-     dE:"The heart. Seven core tables under RLS - profiles, posts, matches, messages, ratings, reports and blocks - plus 57 operational tables (notification log, monitor state, system messages, limits and security logs, moderation events, feature flags, accounts deleted but still restorable, metrics history and server samples, backups, expenses, version config). Every sensitive write goes through one atomic function, never straight from the client."},
+     dH:"הלב. שבע טבלאות ליבה תחת RLS - פרופילים, פוסטים, התאמות, הודעות, דירוגים, דיווחים וחסימות - ועוד 62 טבלאות תפעוליות (יומן התראות, מצב המוניטורים, הודעות מערכת, מכסות ויומני אבטחה, אירועי מודרציה, דגלי פיצ׳רים, חשבונות שנמחקו בתקופת החרטה, היסטוריית מדדים ודגימות שרת, גיבויים, הוצאות, הגדרות גרסה). כל כתיבה רגישה עוברת דרך פונקציה אחת אטומית ולא דרך הלקוח.",
+     dE:"The heart. Seven core tables under RLS - profiles, posts, matches, messages, ratings, reports and blocks - plus 62 operational tables (notification log, monitor state, system messages, limits and security logs, moderation events, feature flags, accounts deleted but still restorable, metrics history and server samples, backups, expenses, version config). Every sensitive write goes through one atomic function, never straight from the client."},
     {id:"rpc", col:"core", c:"--s7",
      he:"פונקציות מסד", en:"Database functions",
      shH:"RPC · SECURITY DEFINER", shE:"RPC · SECURITY DEFINER",
@@ -9225,8 +9232,8 @@
         {k:"nearby_request_alert", cadH:"שעתי", cadE:"hourly", kind:"mk",
          tH:"שכן/ה באזור מחפש/ת עזרה", bH:"\"{כותרת הפוסט}\" · {מרחק}",
          tE:"A neighbour nearby needs a hand", bE:"\"{post title}\" · {distance}",
-         wH:"בקשה חדשה - עד 24 שעות - נפתחה בתוך רדיוס החיפוש שלך. הכותרת לפי הקטגוריה: פעילות - \"שכן/ה באזור מחפש/ת שותף/ה לפעילות\"; השאלה - \"שכן/ה באזור צריך/ה משהו בהשאלה\"; מסירה - \"שכן/ה באזור מחפש/ת משהו שאולי יש לך\"; כל השאר - הכותרת שלמעלה. נרשם ביומן ההתראות בתור `urgent_nearby`. הרדיוס מוגבל ל-25 ק\"מ, והיא נשלחת רק למי שסימן/ה את הקטגוריה כתחום שבו הוא/היא עוזר/ת או שכבר הציע/ה עזרה בעבר. עד 27.10 היא נרשמה ביומן תחת urgent_nearby, ולכן הספירות שלה מאותה תקופה נמצאות שם.",
-         wE:"A fresh request - under 24 hours old - opened inside your search radius. The title follows the category: activity - \"A neighbour nearby is looking for company\"; borrow - \"A neighbour nearby needs to borrow something\"; giveaway - \"A neighbour nearby is looking for something you might have\"; everything else - the title above. Logged in notification_log as `urgent_nearby`. Radius capped at 25 km, and sent only to people who marked that category as one they help with, or who have offered help before. Until 27.10 it was logged as urgent_nearby, so its counts from that period sit there."},
+         wH:"בקשה חדשה - עד 24 שעות - נפתחה בתוך רדיוס החיפוש שלך. הכותרת לפי הקטגוריה: פעילות - \"שכן/ה באזור מחפש/ת שותף/ה לפעילות\"; השאלה - \"שכן/ה באזור צריך/ה משהו בהשאלה\"; מסירה - \"שכן/ה באזור מחפש/ת משהו שאולי יש לך\"; כל השאר - הכותרת שלמעלה. נרשם ביומן ההתראות בתור `nearby_request_alert`. הרדיוס מוגבל ל-25 ק\"מ, והיא נשלחת רק למי שסימן/ה את הקטגוריה כתחום שבו הוא/היא עוזר/ת או שכבר הציע/ה עזרה בעבר. עד 27.10 היא נרשמה ביומן תחת urgent_nearby, ולכן הספירות שלה מאותה תקופה נמצאות שם.",
+         wE:"A fresh request - under 24 hours old - opened inside your search radius. The title follows the category: activity - \"A neighbour nearby is looking for company\"; borrow - \"A neighbour nearby needs to borrow something\"; giveaway - \"A neighbour nearby is looking for something you might have\"; everything else - the title above. Logged in notification_log as `nearby_request_alert`. Radius capped at 25 km, and sent only to people who marked that category as one they help with, or who have offered help before. Until 27.10 it was logged as urgent_nearby, so its counts from that period sit there."},
         {k:"offer_rescue", cadH:"שעתי", cadE:"hourly", kind:"mk",
          tH:"בקשה באזור שמתאימה להצעה שלך", bH:"\"{כותרת הבקשה}\" · {מרחק}",
          tE:"A request nearby that fits your offer", bE:"\"{request title}\" · {distance}",
@@ -12788,24 +12795,46 @@
     });
   }
 
-  var autoTimer=null;
-  $("autoRef").addEventListener("change",function(){
-    var tog=$("liveTog"); if(tog) tog.classList.toggle("on", this.checked);
-    if(this.checked){
-      autoTimer=setInterval(function(){
-        // a swallowed rejection left the page showing stale numbers with no
-        // tell at all - the only signal was the "updated N ago" ticker climbing
-        load(true).catch(function(){ markStale(); });
-        // the server tab rides the same tick, but only while it is on screen
-        if(infraOn()){ loadInfra(); loadBackups(); }
-        // expenses too - but never under a form or a delete being answered:
-        // the re-render would not lose the typing, but it would move it
-        if(expensesOn() && !EX_FORM && !EX_DEL && !EX_RATE) loadExpenses();
-        if(securityOn()) loadSecurity();
-      },60000);
-    }
+  // Live is ON by default (2026-10-28, Nir): the console is a monitoring
+  // surface, and an off-by-default switch that forgot itself on every load
+  // made it look static. The choice is remembered per browser.
+  var LIVE_MS=60000, autoTimer=null;
+  function liveTick(){
+    // never before the first successful load (no session yet = a 401 and a
+    // false "stale"), and never while the browser tab is hidden: a console
+    // left open overnight would otherwise pull the dashboard ~1,400 times
+    if(!SESSION || !lastLoadTs || document.hidden) return;
+    // a swallowed rejection left the page showing stale numbers with no
+    // tell at all - the only signal was the "updated N ago" ticker climbing
+    load(true).catch(function(){ markStale(); });
+    // the server tab rides the same tick, but only while it is on screen
+    if(infraOn()){ loadInfra(); loadBackups(); }
+    // expenses too - but never under a form or a delete being answered:
+    // the re-render would not lose the typing, but it would move it
+    if(expensesOn() && !EX_FORM && !EX_DEL && !EX_RATE) loadExpenses();
+    if(securityOn()) loadSecurity();
+  }
+  function setLive(on){
+    var tog=$("liveTog"); if(tog) tog.classList.toggle("on", on);
+    if(on){ if(!autoTimer) autoTimer=setInterval(liveTick,LIVE_MS); }
     else if(autoTimer){ clearInterval(autoTimer); autoTimer=null; markStale(true); }
+  }
+  $("autoRef").addEventListener("change",function(){
+    try{ localStorage.setItem("helpy_console_live", this.checked? "on":"off"); }catch(e){}
+    setLive(this.checked);
   });
+  // back on the tab after a minute or more away: catch up at once, not on
+  // the next tick
+  document.addEventListener("visibilitychange",function(){
+    if(!document.hidden && autoTimer && lastLoadTs && Date.now()-lastLoadTs>=LIVE_MS) liveTick();
+  });
+  (function(){
+    var pref=null;
+    try{ pref=localStorage.getItem("helpy_console_live"); }catch(e){}
+    var on = pref!=="off";
+    $("autoRef").checked=on;
+    setLive(on);
+  })();
 
   // scroll-reveal REMOVED (2026-08-23 visual pass): panels sat ghost-faded
   // for minutes and the page read as broken. A monitoring surface shows its
