@@ -12790,24 +12790,46 @@
     });
   }
 
-  var autoTimer=null;
-  $("autoRef").addEventListener("change",function(){
-    var tog=$("liveTog"); if(tog) tog.classList.toggle("on", this.checked);
-    if(this.checked){
-      autoTimer=setInterval(function(){
-        // a swallowed rejection left the page showing stale numbers with no
-        // tell at all - the only signal was the "updated N ago" ticker climbing
-        load(true).catch(function(){ markStale(); });
-        // the server tab rides the same tick, but only while it is on screen
-        if(infraOn()){ loadInfra(); loadBackups(); }
-        // expenses too - but never under a form or a delete being answered:
-        // the re-render would not lose the typing, but it would move it
-        if(expensesOn() && !EX_FORM && !EX_DEL && !EX_RATE) loadExpenses();
-        if(securityOn()) loadSecurity();
-      },60000);
-    }
+  // Live is ON by default (2026-10-28, Nir): the console is a monitoring
+  // surface, and an off-by-default switch that forgot itself on every load
+  // made it look static. The choice is remembered per browser.
+  var LIVE_MS=60000, autoTimer=null;
+  function liveTick(){
+    // never before the first successful load (no session yet = a 401 and a
+    // false "stale"), and never while the browser tab is hidden: a console
+    // left open overnight would otherwise pull the dashboard ~1,400 times
+    if(!SESSION || !lastLoadTs || document.hidden) return;
+    // a swallowed rejection left the page showing stale numbers with no
+    // tell at all - the only signal was the "updated N ago" ticker climbing
+    load(true).catch(function(){ markStale(); });
+    // the server tab rides the same tick, but only while it is on screen
+    if(infraOn()){ loadInfra(); loadBackups(); }
+    // expenses too - but never under a form or a delete being answered:
+    // the re-render would not lose the typing, but it would move it
+    if(expensesOn() && !EX_FORM && !EX_DEL && !EX_RATE) loadExpenses();
+    if(securityOn()) loadSecurity();
+  }
+  function setLive(on){
+    var tog=$("liveTog"); if(tog) tog.classList.toggle("on", on);
+    if(on){ if(!autoTimer) autoTimer=setInterval(liveTick,LIVE_MS); }
     else if(autoTimer){ clearInterval(autoTimer); autoTimer=null; markStale(true); }
+  }
+  $("autoRef").addEventListener("change",function(){
+    try{ localStorage.setItem("helpy_console_live", this.checked? "on":"off"); }catch(e){}
+    setLive(this.checked);
   });
+  // back on the tab after a minute or more away: catch up at once, not on
+  // the next tick
+  document.addEventListener("visibilitychange",function(){
+    if(!document.hidden && autoTimer && lastLoadTs && Date.now()-lastLoadTs>=LIVE_MS) liveTick();
+  });
+  (function(){
+    var pref=null;
+    try{ pref=localStorage.getItem("helpy_console_live"); }catch(e){}
+    var on = pref!=="off";
+    $("autoRef").checked=on;
+    setLive(on);
+  })();
 
   // scroll-reveal REMOVED (2026-08-23 visual pass): panels sat ghost-faded
   // for minutes and the page read as broken. A monitoring surface shows its
