@@ -6093,7 +6093,12 @@
     {d:"2026-07-29", he:"מיקוד ת\"א", en:"TLV-only ads"},
     {d:"2026-07-30", he:"גרסה 1.1.15", en:"v1.1.15"},
     {d:"2026-08-04", he:"גרסה 1.1.18", en:"v1.1.18"},
-    {d:"2026-08-16", he:"גל נאדג'ים", en:"nudge wave"}
+    {d:"2026-08-16", he:"גל נאדג'ים", en:"nudge wave"},
+    {d:"2026-09-06", he:"גרסה 1.1.21", en:"v1.1.21"},
+    {d:"2026-09-18", he:"גרסה 1.1.23", en:"v1.1.23"},
+    {d:"2026-10-08", he:"גרסה 1.1.27", en:"v1.1.27"},
+    {d:"2026-10-17", he:"גרסה 1.1.28", en:"v1.1.28"},
+    {d:"2026-10-26", he:"גרסה 1.1.29", en:"v1.1.29"}
   ];
   function annotMarks(rows){
     if(!rows.length) return [];
@@ -8951,13 +8956,13 @@
     {id:"rls", col:"gate", c:"--s8",
      he:"הרשאות שורה", en:"Row-level security",
      shH:"RLS · על כל טבלה של Helpy", shE:"RLS · on every Helpy table",
-     dH:"החוקים שמחליטים איזו שורה כל משתמש רשאי לראות או לשנות, ונאכפים במסד הנתונים עצמו - לא באפליקציה. גם אם מישהו יכתוב לקוח משלו, הוא לא יעקוף אותם. בפרופילים ובפוסטים ההרשאה היא גם לפי עמודה: מיקום מדויק ופרטים אישיים סגורים לאחרים. 37 חוקי אבטחה קבועים נבדקים בכל סגירת סשן ומוצגים בלשונית האבטחה.",
-     dE:"The rules deciding which row each user may read or change, enforced in the database itself - not in the app. Even a hand-rolled client cannot get around them. Profiles and posts are also locked per column: exact location and personal details stay closed to others. 37 standing security guards are checked at every session close and shown in the security tab."},
+     dH:"החוקים שמחליטים איזו שורה כל משתמש רשאי לראות או לשנות, ונאכפים במסד הנתונים עצמו - לא באפליקציה. גם אם מישהו יכתוב לקוח משלו, הוא לא יעקוף אותם. בפרופילים ובפוסטים ההרשאה היא גם לפי עמודה: מיקום מדויק ופרטים אישיים סגורים לאחרים. 40 חוקי אבטחה קבועים נבדקים בכל סגירת סשן ומוצגים בלשונית האבטחה.",
+     dE:"The rules deciding which row each user may read or change, enforced in the database itself - not in the app. Even a hand-rolled client cannot get around them. Profiles and posts are also locked per column: exact location and personal details stay closed to others. 40 standing security guards are checked at every session close and shown in the security tab."},
     {id:"db", col:"core", c:"--s1",
      he:"מסד הנתונים", en:"The database",
      shH:"PostgreSQL", shE:"PostgreSQL",
-     dH:"הלב. שבע טבלאות ליבה תחת RLS - פרופילים, פוסטים, התאמות, הודעות, דירוגים, דיווחים וחסימות - ועוד 57 טבלאות תפעוליות (יומן התראות, מצב המוניטורים, הודעות מערכת, מכסות ויומני אבטחה, אירועי מודרציה, דגלי פיצ׳רים, חשבונות שנמחקו בתקופת החרטה, היסטוריית מדדים ודגימות שרת, גיבויים, הוצאות, הגדרות גרסה). כל כתיבה רגישה עוברת דרך פונקציה אחת אטומית ולא דרך הלקוח.",
-     dE:"The heart. Seven core tables under RLS - profiles, posts, matches, messages, ratings, reports and blocks - plus 57 operational tables (notification log, monitor state, system messages, limits and security logs, moderation events, feature flags, accounts deleted but still restorable, metrics history and server samples, backups, expenses, version config). Every sensitive write goes through one atomic function, never straight from the client."},
+     dH:"הלב. שבע טבלאות ליבה תחת RLS - פרופילים, פוסטים, התאמות, הודעות, דירוגים, דיווחים וחסימות - ועוד 62 טבלאות תפעוליות (יומן התראות, מצב המוניטורים, הודעות מערכת, מכסות ויומני אבטחה, אירועי מודרציה, דגלי פיצ׳רים, חשבונות שנמחקו בתקופת החרטה, היסטוריית מדדים ודגימות שרת, גיבויים, הוצאות, הגדרות גרסה). כל כתיבה רגישה עוברת דרך פונקציה אחת אטומית ולא דרך הלקוח.",
+     dE:"The heart. Seven core tables under RLS - profiles, posts, matches, messages, ratings, reports and blocks - plus 62 operational tables (notification log, monitor state, system messages, limits and security logs, moderation events, feature flags, accounts deleted but still restorable, metrics history and server samples, backups, expenses, version config). Every sensitive write goes through one atomic function, never straight from the client."},
     {id:"rpc", col:"core", c:"--s7",
      he:"פונקציות מסד", en:"Database functions",
      shH:"RPC · SECURITY DEFINER", shE:"RPC · SECURITY DEFINER",
@@ -9222,8 +9227,8 @@
         {k:"nearby_request_alert", cadH:"שעתי", cadE:"hourly", kind:"mk",
          tH:"שכן/ה באזור מחפש/ת עזרה", bH:"\"{כותרת הפוסט}\" · {מרחק}",
          tE:"A neighbour nearby needs a hand", bE:"\"{post title}\" · {distance}",
-         wH:"בקשה חדשה - עד 24 שעות - נפתחה בתוך רדיוס החיפוש שלך. הכותרת לפי הקטגוריה: פעילות - \"שכן/ה באזור מחפש/ת שותף/ה לפעילות\"; השאלה - \"שכן/ה באזור צריך/ה משהו בהשאלה\"; מסירה - \"שכן/ה באזור מחפש/ת משהו שאולי יש לך\"; כל השאר - הכותרת שלמעלה. נרשם ביומן ההתראות בתור `urgent_nearby`. הרדיוס מוגבל ל-25 ק\"מ, והיא נשלחת רק למי שסימן/ה את הקטגוריה כתחום שבו הוא/היא עוזר/ת או שכבר הציע/ה עזרה בעבר. עד 27.10 היא נרשמה ביומן תחת urgent_nearby, ולכן הספירות שלה מאותה תקופה נמצאות שם.",
-         wE:"A fresh request - under 24 hours old - opened inside your search radius. The title follows the category: activity - \"A neighbour nearby is looking for company\"; borrow - \"A neighbour nearby needs to borrow something\"; giveaway - \"A neighbour nearby is looking for something you might have\"; everything else - the title above. Logged in notification_log as `urgent_nearby`. Radius capped at 25 km, and sent only to people who marked that category as one they help with, or who have offered help before. Until 27.10 it was logged as urgent_nearby, so its counts from that period sit there."},
+         wH:"בקשה חדשה - עד 24 שעות - נפתחה בתוך רדיוס החיפוש שלך. הכותרת לפי הקטגוריה: פעילות - \"שכן/ה באזור מחפש/ת שותף/ה לפעילות\"; השאלה - \"שכן/ה באזור צריך/ה משהו בהשאלה\"; מסירה - \"שכן/ה באזור מחפש/ת משהו שאולי יש לך\"; כל השאר - הכותרת שלמעלה. נרשם ביומן ההתראות בתור `nearby_request_alert`. הרדיוס מוגבל ל-25 ק\"מ, והיא נשלחת רק למי שסימן/ה את הקטגוריה כתחום שבו הוא/היא עוזר/ת או שכבר הציע/ה עזרה בעבר. עד 27.10 היא נרשמה ביומן תחת urgent_nearby, ולכן הספירות שלה מאותה תקופה נמצאות שם.",
+         wE:"A fresh request - under 24 hours old - opened inside your search radius. The title follows the category: activity - \"A neighbour nearby is looking for company\"; borrow - \"A neighbour nearby needs to borrow something\"; giveaway - \"A neighbour nearby is looking for something you might have\"; everything else - the title above. Logged in notification_log as `nearby_request_alert`. Radius capped at 25 km, and sent only to people who marked that category as one they help with, or who have offered help before. Until 27.10 it was logged as urgent_nearby, so its counts from that period sit there."},
         {k:"offer_rescue", cadH:"שעתי", cadE:"hourly", kind:"mk",
          tH:"בקשה באזור שמתאימה להצעה שלך", bH:"\"{כותרת הבקשה}\" · {מרחק}",
          tE:"A request nearby that fits your offer", bE:"\"{request title}\" · {distance}",
