@@ -2994,7 +2994,6 @@
       instName:{ certain_installed:"מותקנת בוודאות", probe_confirmed_installed:"נבדקה, אין סימן מחיקה",
                  probably_installed:"כנראה מותקנת", unknown:"לא ידוע", certain_removed:"נמחקה" },
       // the numbers come from install_status.rules, so the words match the server
-      // the numbers come from install_status.rules, so the words match the server
       instDays:function(n){ return n===1? "ביום האחרון" : "ב-"+n+" הימים האחרונים"; },
       instRange:function(R){ // settle_hours..fresh_days -> "לפני 2 עד 7 ימים"
         var lo=R.settle_hours%24===0? R.settle_hours/24 : null;
