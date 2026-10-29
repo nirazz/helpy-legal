@@ -11077,12 +11077,12 @@
   // share of max_conns, the rest are percents.
   var IF_LIM={cpu:80, mem:90, disk:80, conns:80};
   function infraOn(){ var v=$("infraView"); return !!(v && !v.classList.contains("hidden")); }
-  function loadInfra(){
+  function loadInfra(quiet){
     // the #infra deep link switches tabs before the session is restored;
     // bootLoad kicks this again once it is
     if(!SESSION || !SESSION.access_token) return Promise.resolve();
     var seq=++INFRA_SEQ;
-    var body=$("ifBody"); if(body && INFRA) body.classList.add("loading");
+    var body=$("ifBody"); if(body && INFRA && !quiet) body.classList.add("loading");
     return relayCall("infra",{hours:INFRA_HOURS}).then(function(d){
       if(seq!==INFRA_SEQ) return;          // a newer window was asked for
       INFRA=d||{}; INFRA_ERR=null;
@@ -11405,10 +11405,10 @@
     ["GitHub","tools","USD","monthly",1]
   ];
   function expensesOn(){ var v=$("expensesView"); return !!(v && !v.classList.contains("hidden")); }
-  function loadExpenses(){
+  function loadExpenses(quiet){
     if(!SESSION || !SESSION.access_token) return Promise.resolve();
     var seq=++EXP_SEQ;
-    var body=$("exBody"); if(body && EXP) body.classList.add("loading");
+    var body=$("exBody"); if(body && EXP && !quiet) body.classList.add("loading");
     return relayCall("expenses",{months:EXP_MONTHS}).then(function(d){
       if(seq!==EXP_SEQ) return;
       EXP=d||{}; EXP_ERR=null;
@@ -11944,10 +11944,10 @@
   var BK=null, BK_ERR=null, BK_SEQ=0;
   // the backend's "no success for 8 days" monitor, mirrored - change both together
   var BK_STALE_DAYS=8;
-  function loadBackups(){
+  function loadBackups(quiet){
     if(!SESSION || !SESSION.access_token) return Promise.resolve();
     var seq=++BK_SEQ;
-    var body=$("bkBody"); if(body && BK) body.classList.add("loading");
+    var body=$("bkBody"); if(body && BK && !quiet) body.classList.add("loading");
     return relayCall("backups",{}).then(function(d){
       if(seq!==BK_SEQ) return;
       BK=d||{}; BK_ERR=null;
@@ -12168,12 +12168,12 @@
     hint.classList.toggle("hidden", !short);
   }
   function scWinNote(days){ var d=scLogStart(days); return d? S.scSince(d) : S.scInDays(days); }
-  function loadSecurity(){
+  function loadSecurity(quiet){
     // the #security deep link switches tabs before the session is restored;
     // bootLoad kicks this again once it is
     if(!SESSION || !SESSION.access_token) return Promise.resolve();
     var seq=++SEC_SEQ;
-    var body=$("scBody"); if(body && SEC) body.classList.add("loading");
+    var body=$("scBody"); if(body && SEC && !quiet) body.classList.add("loading");
     return relayCall("security",{days:SEC_DAYS}).then(function(d){
       if(seq!==SEC_SEQ) return;          // a newer window was asked for
       SEC=d||{}; SEC_ERR=null;
@@ -12699,7 +12699,10 @@
   function load(autoTick){
     // not over a brief-only first paint: that brief is current, and the
     // spinning refresh icon already says the rest is on its way
-    if(!(DATA && DATA.partial)) $("app").classList.add("loading");
+    // the minute ticker refreshes in the background: dimming the page and
+    // blocking clicks every 60s made the numbers hard to read (Nir, 29.10).
+    // Only a refresh someone asked for dims; the spinning icon is enough here.
+    if(!autoTick && !(DATA && DATA.partial)) $("app").classList.add("loading");
     $("refreshIcon").classList.add("spinning");
     var fetchDays, chatDays;
     if(CUSTOM){
@@ -12821,11 +12824,11 @@
     // tell at all - the only signal was the "updated N ago" ticker climbing
     load(true).catch(function(){ markStale(); });
     // the server tab rides the same tick, but only while it is on screen
-    if(infraOn()){ loadInfra(); loadBackups(); }
+    if(infraOn()){ loadInfra(true); loadBackups(true); }
     // expenses too - but never under a form or a delete being answered:
     // the re-render would not lose the typing, but it would move it
-    if(expensesOn() && !EX_FORM && !EX_DEL && !EX_RATE) loadExpenses();
-    if(securityOn()) loadSecurity();
+    if(expensesOn() && !EX_FORM && !EX_DEL && !EX_RATE) loadExpenses(true);
+    if(securityOn()) loadSecurity(true);
   }
   function setLive(on){
     var tog=$("liveTog"); if(tog) tog.classList.toggle("on", on);
