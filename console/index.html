@@ -6104,7 +6104,8 @@
     {d:"2026-09-18", he:"גרסה 1.1.23", en:"v1.1.23"},
     {d:"2026-10-08", he:"גרסה 1.1.27", en:"v1.1.27"},
     {d:"2026-10-17", he:"גרסה 1.1.28", en:"v1.1.28"},
-    {d:"2026-10-26", he:"גרסה 1.1.29", en:"v1.1.29"}
+    {d:"2026-10-26", he:"גרסה 1.1.29", en:"v1.1.29"},
+    {d:"2026-10-29", he:"גרסה 1.1.30", en:"v1.1.30"}
   ];
   function annotMarks(rows){
     if(!rows.length) return [];
@@ -8974,13 +8975,13 @@
     {id:"rls", col:"gate", c:"--s8",
      he:"הרשאות שורה", en:"Row-level security",
      shH:"RLS · על כל טבלה של Helpy", shE:"RLS · on every Helpy table",
-     dH:"החוקים שמחליטים איזו שורה כל משתמש רשאי לראות או לשנות, ונאכפים במסד הנתונים עצמו - לא באפליקציה. גם אם מישהו יכתוב לקוח משלו, הוא לא יעקוף אותם. בפרופילים ובפוסטים ההרשאה היא גם לפי עמודה: מיקום מדויק ופרטים אישיים סגורים לאחרים. 40 חוקי אבטחה קבועים נבדקים בכל סגירת סשן ומוצגים בלשונית האבטחה.",
-     dE:"The rules deciding which row each user may read or change, enforced in the database itself - not in the app. Even a hand-rolled client cannot get around them. Profiles and posts are also locked per column: exact location and personal details stay closed to others. 40 standing security guards are checked at every session close and shown in the security tab."},
+     dH:"החוקים שמחליטים איזו שורה כל משתמש רשאי לראות או לשנות, ונאכפים במסד הנתונים עצמו - לא באפליקציה. גם אם מישהו יכתוב לקוח משלו, הוא לא יעקוף אותם. בפרופילים ובפוסטים ההרשאה היא גם לפי עמודה: מיקום מדויק ופרטים אישיים סגורים לאחרים. 42 חוקי אבטחה קבועים נבדקים בכל סגירת סשן ומוצגים בלשונית האבטחה.",
+     dE:"The rules deciding which row each user may read or change, enforced in the database itself - not in the app. Even a hand-rolled client cannot get around them. Profiles and posts are also locked per column: exact location and personal details stay closed to others. 42 standing security guards are checked at every session close and shown in the security tab."},
     {id:"db", col:"core", c:"--s1",
      he:"מסד הנתונים", en:"The database",
      shH:"PostgreSQL", shE:"PostgreSQL",
-     dH:"הלב. שבע טבלאות ליבה תחת RLS - פרופילים, פוסטים, התאמות, הודעות, דירוגים, דיווחים וחסימות - ועוד 62 טבלאות תפעוליות (יומן התראות, מצב המוניטורים, הודעות מערכת, מכסות ויומני אבטחה, אירועי מודרציה, דגלי פיצ׳רים, חשבונות שנמחקו בתקופת החרטה, היסטוריית מדדים ודגימות שרת, גיבויים, הוצאות, הגדרות גרסה). כל כתיבה רגישה עוברת דרך פונקציה אחת אטומית ולא דרך הלקוח.",
-     dE:"The heart. Seven core tables under RLS - profiles, posts, matches, messages, ratings, reports and blocks - plus 62 operational tables (notification log, monitor state, system messages, limits and security logs, moderation events, feature flags, accounts deleted but still restorable, metrics history and server samples, backups, expenses, version config). Every sensitive write goes through one atomic function, never straight from the client."},
+     dH:"הלב. שבע טבלאות ליבה תחת RLS - פרופילים, פוסטים, התאמות, הודעות, דירוגים, דיווחים וחסימות - ועוד 67 טבלאות תפעוליות (יומן התראות, מצב המוניטורים, הודעות מערכת, מכסות ויומני אבטחה, אירועי מודרציה, דגלי פיצ׳רים, חשבונות שנמחקו בתקופת החרטה, היסטוריית מדדים ודגימות שרת, גיבויים, הוצאות, הגדרות גרסה). כל כתיבה רגישה עוברת דרך פונקציה אחת אטומית ולא דרך הלקוח.",
+     dE:"The heart. Seven core tables under RLS - profiles, posts, matches, messages, ratings, reports and blocks - plus 67 operational tables (notification log, monitor state, system messages, limits and security logs, moderation events, feature flags, accounts deleted but still restorable, metrics history and server samples, backups, expenses, version config). Every sensitive write goes through one atomic function, never straight from the client."},
     {id:"rpc", col:"core", c:"--s7",
      he:"פונקציות מסד", en:"Database functions",
      shH:"RPC · SECURITY DEFINER", shE:"RPC · SECURITY DEFINER",
@@ -9274,8 +9275,8 @@
          bH:"\"{כותרת הפוסט}\" - אפשר לעזור?",
          tE:"Neighbor still waiting for help",
          bE:"\"{post title}\" - can you help?",
-         wH:"בקשה בת 12 שעות עד שבוע שלא קיבלה אף פנייה, נשלחת לשכן זמין בטווח (עד 25 ק\"מ). זו ההתראה שקיימת כדי שפוסט לא ימות בשקט. בניגוד להערת הקבוצה, לשולח הזה אין רצפת גיל חשבון של שלושה ימים - רק הסכמה, לא-ארעי, זמינות ומכסת השבוע. נרשם ביומן ההתראות בתור `no_offer_request` (יחיד, בעוד הקרון שולח `no_offer_requests`). כשהפוסט הזנוח הוא הצעה, הכותרת היא «שכן/ה מציע/ה עזרה בקרבתך» והשאלה בגוף הופכת ל«מעניין אותך?».",
-         wE:"A request between 12 hours and a week old that received no approach at all, sent to an available neighbour in range (capped at 25 km). This is the notification that exists so a post does not die in silence. Unlike the group note, this sender has NO 3-day account floor - only consent, non-provisional, availability and the 7-day cap. Logged in notification_log as `no_offer_request` (singular, while the cron posts `no_offer_requests`). When the neglected post is an offer: \u201cA neighbor is offering help nearby\u201d and \u201c\u2026 - interested?\u201d."},
+         wH:"בקשה בת 12 שעות עד שבוע שלא קיבלה אף פנייה, נשלחת לשכן זמין בטווח (עד 25 ק\"מ). זו ההתראה שקיימת כדי שפוסט לא ימות בשקט. כמו בהערת הקבוצה, מאז 27.10 גם לשולח הזה יש רצפת גיל חשבון של שלושה ימים, לצד הסכמה, לא-ארעי, זמינות ומכסת השבוע; חשבונות בדיקה וזוגות חסומים לא מקבלים אותה. נרשם ביומן ההתראות בתור `no_offer_request` (יחיד, בעוד הקרון שולח `no_offer_requests`). כשהפוסט הזנוח הוא הצעה, הכותרת היא «שכן/ה מציע/ה עזרה בקרבתך» והשאלה בגוף הופכת ל«מעניין אותך?».",
+         wE:"A request between 12 hours and a week old that received no approach at all, sent to an available neighbour in range (capped at 25 km). This is the notification that exists so a post does not die in silence. As in the group note, since 27.10 this sender also has the 3-day account floor, alongside consent, non-provisional, availability and the 7-day cap; test accounts and blocked pairs never get it. Logged in notification_log as `no_offer_request` (singular, while the cron posts `no_offer_requests`). When the neglected post is an offer: \u201cA neighbor is offering help nearby\u201d and \u201c\u2026 - interested?\u201d."},
         {k:"silent_post", cadH:"שעתי", cadE:"hourly", kind:"mk",
          tH:"הבקשה שלך עדיין פעילה",
          bH:"{N} שכנים חדשים הצטרפו באזורך החודש. שווה הצצה - אולי מחכה לך שם מישהו.",
