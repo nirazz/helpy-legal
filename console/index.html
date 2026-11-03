@@ -9159,6 +9159,21 @@
          tE:"{sender name}", bE:"The first 100 characters of the message · or \"📷 Photo\" for an image-only message · or \"🎤 Voice message\"",
          wH:"כל הודעה בצ'אט, מיד. זו ההתראה היחידה שמציגה תוכן שכתב משתמש - ולכן היא נעצרת במאה תווים.",
          wE:"Every chat message, instantly. This is the only notification that shows user-written content - which is why it stops at 100 characters."},
+        {k:"group_opened", kind:"op",
+         tH:"{כותרת הפוסט}", bH:"{שם הפותח/ת} פתח/ה שיחה משותפת",
+         tE:"{post title}", bE:"{name} opened a shared chat",
+         wH:"בעל/ת פוסט בקטגוריית פעילות משותפת או טיולים פתח/ה חדר משותף לכל מי שאושר/ה על הפוסט (רק הבעלים פותח/ת, אף פעם לא אוטומטית). נשלחת מיד לכל חבר/ת החדר מלבד הפותח/ת. מי קיבל/ה נקבע במסד הנתונים בלבד (group_push_recipients): לא למי שהשתיק/ה את החדר, לא לחסימה הדדית, ולא למי שקרא/ה את החדר ב-45 השניות האחרונות. תפעולית: גם טוקן שקט מקבל אותה.",
+         wE:"The owner of a shared-activity or trips post opened a shared room for everyone accepted on the post (only the owner opens it, never automatically). Sent instantly to every member except the opener. Who receives it is decided in the database alone (group_push_recipients): not a member who muted the room, not a mutual block, not someone who read the room in the last 45 seconds. Operational: a quiet token gets it too."},
+        {k:"group_message", kind:"op",
+         tH:"{כותרת הפוסט}", bH:"{שם השולח/ת}: מאה התווים הראשונים של ההודעה",
+         tE:"{post title}", bE:"{sender name}: the first 100 characters of the message",
+         wH:"הודעה בחדר משותף. מאוגדת: לכל חבר/ת חדר לכל היותר אחת ב-10 דקות לכל חדר - התור נתפס במסד הנתונים (group_push_claims), לא נקרא-ואז-נשלח. אותם מסננים כמו פתיחת החדר: השתקה, חסימה הדדית, מי שקורא/ת ברגע זה. שורת מערכת (מי שהצטרף/ה או עזב/ה) לעולם לא שולחת. כמו הודעה בצ'אט, מציגה תוכן שכתב משתמש - ולכן נעצרת במאה תווים.",
+         wE:"A message in a shared room. Pooled: each member gets at most one per 10 minutes per room - the slot is claimed in the database (group_push_claims), never read-then-sent. Same filters as the room opening: mute, mutual block, someone reading right now. A system line (who joined or left) never sends. Like a chat message it shows user-written content - which is why it stops at 100 characters."},
+        {k:"group_update", kind:"op",
+         tH:"{כותרת הפוסט}", bH:"{שם} פתח/ה סקר: {השאלה} · או {שם} קבע/ה את הפעם הבאה: {המקום}",
+         tE:"{post title}", bE:"{name} opened a poll: {question} · or {name} set the next time: {place}",
+         wH:"סקר חדש או כרטיס הפעם הבאה בחדר משותף. מיידית, לא מאוגדת - עדכון כזה הוא מה שהחדר קיים בשבילו. אותם מסננים כמו הודעה (השתקה, חסימה הדדית, 45 שניות). כשאין מקום בכרטיס, הגוף מסתיים אחרי קבע/ה את הפעם הבאה.",
+         wE:"A new poll or a next-time card in a shared room. Instant, not pooled - an update like this is what the room exists for. Same filters as a message (mute, mutual block, 45 seconds). With no place on the card, the body ends after set the next time."},
         {k:"rating_received", kind:"op",
          tH:"!דירוג חדש", bH:"{שם} דירג אותך {מספר} כוכבים",
          tE:"New Rating!", bE:"{name} rated you {n} stars",
@@ -9625,6 +9640,10 @@
   // a row label. Anything else keeps its real text from the catalogue.
   var PUSH_LABEL={
     new_message:            {he:"הודעה חדשה בצ'אט",            en:"New chat message"},
+    // the group-room pushes title themselves with the POST title - a template too
+    group_opened:           {he:"חדר משותף נפתח",              en:"Shared chat opened"},
+    group_message:          {he:"הודעה בחדר משותף",            en:"Shared chat message"},
+    group_update:           {he:"עדכון בחדר משותף",            en:"Shared chat update"},
     // these are watermark keys, not push types - the catalogue has no entry, or
     // has one whose title is generic ("צוות Helpy") and would tell a reader nothing
     completion_nudge:       {he:"איך הלך עם העזרה?",           en:"How did the help go?"},
