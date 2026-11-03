@@ -3332,7 +3332,7 @@
       pnDelivered:"נמסרו למכשיר",
       pnOpened:"נפתחו",
       pnAnswered:"נענו",
-      pnFailed:"נכשלו",
+      pnFailed:"נכשלו", pnUninstalled:"הסירו את האפליקציה",
       pnQTitle:"השאלה ששאלנו: איך הלך עם העזרה?",
       pnQSub:"ההתראה היחידה ששואלת שאלה. המספרים כאן לא תלויים ביומן - הם נספרים מהתשובות עצמן.",
       pnQAsked:"נשאלו",
@@ -3821,7 +3821,7 @@
       brDigestHint:"אם עדיין לא יצא, לבדוק את היומן של הפונקציה \u2068daily-metrics\u2069",
       brSweepL:"הטאטוא הלילי", brSweep:function(n){ return n==="1"? "סגר <b>התאמה אחת</b>" : "סגר <b>"+n+"</b> התאמות"; },
       brStoreL:"App Store", brStore:function(a,c){ return "<b>"+a+"</b> ("+(c==="1"? "דירוג אחד" : c+" דירוגים")+")"; },
-      brPushL:"התראות ביממה", brPushLine:function(s,d,f,o){ return "<b>"+s+"</b> נשלחו · <b>"+d+"</b> נמסרו · <b>"+f+"</b> נכשלו · <b>"+o+"</b> נפתחו"; },
+      brPushL:"התראות ביממה", brPushLine:function(s,d,f,o,u){ return "<b>"+s+"</b> נשלחו · <b>"+d+"</b> נמסרו · <b>"+f+"</b> נכשלו · <b>"+o+"</b> נפתחו"+(u&&u!=="0"? " · <b>"+u+"</b> הסירו את האפליקציה" : ""); },
       brDeadL:"טלפונים שהפסיקו לקבל התראות", brDead:function(d,tot,g){ return "<b>"+d+"</b> "+(d==="1"? "חדש" : "חדשים")+" ביממה · <b>"+tot+"</b> בסך הכול · כ-"+g+" עוד לא נבדקו"; },
       brVerLine:function(on,tot){ return "<b>"+on+"</b> מתוך "+tot+" שנראו השבוע כבר עליה"; },
       brVerNote:"נספר לפי הגרסה שכל אחד/ת פתח/ה לאחרונה - מי שעדכן/ה ועוד לא פתח/ה את האפליקציה עדיין נספר/ת על הישנה.",
@@ -4368,7 +4368,7 @@
       pnDelivered:"Reached the device",
       pnOpened:"Opened",
       pnAnswered:"Answered",
-      pnFailed:"Failed",
+      pnFailed:"Failed", pnUninstalled:"Removed the app",
       pnQTitle:"The question we asked: how did it go?",
       pnQSub:"The one notification that asks a question. These numbers do not depend on the log - they are counted from the answers themselves.",
       pnQAsked:"Asked",
@@ -4849,7 +4849,7 @@
       brDigestHint:"If it still has not gone out, check the daily-metrics function log",
       brSweepL:"Nightly sweep", brSweep:function(n){ return "closed <b>"+n+"</b> "+(n==="1"?"match":"matches"); },
       brStoreL:"App Store", brStore:function(a,c){ return "<b>"+a+"</b> ("+c+(c==="1"?" rating":" ratings")+")"; },
-      brPushL:"Push in 24h", brPushLine:function(s,d,f,o){ return "<b>"+s+"</b> sent · <b>"+d+"</b> delivered · <b>"+f+"</b> failed · <b>"+o+"</b> opened"; },
+      brPushL:"Push in 24h", brPushLine:function(s,d,f,o,u){ return "<b>"+s+"</b> sent · <b>"+d+"</b> delivered · <b>"+f+"</b> failed · <b>"+o+"</b> opened"+(u&&u!=="0"? " · <b>"+u+"</b> removed the app" : ""); },
       brDeadL:"Phones that stopped getting push", brDead:function(d,tot,g){ return "<b>"+d+"</b> new in 24h · <b>"+tot+"</b> in total · about "+g+" not checked yet"; },
       brVerLine:function(on,tot){ return "<b>"+on+"</b> of "+tot+" seen this week are on it"; },
       brVerNote:"Counted by the version each person last opened - someone who updated but has not opened the app since still counts on the old one.",
@@ -10283,7 +10283,10 @@
     hh.appendChild(el("div","brnote",S.brCronNote));
 
     var pu=$("brPush");
-    brKV(pu, S.brPushL, S.brPushLine(fmt(push.sent||0), fmt(push.delivered||0), fmt(push.failed||0), fmt(push.opened||0)));
+    // failed excludes uninstalls since 3.11 (push_log_outcome); uninstalled = phones whose
+    // token bounced DeviceNotRegistered on a REAL push, distinct from the dead-tokens row
+    // below, which also counts tokens retired by the liveness probe.
+    brKV(pu, S.brPushL, S.brPushLine(fmt(push.sent||0), fmt(push.delivered||0), fmt(push.failed||0), fmt(push.opened||0), fmt(push.uninstalled||0)));
     brKV(pu, S.brDeadL, S.brDead(fmt(H.dead_tokens_24h||0), fmt(dg.push_dead_total||0), fmt(dg.push_ghosts_remaining||0)));
     ["ios","android"].forEach(function(p){
       var tot=(V.seen_7d||[]).filter(function(r){ return r.p===p; }).reduce(function(a,r){ return a+(r.n||0); },0);
@@ -10580,6 +10583,8 @@
       hbars(fh,bars);
       Array.prototype.forEach.call(fh.querySelectorAll(".hrow"),function(r){ r.classList.add("wrap"); });
       if(T.failed) fh.appendChild(el("div","note",S.pnFailed+" · "+fmt(T.failed)));
+      // DeviceNotRegistered bounces the sweeper already retired - not failures (3.11)
+      if(T.uninstalled) fh.appendChild(el("div","note",S.pnUninstalled+" · "+fmt(T.uninstalled)));
       // A percentage over a handful of rows describes an evening, not a rate.
       // This sits ABOVE the influenced line because it qualifies every
       // percentage below it.
