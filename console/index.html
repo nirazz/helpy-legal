@@ -3551,7 +3551,8 @@
         liveness_probe_runs:["ריצות בדיקת ההתקנה","מפתח לכל ריצה יומית, כדי ששליחה חוזרת של אותה ריצה לא תבדוק אנשים פעמיים - נמחק אחרי 14 יום"],
         liveness_probe_sends:["בדיקות התקנה שקטות","כל בדיקה שקטה שנשלחה ומה ענו עליה, כדי לדעת מי עדיין מחזיק/ה באפליקציה - נמחק אחרי 14 יום"],
         urgent_push_claims:["פוש דחוף - מי קיבל היום","מי קיבל/ה פוש על בקשה דחופה ב-24 השעות האחרונות, כדי שלא יקבלו יותר מאחד ביום - נמחק אחרי יומיים"],
-        account_deletion_holds:["חשבונות שנמחקו - 30 יום לשחזור","מה שצריך כדי לשחזר חשבון שנמחק אם המשתמש/ת מתחרט/ת - נמחק סופית אחרי 30 יום"] },
+        account_deletion_holds:["חשבונות שנמחקו - 30 יום לשחזור","מה שצריך כדי לשחזר חשבון שנמחק אם המשתמש/ת מתחרט/ת - נמחק סופית אחרי 30 יום"],
+        category_interest:["קטגוריות שמעניינות כל משתמש/ת","לכל משתמש/ת, הקטגוריות שהתעכב/ה עליהן בפיד או פנה/תה בהן, עם משקל שדועך - בלי פוסטים ובלי זמנים. מסדר את הפיד ובוחר את הפוש על בקשה באזור. נמחק אחרי 60 יום בלי פעילות ועם החשבון"] },
       bkFoot:"נתוני המשתמשים עצמם (פרופילים, פוסטים, שיחות) נשמרים עד שהמשתמש/ת מוחק/ת את החשבון. אחרי מחיקה יש 30 יום לשחזר אותו, ואז המחיקה סופית. מהגיבויים הכל נמחק תוך 90 יום לכל היותר.",
       bkMonOffsite:"גיבוי חיצוני שבועי", bkMonRet:"מחיקת נתונים ישנים",
       // security tab. Latin tokens (iOS, Android, country codes, ids) are
@@ -4583,7 +4584,8 @@
         liveness_probe_runs:["Install check runs","One key per daily run, so a re-sent run never checks people twice - erased after 14 days"],
         liveness_probe_sends:["Silent install checks","Every silent check we sent and what came back, to know who still has the app - erased after 14 days"],
         urgent_push_claims:["Urgent push - who got one today","Who got an urgent-request push in the last 24 hours, so nobody gets more than one a day - erased after two days"],
-        account_deletion_holds:["Deleted accounts - 30 days to restore","What restoring a deleted account needs if the person changes their mind - erased for good after 30 days"] },
+        account_deletion_holds:["Deleted accounts - 30 days to restore","What restoring a deleted account needs if the person changes their mind - erased for good after 30 days"],
+        category_interest:["Categories each person is interested in","Per person, the categories they paused on in the feed or reached out in, with a fading weight - no posts, no times. Orders the feed and picks the nearby-request push. Erased after 60 days without activity and with the account"] },
       bkFoot:"The users' own data (profiles, posts, chats) is kept until the account is deleted. After a deletion there are 30 days to restore it, then it is final. Everything is gone from the backups within 90 days at most.",
       bkMonOffsite:"Weekly off-site backup", bkMonRet:"Old-data deletion",
       // security tab
@@ -4995,6 +4997,7 @@
     "grocery":["קניות","Shopping"], "rides":["טרמפ","Rides"],
     "transportation":["טרמפ","Rides"], "borrow":["השאלה","Borrow"],
     "giveaway":["מסירה","Giveaway"], "activity":["פעילות","Activity"],
+    "trips":["טיולים","Trips"], "talk":["שיחות נפש","Let's Talk"], "pets":["חיות מחמד","Pets"], "languages":["תרגול שפות","Language Practice"],
     "tutoring":["שיעורי עזר","Tutoring"], "pro-advice":["ייעוץ מקצועי","Pro Advice"],
     "language-help":["עזרה בשפה","Language Help"], "other":["אחר","Other"],
     "home-repair":["תיקון בית","Home Repair"]
@@ -9245,8 +9248,8 @@
         {k:"nearby_request_alert", cadH:"שעתי", cadE:"hourly", kind:"mk",
          tH:"שכן/ה באזור מחפש/ת עזרה", bH:"\"{כותרת הפוסט}\" · {מרחק}",
          tE:"A neighbour nearby needs a hand", bE:"\"{post title}\" · {distance}",
-         wH:"בקשה חדשה - עד 24 שעות - נפתחה בתוך רדיוס החיפוש שלך. הכותרת לפי הקטגוריה: פעילות - \"שכן/ה באזור מחפש/ת שותף/ה לפעילות\"; השאלה - \"שכן/ה באזור צריך/ה משהו בהשאלה\"; מסירה - \"שכן/ה באזור מחפש/ת משהו שאולי יש לך\"; כל השאר - הכותרת שלמעלה. נרשם ביומן ההתראות בתור `nearby_request_alert`. הרדיוס מוגבל ל-25 ק\"מ, והיא נשלחת רק למי שסימן/ה את הקטגוריה כתחום שבו הוא/היא עוזר/ת או שכבר הציע/ה עזרה בעבר. עד 27.10 היא נרשמה ביומן תחת urgent_nearby, ולכן הספירות שלה מאותה תקופה נמצאות שם.",
-         wE:"A fresh request - under 24 hours old - opened inside your search radius. The title follows the category: activity - \"A neighbour nearby is looking for company\"; borrow - \"A neighbour nearby needs to borrow something\"; giveaway - \"A neighbour nearby is looking for something you might have\"; everything else - the title above. Logged in notification_log as `nearby_request_alert`. Radius capped at 25 km, and sent only to people who marked that category as one they help with, or who have offered help before. Until 27.10 it was logged as urgent_nearby, so its counts from that period sit there."},
+         wH:"בקשה חדשה - עד 24 שעות - נפתחה בתוך רדיוס החיפוש שלך. הכותרת לפי הקטגוריה: פעילות - \"שכן/ה באזור מחפש/ת שותף/ה לפעילות\"; טיולים - \"שכן/ה באזור מחפש/ת שותף/ה לטיול\"; שיחות נפש - \"שכן/ה באזור מחפש/ת שיחה\"; חיות מחמד - \"שכן/ה באזור צריך/ה עזרה עם חיית מחמד\"; תרגול שפות - \"שכן/ה באזור מחפש/ת שותף/ה לתרגול שפה\"; השאלה - \"שכן/ה באזור צריך/ה משהו בהשאלה\"; מסירה - \"שכן/ה באזור מחפש/ת משהו שאולי יש לך\"; כל השאר - הכותרת שלמעלה. נרשם ביומן ההתראות בתור `nearby_request_alert`. הרדיוס מוגבל ל-25 ק\"מ, והיא נשלחת רק למי שסימן/ה את הקטגוריה כתחום שבו הוא/היא עוזר/ת, שכבר הציע/ה עזרה בעבר, או שהתעכב/ה לאחרונה בפיד על פוסטים מהקטגוריה הזאת (מ-3.11; כשיש כמה בקשות, הפוש מספר קודם על זו מקטגוריה שעניינה אותו/ה - ביומן ההתראות variant=interest_over כשההצעה מהקטגוריה נבחרה על פני קרובה יותר, interest_same כשהיא ממילא הקרובה). עד 27.10 היא נרשמה ביומן תחת urgent_nearby, ולכן הספירות שלה מאותה תקופה נמצאות שם.",
+         wE:"A fresh request - under 24 hours old - opened inside your search radius. The title follows the category: activity - \"A neighbour nearby is looking for company\"; trips - \"A neighbour nearby is looking for a hiking buddy\"; talk - \"A neighbour nearby would like someone to talk to\"; pets - \"A neighbour nearby needs a hand with a pet\"; languages - \"A neighbour nearby wants a language-practice partner\"; borrow - \"A neighbour nearby needs to borrow something\"; giveaway - \"A neighbour nearby is looking for something you might have\"; everything else - the title above. Logged in notification_log as `nearby_request_alert`. Radius capped at 25 km, and sent only to people who marked that category as one they help with, who have offered help before, or who recently paused on posts from that category in the feed (from 3.11; with several requests to choose from, it names the one from a category that interested them first - notification_log variant=interest_over when the interest post was chosen over a nearer one, interest_same when it was the nearest anyway). Until 27.10 it was logged as urgent_nearby, so its counts from that period sit there."},
         {k:"offer_rescue", cadH:"שעתי", cadE:"hourly", kind:"mk",
          tH:"בקשה באזור שמתאימה להצעה שלך", bH:"\"{כותרת הבקשה}\" · {מרחק}",
          tE:"A request nearby that fits your offer", bE:"\"{request title}\" · {distance}",
