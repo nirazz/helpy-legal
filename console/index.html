@@ -3822,7 +3822,7 @@
       brDigestHint:"אם עדיין לא יצא, לבדוק את היומן של הפונקציה \u2068daily-metrics\u2069",
       brSweepL:"הטאטוא הלילי", brSweep:function(n){ return n==="1"? "סגר <b>התאמה אחת</b>" : "סגר <b>"+n+"</b> התאמות"; },
       brStoreL:"App Store", brStore:function(a,c){ return "<b>"+a+"</b> ("+(c==="1"? "דירוג אחד" : c+" דירוגים")+")"; },
-      brPushL:"התראות ביממה", brPushLine:function(s,d,f,o){ return "<b>"+s+"</b> נשלחו · <b>"+d+"</b> נמסרו · <b>"+f+"</b> נכשלו · <b>"+o+"</b> נפתחו"; },
+      brPushL:"התראות ביממה", brPushLine:function(s,d,f,o,u){ return "<b>"+s+"</b> נשלחו · <b>"+d+"</b> נמסרו · <b>"+f+"</b> נכשלו · <b>"+o+"</b> נפתחו"+(u&&u!=="0"? " · <b>"+u+"</b> טלפונים הפסיקו לקבל" : ""); },
       brDeadL:"טלפונים שהפסיקו לקבל התראות", brDead:function(d,tot,g){ return "<b>"+d+"</b> "+(d==="1"? "חדש" : "חדשים")+" ביממה · <b>"+tot+"</b> בסך הכול · כ-"+g+" עוד לא נבדקו"; },
       brVerLine:function(on,tot){ return "<b>"+on+"</b> מתוך "+tot+" שנראו השבוע כבר עליה"; },
       brVerNote:"נספר לפי הגרסה שכל אחד/ת פתח/ה לאחרונה - מי שעדכן/ה ועוד לא פתח/ה את האפליקציה עדיין נספר/ת על הישנה.",
@@ -3845,6 +3845,7 @@
       brInsDigest:"הסיכום היומי עוד לא יצא היום (היה אמור לצאת ב-09:00)",
       brInsDigestDue:"הסיכום היומי יוצא ב-09:00",
       brInsPushFail:function(n){ return n==="1"? "<b>התראה אחת</b> נכשלה ביממה" : "<b>"+n+"</b> התראות נכשלו ביממה"; },
+      brInsDeadBurst:function(n){ return "<b>"+n+"</b> טלפונים הפסיקו לקבל התראות ביממה. אחרי הודעה לכולם זה צפוי (טוקן מת מתגלה רק כששולחים אליו); בלי כזו - לבדוק את הרשאות הפוש (APNs / FCM)"; },
       brInsVer:function(p){ return "<b>"+p+"%</b> מהמשתמשים שנראו השבוע על הגרסה האחרונה"; },
       brInsQuiet:"אתמול היה שקט: אף פוסט, סווייף או הודעה",
       brInsSign:function(n,d){ return (n==="1"? "<b>הרשמה אחת</b>" : "<b>"+n+"</b> הרשמות")+" אתמול ("+(d>0? "עלייה של "+d : d<0? "ירידה של "+(-d) : "ללא שינוי")+" מול שלשום)"; },
@@ -4851,7 +4852,7 @@
       brDigestHint:"If it still has not gone out, check the daily-metrics function log",
       brSweepL:"Nightly sweep", brSweep:function(n){ return "closed <b>"+n+"</b> "+(n==="1"?"match":"matches"); },
       brStoreL:"App Store", brStore:function(a,c){ return "<b>"+a+"</b> ("+c+(c==="1"?" rating":" ratings")+")"; },
-      brPushL:"Push in 24h", brPushLine:function(s,d,f,o){ return "<b>"+s+"</b> sent · <b>"+d+"</b> delivered · <b>"+f+"</b> failed · <b>"+o+"</b> opened"; },
+      brPushL:"Push in 24h", brPushLine:function(s,d,f,o,u){ return "<b>"+s+"</b> sent · <b>"+d+"</b> delivered · <b>"+f+"</b> failed · <b>"+o+"</b> opened"+(u&&u!=="0"? " · <b>"+u+"</b> phones stopped getting push" : ""); },
       brDeadL:"Phones that stopped getting push", brDead:function(d,tot,g){ return "<b>"+d+"</b> new in 24h · <b>"+tot+"</b> in total · about "+g+" not checked yet"; },
       brVerLine:function(on,tot){ return "<b>"+on+"</b> of "+tot+" seen this week are on it"; },
       brVerNote:"Counted by the version each person last opened - someone who updated but has not opened the app since still counts on the old one.",
@@ -4874,6 +4875,7 @@
       brInsDigest:"The daily digest has not gone out yet today (due at 09:00)",
       brInsDigestDue:"The daily digest goes out at 09:00",
       brInsPushFail:function(n){ return n==="1"? "<b>One push</b> failed in 24h" : "<b>"+n+"</b> pushes failed in 24h"; },
+      brInsDeadBurst:function(n){ return "<b>"+n+"</b> phones stopped getting push in 24h. Expected after a broadcast (a dead token only shows when something is sent to it); without one, check the push credentials (APNs / FCM)"; },
       brInsVer:function(p){ return "<b>"+p+"%</b> of users seen this week are on the latest version"; },
       brInsQuiet:"A quiet day yesterday: no post, swipe or message",
       brInsSign:function(n,d){ return "<b>"+n+"</b> "+(n==="1"?"signup":"signups")+" yesterday ("+(d>=0?"+":"")+d+" vs the day before)"; },
@@ -9990,6 +9992,12 @@
     if(digestLate) ins.push(["warn", S.brInsDigest, "brHealth"]);
     else if(!digestSent) ins.push(["info", S.brInsDigestDue, "brHealth"]);
     if(push.failed) ins.push(["warn", S.brInsPushFail(fmt(push.failed)), "brPush"]);
+    // failed excludes DeviceNotRegistered since 3.11 (push_log_outcome): a dead token is
+    // the sweepers' business, not an incident - unless there is a BURST of them, which
+    // can be a broken APNs/FCM credential - or a wide broadcast reaching dormant phones.
+    // 2-8 a day is the normal range without one.
+    var DEAD_BURST=10;
+    if((push.dead_token||0)>=DEAD_BURST) ins.push(["warn", S.brInsDeadBurst(fmt(push.dead_token)), "brPush"]);
     // a request nobody answered is work (it has actions now), not a fact
     if(W.requests_no_offer_n) ins.push(["warn", S.brInsNoOffer(fmt(W.requests_no_offer_n)), "brNoOffer"]);
     if(D.completed) ins.push(["good", S.brInsDone(fmt(D.completed)), "brTiles"]);
@@ -10286,7 +10294,8 @@
     hh.appendChild(el("div","brnote",S.brCronNote));
 
     var pu=$("brPush");
-    brKV(pu, S.brPushL, S.brPushLine(fmt(push.sent||0), fmt(push.delivered||0), fmt(push.failed||0), fmt(push.opened||0)));
+    // dead_token (phones, since 3.11) explains the sent-vs-delivered gap below the burst threshold
+    brKV(pu, S.brPushL, S.brPushLine(fmt(push.sent||0), fmt(push.delivered||0), fmt(push.failed||0), fmt(push.opened||0), fmt(push.dead_token||0)));
     brKV(pu, S.brDeadL, S.brDead(fmt(H.dead_tokens_24h||0), fmt(dg.push_dead_total||0), fmt(dg.push_ghosts_remaining||0)));
     ["ios","android"].forEach(function(p){
       var tot=(V.seen_7d||[]).filter(function(r){ return r.p===p; }).reduce(function(a,r){ return a+(r.n||0); },0);
