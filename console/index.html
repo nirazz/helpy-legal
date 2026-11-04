@@ -699,6 +699,8 @@
       border:1px solid var(--grid); color:var(--ink); }
   .msgthread .mt.us { align-self:flex-end; background:var(--wash1); color:var(--ink); }
   .msgthread .mtwhen { font-size:11px; color:var(--muted); margin-top:3px; }
+  .msgthread .mtimg { display:block; max-width:220px; max-height:260px; border-radius:8px; margin-bottom:4px; }
+  .msgthread .mtgone { font-style:italic; color:var(--muted); }
   .msgthread .mtempty { font-size:12px; color:var(--muted); text-align:center; padding:6px 0; }
   .msgpick { display:flex; flex-direction:column; gap:6px; max-height:260px; overflow-y:auto;
              margin-top:10px; }
@@ -3369,6 +3371,8 @@
       psMsgPickPh:"שם של שכן/ה", psMsgNoUsers:"לא נמצאו שכנים בשם הזה",
       psMsgLoading:"טוען…", psMsgNoThread:"אין עדיין התכתבות",
       psMsgNoThreadErr:"לא הצלחתי לטעון את ההתכתבות",
+      psMsgPhotoGone:"התמונה כבר לא זמינה (נמחקת אחרי 90 יום)",
+      psMsgPhotoOpen:"פתיחת התמונה בגודל מלא",
       psMsgTitle:"הודעה אל {name}",
       psMsgAbout:"בעקבות הכרטיס: {title} · ההקשר הזה לא נשלח, הוא רק כדי שתדע/י על מה כתבת",
       psMsgFrom:"בשם", psMsgAsHelpy:"צוות Helpy", psMsgAsFounder:"ניר · מייסד",
@@ -3542,6 +3546,7 @@
         storage_hygiene_runs:["ניקוי תמונות לילי","ריצה אחת בכל לילה: כמה קבצים נמחקו ונבדקו - נשמר 90 יום"],
         churn_risk_snapshots:["צילומי ציון נטישה","צילום לילי של ציון הסיכון לכל משתמש, כדי לבדוק אם הציון מנבא מי חוזר - נשמר 90 יום ונמחק עם החשבון"],
         message_originals:["הודעות צ'אט שנערכו או נמחקו","הנוסח המקורי של הודעה שנערכה או נמחקה אצל כולם - לצוות בלבד, לבירור דיווח. נשמר 90 יום ונמחק"],
+        support_images:["תמונות בצ'אט Helpy","תמונה או צילום מסך שמשתמש/ת שלח/ה לצוות בצ'אט Helpy - רק המשתמש/ת והצוות רואים. נמחקת אחרי 90 יום, או כשהצ'אט נמחק עם החשבון"],
         console_link_refusals:["ניסיונות חסומים בקישורים","מפתח שגוי או חריגה מהתקרה בהוספת קישור לקונסול - נמחק אחרי יום"],
         webhook_outbox:["תור שליחה חוזרת","קריאות שנכשלו ומחכות שישלחו אותן שוב"],
         notification_log:["יומן התראות פוש","איזו התראה נשלחה למי ומתי"],
@@ -4410,6 +4415,8 @@
       psMsgPickPh:"Neighbour\u2019s name", psMsgNoUsers:"No neighbour by that name",
       psMsgLoading:"Loading\u2026", psMsgNoThread:"No conversation yet",
       psMsgNoThreadErr:"Could not load the conversation",
+      psMsgPhotoGone:"This photo is no longer available (deleted after 90 days)",
+      psMsgPhotoOpen:"Open the photo full size",
       psMsgTitle:"Message to {name}",
       psMsgAbout:"About the card: {title} \u00b7 this context is not sent, it is here so you know what you are writing about",
       psMsgFrom:"From", psMsgAsHelpy:"Helpy team", psMsgAsFounder:"Nir \u00b7 founder",
@@ -4579,6 +4586,7 @@
         storage_hygiene_runs:["Nightly photo clean-up","One row per night: how many files were removed and checked - kept 90 days"],
         churn_risk_snapshots:["Churn-score snapshots","A nightly snapshot of each user's risk score, to test whether it predicts who comes back - kept 90 days, removed with the account"],
         message_originals:["Edited or deleted chat messages","The original text of a chat message that was edited or deleted for everyone - team only, to look into a report. Kept 90 days, then removed"],
+        support_images:["Photos in the Helpy chat","A photo or screenshot a user sent the team in the Helpy chat - only that user and the team can see it. Deleted after 90 days, or when the chat goes with the account"],
         console_link_refusals:["Blocked link attempts","A wrong key or a cap hit when adding a console link - removed after a day"],
         webhook_outbox:["Retry queue","Calls that failed and wait to be sent again"],
         notification_log:["Push notification log","Which push went to whom, and when"],
@@ -8526,7 +8534,20 @@
       rows.forEach(function(m){
         // "them" is the person; anything we sent (helpy, broadcast, founder
         // persona) is us
-        var b=el("div","mt "+(m.sender==="user"?"them":"us"), m.content||"");
+        // A photo the user sent: shown from the short-lived signed link the
+        // server made (private bucket). Only our own storage host is accepted.
+        var photoOnly = m.has_image===true && m.content==="\uD83D\uDCF7";
+        var b=el("div","mt "+(m.sender==="user"?"them":"us"), photoOnly ? "" : (m.content||""));
+        if(m.has_image===true){
+          var u = typeof m.image_url==="string" ? m.image_url : "";
+          if(u.indexOf("https://lwomstzzmyegpbidibfm.supabase.co/storage/v1/object/sign/support-images/")===0){
+            var a=el("a"); a.href=u; a.target="_blank"; a.rel="noopener noreferrer"; a.title=S.psMsgPhotoOpen;
+            var im=el("img","mtimg"); im.src=u; im.alt=S.psMsgPhotoOpen; im.loading="lazy";
+            a.appendChild(im); b.insertBefore(a, b.firstChild);
+          } else {
+            b.insertBefore(el("div","mtgone",S.psMsgPhotoGone), b.firstChild);
+          }
+        }
         b.appendChild(el("div","mtwhen",msgWhen(m.created_at)));
         th.appendChild(b);
       });
