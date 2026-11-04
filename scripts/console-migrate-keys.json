@@ -1,0 +1,32 @@
+{
+  "_": "PINNED COPY of nirazz/admin-console helpy/migrate-keys.json (the one source; private repo). scripts/build_console_redirect.py builds console/index.html from it; admin-console tests/helpy.mjs fails when this copy and the source differ. Change the source there, then copy it here.",
+  "prefs": [
+    "helpy_console_lang",
+    "helpy_console_theme",
+    "helpy_console_live",
+    "helpy_console_secopen2",
+    "helpy_console_tip",
+    "helpy_console_chat_seen",
+    "helpy_console_support_done"
+  ],
+  "docKeys": [
+    "helpy_decisions",
+    "helpy_fc_progress_v1",
+    "helpy-checklist-v2",
+    "helpy_survey_runs",
+    "helpy-postmortem-v1",
+    "helpy-retro-v1",
+    "helpy_sprint_v2",
+    "helpy_stakeholder_history"
+  ],
+  "docPrefixes": [
+    "eng-brief-",
+    "helpy-pmf-",
+    "okr_",
+    "helpy_interview_"
+  ],
+  "keyPattern": "^[A-Za-z0-9_.:-]{1,200}$",
+  "maxItems": 300,
+  "maxValue": 200000,
+  "maxTotal": 1000000
+}
