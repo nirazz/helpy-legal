@@ -3373,6 +3373,7 @@
       psMsgNoThreadErr:"לא הצלחתי לטעון את ההתכתבות",
       psMsgPhotoGone:"התמונה כבר לא זמינה (נמחקת אחרי 90 יום)",
       psMsgPhotoOpen:"פתיחת התמונה בגודל מלא",
+      psMsgPhotoErr:"לא הצלחתי לטעון את התמונה - אפשר לפתוח שוב את החלון",
       psMsgTitle:"הודעה אל {name}",
       psMsgAbout:"בעקבות הכרטיס: {title} · ההקשר הזה לא נשלח, הוא רק כדי שתדע/י על מה כתבת",
       psMsgFrom:"בשם", psMsgAsHelpy:"צוות Helpy", psMsgAsFounder:"ניר · מייסד",
@@ -4417,6 +4418,7 @@
       psMsgNoThreadErr:"Could not load the conversation",
       psMsgPhotoGone:"This photo is no longer available (deleted after 90 days)",
       psMsgPhotoOpen:"Open the photo full size",
+      psMsgPhotoErr:"Could not load the photo - reopen this window to try again",
       psMsgTitle:"Message to {name}",
       psMsgAbout:"About the card: {title} \u00b7 this context is not sent, it is here so you know what you are writing about",
       psMsgFrom:"From", psMsgAsHelpy:"Helpy team", psMsgAsFounder:"Nir \u00b7 founder",
@@ -8543,9 +8545,11 @@
           if(u.indexOf("https://lwomstzzmyegpbidibfm.supabase.co/storage/v1/object/sign/support-images/")===0){
             var a=el("a"); a.href=u; a.target="_blank"; a.rel="noopener noreferrer"; a.title=S.psMsgPhotoOpen;
             var im=el("img","mtimg"); im.src=u; im.alt=S.psMsgPhotoOpen; im.loading="lazy";
+            im.addEventListener("error", function(){ var g=el("div","mtgone",S.psMsgPhotoErr); if(a.parentNode) a.parentNode.replaceChild(g,a); });
             a.appendChild(im); b.insertBefore(a, b.firstChild);
           } else {
-            b.insertBefore(el("div","mtgone",S.psMsgPhotoGone), b.firstChild);
+            // image_gone = storage says deleted (90 days); otherwise signing failed
+            b.insertBefore(el("div","mtgone", m.image_gone===true ? S.psMsgPhotoGone : S.psMsgPhotoErr), b.firstChild);
           }
         }
         b.appendChild(el("div","mtwhen",msgWhen(m.created_at)));
