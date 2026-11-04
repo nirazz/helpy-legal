@@ -9,22 +9,68 @@
     "helpy_console_chat_seen",
     "helpy_console_support_done"
   ],
-  "docKeys": [
-    "helpy_decisions",
-    "helpy_fc_progress_v1",
-    "helpy-checklist-v2",
-    "helpy_survey_runs",
-    "helpy-postmortem-v1",
-    "helpy-retro-v1",
-    "helpy_sprint_v2",
-    "helpy_stakeholder_history"
-  ],
-  "docPrefixes": [
-    "eng-brief-",
-    "helpy-pmf-",
-    "okr_",
-    "helpy_interview_"
-  ],
+  "docs": {
+    "decisions": {
+      "keys": [
+        "helpy_decisions"
+      ]
+    },
+    "interview-prep": {
+      "keys": [
+        "helpy_fc_progress_v1"
+      ]
+    },
+    "launch-checklist": {
+      "keys": [
+        "helpy-checklist-v2"
+      ]
+    },
+    "nps": {
+      "keys": [
+        "helpy_survey_runs"
+      ]
+    },
+    "postmortem": {
+      "keys": [
+        "helpy-postmortem-v1"
+      ]
+    },
+    "retro": {
+      "keys": [
+        "helpy-retro-v1"
+      ]
+    },
+    "sprint": {
+      "keys": [
+        "helpy_sprint_v2"
+      ]
+    },
+    "stakeholder-update": {
+      "keys": [
+        "helpy_stakeholder_history"
+      ]
+    },
+    "eng-brief": {
+      "prefixes": [
+        "eng-brief-"
+      ]
+    },
+    "gtm": {
+      "prefixes": [
+        "helpy-pmf-"
+      ]
+    },
+    "okrs": {
+      "prefixes": [
+        "okr_"
+      ]
+    },
+    "user-interviews": {
+      "prefixes": [
+        "helpy_interview_"
+      ]
+    }
+  },
   "keyPattern": "^[A-Za-z0-9_.:-]{1,200}$",
   "maxItems": 300,
   "maxValue": 200000,
