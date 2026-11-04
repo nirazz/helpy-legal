@@ -1,0 +1,78 @@
+{
+  "_": "PINNED COPY of nirazz/admin-console helpy/migrate-keys.json (the one source; private repo). scripts/build_console_redirect.py builds console/index.html from it; admin-console tests/helpy.mjs fails when this copy and the source differ. Change the source there, then copy it here.",
+  "prefs": [
+    "helpy_console_lang",
+    "helpy_console_theme",
+    "helpy_console_live",
+    "helpy_console_secopen2",
+    "helpy_console_tip",
+    "helpy_console_chat_seen",
+    "helpy_console_support_done"
+  ],
+  "docs": {
+    "decisions": {
+      "keys": [
+        "helpy_decisions"
+      ]
+    },
+    "interview-prep": {
+      "keys": [
+        "helpy_fc_progress_v1"
+      ]
+    },
+    "launch-checklist": {
+      "keys": [
+        "helpy-checklist-v2"
+      ]
+    },
+    "nps": {
+      "keys": [
+        "helpy_survey_runs"
+      ]
+    },
+    "postmortem": {
+      "keys": [
+        "helpy-postmortem-v1"
+      ]
+    },
+    "retro": {
+      "keys": [
+        "helpy-retro-v1"
+      ]
+    },
+    "sprint": {
+      "keys": [
+        "helpy_sprint_v2"
+      ]
+    },
+    "stakeholder-update": {
+      "keys": [
+        "helpy_stakeholder_history"
+      ]
+    },
+    "eng-brief": {
+      "prefixes": [
+        "eng-brief-"
+      ]
+    },
+    "gtm": {
+      "prefixes": [
+        "helpy-pmf-"
+      ]
+    },
+    "okrs": {
+      "prefixes": [
+        "okr_"
+      ]
+    },
+    "user-interviews": {
+      "prefixes": [
+        "helpy_interview_"
+      ]
+    }
+  },
+  "keyPattern": "^[A-Za-z0-9_.:-]{1,200}$",
+  "maxItems": 300,
+  "maxValue": 200000,
+  "maxTotal": 1000000
+}
