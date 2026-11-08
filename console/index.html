@@ -6138,7 +6138,8 @@
     {d:"2026-10-08", he:"גרסה 1.1.27", en:"v1.1.27"},
     {d:"2026-10-17", he:"גרסה 1.1.28", en:"v1.1.28"},
     {d:"2026-10-26", he:"גרסה 1.1.29", en:"v1.1.29"},
-    {d:"2026-10-29", he:"גרסה 1.1.30", en:"v1.1.30"}
+    {d:"2026-10-29", he:"גרסה 1.1.30", en:"v1.1.30"},
+    {d:"2026-11-07", he:"גרסה 1.1.31", en:"v1.1.31"}
   ];
   function annotMarks(rows){
     if(!rows.length) return [];
@@ -9023,13 +9024,13 @@
     {id:"rls", col:"gate", c:"--s8",
      he:"הרשאות שורה", en:"Row-level security",
      shH:"RLS · על כל טבלה של Helpy", shE:"RLS · on every Helpy table",
-     dH:"החוקים שמחליטים איזו שורה כל משתמש רשאי לראות או לשנות, ונאכפים במסד הנתונים עצמו - לא באפליקציה. גם אם מישהו יכתוב לקוח משלו, הוא לא יעקוף אותם. בפרופילים ובפוסטים ההרשאה היא גם לפי עמודה: מיקום מדויק ופרטים אישיים סגורים לאחרים. 44 חוקי אבטחה קבועים נבדקים בכל סגירת סשן ומוצגים בלשונית האבטחה.",
-     dE:"The rules deciding which row each user may read or change, enforced in the database itself - not in the app. Even a hand-rolled client cannot get around them. Profiles and posts are also locked per column: exact location and personal details stay closed to others. 44 standing security guards are checked at every session close and shown in the security tab."},
+     dH:"החוקים שמחליטים איזו שורה כל משתמש רשאי לראות או לשנות, ונאכפים במסד הנתונים עצמו - לא באפליקציה. גם אם מישהו יכתוב לקוח משלו, הוא לא יעקוף אותם. בפרופילים ובפוסטים ההרשאה היא גם לפי עמודה: מיקום מדויק ופרטים אישיים סגורים לאחרים. 52 חוקי אבטחה קבועים נבדקים בכל סגירת סשן ומוצגים בלשונית האבטחה.",
+     dE:"The rules deciding which row each user may read or change, enforced in the database itself - not in the app. Even a hand-rolled client cannot get around them. Profiles and posts are also locked per column: exact location and personal details stay closed to others. 52 standing security guards are checked at every session close and shown in the security tab."},
     {id:"db", col:"core", c:"--s1",
      he:"מסד הנתונים", en:"The database",
      shH:"PostgreSQL", shE:"PostgreSQL",
-     dH:"הלב. שבע טבלאות ליבה תחת RLS - פרופילים, פוסטים, התאמות, הודעות, דירוגים, דיווחים וחסימות - ועוד 68 טבלאות תפעוליות (יומן התראות, מצב המוניטורים, הודעות מערכת, מכסות ויומני אבטחה, אירועי מודרציה, דגלי פיצ׳רים, חשבונות שנמחקו בתקופת החרטה, היסטוריית מדדים ודגימות שרת, גיבויים, הוצאות, הגדרות גרסה). כל כתיבה רגישה עוברת דרך פונקציה אחת אטומית ולא דרך הלקוח.",
-     dE:"The heart. Seven core tables under RLS - profiles, posts, matches, messages, ratings, reports and blocks - plus 68 operational tables (notification log, monitor state, system messages, limits and security logs, moderation events, feature flags, accounts deleted but still restorable, metrics history and server samples, backups, expenses, version config). Every sensitive write goes through one atomic function, never straight from the client."},
+     dH:"הלב. שבע טבלאות ליבה תחת RLS - פרופילים, פוסטים, התאמות, הודעות, דירוגים, דיווחים וחסימות - ועוד 87 טבלאות תפעוליות (יומן התראות, מצב המוניטורים, הודעות מערכת, מכסות ויומני אבטחה, אירועי מודרציה, דגלי פיצ׳רים, חשבונות שנמחקו בתקופת החרטה, היסטוריית מדדים ודגימות שרת, גיבויים, הוצאות, הגדרות גרסה). כל כתיבה רגישה עוברת דרך פונקציה אחת אטומית ולא דרך הלקוח.",
+     dE:"The heart. Seven core tables under RLS - profiles, posts, matches, messages, ratings, reports and blocks - plus 87 operational tables (notification log, monitor state, system messages, limits and security logs, moderation events, feature flags, accounts deleted but still restorable, metrics history and server samples, backups, expenses, version config). Every sensitive write goes through one atomic function, never straight from the client."},
     {id:"rpc", col:"core", c:"--s7",
      he:"פונקציות מסד", en:"Database functions",
      shH:"RPC · SECURITY DEFINER", shE:"RPC · SECURITY DEFINER",
@@ -9043,11 +9044,11 @@
     {id:"storage", col:"core", c:"--s5",
      he:"אחסון קבצים", en:"File storage",
      shH:"Storage buckets", shE:"Storage buckets",
-     dH:"תמונות פרופיל ותמונות פוסטים. תמונות צ׳אט יושבות בדלי פרטי ונגישות רק דרך קישור חתום שפג - לא בכתובת פומבית. ניקוי לילי (03:20 UTC) מוחק קבצים של חשבונות שנמחקו ותמונות שאף פוסט כבר לא מחזיק, ובודק שאין בתמונה חדשה מיקום GPS.",
-     dE:"Avatars and post photos. Chat images sit in a private bucket reachable only through an expiring signed link - never a public URL. A nightly sweep (03:20 UTC) deletes files of deleted accounts and photos no post holds any more, and checks new photos carry no GPS location."},
+     dH:"תמונות פרופיל ותמונות פוסטים. תמונות צ׳אט יושבות בדלי פרטי ונגישות רק דרך קישור חתום שפג - לא בכתובת פומבית. ניקוי לילי (03:20 UTC) מוחק קבצים של חשבונות שנמחקו ותמונות שאף פוסט כבר לא מחזיק, ובודק שאין בתמונה חדשה מיקום GPS. מאז 8.11 השרת מכין לכל תמונת פוסט ופרופיל עותקים בכמה גדלים, פעם אחת, מהמקור שעבר מודרציה ובלי מטא-דאטה, בדלי ציבורי נפרד; מהגרסה שאחרי 1.1.31 האפליקציה טוענת אותם במקום להקטין כל תמונה מחדש.",
+     dE:"Avatars and post photos. Chat images sit in a private bucket reachable only through an expiring signed link - never a public URL. A nightly sweep (03:20 UTC) deletes files of deleted accounts and photos no post holds any more, and checks new photos carry no GPS location. Since 8.11 the server makes each post and profile photo in a few sizes, once, from the moderated original and without metadata, in a separate public bucket; from the version after 1.1.31 the app loads those instead of resizing every photo again."},
     {id:"edge", col:"core", c:"--s2",
      he:"פונקציות קצה", en:"Edge functions",
-     shH:"Deno · 31 פונקציות", shE:"Deno · 31 functions",
+     shH:"Deno · 32 פונקציות", shE:"Deno · 32 functions",
      dH:"קוד שרת קטן שרץ קרוב למשתמש. כאן יושבת כל עבודה שאסור לתת ללקוח: שליחת התראות ומיילים, אימות טלפון, מודרציה, התראות מייסד, ניטור השרת והקריסות, וה-API של הקונסולה הזו. כל מכסה או הגבלה שלהן נשמרת במסד - לא בזיכרון הפונקציה, שמתאפס בכל הפעלה.",
      dE:"Small server code running close to the user. Everything the client must not be trusted with lives here: sending notifications and emails, phone verification, moderation, founder alerts, server and crash monitoring, and this console's own API. Every limit they enforce lives in the database - never in function memory, which resets on every boot."},
     {id:"cron", col:"auto", c:"--s2",
