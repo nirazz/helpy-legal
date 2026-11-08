@@ -699,6 +699,8 @@
       border:1px solid var(--grid); color:var(--ink); }
   .msgthread .mt.us { align-self:flex-end; background:var(--wash1); color:var(--ink); }
   .msgthread .mtwhen { font-size:11px; color:var(--muted); margin-top:3px; }
+  .msgthread .mtimg { display:block; max-width:220px; max-height:260px; border-radius:8px; margin-bottom:4px; }
+  .msgthread .mtgone { font-style:italic; color:var(--muted); }
   .msgthread .mtempty { font-size:12px; color:var(--muted); text-align:center; padding:6px 0; }
   .msgpick { display:flex; flex-direction:column; gap:6px; max-height:260px; overflow-y:auto;
              margin-top:10px; }
@@ -3369,6 +3371,9 @@
       psMsgPickPh:"שם של שכן/ה", psMsgNoUsers:"לא נמצאו שכנים בשם הזה",
       psMsgLoading:"טוען…", psMsgNoThread:"אין עדיין התכתבות",
       psMsgNoThreadErr:"לא הצלחתי לטעון את ההתכתבות",
+      psMsgPhotoGone:"התמונה כבר לא זמינה (נמחקת אחרי 90 יום)",
+      psMsgPhotoOpen:"פתיחת התמונה בגודל מלא",
+      psMsgPhotoErr:"לא הצלחתי לטעון את התמונה - אפשר לפתוח שוב את החלון",
       psMsgTitle:"הודעה אל {name}",
       psMsgAbout:"בעקבות הכרטיס: {title} · ההקשר הזה לא נשלח, הוא רק כדי שתדע/י על מה כתבת",
       psMsgFrom:"בשם", psMsgAsHelpy:"צוות Helpy", psMsgAsFounder:"ניר · מייסד",
@@ -3542,6 +3547,9 @@
         storage_hygiene_runs:["ניקוי תמונות לילי","ריצה אחת בכל לילה: כמה קבצים נמחקו ונבדקו - נשמר 90 יום"],
         churn_risk_snapshots:["צילומי ציון נטישה","צילום לילי של ציון הסיכון לכל משתמש, כדי לבדוק אם הציון מנבא מי חוזר - נשמר 90 יום ונמחק עם החשבון"],
         message_originals:["הודעות צ'אט שנערכו או נמחקו","הנוסח המקורי של הודעה שנערכה או נמחקה אצל כולם - לצוות בלבד, לבירור דיווח. נשמר 90 יום ונמחק"],
+        group_message_originals:["הודעות שנערכו או נמחקו בשיחות משותפות","הנוסח המקורי (וקובץ התמונה או ההקלטה) של הודעה שנערכה או נמחקה בשיחה משותפת, גם כזו שמנהל/ת מחק/ה - לצוות בלבד, לבירור דיווח. נשמר 90 יום ונמחק"],
+        support_upload_claims:["אישורי העלאה לתמונות בצ'אט Helpy","לפני כל העלאה של תמונה לצוות השרת נותן מקום אחד (עד 15 ביום למשתמש/ת) - כך המגבלה נאכפת גם בהעלאות במקביל. רק מזהה המשתמש/ת ונתיב הקובץ, נשמר יומיים ונמחק"],
+        support_images:["תמונות בצ'אט Helpy","תמונה או צילום מסך שמשתמש/ת שלח/ה לצוות בצ'אט Helpy - רק המשתמש/ת והצוות רואים. נמחקת אחרי 90 יום, או כשהצ'אט נמחק עם החשבון"],
         console_link_refusals:["ניסיונות חסומים בקישורים","מפתח שגוי או חריגה מהתקרה בהוספת קישור לקונסול - נמחק אחרי יום"],
         webhook_outbox:["תור שליחה חוזרת","קריאות שנכשלו ומחכות שישלחו אותן שוב"],
         notification_log:["יומן התראות פוש","איזו התראה נשלחה למי ומתי"],
@@ -3551,7 +3559,12 @@
         liveness_probe_runs:["ריצות בדיקת ההתקנה","מפתח לכל ריצה יומית, כדי ששליחה חוזרת של אותה ריצה לא תבדוק אנשים פעמיים - נמחק אחרי 14 יום"],
         liveness_probe_sends:["בדיקות התקנה שקטות","כל בדיקה שקטה שנשלחה ומה ענו עליה, כדי לדעת מי עדיין מחזיק/ה באפליקציה - נמחק אחרי 14 יום"],
         urgent_push_claims:["פוש דחוף - מי קיבל היום","מי קיבל/ה פוש על בקשה דחופה ב-24 השעות האחרונות, כדי שלא יקבלו יותר מאחד ביום - נמחק אחרי יומיים"],
+        reach_out_withdrawals:["ביטולי פניות - מי ביטל היום","מי ביטל/ה פנייה שעוד לא אושרה ב-24 השעות האחרונות, כדי שאי אפשר יהיה לבטל ולפנות שוב בלולאה ולהציף את בעל/ת הפוסט - פעם אחת לכל פוסט ועד 10 ביום, נמחק אחרי יומיים"],
         account_deletion_holds:["חשבונות שנמחקו - 30 יום לשחזור","מה שצריך כדי לשחזר חשבון שנמחק אם המשתמש/ת מתחרט/ת - נמחק סופית אחרי 30 יום"],
+        group_rooms:["שיחות משותפות שנסגרו","חדר משותף שנסגר - חברים, הודעות, סקרים, הצבעות ומפגשים - נשמר 90 יום מהסגירה ואז נמחק כולו. חדר פתוח נשמר כל עוד הוא חי"],
+        group_media_claims:["אישורי העלאה בשיחות משותפות","לפני כל העלאה של תמונה או הקלטה לחדר משותף השרת נותן מקום אחד (עד 30 תמונות ו-60 הקלטות ביום למשתמש/ת) - כך המגבלה נאכפת גם בהעלאות במקביל. רק מזהה המשתמש/ת, החדר ונתיב הקובץ, נשמר יומיים ונמחק"],
+        group_media:["תמונות, הקלטות ומיקומים בשיחות משותפות","מה שחברי חדר משותף שלחו בו - רק מי שבחדר עכשיו רואה. נמחק עם החדר, 90 יום אחרי שנסגר. נקודת מיקום מדויקת נמחקת כשהחשבון נמחק, וקובץ שהועלה ולא נשלח נמחק תוך יום"],
+        group_push_claims:["ריכוז התראות בשיחות משותפות","מתי נשלחה לאחרונה התראה לכל חבר/ה בכל חדר, כדי לאגד הודעות ולא להציף - נמחק אחרי 7 ימים"],
         category_interest:["קטגוריות שמעניינות כל משתמש/ת","לכל משתמש/ת, הקטגוריות שהתעכב/ה עליהן בפיד או פנה/תה בהן, עם משקל שדועך - בלי פוסטים ובלי זמנים. מסדר את הפיד ובוחר את הפוש על בקשה באזור. נמחק אחרי 60 יום בלי פעילות ועם החשבון"] },
       bkFoot:"נתוני המשתמשים עצמם (פרופילים, פוסטים, שיחות) נשמרים עד שהמשתמש/ת מוחק/ת את החשבון. אחרי מחיקה יש 30 יום לשחזר אותו, ואז המחיקה סופית. מהגיבויים הכל נמחק תוך 90 יום לכל היותר.",
       bkMonOffsite:"גיבוי חיצוני שבועי", bkMonRet:"מחיקת נתונים ישנים",
@@ -3674,7 +3687,9 @@
         cron_jobs:"פקודות קרון", push_tickets:"כרטיסי פוש", daily_digest:"הסיכום היומי",
         push_auth:"התראות פוש", founder_alerts:"התראות טלגרם", moderate_post:"סינון תוכן אוטומטי",
         abuse_volume:"הצפה בפעולות משתמשים", cap_headroom:"תקרות יומיות נגד הצפה",
-        attestation_ios:"אימות מכשיר באייפון", attestation_android:"אימות מכשיר באנדרואיד", attestation_platform:"אימות מכשיר: זיהוי פלטפורמה" },
+        attestation_ios:"אימות מכשיר באייפון", attestation_android:"אימות מכשיר באנדרואיד", attestation_platform:"אימות מכשיר: זיהוי פלטפורמה",
+        image_variants_stall:"גדלי תמונות: תור", image_variants_orphans:"גדלי תמונות: מחיקת עותקים",
+        image_variants_failed:"גדלי תמונות: כשלים", image_variants_volume:"גדלי תמונות: כמויות" },
       scNowTitle:"עכשיו",
       scNowSub:"כמה פעולות נעשו ממש עכשיו, מול התקרה שמעליה נכנס בלם.",
       scNowEmpty:"אין מונים פעילים כרגע.",
@@ -3812,7 +3827,9 @@
                  abuse_volume:"הצפה בפעולות", cap_headroom:"תקרות יומיות", data_retention:"מחיקת נתונים ישנים",
                  infra_compute_budget:"גודל השרת ותקציב", infra_connections:"חיבורים למסד",
                  infra_cpu:"מעבד", infra_disk:"דיסק", infra_memory:"זיכרון",
-                 offsite_backup:"גיבוי חיצוני" },
+                 offsite_backup:"גיבוי חיצוני",
+                 image_variants_stall:"גדלי תמונות", image_variants_orphans:"מחיקת עותקי תמונות",
+                 image_variants_failed:"כשלי גדלי תמונות", image_variants_volume:"כמויות גדלי תמונות" },
       brTabBadge:function(n){ return n==="1"? "דבר אחד מחכה לך בבוקר" : n+" דברים מחכים לך בבוקר"; },
       brAllUp:function(n){ return "כל "+n+" הבדיקות תקינות"; }, brRestUp:function(n){ return "עוד "+n+" תקינות"; }, brShowChecks:"הצגת כולן", brHideChecks:"הסתרה",
       brCheck:function(x){ return (this.brChecks && this.brChecks[x]) || MON_NAMES()[x] || String(x||"").replace(/_/g," "); },
@@ -4407,6 +4424,9 @@
       psMsgPickPh:"Neighbour\u2019s name", psMsgNoUsers:"No neighbour by that name",
       psMsgLoading:"Loading\u2026", psMsgNoThread:"No conversation yet",
       psMsgNoThreadErr:"Could not load the conversation",
+      psMsgPhotoGone:"This photo is no longer available (deleted after 90 days)",
+      psMsgPhotoOpen:"Open the photo full size",
+      psMsgPhotoErr:"Could not load the photo - reopen this window to try again",
       psMsgTitle:"Message to {name}",
       psMsgAbout:"About the card: {title} \u00b7 this context is not sent, it is here so you know what you are writing about",
       psMsgFrom:"From", psMsgAsHelpy:"Helpy team", psMsgAsFounder:"Nir \u00b7 founder",
@@ -4576,6 +4596,9 @@
         storage_hygiene_runs:["Nightly photo clean-up","One row per night: how many files were removed and checked - kept 90 days"],
         churn_risk_snapshots:["Churn-score snapshots","A nightly snapshot of each user's risk score, to test whether it predicts who comes back - kept 90 days, removed with the account"],
         message_originals:["Edited or deleted chat messages","The original text of a chat message that was edited or deleted for everyone - team only, to look into a report. Kept 90 days, then removed"],
+        group_message_originals:["Edited or deleted shared-chat messages","The original (and the photo or recording) of a message edited or deleted in a shared chat, including ones an admin removed - team only, to look into a report. Kept 90 days, then removed"],
+        support_upload_claims:["Upload slots for Helpy-chat photos","Before each photo upload to the team the server hands out one slot (up to 15 a day per user) - so the limit holds even for parallel uploads. Only the user id and file path; kept 2 days, then removed"],
+        support_images:["Photos in the Helpy chat","A photo or screenshot a user sent the team in the Helpy chat - only that user and the team can see it. Deleted after 90 days, or when the chat goes with the account"],
         console_link_refusals:["Blocked link attempts","A wrong key or a cap hit when adding a console link - removed after a day"],
         webhook_outbox:["Retry queue","Calls that failed and wait to be sent again"],
         notification_log:["Push notification log","Which push went to whom, and when"],
@@ -4585,7 +4608,12 @@
         liveness_probe_runs:["Install check runs","One key per daily run, so a re-sent run never checks people twice - erased after 14 days"],
         liveness_probe_sends:["Silent install checks","Every silent check we sent and what came back, to know who still has the app - erased after 14 days"],
         urgent_push_claims:["Urgent push - who got one today","Who got an urgent-request push in the last 24 hours, so nobody gets more than one a day - erased after two days"],
+        reach_out_withdrawals:["Withdrawn reach-outs - who took one back today","Who took back a not-yet-accepted reach-out in the last 24 hours, so nobody can withdraw and reach out again in a loop to flood a post owner - once per post and up to 10 a day, erased after two days"],
         account_deletion_holds:["Deleted accounts - 30 days to restore","What restoring a deleted account needs if the person changes their mind - erased for good after 30 days"],
+        group_rooms:["Closed shared chats","A closed shared room - members, messages, polls, votes and meetups - is kept 90 days after it closed, then deleted whole. An open room is kept while it lives"],
+        group_media_claims:["Upload slots in shared chats","Before each photo or recording upload to a shared room the server hands out one slot (up to 30 photos and 60 recordings a day per user) - so the limit holds even for parallel uploads. Only the user id, room and file path; kept 2 days, then removed"],
+        group_media:["Photos, recordings and locations in shared chats","What members sent in a shared room - only current members can see it. Deleted with the room, 90 days after it closed. A precise location point goes when the account is deleted, and a file uploaded but never sent is removed within a day"],
+        group_push_claims:["Shared-chat notification pooling","When each member of each room was last notified, so messages are bundled instead of flooding - erased after 7 days"],
         category_interest:["Categories each person is interested in","Per person, the categories they paused on in the feed or reached out in, with a fading weight - no posts, no times. Orders the feed and picks the nearby-request push. Erased after 60 days without activity and with the account"] },
       bkFoot:"The users' own data (profiles, posts, chats) is kept until the account is deleted. After a deletion there are 30 days to restore it, then it is final. Everything is gone from the backups within 90 days at most.",
       bkMonOffsite:"Weekly off-site backup", bkMonRet:"Old-data deletion",
@@ -4706,7 +4734,9 @@
         cron_jobs:"Cron jobs", push_tickets:"Push tickets", daily_digest:"Daily digest",
         push_auth:"Push notifications", founder_alerts:"Telegram alerts", moderate_post:"Automatic content filter",
         abuse_volume:"Flood of user actions", cap_headroom:"Daily anti-abuse caps",
-        attestation_ios:"Device check on iPhone", attestation_android:"Device check on Android", attestation_platform:"Device check: platform detection" },
+        attestation_ios:"Device check on iPhone", attestation_android:"Device check on Android", attestation_platform:"Device check: platform detection",
+        image_variants_stall:"Photo sizes: queue", image_variants_orphans:"Photo sizes: copy deletion",
+        image_variants_failed:"Photo sizes: failures", image_variants_volume:"Photo sizes: volume" },
       scNowTitle:"Right now",
       scNowSub:"How many actions are happening right now, against the ceiling where a brake kicks in.",
       scNowEmpty:"No active counters right now.",
@@ -4842,7 +4872,9 @@
                  abuse_volume:"Abuse volume", cap_headroom:"Daily caps", data_retention:"Data retention",
                  infra_compute_budget:"Server size and budget", infra_connections:"DB connections",
                  infra_cpu:"CPU", infra_disk:"Disk", infra_memory:"Memory",
-                 offsite_backup:"Off-site backup" },
+                 offsite_backup:"Off-site backup",
+                 image_variants_stall:"Photo sizes", image_variants_orphans:"Photo copy deletion",
+                 image_variants_failed:"Photo size failures", image_variants_volume:"Photo size volume" },
       brTabBadge:function(n){ return n==="1"? "One thing is waiting in the brief" : n+" things are waiting in the brief"; },
       brAllUp:function(n){ return "All "+n+" checks OK"; }, brRestUp:function(n){ return n+" more OK"; }, brShowChecks:"Show all", brHideChecks:"Hide",
       brCheck:function(x){ return (this.brChecks && this.brChecks[x]) || MON_NAMES()[x] || String(x||"").replace(/_/g," "); },
@@ -5000,6 +5032,7 @@
     "transportation":["טרמפ","Rides"], "borrow":["השאלה","Borrow"],
     "giveaway":["מסירה","Giveaway"], "activity":["פעילות","Activity"],
     "trips":["טיולים","Trips"], "talk":["שיחות נפש","Let's Talk"], "pets":["חיות מחמד","Pets"], "languages":["תרגול שפות","Language Practice"],
+    "meetups":["מפגשים חברתיים","Social meetups"], "kids":["פעילות משותפת עם ילדים","Activities with kids"], "cooking":["בישול ואוכל","Cooking & food"], "bureaucracy":["עזרה בבירוקרטיה","Help with paperwork"],
     "tutoring":["שיעורי עזר","Tutoring"], "pro-advice":["ייעוץ מקצועי","Pro Advice"],
     "language-help":["עזרה בשפה","Language Help"], "other":["אחר","Other"],
     "home-repair":["תיקון בית","Home Repair"]
@@ -8521,7 +8554,22 @@
       rows.forEach(function(m){
         // "them" is the person; anything we sent (helpy, broadcast, founder
         // persona) is us
-        var b=el("div","mt "+(m.sender==="user"?"them":"us"), m.content||"");
+        // A photo the user sent: shown from the short-lived signed link the
+        // server made (private bucket). Only our own storage host is accepted.
+        var photoOnly = m.has_image===true && m.content==="\uD83D\uDCF7";
+        var b=el("div","mt "+(m.sender==="user"?"them":"us"), photoOnly ? "" : (m.content||""));
+        if(m.has_image===true){
+          var u = typeof m.image_url==="string" ? m.image_url : "";
+          if(u.indexOf("https://lwomstzzmyegpbidibfm.supabase.co/storage/v1/object/sign/support-images/")===0){
+            var a=el("a"); a.href=u; a.target="_blank"; a.rel="noopener noreferrer"; a.title=S.psMsgPhotoOpen;
+            var im=el("img","mtimg"); im.src=u; im.alt=S.psMsgPhotoOpen; im.loading="lazy";
+            im.addEventListener("error", function(){ var g=el("div","mtgone",S.psMsgPhotoErr); if(a.parentNode) a.parentNode.replaceChild(g,a); });
+            a.appendChild(im); b.insertBefore(a, b.firstChild);
+          } else {
+            // image_gone = storage says deleted (90 days); otherwise signing failed
+            b.insertBefore(el("div","mtgone", m.image_gone===true ? S.psMsgPhotoGone : S.psMsgPhotoErr), b.firstChild);
+          }
+        }
         b.appendChild(el("div","mtwhen",msgWhen(m.created_at)));
         th.appendChild(b);
       });
@@ -9004,7 +9052,7 @@
      dE:"Small server code running close to the user. Everything the client must not be trusted with lives here: sending notifications and emails, phone verification, moderation, founder alerts, server and crash monitoring, and this console's own API. Every limit they enforce lives in the database - never in function memory, which resets on every boot."},
     {id:"cron", col:"auto", c:"--s2",
      he:"משימות מתוזמנות", en:"Scheduled jobs",
-     shH:"pg_cron · 56 משימות (54 פעילות)", shE:"pg_cron · 56 jobs (54 active)",
+     shH:"pg_cron · 65 משימות (63 פעילות)", shE:"pg_cron · 65 jobs (63 active)",
      dH:"שעון בתוך המסד שמפעיל משימות לפי לוח זמנים: תזכורות, סגירת התאמות שנתקעו, הורדת פוסטים שבעליהם לא ענו למייל, השלמת שמות ערים, חיבור בקשות תקועות להצעות, הודעת מסע משתמש חדש לטלגרם כחצי שעה אחרי ההרשמה, דוח יומי. הדחיפות מוגבלות ל-10:00-19:00 בישראל; משימות התחזוקה רצות מסביב לשעון - בריאות השרת וקריסות כל 5 דקות, שליחה חוזרת של קריאות שלא יצאו, כלב שמירה כל שעה, קבלות, פרסום דירוגים, ניקוי האחסון, מחיקת יומנים לפי כללי השמירה, מחיקה סופית של חשבון 30 יום אחרי בקשת המחיקה, ניקוי פוסטים של חשבונות שנמחקו, תמונת מצב לילית של סיכון נטישה, הסיכום של 06:00 UTC וסנכרון גרסה.",
      dE:"A clock inside the database firing jobs on a schedule: reminders, closing stalled matches, taking down posts whose owners never answered the email, filling in city names, connecting stuck requests to offers, a new-user journey message to Telegram about half an hour after sign-up, the daily digest. Push senders keep to 10:00-19:00 Israel; the maintenance jobs run around the clock - server health and crashes every 5 min, re-sending calls that never left, watchdog hourly, receipts, rating publish, the storage sweep, pruning logs by their retention rules, final deletion of an account 30 days after it asked, scrubbing deleted accounts' posts, a nightly churn-risk snapshot, the 06:00 UTC digest and version sync."},
     {id:"nudge", col:"auto", c:"--s2",
@@ -9162,6 +9210,26 @@
          tE:"{sender name}", bE:"The first 100 characters of the message · or \"📷 Photo\" for an image-only message · or \"🎤 Voice message\"",
          wH:"כל הודעה בצ'אט, מיד. זו ההתראה היחידה שמציגה תוכן שכתב משתמש - ולכן היא נעצרת במאה תווים.",
          wE:"Every chat message, instantly. This is the only notification that shows user-written content - which is why it stops at 100 characters."},
+        {k:"group_opened", kind:"op",
+         tH:"{כותרת הפוסט}", bH:"{שם הפותח/ת} פתח/ה שיחה משותפת",
+         tE:"{post title}", bE:"{name} opened a shared chat",
+         wH:"בעל/ת פוסט בקטגוריית פעילות, טיולים, תרגול שפות, חיות מחמד, מפגשים חברתיים או פעילות משותפת עם ילדים פתח/ה חדר משותף לכל מי שאושר/ה על הפוסט (רק הבעלים פותח/ת, אף פעם לא אוטומטית). נשלחת מיד לכל חבר/ת החדר מלבד הפותח/ת. מי קיבל/ה נקבע במסד הנתונים בלבד (group_push_recipients): לא למי שהשתיק/ה את החדר, לא לחסימה הדדית, ולא למי שקרא/ה את החדר ב-45 השניות האחרונות. תפעולית: גם טוקן שקט מקבל אותה.",
+         wE:"The owner of an activity, trips, language-practice, pets, social-meetups or activities-with-kids post opened a shared room for everyone accepted on the post (only the owner opens it, never automatically). Sent instantly to every member except the opener. Who receives it is decided in the database alone (group_push_recipients): not a member who muted the room, not a mutual block, not someone who read the room in the last 45 seconds. Operational: a quiet token gets it too."},
+        {k:"group_message", kind:"op",
+         tH:"{כותרת הפוסט}", bH:"{שם השולח/ת}: מאה התווים הראשונים של ההודעה · או {שם}: 📷 תמונה {הכיתוב} · או {שם}: 🎤 הודעה קולית · או {שם}: 📍 מיקום",
+         tE:"{post title}", bE:"{sender name}: the first 100 characters of the message · or {name}: 📷 Photo {caption} · or {name}: 🎤 Voice message · or {name}: 📍 Location",
+         wH:"הודעה בחדר משותף. מאוגדת: לכל חבר/ת חדר לכל היותר אחת ב-10 דקות לכל חדר - התור נתפס במסד הנתונים (group_push_claims), לא נקרא-ואז-נשלח. אותם מסננים כמו פתיחת החדר: השתקה, חסימה הדדית, מי שקורא/ת ברגע זה. שורת מערכת (מי שהצטרף/ה או עזב/ה) לעולם לא שולחת. כמו הודעה בצ'אט, מציגה תוכן שכתב משתמש - ולכן נעצרת במאה תווים. תמונה, הקלטה ומיקום נכנסים לאותו תור של 10 דקות. רק תמונה מציגה את הכיתוב שלה; שם המקום והנקודה של מיקום לעולם לא נשלחים בהתראה. החריג: הודעה חשובה של מנהל/ת (📣 לפני השם) נשלחת לכל החברים, גם למי שהשתיק/ה את החדר, מחוץ לתור - עד 5 בחדר ביום.",
+         wE:"A message in a shared room. Pooled: each member gets at most one per 10 minutes per room - the slot is claimed in the database (group_push_claims), never read-then-sent. Same filters as the room opening: mute, mutual block, someone reading right now. A system line (who joined or left) never sends. Like a chat message it shows user-written content - which is why it stops at 100 characters. Photos, recordings and locations share the same 10-minute pool. Only a photo shows its caption; a location's label and point are never sent in the notification. An admin's important message (📣 before the name) is the exception: it goes to every member, including those who muted the room, outside the pool - at most 5 per room per day."},
+        {k:"group_update", kind:"op",
+         tH:"{כותרת הפוסט}", bH:"{שם} פתח/ה סקר: {השאלה} · או {שם} פתח/ה רשימת ציוד: {שם הרשימה} · או {שם} קבע/ה מועד: {המקום}",
+         tE:"{post title}", bE:"{name} opened a poll: {question} · or {name} started a gear list: {list name} · or {name} set a date: {place}",
+         wH:"סקר חדש או כרטיס המפגש / הטיול הבא בחדר משותף. מיידית, לא מאוגדת - עדכון כזה הוא מה שהחדר קיים בשבילו. אותם מסננים כמו הודעה (השתקה, חסימה הדדית, 45 שניות). כשאין מקום בכרטיס, הגוף מסתיים אחרי קבע/ה מועד.",
+         wE:"A new poll or a next-meetup / next-trip card in a shared room. Instant, not pooled - an update like this is what the room exists for. Same filters as a message (mute, mutual block, 45 seconds). With no place on the card, the body ends after set a date."},
+        {k:"group_assigned", kind:"op",
+         tH:"{כותרת הפוסט}", bH:"{שם המנהל/ת} ביקש/ה ממך להביא: {הפריט}",
+         tE:"{post title}", bE:"{admin name} asked you to bring: {item}",
+         wH:"מנהל/ת של חדר משותף הטיל/ה על חבר/ת חדר פריט ברשימת הציוד. נשלחת רק למי שקיבל/ה את הפריט, גם אם השתיק/ה את החדר (היא מופנית אליו/ה). לכל היותר אחת ב-10 דקות לכל חדר - התור נתפס במסד הנתונים (group_assign_push_claims) - כך שכמה פריטים ברצף הם התראה אחת. לא כשמישהו לוקח/ת פריט על עצמו/ה. לחיצה פותחת את הרשימה. תפעולית: גם טוקן שקט מקבל אותה.",
+         wE:"A shared-room admin put a gear-list item on a member. Sent only to that member, even if they muted the room (it is addressed to them). At most one per 10 minutes per room - the slot is claimed in the database (group_assign_push_claims) - so a run of items is one notification. Never when someone takes an item themselves. A tap opens the list. Operational: a quiet token gets it too."},
         {k:"rating_received", kind:"op",
          tH:"!דירוג חדש", bH:"{שם} דירג אותך {מספר} כוכבים",
          tE:"New Rating!", bE:"{name} rated you {n} stars",
@@ -9239,10 +9307,10 @@
          wH:"התאמה שהושלמה לפני 23 עד 48 שעות, לכל צד שעוד לא דירג - פעם אחת לכל צד. הצד שנתן את העזרה מקבל נוסח אחר: \"איך הלך?\" / \"איך היה לעבוד עם {שם}? דרגו\", ורק אם כבר פתח/ה גרסה 1.1.25 ומעלה. בניגוד להערת הקבוצה, לענף הזה אין שער שעות - הקרון רץ כל שעה והתזכורת נשלחת בכל שעה שבה התנאי מתקיים.",
          wE:"A match completed 23 to 48 hours ago, for each side that has not rated yet - once per side. The side that GAVE the help gets different copy: \"How did it go?\" / \"How was it working with {name}? Rate them\", and only once they have opened 1.1.25 or later. Unlike the group note, this branch has NO hour gate - the cron runs hourly and the nudge sends at whatever hour the condition is met."},
         {k:"helper_badge", cadH:"פעם אחת אי פעם", cadE:"once ever", kind:"mk",
-         tH:"צוות Helpy", bH:"עכשיו כשהקהילה גדלה, רצינו להודות לך שהיית מהראשונים שהציעו עזרה ב-Helpy. כאות תודה, קיבלת תג עוזר סביב תמונת הפרופיל שלך.",
-         tE:"Helpy Team", bE:"Now that the community has grown, thank you for being one of the first to offer help on Helpy. You now have a Helper badge around your profile photo.",
-         wH:"פעם אחת בחיי החשבון, למי שהציע/ה עזרה עוד לפני שתג העוזר/ת נולד. ההודעה אומרת במפורש שקיבלו תג עוזר סביב תמונת הפרופיל (עד 15.10 נכתב רק \"משהו מחכה לך בפנים\"). ההודעה בשרשור נכתבת לכולם, אבל הדחיפה שיווקית לכל דבר: דורשת הסכמה שיווקית, מדלגת על טוקן ארעי, מכבדת את מכסת השבוע המשותפת וגם צורכת אותה. יומיים של שקט באפליקציה לפני, וכל חילופי דברים בשרשור Helpy ב-24 השעות האחרונות דוחים לריצה הבאה.",
-         wE:"Once in the life of an account, to whoever offered help before the helper badge existed. The message names the badge and where it shows - a ring around the profile photo (until 15.10 it only said \"something is waiting inside\"). The thread message goes to everyone, but the push is marketing in every respect: it requires marketing consent, skips provisional tokens, honours the pooled 7-day cap and consumes it. Two days of app quiet first, and any Helpy-thread exchange in the last 24h defers to a later run."}
+         tH:"צוות Helpy", bH:"תודה שהצעת עזרה לשכנים ב-Helpy 💜 מעכשיו יש לך תג עוזר סביב תמונת הפרופיל, כדי שכל השכנים יראו אותו.",
+         tE:"Helpy Team", bE:"Thanks for offering to help your neighbours on Helpy 💜 You now have a Helper badge around your profile photo, so everyone nearby can see it.",
+         wH:"פעם אחת בחיי החשבון, למי שקיבל/ה תג עוזר/ת ועוד לא ראה/תה את חלון התג באפליקציה. ההודעה אומרת במפורש שקיבלו תג עוזר סביב תמונת הפרופיל (עד 15.10 נכתב רק \"משהו מחכה לך בפנים\"; עד 5.11 \"שהיית מהראשונים\", שכבר לא היה נכון). ההודעה בשרשור נכתבת לכולם, אבל הדחיפה שיווקית לכל דבר: דורשת הסכמה שיווקית, מדלגת על טוקן ארעי, מכבדת את מכסת השבוע המשותפת וגם צורכת אותה. יומיים של שקט באפליקציה לפני, וכל חילופי דברים בשרשור Helpy ב-24 השעות האחרונות דוחים לריצה הבאה.",
+         wE:"Once in the life of an account, to whoever earned the helper badge and has not seen its card in the app yet. The message names the badge and where it shows - a ring around the profile photo (until 15.10 it only said \"something is waiting inside\"; until 5.11 \"one of the first\", no longer true). The thread message goes to everyone, but the push is marketing in every respect: it requires marketing consent, skips provisional tokens, honours the pooled 7-day cap and consumes it. Two days of app quiet first, and any Helpy-thread exchange in the last 24h defers to a later run."}
        ]},
       {he:"שיווקיות - הזמנה לחזור", en:"Marketing - an invitation to come back",
        noteH:"חסם קשיח: הודעה שיווקית אחת לאדם בשבוע, מכל השולחים יחד. רק בהסכמה, רק 10:00-19:00, ורק לחשבון בן שלושה ימים לפחות - שלושת הימים הראשונים שייכים לתזכורת ההפעלה בלבד. חשבון מושהה לא מקבל אף אחת מהן.",
@@ -9251,8 +9319,8 @@
         {k:"nearby_request_alert", cadH:"שעתי", cadE:"hourly", kind:"mk",
          tH:"שכן/ה באזור מחפש/ת עזרה", bH:"\"{כותרת הפוסט}\" · {מרחק}",
          tE:"A neighbour nearby needs a hand", bE:"\"{post title}\" · {distance}",
-         wH:"בקשה חדשה - עד 24 שעות - נפתחה בתוך רדיוס החיפוש שלך. הכותרת לפי הקטגוריה: פעילות - \"שכן/ה באזור מחפש/ת שותף/ה לפעילות\"; טיולים - \"שכן/ה באזור מחפש/ת שותף/ה לטיול\"; שיחות נפש - \"שכן/ה באזור מחפש/ת שיחה\"; חיות מחמד - \"שכן/ה באזור צריך/ה עזרה עם חיית מחמד\"; תרגול שפות - \"שכן/ה באזור מחפש/ת שותף/ה לתרגול שפה\"; השאלה - \"שכן/ה באזור צריך/ה משהו בהשאלה\"; מסירה - \"שכן/ה באזור מחפש/ת משהו שאולי יש לך\"; כל השאר - הכותרת שלמעלה. נרשם ביומן ההתראות בתור `nearby_request_alert`. הרדיוס מוגבל ל-25 ק\"מ, והיא נשלחת רק למי שסימן/ה את הקטגוריה כתחום שבו הוא/היא עוזר/ת, שכבר הציע/ה עזרה בעבר, או שהתעכב/ה לאחרונה בפיד על פוסטים מהקטגוריה הזאת (מ-3.11; כשיש כמה בקשות, הפוש מספר קודם על זו מקטגוריה שעניינה אותו/ה - ביומן ההתראות variant=interest_over כשההצעה מהקטגוריה נבחרה על פני קרובה יותר, interest_same כשהיא ממילא הקרובה). עד 27.10 היא נרשמה ביומן תחת urgent_nearby, ולכן הספירות שלה מאותה תקופה נמצאות שם.",
-         wE:"A fresh request - under 24 hours old - opened inside your search radius. The title follows the category: activity - \"A neighbour nearby is looking for company\"; trips - \"A neighbour nearby is looking for a hiking buddy\"; talk - \"A neighbour nearby would like someone to talk to\"; pets - \"A neighbour nearby needs a hand with a pet\"; languages - \"A neighbour nearby wants a language-practice partner\"; borrow - \"A neighbour nearby needs to borrow something\"; giveaway - \"A neighbour nearby is looking for something you might have\"; everything else - the title above. Logged in notification_log as `nearby_request_alert`. Radius capped at 25 km, and sent only to people who marked that category as one they help with, who have offered help before, or who recently paused on posts from that category in the feed (from 3.11; with several requests to choose from, it names the one from a category that interested them first - notification_log variant=interest_over when the interest post was chosen over a nearer one, interest_same when it was the nearest anyway). Until 27.10 it was logged as urgent_nearby, so its counts from that period sit there."},
+         wH:"בקשה חדשה - עד 24 שעות - נפתחה בתוך רדיוס החיפוש שלך. הכותרת לפי הקטגוריה: פעילות - \"שכן/ה באזור מחפש/ת שותף/ה לפעילות\"; טיולים - \"שכן/ה באזור מחפש/ת שותף/ה לטיול\"; שיחות נפש - \"שכן/ה באזור מחפש/ת שיחה\"; חיות מחמד - \"שכן/ה באזור צריך/ה עזרה עם חיית מחמד\"; תרגול שפות - \"שכן/ה באזור מחפש/ת שותף/ה לתרגול שפה\"; מפגשים חברתיים - \"שכן/ה באזור מזמין/ה למפגש\"; פעילות משותפת עם ילדים - \"שכן/ה באזור מחפש/ת שותפים לפעילות עם ילדים\"; בישול ואוכל - \"שכן/ה באזור צריך/ה עזרה עם אוכל\"; עזרה בבירוקרטיה - \"שכן/ה באזור צריך/ה עזרה בבירוקרטיה\"; השאלה - \"שכן/ה באזור צריך/ה משהו בהשאלה\"; מסירה - \"שכן/ה באזור מחפש/ת משהו שאולי יש לך\"; כל השאר - הכותרת שלמעלה. נרשם ביומן ההתראות בתור `nearby_request_alert`. הרדיוס מוגבל ל-25 ק\"מ, והיא נשלחת רק למי שסימן/ה את הקטגוריה כתחום שבו הוא/היא עוזר/ת, שכבר הציע/ה עזרה בעבר, או שהתעכב/ה לאחרונה בפיד על פוסטים מהקטגוריה הזאת (מ-3.11; כשיש כמה בקשות, הפוש מספר קודם על זו מקטגוריה שעניינה אותו/ה - ביומן ההתראות variant=interest_over כשההצעה מהקטגוריה נבחרה על פני קרובה יותר, interest_same כשהיא ממילא הקרובה). עד 27.10 היא נרשמה ביומן תחת urgent_nearby, ולכן הספירות שלה מאותה תקופה נמצאות שם.",
+         wE:"A fresh request - under 24 hours old - opened inside your search radius. The title follows the category: activity - \"A neighbour nearby is looking for company\"; trips - \"A neighbour nearby is looking for a hiking buddy\"; talk - \"A neighbour nearby would like someone to talk to\"; pets - \"A neighbour nearby needs a hand with a pet\"; languages - \"A neighbour nearby wants a language-practice partner\"; meetups - \"A neighbour nearby is getting people together\"; kids - \"A neighbour nearby is looking for a family to do something with\"; cooking - \"A neighbour nearby could use a hand with a meal\"; bureaucracy - \"A neighbour nearby needs help with paperwork\"; borrow - \"A neighbour nearby needs to borrow something\"; giveaway - \"A neighbour nearby is looking for something you might have\"; everything else - the title above. Logged in notification_log as `nearby_request_alert`. Radius capped at 25 km, and sent only to people who marked that category as one they help with, who have offered help before, or who recently paused on posts from that category in the feed (from 3.11; with several requests to choose from, it names the one from a category that interested them first - notification_log variant=interest_over when the interest post was chosen over a nearer one, interest_same when it was the nearest anyway). Until 27.10 it was logged as urgent_nearby, so its counts from that period sit there."},
         {k:"offer_rescue", cadH:"שעתי", cadE:"hourly", kind:"mk",
          tH:"בקשה באזור שמתאימה להצעה שלך", bH:"\"{כותרת הבקשה}\" · {מרחק}",
          tE:"A request nearby that fits your offer", bE:"\"{request title}\" · {distance}",
@@ -9628,6 +9696,11 @@
   // a row label. Anything else keeps its real text from the catalogue.
   var PUSH_LABEL={
     new_message:            {he:"הודעה חדשה בצ'אט",            en:"New chat message"},
+    // the group-room pushes title themselves with the POST title - a template too
+    group_opened:           {he:"חדר משותף נפתח",              en:"Shared chat opened"},
+    group_message:          {he:"הודעה בחדר משותף",            en:"Shared chat message"},
+    group_update:           {he:"עדכון בחדר משותף",            en:"Shared chat update"},
+    group_assigned:         {he:"פריט ברשימת הציוד",           en:"Gear list item for you"},
     // these are watermark keys, not push types - the catalogue has no entry, or
     // has one whose title is generic ("צוות Helpy") and would tell a reader nothing
     completion_nudge:       {he:"איך הלך עם העזרה?",           en:"How did the help go?"},
