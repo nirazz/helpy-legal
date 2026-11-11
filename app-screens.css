@@ -1,0 +1,107 @@
+/* ================================================================ app screens
+   The feature sections' phones, BUILT in HTML instead of screenshots (Nir
+   11.11): one consistent set - same device, one fictional cast (Maya Cohen
+   and her couch, Yoav Levi who helps), a profile with ratings - crisp at any
+   size, in both languages. Reuses the hero phone's static parts (.hp-status,
+   .hp-seg, .hp-chips, .hp-card, .hp-tabs ... in motion.css); nothing here
+   animates. Fictional people and posts only. */
+.device-shot { container-type: inline-size; }
+/* without container units (Safari < 16) the built phones would collapse: the screenshot stays */
+.ui-phone { display: none; }
+@supports (width: 1cqi) { .device-shot > .ui-fallback { display: none; } .ui-phone { display: block; } }
+.ui-phone {
+  position: relative; aspect-ratio: 750 / 1628; width: 100%;
+  border: 3.2cqi solid #111216; border-radius: 15cqi; background: #111216;
+  box-shadow: 0 2px 4px rgba(16, 24, 40, 0.06), 0 24px 56px rgba(16, 24, 40, 0.14);
+  font-family: "Heebo", "Inter", system-ui, sans-serif; color: var(--app-ink); text-align: start; /* the bilingual section centres its text */
+  -webkit-user-select: none; user-select: none;
+}
+.ui-screen { position: absolute; inset: 0; border-radius: 12cqi; overflow: hidden; background: var(--app-bg); display: flex; flex-direction: column; }
+.ui-screen > .hp-tabs { position: absolute; }
+.ui-head { display: flex; align-items: center; justify-content: space-between; padding: 2cqi 5cqi 3cqi; }
+.ui-head b { font-size: 6cqi; font-weight: 800; }
+.ui-head span { font-size: 3.2cqi; color: var(--app-sub); }
+.ui-body { flex: 1; padding: 0 4cqi 24cqi; display: flex; flex-direction: column; gap: 3cqi; overflow: hidden; }
+
+/* a card in the feed, in place */
+.ui-deck { position: absolute; left: 4cqi; right: 4cqi; top: 49cqi; height: 107cqi; }
+.ui-deck .hp-card { position: absolute; inset: 0; }
+.hp-pill.offer { background: #fff; color: var(--app-purple-deep); box-shadow: inset 0 0 0 0.3cqi #c7c9f5; }
+.hp-btn.cta { flex: 1; background: var(--app-purple); color: #fff; box-shadow: 0 4px 10px rgba(16, 24, 40, 0.18); }
+
+/* the post form */
+.ui-toggle { display: grid; grid-template-columns: 1fr 1fr; padding: 0.9cqi; border-radius: 3cqi; background: #e8eaf0; font-size: 3.4cqi; font-weight: 700; text-align: center; color: var(--app-sub); }
+.ui-toggle span { padding: 2cqi 0; border-radius: 2.4cqi; }
+.ui-toggle .on { background: var(--app-purple); color: #fff; }
+.ui-label { font-size: 3.4cqi; font-weight: 700; margin-top: 1cqi; }
+.ui-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqi; }
+.ui-tile { display: flex; flex-direction: column; align-items: center; gap: 1.2cqi; padding: 2.6cqi 0; border-radius: 3cqi; background: #fff; box-shadow: inset 0 0 0 0.3cqi var(--app-line); font-size: 3cqi; font-weight: 600; color: #4b5563; }
+.ui-tile svg { width: 6cqi; height: 6cqi; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.ui-tile.on { color: var(--app-purple-deep); background: #eef0fd; box-shadow: inset 0 0 0 0.5cqi var(--app-purple); }
+.ui-field { padding: 3cqi 3.4cqi; border-radius: 3cqi; background: #fff; box-shadow: inset 0 0 0 0.3cqi var(--app-line); font-size: 3.6cqi; line-height: 1.4; color: var(--app-ink); }
+.ui-field.tall { min-height: 17cqi; color: #374151; font-size: 3.3cqi; }
+.ui-photos { display: flex; gap: 2cqi; }
+.ui-photo { width: 15cqi; aspect-ratio: 1; border-radius: 3cqi; background: #eef0fd url("card-tile.png") 0 0 / 40cqi; box-shadow: inset 0 0 0 0.3cqi #dfe1fb; }
+.ui-photo.add { display: grid; place-items: center; background: #fff; box-shadow: inset 0 0 0 0.3cqi var(--app-line); color: var(--app-sub); font-size: 6cqi; }
+.ui-go { margin-top: auto; padding: 3.4cqi; border-radius: 99px; text-align: center; font-size: 4.2cqi; font-weight: 700; color: #fff; background: var(--app-purple); }
+
+/* a chat */
+.ui-chat-head { display: flex; align-items: center; gap: 2.6cqi; padding: 2cqi 4.4cqi 3cqi; border-bottom: 1px solid var(--app-line); background: #fff; }
+.ui-chat-head .hp-meta { color: var(--app-green); }
+.ui-chevron { width: 4cqi; height: 4cqi; fill: none; stroke: var(--app-purple-deep); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.ui-msgs { flex: 1; display: flex; flex-direction: column; gap: 2.2cqi; padding: 4cqi 4.4cqi; background: #fff; }
+.ui-day { align-self: center; font-size: 2.8cqi; color: var(--app-sub); background: #f1f2f6; padding: 1cqi 2.8cqi; border-radius: 99px; }
+.ui-msg { max-width: 74%; font-size: 3.6cqi; line-height: 1.35; padding: 2.2cqi 3.4cqi 1.6cqi; border-radius: 4.2cqi; }
+.ui-msg small { display: block; font-size: 2.5cqi; opacity: 0.75; margin-top: 0.6cqi; text-align: right; } /* bottom-right in both languages, as in the app (#563) */
+.ui-msgs { direction: ltr; } /* sides are physical, as in the app: mine right, theirs left, in every language */
+.ui-msg.mine { align-self: flex-end; background: var(--app-purple); color: #fff; border-bottom-right-radius: 1.2cqi; }
+.ui-msg.theirs { align-self: flex-start; background: #f1f2f6; border-bottom-left-radius: 1.2cqi; }
+.ui-compose { display: flex; align-items: center; gap: 2.4cqi; padding: 3cqi 4cqi 7cqi; border-top: 1px solid var(--app-line); background: #fff; }
+.ui-compose span { flex: 1; height: 9cqi; border-radius: 99px; background: #f1f2f6; }
+.ui-compose i { width: 9cqi; height: 9cqi; border-radius: 50%; background: var(--app-purple); }
+
+/* the conversations list */
+.ui-row { display: flex; align-items: center; gap: 2.8cqi; padding: 3cqi 3.2cqi; border-radius: 3.6cqi; background: #fff; box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05); }
+.ui-row .hp-av { width: 10cqi; height: 10cqi; font-size: 4cqi; }
+.ui-row .who { flex: 1; min-width: 0; }
+.ui-row .who b { display: block; font-size: 3.7cqi; }
+.ui-row .who span { display: block; font-size: 3.1cqi; color: var(--app-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ui-row time { font-size: 2.8cqi; color: var(--app-sub); align-self: flex-start; }
+.ui-badge { min-width: 4.6cqi; height: 4.6cqi; border-radius: 99px; background: var(--app-purple); color: #fff; font-size: 2.6cqi; font-weight: 700; display: grid; place-items: center; padding: 0 1cqi; }
+.ui-yes, .ui-no { width: 8cqi; height: 8cqi; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; }
+.ui-yes { background: var(--app-purple); color: #fff; }
+.ui-no { background: #f1f2f6; color: #6b7280; }
+.ui-yes svg, .ui-no svg { width: 4cqi; height: 4cqi; fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.ui-section { font-size: 3cqi; font-weight: 700; color: var(--app-sub); margin-top: 1cqi; }
+
+/* the profile */
+.ui-me { display: flex; flex-direction: column; align-items: center; gap: 1.4cqi; padding: 2cqi 0 1cqi; }
+.ui-me .hp-av { width: 20cqi; height: 20cqi; font-size: 8cqi; box-shadow: 0 0 0 1cqi #fff, 0 0 0 1.6cqi #f59e0b; }
+.ui-me b { font-size: 5cqi; }
+.ui-me span { font-size: 3.2cqi; color: var(--app-sub); }
+.ui-stats { display: grid; grid-template-columns: repeat(4, 1fr); background: #fff; border-radius: 3.6cqi; padding: 3cqi 0; box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05); text-align: center; }
+.ui-stats b { display: block; font-size: 5.2cqi; font-weight: 800; color: var(--app-ink); }
+.ui-stats span { font-size: 2.8cqi; color: var(--app-sub); }
+.ui-stats .star { color: #b45309; }
+.ui-review { background: #fff; border-radius: 3.6cqi; padding: 3cqi 3.4cqi; box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05); }
+.ui-review .top { display: flex; align-items: center; justify-content: space-between; font-size: 3.2cqi; font-weight: 700; }
+.ui-review p { font-size: 3.2cqi; color: #374151; margin-top: 1.2cqi; line-height: 1.4; }
+.ui-stars { display: flex; gap: 0.6cqi; direction: ltr; }
+.ui-stars svg { width: 3.4cqi; height: 3.4cqi; fill: #f59e0b; stroke: #f59e0b; stroke-width: 1.5; stroke-linejoin: round; }
+.ui-streak { display: flex; align-items: center; gap: 2cqi; background: #fff7ed; color: #9a3412; border-radius: 3.6cqi; padding: 2.6cqi 3.4cqi; font-size: 3.2cqi; font-weight: 600; }
+.ui-streak svg { width: 4.6cqi; height: 4.6cqi; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* dark mode (the bilingual section shows the app's dark theme) */
+.ui-phone.dark .ui-screen { background: #0b0b10; color: #f3f4f6; }
+.ui-phone.dark .ui-chat-head, .ui-phone.dark .ui-msgs, .ui-phone.dark .ui-compose { background: #121218; border-color: #23232d; }
+.ui-phone.dark .ui-msg.theirs { background: #23232d; color: #f3f4f6; }
+.ui-phone.dark .ui-day, .ui-phone.dark .ui-compose span { background: #23232d; color: #a1a1aa; }
+.ui-phone.dark .hp-name { color: #f3f4f6; }
+.ui-phone.dark .hp-av { background: #312e81; color: #e0e7ff; }
+.ui-phone.dark .ui-chat-head .hp-meta { color: #4ade80; }
+.ui-phone.dark .hp-status { color: #f3f4f6; }
+.ui-phone.dark .hp-island { background: #000; }
+.ui-phone.dark .ui-chevron { stroke: #a5b4fc; }
+
+/* the bilingual pair on a phone is half-width: the frame thins with it */
+.bilingual-phones .ui-phone { border-width: 2.6cqi; }
