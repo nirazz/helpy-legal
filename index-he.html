@@ -709,7 +709,7 @@
   // The card that bursts out of the phone is a copy of the deck's top card (one source).
   (function () {
     var top = document.querySelector('.hp-card.top'), esc = document.querySelector('.hp-escape');
-    if (top && esc) esc.appendChild(top.cloneNode(true));
+    if (top && esc) { esc.appendChild(top.cloneNode(true)); esc.parentNode.classList.add('has-escape'); }
   })();
 
   // Hero demo: a stop button (WCAG 2.2.2: the story loops), and it rests
