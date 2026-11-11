@@ -6,6 +6,9 @@
    .hp-seg, .hp-chips, .hp-card, .hp-tabs ... in motion.css); nothing here
    animates. Fictional people and posts only. */
 .device-shot { container-type: inline-size; }
+/* without container units (Safari < 16) the built phones would collapse: the screenshot stays */
+.ui-phone { display: none; }
+@supports (width: 1cqi) { .device-shot > .ui-fallback { display: none; } .ui-phone { display: block; } }
 .ui-phone {
   position: relative; aspect-ratio: 750 / 1628; width: 100%;
   border: 3.2cqi solid #111216; border-radius: 15cqi; background: #111216;
@@ -49,14 +52,10 @@
 .ui-msgs { flex: 1; display: flex; flex-direction: column; gap: 2.2cqi; padding: 4cqi 4.4cqi; background: #fff; }
 .ui-day { align-self: center; font-size: 2.8cqi; color: var(--app-sub); background: #f1f2f6; padding: 1cqi 2.8cqi; border-radius: 99px; }
 .ui-msg { max-width: 74%; font-size: 3.6cqi; line-height: 1.35; padding: 2.2cqi 3.4cqi 1.6cqi; border-radius: 4.2cqi; }
-.ui-msg small { display: block; font-size: 2.5cqi; opacity: 0.75; margin-top: 0.6cqi; text-align: end; }
+.ui-msg small { display: block; font-size: 2.5cqi; opacity: 0.75; margin-top: 0.6cqi; text-align: right; } /* bottom-right in both languages, as in the app (#563) */
+.ui-msgs { direction: ltr; } /* sides are physical, as in the app: mine right, theirs left, in every language */
 .ui-msg.mine { align-self: flex-end; background: var(--app-purple); color: #fff; border-bottom-right-radius: 1.2cqi; }
 .ui-msg.theirs { align-self: flex-start; background: #f1f2f6; border-bottom-left-radius: 1.2cqi; }
-[dir="rtl"] .ui-msg.mine { align-self: flex-start; }
-[dir="rtl"] .ui-msg.theirs { align-self: flex-end; }
-/* an English chat shown inside the Hebrew page (bilingual pair) keeps its own sides */
-[dir="ltr"] .ui-msg.mine { align-self: flex-end; }
-[dir="ltr"] .ui-msg.theirs { align-self: flex-start; }
 .ui-compose { display: flex; align-items: center; gap: 2.4cqi; padding: 3cqi 4cqi 7cqi; border-top: 1px solid var(--app-line); background: #fff; }
 .ui-compose span { flex: 1; height: 9cqi; border-radius: 99px; background: #f1f2f6; }
 .ui-compose i { width: 9cqi; height: 9cqi; border-radius: 50%; background: var(--app-purple); }
@@ -102,6 +101,7 @@
 .ui-phone.dark .ui-chat-head .hp-meta { color: #4ade80; }
 .ui-phone.dark .hp-status { color: #f3f4f6; }
 .ui-phone.dark .hp-island { background: #000; }
+.ui-phone.dark .ui-chevron { stroke: #a5b4fc; }
 
 /* the bilingual pair on a phone is half-width: the frame thins with it */
 .bilingual-phones .ui-phone { border-width: 2.6cqi; }
