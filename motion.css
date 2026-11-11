@@ -1,14 +1,16 @@
 /* ================================================================ motion
    One file for both homepages (index.html, index-he.html), loaded after
    their inline styles. CSS only. Three layers:
-   1. the hero plays once on load and tells the product in one beat: the
-      copy rises, the feed lands on its phone, and the app's REAL push
-      ("New Help Offer!", push-notification/index.ts new_offer) drops in;
+   1. the hero IS the app: over the real feed screen, a request card is
+      swiped right ("עזרה" stamp, the "אשמח לעזור" button presses), flies
+      off, the next card rises; the real offer_accepted push drops in; the
+      chat slides up and the neighbour answers. Every word is the app's own
+      (ctaLabels.ts, useLocalization browse.swipeHelp, push-notification
+      offer_accepted). It loops while the page is open;
    2. sections rise as they scroll in (scroll-driven, no observer);
    3. small feedback on the store buttons.
-   Browsers without scroll timelines get the static page. Reduced motion:
-   the page's own rule makes every animation instant, so nothing moves and
-   nothing stays hidden. */
+   Without motion (reduced motion, or no animation support) the live layer is
+   simply the feed's first card - nothing hidden, nothing half-way. */
 :root {
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
@@ -31,8 +33,81 @@
 }
 [dir="rtl"] .hero .tagline .mark::after { transform-origin: right center; }
 
-/* ── the push banner over the hero phone (the real new_offer copy) ── */
+/* ── the live phone: sizes in cqi so it scales with the hero phone ── */
 .hero-shot { position: relative; container-type: inline-size; }
+.hero-shot .device-image { border-width: 3.2cqi; border-radius: 15cqi; }
+.live {
+  position: absolute; inset: 3.2cqi; border-radius: 12cqi;
+  overflow: hidden; pointer-events: none; user-select: none;
+  font-family: "Heebo", "Inter", sans-serif;
+}
+/* percentages below are of the real screen (750x1630), measured on the screenshot */
+.live .deck { position: absolute; left: 4%; right: 4%; top: 24.2%; height: 51.3%; }
+/* hide the screenshot's own card under the deck, so only our next card shows behind a swipe */
+.live .deck::before { content: ""; position: absolute; inset: -2% -3%; background: #f8f8fb; }
+.live .card {
+  position: absolute; inset: 0; border-radius: 5cqi; overflow: hidden;
+  background: #fff; display: flex; flex-direction: column;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+}
+.live .card-face {
+  flex: 1; position: relative; display: flex; flex-direction: column;
+  justify-content: center; align-items: center; text-align: center;
+  padding: 4cqi 5cqi;
+  background: #efeafc url("card-tile.png") 0 0 / 69cqi repeat;
+}
+.live .pills { position: absolute; top: 3.2cqi; inset-inline-start: 3.2cqi; display: flex; gap: 1.6cqi; }
+.live .pill { font-size: 3cqi; font-weight: 600; padding: 1.1cqi 2.8cqi; border-radius: 99px; line-height: 1.2; }
+.live .pill-kind { background: #5b55e6; color: #fff; }
+.live .pill-cat { background: rgba(255, 255, 255, 0.7); color: #4338ca; }
+.live .c-title { font-size: 6.4cqi; font-weight: 800; line-height: 1.15; color: #1e1b4b; letter-spacing: 0; text-wrap: balance; margin-top: 4cqi; }
+.live .c-desc { font-size: 3.4cqi; color: #4a4a68; margin-top: 2.6cqi; line-height: 1.35; text-wrap: balance; }
+.live .person { display: flex; align-items: center; gap: 2.6cqi; padding: 3cqi 4.2cqi; }
+.live .avatar {
+  width: 9cqi; height: 9cqi; border-radius: 50%; flex-shrink: 0;
+  display: grid; place-items: center; font-size: 3.8cqi; font-weight: 700;
+  background: #e0e7ff; color: #4338ca; box-shadow: 0 0 0 0.6cqi #f59e0b;
+}
+.live .p-name { font-size: 4cqi; font-weight: 700; color: #111; line-height: 1.2; }
+.live .p-meta { font-size: 3.1cqi; color: #6366f1; line-height: 1.3; }
+.live .card-next { scale: 0.94; translate: 0 3%; }
+.live .stamp {
+  position: absolute; top: 18%; left: 7%; /* a right swipe stamps the leading-left corner */
+  font-size: 6cqi; font-weight: 800; letter-spacing: 0.04em; color: #16a34a;
+  border: 0.9cqi solid #16a34a; border-radius: 2.4cqi; padding: 0.6cqi 3cqi;
+  rotate: -14deg; opacity: 0; background: rgba(255, 255, 255, 0.6);
+}
+.live .actions {
+  position: absolute; top: 77%; height: 6.3%; left: 5%; right: 4.4%;
+  display: flex; gap: 4.2%; align-items: stretch;
+}
+.live .act { border-radius: 99px; display: grid; place-items: center; font-size: 4.2cqi; font-weight: 700; }
+.live .act-skip { flex: 0 0 29%; background: #f1f2f6; color: #4b5563; }
+.live .act-help { flex: 1; background: #6366f1; color: #fff; }
+[dir="rtl"] .live .actions { flex-direction: row-reverse; } /* the app keeps "skip" on the left in both languages */
+
+/* the chat that opens once the offer is accepted */
+.live .chat {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 58%;
+  background: #f7f7fb; border-radius: 7cqi 7cqi 0 0;
+  box-shadow: 0 -8px 30px rgba(16, 24, 40, 0.18);
+  translate: 0 105%; padding: 4cqi;
+}
+.live .chat-head { display: flex; align-items: center; gap: 2.6cqi; padding-bottom: 3cqi; border-bottom: 1px solid #e5e7eb; }
+.live .chat-head .p-meta { color: #16a34a; }
+.live .bubbles { display: flex; flex-direction: column; gap: 2.4cqi; padding-top: 4cqi; }
+.live .bubble {
+  align-self: flex-start; max-width: 78%;
+  font-size: 4cqi; line-height: 1.35; padding: 2.4cqi 3.6cqi;
+  border-radius: 4.4cqi; border-end-start-radius: 1.2cqi;
+  background: #fff; color: #111; box-shadow: 0 1px 2px rgba(16, 24, 40, 0.08);
+  opacity: 0;
+}
+[dir="rtl"] .live .bubble { align-self: flex-end; } /* the neighbour's line sits on the left, as in the app */
+.live .typing { display: inline-flex; gap: 1.2cqi; padding: 3cqi 3.6cqi; }
+.live .typing i { width: 1.6cqi; height: 1.6cqi; border-radius: 50%; background: #9ca3af; }
+
+/* ── the push banner (real offer_accepted copy); only ever seen in motion ── */
 .push-banner {
   position: absolute;
   top: 7.5cqi;
@@ -40,12 +115,13 @@
   display: flex; align-items: center; gap: 3cqi;
   padding: 3.4cqi 4cqi;
   border-radius: 6.5cqi;
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.95);
   -webkit-backdrop-filter: blur(16px) saturate(1.6);
   backdrop-filter: blur(16px) saturate(1.6);
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.08), 0 10px 28px rgba(16, 24, 40, 0.22);
   color: var(--ink);
   pointer-events: none;
+  opacity: 0;
 }
 .push-banner img { width: 11cqi; height: 11cqi; border-radius: 2.6cqi; flex-shrink: 0; }
 .push-banner .pb-text { display: flex; flex-direction: column; min-width: 0; flex: 1; line-height: 1.25; }
@@ -53,7 +129,6 @@
 [dir="rtl"] .push-banner .pb-title { letter-spacing: 0; } /* the Hebrew page keeps Hebrew headings at 0 */
 .push-banner .pb-body {
   font-size: 4.1cqi; color: var(--ink2);
-  /* two lines, like the real banner; never more */
   display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
 }
 .push-banner .pb-time { font-size: 3.6cqi; color: var(--muted); align-self: flex-start; }
@@ -64,19 +139,69 @@
 @keyframes m-draw { from { scale: 0 1; } }
 /* the feed lands like a card swiped in from the side it sits on */
 @keyframes m-phone-in { from { translate: calc(var(--dir) * 48px) 64px; rotate: calc(var(--dir) * 6deg); } }
-/* a push drops from the top of the screen, overshoots a hair, settles */
-@keyframes m-push {
-  0% { opacity: 0; translate: 0 -120%; scale: 0.96; }
-  70% { opacity: 1; translate: 0 4%; scale: 1; }
-  100% { translate: 0 0; }
+
+/* ── the loop: one 10s story, every part keyed to the same clock ──
+   0-14 rest · 14-26 drag right + stamp + button press · 26-38 fly off, next
+   card rises · 46-52 push drops · 60-68 chat slides up · 68-78 typing ·
+   78 the answer · 88-100 everything resets behind a fade */
+@keyframes m-swipe {
+  0%, 14% { translate: 0 0; rotate: 0deg; opacity: 1; scale: 1; }
+  26% { translate: 16% -1%; rotate: 6deg; }
+  38% { translate: 160% -6%; rotate: 24deg; opacity: 1; }
+  39%, 92% { translate: 160% -6%; rotate: 24deg; opacity: 0; }
+  93% { translate: 0 3%; rotate: 0deg; scale: 0.94; opacity: 0; }
+  100% { translate: 0 0; scale: 1; opacity: 1; }
 }
+@keyframes m-stamp {
+  0%, 14% { opacity: 0; scale: 1.4; }
+  22%, 38% { opacity: 1; scale: 1; }
+  39%, 100% { opacity: 0; }
+}
+@keyframes m-next {
+  0%, 26% { scale: 0.94; translate: 0 3%; }
+  38%, 90% { scale: 1; translate: 0 0; opacity: 1; }
+  96% { opacity: 0; }
+  97%, 100% { scale: 0.94; translate: 0 3%; opacity: 1; }
+}
+@keyframes m-press {
+  0%, 15% { scale: 1; filter: none; }
+  19% { scale: 0.94; filter: brightness(1.15); }
+  25%, 100% { scale: 1; filter: none; }
+}
+@keyframes m-push-loop {
+  0%, 44% { opacity: 0; translate: 0 -130%; }
+  50% { opacity: 1; translate: 0 5%; }
+  53%, 70% { opacity: 1; translate: 0 0; }
+  76%, 100% { opacity: 0; translate: 0 -130%; }
+}
+@keyframes m-chat {
+  0%, 58% { translate: 0 105%; }
+  66%, 90% { translate: 0 0; }
+  97%, 100% { translate: 0 105%; }
+}
+@keyframes m-typing {
+  0%, 67% { opacity: 0; }
+  69%, 77% { opacity: 1; }
+  78%, 100% { opacity: 0; }
+}
+@keyframes m-answer {
+  0%, 77% { opacity: 0; translate: 0 2.4cqi; scale: 0.92; }
+  81%, 90% { opacity: 1; translate: 0 0; scale: 1; }
+  96%, 100% { opacity: 0; }
+}
+/* the phone buzzes as the push lands, like a real one in the hand */
+@keyframes m-buzz {
+  0%, 45.6%, 49%, 100% { rotate: 0deg; }
+  46% { rotate: 1.4deg; } 46.7% { rotate: -1.4deg; } 47.4% { rotate: 1deg; } 48.1% { rotate: -0.7deg; }
+}
+@keyframes m-dot { 0%, 60%, 100% { translate: 0 0; opacity: 0.5; } 30% { translate: 0 -1.2cqi; opacity: 1; } }
 
 /* ── 3. feedback: fires often, so tiny and fast ── */
 @media (prefers-reduced-motion: no-preference) {
   .store-badge:active { scale: 0.97; }
 }
 
-/* ── 1. hero, once on load ── */
+/* ── 1. hero ── */
 @media (prefers-reduced-motion: no-preference) {
   .hero-copy > * { animation: m-rise 800ms var(--ease-out) both; }
   .hero-copy > :nth-child(2) { animation-name: m-rise-solid; animation-delay: 70ms; }
@@ -84,8 +209,28 @@
   .hero-copy > :nth-child(4) { animation-delay: 210ms; }
   .hero-copy > :nth-child(5) { animation-delay: 280ms; }
   .hero .tagline .mark::after { animation: m-draw 700ms var(--ease-in-out) 650ms both; }
-  .hero-shot .device-image { animation: m-phone-in 1100ms var(--ease-out) 180ms both; }
-  .push-banner { animation: m-push 650ms var(--ease-out) 1450ms both; }
+  .hero-shot .device-image, .hero-shot .live { animation: m-phone-in 1100ms var(--ease-out) 180ms both; }
+
+  /* the story loops; it starts once the phone has landed */
+  .live .card-top, .live .card-next, .live .stamp, .live .act-help,
+  .push-banner, .live .chat, .live .typing, .live .bubble {
+    animation-duration: 10s; animation-delay: 1.6s;
+    animation-iteration-count: infinite; animation-timing-function: var(--ease-out);
+    animation-fill-mode: both;
+  }
+  /* fill none: no rotate is held during the delay, so the landing tilt of the screen stays its own */
+  .hero-shot { animation: m-buzz 10s linear 1.6s infinite none; }
+  .live .card-top { animation-name: m-swipe; }
+  .live .card-next { animation-name: m-next; }
+  .live .stamp { animation-name: m-stamp; }
+  .live .act-help { animation-name: m-press; animation-timing-function: ease; }
+  .push-banner { animation-name: m-push-loop; }
+  .live .chat { animation-name: m-chat; animation-timing-function: var(--ease-in-out); }
+  .live .bubble { animation-name: m-answer; }
+  .live .bubble.typing { animation-name: m-typing; animation-timing-function: linear; }
+  .live .typing i { animation: m-dot 900ms ease-in-out infinite; }
+  .live .typing i:nth-child(2) { animation-delay: 150ms; }
+  .live .typing i:nth-child(3) { animation-delay: 300ms; }
 }
 
 /* ── 2. scroll-driven ── */
@@ -98,9 +243,9 @@
   @media (prefers-reduced-motion: no-preference) {
     /* the hero phone drifts up a little as the hero scrolls away */
     .hero-shot {
-      animation: m-s-lift linear both;
-      animation-timeline: scroll(root);
-      animation-range: 0 100vh;
+      animation: m-buzz 10s linear 1.6s infinite none, m-s-lift linear both;
+      animation-timeline: auto, scroll(root);
+      animation-range: normal, 0 100vh;
     }
 
     /* everything below the hero rises in, finishing while still low on screen */
