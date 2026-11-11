@@ -40,7 +40,9 @@
   /* Visual system: the Stripe / Linear school, light. White and #f6f7f9
      sections on hairlines, one brand indigo for links and actions, real app
      screens as the proof. Inter carries Latin and numerals, Heebo the Hebrew.
-     Content is visible by default; nothing waits on a scroll to appear. */
+     Content is visible by default. motion.css adds scroll reveals only where
+     scroll timelines exist, finishing while still low on screen; without them,
+     or with reduced motion, the page is static and fully visible. */
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
@@ -111,7 +113,7 @@
     background: #000; color: #fff; padding: 10px 18px; border-radius: 10px;
     text-decoration: none; border: 1px solid #000; min-width: 172px; direction: ltr;
     box-shadow: 0 1px 2px rgba(16,24,40,.12);
-    transition: background .15s ease, box-shadow .15s ease;
+    transition: background .15s ease, box-shadow .15s ease, scale 120ms cubic-bezier(0.23, 1, 0.32, 1);
   }
   .store-badge:hover { background: #1f2024; box-shadow: 0 4px 14px rgba(16,24,40,.18); }
   .store-badge svg { width: 26px; height: 26px; flex-shrink: 0; }
@@ -354,7 +356,7 @@
   body.no-icons .flow-emoji, body.no-icons .hero-pill svg { display: none; }
   body.no-icons .feature-list li { gap: 0; }
 </style>
-<link rel="stylesheet" href="/motion.css">
+<link rel="stylesheet" href="motion.css">
 <noscript>
   <style>
     [data-lucide] { display: none; }
@@ -705,14 +707,6 @@
     const pct = docHeight > 0 ? (scrollTop / docHeight * 100) : 0;
     document.getElementById('progressBar').style.width = pct + '%';
   });
-
-  // Reveal sections on scroll
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('visible');
-    });
-  }, { threshold: 0.06 });
-  document.querySelectorAll('.section').forEach(el => observer.observe(el));
 
   // Render Lucide icons - the library loads with `defer`, so it is NOT available
   // yet when this inline script runs; wait for window load (which fires after

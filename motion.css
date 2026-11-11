@@ -50,6 +50,7 @@
 .push-banner img { width: 11cqi; height: 11cqi; border-radius: 2.6cqi; flex-shrink: 0; }
 .push-banner .pb-text { display: flex; flex-direction: column; min-width: 0; flex: 1; line-height: 1.25; }
 .push-banner .pb-title { font-size: 4.4cqi; font-weight: 600; letter-spacing: -0.01em; }
+[dir="rtl"] .push-banner .pb-title { letter-spacing: 0; } /* the Hebrew page keeps Hebrew headings at 0 */
 .push-banner .pb-body {
   font-size: 4.1cqi; color: var(--ink2);
   /* two lines, like the real banner; never more */
@@ -57,11 +58,12 @@
 }
 .push-banner .pb-time { font-size: 3.6cqi; color: var(--muted); align-self: flex-start; }
 
-@keyframes m-fade { from { opacity: 0; } }
 @keyframes m-rise { from { opacity: 0; translate: 0 18px; } }
+/* the headline and the hero phone are the first paint (LCP): they move, they never start invisible */
+@keyframes m-rise-solid { from { translate: 0 18px; } }
 @keyframes m-draw { from { scale: 0 1; } }
 /* the feed lands like a card swiped in from the side it sits on */
-@keyframes m-phone-in { from { opacity: 0; translate: calc(var(--dir) * 48px) 64px; rotate: calc(var(--dir) * 6deg); } }
+@keyframes m-phone-in { from { translate: calc(var(--dir) * 48px) 64px; rotate: calc(var(--dir) * 6deg); } }
 /* a push drops from the top of the screen, overshoots a hair, settles */
 @keyframes m-push {
   0% { opacity: 0; translate: 0 -120%; scale: 0.96; }
@@ -71,14 +73,13 @@
 
 /* ── 3. feedback: fires often, so tiny and fast ── */
 @media (prefers-reduced-motion: no-preference) {
-  .store-badge { transition: background .15s ease, box-shadow .15s ease, scale 120ms var(--ease-out); }
   .store-badge:active { scale: 0.97; }
 }
 
 /* ── 1. hero, once on load ── */
 @media (prefers-reduced-motion: no-preference) {
   .hero-copy > * { animation: m-rise 800ms var(--ease-out) both; }
-  .hero-copy > :nth-child(2) { animation-delay: 70ms; }
+  .hero-copy > :nth-child(2) { animation-name: m-rise-solid; animation-delay: 70ms; }
   .hero-copy > :nth-child(3) { animation-delay: 140ms; }
   .hero-copy > :nth-child(4) { animation-delay: 210ms; }
   .hero-copy > :nth-child(5) { animation-delay: 280ms; }
@@ -91,8 +92,6 @@
 @keyframes m-s-rise { from { opacity: 0; translate: 0 32px; } }
 @keyframes m-s-phone { from { opacity: 0; translate: 0 72px; scale: 0.95; rotate: calc(var(--dir) * var(--tilt, 3deg)); } }
 @keyframes m-s-pop { from { opacity: 0; scale: 0.5; } }
-@keyframes m-s-rule-h { from { clip-path: inset(0 100% 0 0); } }
-@keyframes m-s-rule-h-rtl { from { clip-path: inset(0 0 0 100%); } }
 @keyframes m-s-lift { to { translate: 0 -40px; } }
 
 @supports (animation-timeline: view()) {
@@ -114,8 +113,12 @@
       animation-range: entry 0% cover 30%;
     }
     .section-text > p.lede, .flow-section > .section-sub, .bilingual-section > .section-sub,
-    .safety-section > .section-sub, .footer > .footer-sub { animation-range: entry 10% cover 32%; }
-    .section-text > .feature-list, .footer > .badge-row { animation-range: entry 20% cover 34%; }
+    .safety-section > .section-sub { animation-range: entry 10% cover 32%; }
+    .section-text > .feature-list { animation-range: entry 20% cover 34%; }
+    /* the footer is the end of the page: it may never scroll to 'cover 30%', so it finishes on entry */
+    .footer > h2 { animation-range: entry 0% entry 70%; }
+    .footer > .footer-sub { animation-range: entry 10% entry 80%; }
+    .footer > .badge-row { animation-range: entry 20% entry 90%; }
     .safety-card:nth-child(2) { animation-range: entry 8% cover 32%; }
     .safety-card:nth-child(3) { animation-range: entry 16% cover 34%; }
     .safety-card:nth-child(4) { animation-range: entry 24% cover 36%; }
@@ -128,12 +131,17 @@
     }
     .section:nth-child(even) .device-shot { --tilt: -3deg; }
     .bilingual-phones .device-shot + .device-shot { --tilt: -3deg; animation-range: entry 12% cover 46%; }
+    @media (max-width: 600px) {
+      /* #s-browse is hidden on phones and the bands swap; the tilt swaps with them */
+      #s-browse ~ .section .device-shot { --tilt: -3deg; }
+      #s-browse ~ .section:nth-child(even) .device-shot { --tilt: 3deg; }
+    }
 
     /* how it works: the steps arrive one after another, each number pops */
     .flow-step { animation: m-s-rise var(--ease-out) both; animation-timeline: view(); animation-range: entry 0% cover 30%; }
     .flow-number { animation: m-s-pop var(--ease-out) both; animation-timeline: view(); animation-range: entry 10% cover 30%; }
     @media (min-width: 961px) {
-      /* one row: drive the five steps from the row, staggered along it, the rule drawn under them */
+      /* one row: drive the five steps from the row, staggered along it */
       .flow-steps { view-timeline: --flow block; }
       .flow-step, .flow-number { animation-timeline: --flow; }
       .flow-step:nth-child(1) { animation-range: entry 20% cover 30%; }
