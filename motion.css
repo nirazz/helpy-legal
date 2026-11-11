@@ -1,0 +1,151 @@
+/* ================================================================ motion
+   One file for both homepages (index.html, index-he.html), loaded after
+   their inline styles. CSS only. Three layers:
+   1. the hero plays once on load and tells the product in one beat: the
+      copy rises, the feed lands on its phone, and the app's REAL push
+      ("New Help Offer!", push-notification/index.ts new_offer) drops in;
+   2. sections rise as they scroll in (scroll-driven, no observer);
+   3. small feedback on the store buttons.
+   Browsers without scroll timelines get the static page. Reduced motion:
+   the page's own rule makes every animation instant, so nothing moves and
+   nothing stays hidden. */
+:root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --dir: 1;
+}
+[dir="rtl"] { --dir: -1; }
+
+/* ── the key words of the tagline: a drawn underline, from the start edge ── */
+.hero .tagline .mark { position: relative; white-space: nowrap; }
+.hero .tagline .mark::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0.02em;
+  height: 0.1em;
+  border-radius: 0.1em;
+  background: var(--brand);
+  opacity: 0.85;
+  transform-origin: left center;
+}
+[dir="rtl"] .hero .tagline .mark::after { transform-origin: right center; }
+
+/* ── the push banner over the hero phone (the real new_offer copy) ── */
+.hero-shot { position: relative; container-type: inline-size; }
+.push-banner {
+  position: absolute;
+  top: 7.5cqi;
+  inset-inline: 7cqi;
+  display: flex; align-items: center; gap: 3cqi;
+  padding: 3.4cqi 4cqi;
+  border-radius: 6.5cqi;
+  background: rgba(255, 255, 255, 0.94);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
+  backdrop-filter: blur(16px) saturate(1.6);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.08), 0 10px 28px rgba(16, 24, 40, 0.22);
+  color: var(--ink);
+  pointer-events: none;
+}
+.push-banner img { width: 11cqi; height: 11cqi; border-radius: 2.6cqi; flex-shrink: 0; }
+.push-banner .pb-text { display: flex; flex-direction: column; min-width: 0; flex: 1; line-height: 1.25; }
+.push-banner .pb-title { font-size: 4.4cqi; font-weight: 600; letter-spacing: -0.01em; }
+.push-banner .pb-body {
+  font-size: 4.1cqi; color: var(--ink2);
+  /* two lines, like the real banner; never more */
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+}
+.push-banner .pb-time { font-size: 3.6cqi; color: var(--muted); align-self: flex-start; }
+
+@keyframes m-fade { from { opacity: 0; } }
+@keyframes m-rise { from { opacity: 0; translate: 0 18px; } }
+@keyframes m-draw { from { scale: 0 1; } }
+/* the feed lands like a card swiped in from the side it sits on */
+@keyframes m-phone-in { from { opacity: 0; translate: calc(var(--dir) * 48px) 64px; rotate: calc(var(--dir) * 6deg); } }
+/* a push drops from the top of the screen, overshoots a hair, settles */
+@keyframes m-push {
+  0% { opacity: 0; translate: 0 -120%; scale: 0.96; }
+  70% { opacity: 1; translate: 0 4%; scale: 1; }
+  100% { translate: 0 0; }
+}
+
+/* ── 3. feedback: fires often, so tiny and fast ── */
+@media (prefers-reduced-motion: no-preference) {
+  .store-badge { transition: background .15s ease, box-shadow .15s ease, scale 120ms var(--ease-out); }
+  .store-badge:active { scale: 0.97; }
+}
+
+/* ── 1. hero, once on load ── */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-copy > * { animation: m-rise 800ms var(--ease-out) both; }
+  .hero-copy > :nth-child(2) { animation-delay: 70ms; }
+  .hero-copy > :nth-child(3) { animation-delay: 140ms; }
+  .hero-copy > :nth-child(4) { animation-delay: 210ms; }
+  .hero-copy > :nth-child(5) { animation-delay: 280ms; }
+  .hero .tagline .mark::after { animation: m-draw 700ms var(--ease-in-out) 650ms both; }
+  .hero-shot .device-image { animation: m-phone-in 1100ms var(--ease-out) 180ms both; }
+  .push-banner { animation: m-push 650ms var(--ease-out) 1450ms both; }
+}
+
+/* ── 2. scroll-driven ── */
+@keyframes m-s-rise { from { opacity: 0; translate: 0 32px; } }
+@keyframes m-s-phone { from { opacity: 0; translate: 0 72px; scale: 0.95; rotate: calc(var(--dir) * var(--tilt, 3deg)); } }
+@keyframes m-s-pop { from { opacity: 0; scale: 0.5; } }
+@keyframes m-s-rule-h { from { clip-path: inset(0 100% 0 0); } }
+@keyframes m-s-rule-h-rtl { from { clip-path: inset(0 0 0 100%); } }
+@keyframes m-s-lift { to { translate: 0 -40px; } }
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* the hero phone drifts up a little as the hero scrolls away */
+    .hero-shot {
+      animation: m-s-lift linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 100vh;
+    }
+
+    /* everything below the hero rises in, finishing while still low on screen */
+    .flow-section > h2, .flow-section > .section-sub,
+    .section-text > *, .bilingual-section > h2, .bilingual-section > .section-sub,
+    .safety-section > h2, .safety-section > .section-sub, .safety-card,
+    .footer > h2, .footer > .footer-sub, .footer > .badge-row {
+      animation: m-s-rise var(--ease-out) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+    .section-text > p.lede, .flow-section > .section-sub, .bilingual-section > .section-sub,
+    .safety-section > .section-sub, .footer > .footer-sub { animation-range: entry 10% cover 32%; }
+    .section-text > .feature-list, .footer > .badge-row { animation-range: entry 20% cover 34%; }
+    .safety-card:nth-child(2) { animation-range: entry 8% cover 32%; }
+    .safety-card:nth-child(3) { animation-range: entry 16% cover 34%; }
+    .safety-card:nth-child(4) { animation-range: entry 24% cover 36%; }
+
+    /* the app's screens land with a small tilt that settles; alternate sides tilt the other way */
+    .section .device-shot, .bilingual-phones .device-shot {
+      animation: m-s-phone var(--ease-out) both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 40%;
+    }
+    .section:nth-child(even) .device-shot { --tilt: -3deg; }
+    .bilingual-phones .device-shot + .device-shot { --tilt: -3deg; animation-range: entry 12% cover 46%; }
+
+    /* how it works: the steps arrive one after another, each number pops */
+    .flow-step { animation: m-s-rise var(--ease-out) both; animation-timeline: view(); animation-range: entry 0% cover 30%; }
+    .flow-number { animation: m-s-pop var(--ease-out) both; animation-timeline: view(); animation-range: entry 10% cover 30%; }
+    @media (min-width: 961px) {
+      /* one row: drive the five steps from the row, staggered along it, the rule drawn under them */
+      .flow-steps { view-timeline: --flow block; }
+      .flow-step, .flow-number { animation-timeline: --flow; }
+      .flow-step:nth-child(1) { animation-range: entry 20% cover 30%; }
+      .flow-step:nth-child(3) { animation-range: entry 25% cover 34%; }
+      .flow-step:nth-child(5) { animation-range: entry 30% cover 38%; }
+      .flow-step:nth-child(7) { animation-range: entry 35% cover 42%; }
+      .flow-step:nth-child(9) { animation-range: entry 40% cover 46%; }
+      .flow-step:nth-child(1) .flow-number { animation-range: entry 25% cover 32%; }
+      .flow-step:nth-child(3) .flow-number { animation-range: entry 30% cover 36%; }
+      .flow-step:nth-child(5) .flow-number { animation-range: entry 35% cover 40%; }
+      .flow-step:nth-child(7) .flow-number { animation-range: entry 40% cover 44%; }
+      .flow-step:nth-child(9) .flow-number { animation-range: entry 45% cover 48%; }
+    }
+  }
+}

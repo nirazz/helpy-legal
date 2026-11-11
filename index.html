@@ -354,6 +354,7 @@
   body.no-icons .flow-emoji, body.no-icons .hero-pill svg { display: none; }
   body.no-icons .feature-list li { gap: 0; }
 </style>
+<link rel="stylesheet" href="/motion.css">
 <noscript>
   <style>
     [data-lucide] { display: none; }
@@ -380,7 +381,7 @@
   <img src="app-icon-512.png" class="hero-icon" alt="Helpy app icon" onerror="this.style.display='none'">
   <h1>Helpy</h1>
   </div>
-  <p class="tagline">Real help, from real neighbors</p>
+  <p class="tagline">Real help, from <span class="mark">real neighbors</span></p>
   <p class="sub-tagline">A free community app for the moments you need a hand, and the moments you can give one.</p>
 
   <div class="hero-pills">
@@ -429,6 +430,11 @@
   </div>
   <div class="hero-shot">
     <img src="screen-browse.png" class="device-image" alt="Browse screen, swipe through nearby help requests">
+    <div class="push-banner" aria-hidden="true">
+      <img src="app-icon-512.png" alt="">
+      <span class="pb-text"><span class="pb-title">New Help Offer!</span><span class="pb-body">Noa offered to help with "Moving a couch"</span></span>
+      <span class="pb-time">now</span>
+    </div>
   </div>
   <div class="scroll-hint">Explore<span>↓</span></div>
 </div>

@@ -341,6 +341,7 @@
   body.no-icons .flow-emoji, body.no-icons .hero-pill svg { display: none; }
   body.no-icons .feature-list li { gap: 0; }
 </style>
+<link rel="stylesheet" href="/motion.css">
 <noscript>
   <style>
     [data-lucide] { display: none; }
@@ -367,7 +368,7 @@
   <img src="app-icon-512.png" class="hero-icon" alt="סמל האפליקציה Helpy" onerror="this.style.display='none'">
   <h1>Helpy</h1>
   </div>
-  <p class="tagline">עזרה אמיתית, משכנים אמיתיים</p>
+  <p class="tagline">עזרה אמיתית, <span class="mark">משכנים אמיתיים</span></p>
   <p class="sub-tagline">אפליקציה קהילתית חינמית, לרגעים שבהם צריך יד עוזרת, ולרגעים שבהם אפשר לתת אחת.</p>
 
   <div class="hero-pills">
@@ -408,6 +409,11 @@
   </div>
   <div class="hero-shot">
     <img src="screen-hebrew-browse.png" class="device-image" alt="מסך גלישה, בקשות עזרה בקרבת מקום">
+    <div class="push-banner" aria-hidden="true">
+      <img src="app-icon-512.png" alt="">
+      <span class="pb-text"><span class="pb-title">הצעת עזרה חדשה!</span><span class="pb-body">נועה הציע/ה לעזור עם "סחיבת ספה"</span></span>
+      <span class="pb-time">עכשיו</span>
+    </div>
   </div>
   <div class="scroll-hint">גלו עוד<span>↓</span></div>
 </div>
