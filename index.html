@@ -40,7 +40,9 @@
   /* Visual system: the Stripe / Linear school, light. White and #f6f7f9
      sections on hairlines, one brand indigo for links and actions, real app
      screens as the proof. Inter carries Latin and numerals, Heebo the Hebrew.
-     Content is visible by default; nothing waits on a scroll to appear. */
+     Content is visible by default. motion.css adds scroll reveals only where
+     scroll timelines exist, finishing while still low on screen; without them,
+     or with reduced motion, the page is static and fully visible. */
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
@@ -111,7 +113,7 @@
     background: #000; color: #fff; padding: 10px 18px; border-radius: 10px;
     text-decoration: none; border: 1px solid #000; min-width: 172px; direction: ltr;
     box-shadow: 0 1px 2px rgba(16,24,40,.12);
-    transition: background .15s ease, box-shadow .15s ease;
+    transition: background .15s ease, box-shadow .15s ease, scale 120ms cubic-bezier(0.23, 1, 0.32, 1);
   }
   .store-badge:hover { background: #1f2024; box-shadow: 0 4px 14px rgba(16,24,40,.18); }
   .store-badge svg { width: 26px; height: 26px; flex-shrink: 0; }
@@ -354,6 +356,7 @@
   body.no-icons .flow-emoji, body.no-icons .hero-pill svg { display: none; }
   body.no-icons .feature-list li { gap: 0; }
 </style>
+<link rel="stylesheet" href="motion.css">
 <noscript>
   <style>
     [data-lucide] { display: none; }
@@ -380,7 +383,7 @@
   <img src="app-icon-512.png" class="hero-icon" alt="Helpy app icon" onerror="this.style.display='none'">
   <h1>Helpy</h1>
   </div>
-  <p class="tagline">Real help, from real neighbors</p>
+  <p class="tagline">Real help, from <span class="mark">real neighbors</span></p>
   <p class="sub-tagline">A free community app for the moments you need a hand, and the moments you can give one.</p>
 
   <div class="hero-pills">
@@ -428,8 +431,29 @@
 
   </div>
   <div class="hero-shot">
-    <img src="screen-browse.png" class="device-image" alt="Browse screen, swipe through nearby help requests">
+    <img src="screen-browse.png" class="device-image" loading="lazy" alt="Browse screen, swipe through nearby help requests">
+    <div class="hp" role="img" aria-label="Browse screen, swipe through nearby help requests">
+      <div class="hp-screen">
+        <div class="hp-status"><span>9:41</span><span class="hp-island"></span><span class="hp-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5" width="3" height="7" rx="1" fill="currentColor"/><rect x="10" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.4 6.8a6.5 6.5 0 0 1 9.2 0l-1.4 1.4a4.5 4.5 0 0 0-6.4 0zM1 4.4a10 10 0 0 1 14 0l-1.4 1.4a8 8 0 0 0-11.2 0z" fill="currentColor"/></svg><svg viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.5" fill="currentColor"/><rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+        <div class="hp-title">Helpy</div>
+        <div class="hp-seg"><span class="on">Near me</span><span>On the map</span></div>
+        <div class="hp-chips"><span class="on">All</span><span>Moving</span><span>Tutoring</span><span>Rides</span><span>Elderly care</span></div>
+        <div class="hp-deck"><div class="hp-card next"><div class="hp-face"><div class="hp-pills"><span class="hp-pill kind">Asking for help</span><span class="hp-pill cat">Rides</span></div><div class="hp-ctitle">A ride to the train station tomorrow</div><div class="hp-cdesc">Leaving at 7:15, room for a small bag.</div></div><div class="hp-person"><span class="hp-av">N</span><span><span class="hp-name">Noa Shamir</span><br><span class="hp-meta">1.4 km · Givatayim</span></span></div></div><div class="hp-card top"><div class="hp-face"><div class="hp-pills"><span class="hp-pill kind">Asking for help</span><span class="hp-pill cat">Moving</span></div><div class="hp-ctitle">Help carrying a couch up 3 floors</div><div class="hp-cdesc">The couch arrived, the elevator didn't. 10 minutes, tomorrow evening.</div><span class="hp-stamp">HELP</span></div><div class="hp-person"><span class="hp-av">M</span><span><span class="hp-name">Maya Cohen</span><br><span class="hp-meta">0.8 km · Ramat Gan</span></span></div></div></div>
+        <div class="hp-actions"><span class="hp-btn skip">Skip</span><span class="hp-btn help">Happy to help</span></div>
+        <div class="hp-count"><i></i>3 of 24</div>
+        <div class="hp-tabs"><span class="on"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Browse</span><span><svg viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg>Chats</span><span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Post</span><span><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4h6v3H9zM9 11h6M9 15h4"/></svg>My posts</span><span><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Profile</span></div>
+        <div class="hp-chat">
+          <div class="hp-chat-head"><span class="hp-av">M</span><span><span class="hp-name">Maya Cohen</span><br><span class="hp-meta">Online now</span></span></div>
+          <div class="hp-chat-post">Post: Help carrying a couch up 3 floors</div>
+          <div class="hp-msgs"><span class="hp-msg mine">Hi! Happy to help with the couch 🙂</span><span class="hp-reply"><span class="hp-msg theirs typing"><span class="hp-typing"><i></i><i></i><i></i></span></span><span class="hp-msg theirs answer">Amazing, thank you!! Tomorrow at 6?</span></span></div>
+          <div class="hp-compose"><span></span><i></i></div>
+        </div>
+      </div>
+      <div class="hp-push"><img src="app-icon-512.png" alt=""><span><b>Offer Accepted!</b><span>Maya accepted your offer! Start chatting to coordinate.</span></span><small>now</small></div>
+    </div>
+    <button type="button" class="demo-toggle" hidden aria-pressed="false" aria-label="Pause the demo" data-pause="Pause the demo" data-play="Play the demo"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14M15 5v14"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg></button>
   </div>
+  <div class="proof" aria-label="Helpy in numbers"><p>More than <b>2,000</b> neighbors in more than <b>100</b> towns have already reached out to help each other about <b>900</b> times.</p></div>
   <div class="scroll-hint">Explore<span>↓</span></div>
 </div>
 
@@ -441,35 +465,35 @@
   <div class="flow-steps">
     <div class="flow-step">
       <div class="flow-number">1</div>
-      <div class="flow-emoji"><i data-lucide="pen-line"></i></div>
+      <div class="flow-ui" aria-hidden="true"><div class="fu-tiles"><span class="on">Moving</span><span>Repairs</span><span>Tutoring</span></div><div class="fu-row"><span class="fu-input">Help carrying a couch up 3 floors</span><span class="fu-go">Post</span></div></div>
       <h3>Post a request</h3>
       <p>Say what you need - or what you can offer. Photos, urgency, done.</p>
     </div>
     <div class="flow-arrow">→</div>
     <div class="flow-step">
       <div class="flow-number">2</div>
-      <div class="flow-emoji"><i data-lucide="layers"></i></div>
+      <div class="flow-ui" aria-hidden="true"><div class="fu-card"><b>Help carrying a couch up 3 floors</b><small>Maya Cohen · 0.8 km</small></div></div>
       <h3>Neighbors browse</h3>
       <p>By card or on the map, whatever feels right.</p>
     </div>
     <div class="flow-arrow">→</div>
     <div class="flow-step">
       <div class="flow-number">3</div>
-      <div class="flow-emoji"><i data-lucide="hand-helping"></i></div>
+      <div class="flow-ui" aria-hidden="true"><div class="fu-row"><span class="fu-av y">Y</span><span class="fu-who"><b>Yoav Levi</b><small>wants to help</small></span><span class="fu-no"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></span><span class="fu-yes"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></div></div>
       <h3>Someone offers</h3>
       <p>You see who they are. You decide.</p>
     </div>
     <div class="flow-arrow">→</div>
     <div class="flow-step">
       <div class="flow-number">4</div>
-      <div class="flow-emoji"><i data-lucide="message-circle"></i></div>
+      <div class="flow-ui" aria-hidden="true"><span class="fu-bub theirs">I can do tomorrow at 6</span><span class="fu-bub mine">Perfect, thank you!</span></div>
       <h3>Match &amp; chat</h3>
       <p>Real-time messages to coordinate the help.</p>
     </div>
     <div class="flow-arrow">→</div>
     <div class="flow-step">
       <div class="flow-number">5</div>
-      <div class="flow-emoji"><i data-lucide="star"></i></div>
+      <div class="flow-ui" aria-hidden="true"><div class="fu-stars"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg></div><div class="fu-caption">Maya rated Yoav</div></div>
       <h3>Rate &amp; build trust</h3>
       <p>Stars and reviews build a real reputation.</p>
     </div>
@@ -511,6 +535,7 @@
     </div>
     <div class="device-shot">
         <img src="screen-map.png" class="device-image" alt="Map view, pins for nearby help requests">
+        <div class="map-fx" aria-hidden="true"><div class="spot"><div class="melt"></div><svg class="pin" viewBox="0 0 24 30" aria-hidden="true"><path fill="currentColor" d="M12 0C5.4 0 0 5.2 0 11.7 0 20.2 12 30 12 30s12-9.8 12-18.3C24 5.2 18.6 0 12 0z"/><circle cx="12" cy="11.5" r="4.5" fill="#fff"/></svg></div></div>
       </div>
   </div>
 </div>
@@ -642,6 +667,7 @@
 
 <!-- ═══════ FOOTER / FINAL CTA ═══════ -->
 <div class="footer">
+  <div class="done-card" aria-hidden="true"><span class="fu-av y">Y</span><span class="fu-who"><b>Help completed</b><small>Maya &amp; Yoav · couch</small></span><span class="fu-stars"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg></span></div>
   <h2>Start <span class="gradient">helping</span> today</h2>
   <p class="footer-sub">Free to join, free to help.</p>
 
@@ -700,13 +726,23 @@
     document.getElementById('progressBar').style.width = pct + '%';
   });
 
-  // Reveal sections on scroll
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('visible');
+  // Hero demo: a stop button (WCAG 2.2.2: the story loops), and it rests
+  // while the hero is off screen. Shown only when this script runs.
+  (function () {
+    var hero = document.querySelector('.hero'), btn = document.querySelector('.demo-toggle');
+    if (!hero || !btn) return;
+    btn.hidden = false;
+    var stopped = false, visible = true;
+    function apply() { hero.classList.toggle('demo-paused', stopped || !visible); }
+    btn.addEventListener('click', function () {
+      stopped = !stopped;
+      btn.setAttribute('aria-pressed', String(stopped));
+      apply();
     });
-  }, { threshold: 0.06 });
-  document.querySelectorAll('.section').forEach(el => observer.observe(el));
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (e) { visible = e[e.length - 1].isIntersecting; apply(); }).observe(hero);
+    }
+  })();
 
   // Render Lucide icons - the library loads with `defer`, so it is NOT available
   // yet when this inline script runs; wait for window load (which fires after
