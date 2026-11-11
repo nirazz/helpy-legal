@@ -380,3 +380,82 @@
     .map-fx .melt { animation: m-s-melt var(--ease-out) forwards; animation-timeline: --map; animation-range: cover 46% cover 62%; }
   }
 }
+
+:root { --hv-dir: 1; }
+[dir="rtl"] { --hv-dir: -1; }
+
+/* ── the bolder hero (A+B+C, Nir 11.11) ──
+   A: leaning in. A bigger phone turned toward the headline; the push lands
+   out of it, toward the words ── */
+.hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.hero-shot { width: 350px; perspective: 1500px; }
+.hp {
+  transform: rotateY(calc(var(--hv-dir) * -16deg)) rotateX(5deg);
+  transform-style: preserve-3d;
+  box-shadow: 0 2px 4px rgba(16, 24, 40, 0.06), calc(var(--hv-dir) * 40px) 50px 90px -20px rgba(16, 24, 40, 0.38);
+}
+.hp-push {
+  inset-inline: -44cqi 14cqi; top: 34cqi; padding: 4.4cqi 5cqi;
+  transform: translateZ(90px);
+  box-shadow: 0 2px 6px rgba(16, 24, 40, 0.1), 0 34px 70px -10px rgba(16, 24, 40, 0.45);
+}
+.hp-push b { font-size: 5cqi; }
+.hp-push span { font-size: 4.3cqi; }
+@media (max-width: 900px) {
+  .hero { grid-template-columns: minmax(0, 1fr); }
+  .hero-shot { width: min(290px, 74vw); }
+  .hp-push { inset-inline: -14cqi 6cqi; }
+}
+
+/* ── B: out of the phone. The swiped card leaves the screen and crosses the page ── */
+.hp-escape { display: none; }
+.hp-escape {
+  display: flex; position: absolute; left: 4cqi; right: 4cqi; top: 49cqi; height: 107cqi; z-index: 3;
+  opacity: 0; pointer-events: none;
+}
+.hp-escape .hp-card { box-shadow: 0 30px 70px -10px rgba(16, 24, 40, 0.4); }
+/* the copy is still a .hp-card.top: it must not inherit the phone card's own loop */
+.hp-escape .hp-card, .hp-escape .hp-stamp { animation: none !important; }
+.hp-escape .hp-card { opacity: 1; translate: none; rotate: none; scale: 1; }
+.hp-escape .hp-stamp { opacity: 1; scale: 1; }
+@keyframes hv-b-inner {
+  0%, 12% { translate: 0 0; rotate: 0deg; opacity: 1; scale: 1; }
+  23.9% { translate: 15% -1%; rotate: 6deg; opacity: 1; }
+  24%, 93% { opacity: 0; }
+  94% { translate: 0 3%; rotate: 0deg; scale: 0.95; opacity: 0; }
+  100% { translate: 0 0; scale: 1; opacity: 1; }
+}
+@keyframes hv-b-escape {
+  0%, 23.9% { opacity: 0; translate: 15% -1%; rotate: 6deg; scale: 1; }
+  24% { opacity: 1; translate: 15% -1%; rotate: 6deg; scale: 1; }
+  37% { opacity: 1; translate: 200% -28%; rotate: 16deg; scale: 1.45; }
+  43%, 100% { opacity: 0; translate: 250% -34%; rotate: 20deg; scale: 1.5; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hp-card.top { animation-name: hv-b-inner; }
+  .hp-escape {
+    animation: hv-b-escape 10s var(--ease-out) 1.4s infinite both;
+  }
+  .demo-paused .hp-escape { animation-play-state: paused; }
+}
+
+/* ── C: a brand stage. The phone stands on a deep indigo field carrying the
+   app's own card pattern ── */
+.hero-shot { isolation: isolate; }
+.hero-shot::before, .hero-shot::after {
+  content: ""; position: absolute; z-index: -1; inset: -5% -42% -9% -42%; border-radius: 36px; /* -5% top: clear of the language link */
+}
+.hero-shot::before { background: linear-gradient(160deg, #5b52ec 0%, #4338ca 55%, #312e81 100%); }
+.hero-shot::after {
+  background: url("card-tile.png") 0 0 / 230px repeat;
+  filter: brightness(0) invert(1); opacity: 0.09;
+}
+.hp { box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 40px 80px -12px rgba(0, 0, 0, 0.45); }
+.demo-toggle { background: rgba(255, 255, 255, 0.14); border-color: rgba(255, 255, 255, 0.3); color: #fff; }
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes hv-c-stage { from { opacity: 0; scale: 0.92; } }
+  .hero-shot::before, .hero-shot::after { animation: hv-c-stage 900ms var(--ease-out) both; }
+}
+@media (max-width: 600px) {
+  .hero-shot::before, .hero-shot::after { inset: -6% -14% -6% -14%; border-radius: 28px; }
+}
