@@ -431,8 +431,8 @@
 
   </div>
   <div class="hero-shot">
-    <img src="screen-browse.png" class="device-image" alt="Browse screen, swipe through nearby help requests">
-    <div class="hp" aria-hidden="true">
+    <img src="screen-browse.png" class="device-image" loading="lazy" alt="Browse screen, swipe through nearby help requests">
+    <div class="hp" role="img" aria-label="Browse screen, swipe through nearby help requests">
       <div class="hp-screen">
         <div class="hp-status"><span>9:41</span><span class="hp-island"></span><span class="hp-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5" width="3" height="7" rx="1" fill="currentColor"/><rect x="10" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.4 6.8a6.5 6.5 0 0 1 9.2 0l-1.4 1.4a4.5 4.5 0 0 0-6.4 0zM1 4.4a10 10 0 0 1 14 0l-1.4 1.4a8 8 0 0 0-11.2 0z" fill="currentColor"/></svg><svg viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.5" fill="currentColor"/><rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
         <div class="hp-title">Helpy</div>
@@ -453,10 +453,9 @@
     </div>
     <button type="button" class="demo-toggle" hidden aria-pressed="false" aria-label="Pause the demo" data-pause="Pause the demo" data-play="Play the demo"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14M15 5v14"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg></button>
   </div>
+  <div class="proof" aria-label="Helpy in numbers"><p>More than <b>2,000</b> neighbors in more than <b>100</b> towns have already reached out to help each other about <b>900</b> times.</p></div>
   <div class="scroll-hint">Explore<span>↓</span></div>
 </div>
-
-<section class="proof" aria-label="Helpy in numbers"><p>More than <b>2,000</b> neighbors in more than <b>100</b> towns have already reached out to help each other about <b>900</b> times.</p></section>
 
 <!-- ═══════ HOW IT WORKS ═══════ -->
 <div class="flow-section" id="flow">
@@ -738,7 +737,6 @@
     btn.addEventListener('click', function () {
       stopped = !stopped;
       btn.setAttribute('aria-pressed', String(stopped));
-      btn.setAttribute('aria-label', stopped ? btn.dataset.play : btn.dataset.pause);
       apply();
     });
     if ('IntersectionObserver' in window) {

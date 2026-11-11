@@ -410,8 +410,8 @@
 
   </div>
   <div class="hero-shot">
-    <img src="screen-hebrew-browse.png" class="device-image" alt="מסך גלישה, בקשות עזרה בקרבת מקום">
-    <div class="hp" aria-hidden="true">
+    <img src="screen-hebrew-browse.png" class="device-image" loading="lazy" alt="מסך גלישה, בקשות עזרה בקרבת מקום">
+    <div class="hp" role="img" aria-label="מסך גלישה, בקשות עזרה בקרבת מקום">
       <div class="hp-screen">
         <div class="hp-status"><span>9:41</span><span class="hp-island"></span><span class="hp-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5" width="3" height="7" rx="1" fill="currentColor"/><rect x="10" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.4 6.8a6.5 6.5 0 0 1 9.2 0l-1.4 1.4a4.5 4.5 0 0 0-6.4 0zM1 4.4a10 10 0 0 1 14 0l-1.4 1.4a8 8 0 0 0-11.2 0z" fill="currentColor"/></svg><svg viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.5" fill="currentColor"/><rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
         <div class="hp-title">Helpy</div>
@@ -432,10 +432,9 @@
     </div>
     <button type="button" class="demo-toggle" hidden aria-pressed="false" aria-label="עצירת ההדגמה" data-pause="עצירת ההדגמה" data-play="הפעלת ההדגמה"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14M15 5v14"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg></button>
   </div>
+  <div class="proof" aria-label="Helpy במספרים"><p>יותר מ-<b>2,000</b> שכנים, ביותר מ-<b>100</b> ערים ויישובים, כבר פנו זה לזה <b>כ-900</b> פעמים כדי לעזור.</p></div>
   <div class="scroll-hint">גלו עוד<span>↓</span></div>
 </div>
-
-<section class="proof" aria-label="Helpy במספרים"><p>יותר מ-<b>2,000</b> שכנים, ביותר מ-<b>100</b> ערים ויישובים, כבר פנו זה לזה <b>כ-900</b> פעמים כדי לעזור.</p></section>
 
 <!-- ═══════ HOW IT WORKS ═══════ -->
 <div class="flow-section" id="flow">
@@ -460,7 +459,7 @@
     <div class="flow-step">
       <div class="flow-number">3</div>
       <div class="flow-ui" aria-hidden="true"><div class="fu-row"><span class="fu-av y">י</span><span class="fu-who"><b>יואב לוי</b><small>רוצה לעזור עם הספה</small></span><span class="fu-no"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></span><span class="fu-yes"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></div></div>
-      <h3>שכנים מציעים עזרה</h3>
+      <h3>מישהו/י מציע/ה עזרה</h3>
       <p>רואים מי זה. מחליטים אם לאשר.</p>
     </div>
     <div class="flow-arrow">←</div>
@@ -717,7 +716,6 @@
     btn.addEventListener('click', function () {
       stopped = !stopped;
       btn.setAttribute('aria-pressed', String(stopped));
-      btn.setAttribute('aria-label', stopped ? btn.dataset.play : btn.dataset.pause);
       apply();
     });
     if ('IntersectionObserver' in window) {

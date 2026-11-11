@@ -12,12 +12,10 @@
 :root {
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-  --dir: 1;
   /* the app's own palette, for the built UI */
   --app-purple: #5450e4; --app-purple-deep: #4338ca; --app-ink: #111827; --app-sub: #6b7280;
   --app-bg: #f8f8fb; --app-line: #eceef3; --app-card: #efeafc; --app-green: #15803d;
 }
-[dir="rtl"] { --dir: -1; }
 ::selection { background: rgba(79, 70, 229, 0.18); }
 
 /* ── the key words of the tagline: a drawn underline, from the start edge ── */
@@ -109,15 +107,15 @@
 /* the chat that opens once Maya accepts */
 .hp-chat {
   position: absolute; inset: 11.5cqi 0 0; background: #fff; display: flex; flex-direction: column;
-  translate: 0 102%; box-shadow: 0 -10px 30px rgba(16, 24, 40, 0.12);
+  translate: 0 115%; box-shadow: 0 -10px 30px rgba(16, 24, 40, 0.12); /* 115%: its shadow stays out of sight too */
 }
 .hp-chat-head { display: flex; align-items: center; gap: 2.6cqi; padding: 3.4cqi 4.4cqi; border-bottom: 1px solid var(--app-line); }
 .hp-chat-head .hp-meta { color: var(--app-green); }
 .hp-chat-post { margin: 3cqi 4.4cqi 0; padding: 2cqi 3cqi; border-radius: 3cqi; background: #f4f3fe; font-size: 3.1cqi; color: var(--app-purple-deep); }
 .hp-msgs { flex: 1; display: flex; flex-direction: column; gap: 2.4cqi; padding: 4cqi 4.4cqi; }
 .hp-msg { max-width: 76%; font-size: 3.9cqi; line-height: 1.35; padding: 2.4cqi 3.6cqi; border-radius: 4.4cqi; opacity: 0; }
-.hp-msg.mine { justify-self: end; align-self: flex-end; background: var(--app-purple); color: #fff; border-bottom-right-radius: 1.2cqi; }
-.hp-msg.theirs { justify-self: start; align-self: flex-start; background: #f1f2f6; color: var(--app-ink); border-bottom-left-radius: 1.2cqi; }
+.hp-msg.mine { align-self: flex-end; background: var(--app-purple); color: #fff; border-bottom-right-radius: 1.2cqi; }
+.hp-msg.theirs { align-self: flex-start; background: #f1f2f6; color: var(--app-ink); border-bottom-left-radius: 1.2cqi; }
 /* my lines on the right, theirs on the left - in Hebrew too, as in the app */
 [dir="rtl"] .hp-msg.mine { align-self: flex-start; }
 [dir="rtl"] .hp-msg.theirs { align-self: flex-end; }
@@ -162,12 +160,13 @@
 @media (prefers-reduced-motion: reduce) { .demo-toggle { display: none; } }
 
 /* ================================================================ proof line */
-.proof { padding: 36px 24px 44px; border-top: 1px solid var(--line); background: var(--white); }
+/* lives inside .hero (a new body child would shift every .section:nth-child band below it) */
+.hero > .proof { grid-column: 1 / -1; margin-top: 8px; padding: 32px 0 0; border-top: 1px solid var(--line); }
 .proof p {
   max-width: 1072px; margin: 0 auto; text-align: center; font-size: 22px; line-height: 1.5; color: var(--ink2); text-wrap: balance;
 }
 .proof b { color: var(--ink); font-weight: 700; font-variant-numeric: tabular-nums; }
-@media (max-width: 600px) { .proof { padding: 28px 20px 32px; } .proof p { font-size: 18px; } }
+@media (max-width: 600px) { .hero > .proof { padding-top: 24px; } .proof p { font-size: 18px; } }
 
 /* ================================================================ how it works: a sharp piece of UI per step */
 .flow-ui {
@@ -258,7 +257,7 @@
   46%, 58% { opacity: 1; translate: 0 0; scale: 1; }
   62%, 100% { opacity: 0; translate: 0 -30%; scale: 0.96; }
 }
-@keyframes m-chat { 0%, 56% { translate: 0 102%; } 64%, 91% { translate: 0 0; } 98%, 100% { translate: 0 102%; } }
+@keyframes m-chat { 0%, 56% { translate: 0 115%; } 64%, 91% { translate: 0 0; } 98%, 100% { translate: 0 115%; } }
 @keyframes m-mine { 0%, 62% { opacity: 0; translate: 0 2cqi; } 65%, 93% { opacity: 1; translate: 0 0; } 97%, 100% { opacity: 0; } }
 @keyframes m-typing { 0%, 66% { opacity: 0; } 68%, 74% { opacity: 1; } 75%, 100% { opacity: 0; } }
 @keyframes m-answer { 0%, 74% { opacity: 0; translate: 0 2cqi; scale: 0.94; } 78%, 93% { opacity: 1; translate: 0 0; scale: 1; } 97%, 100% { opacity: 0; } }
