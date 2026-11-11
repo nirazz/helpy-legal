@@ -411,6 +411,8 @@
   </div>
   <div class="hero-shot">
     <img src="screen-hebrew-browse.png" class="device-image" alt="מסך גלישה, בקשות עזרה בקרבת מקום">
+    <div class="hood-rings" aria-hidden="true"></div>
+    <div class="hood-people" aria-hidden="true"><span>נ</span><span>ד</span><span>י</span><span>ש</span><span>ר</span><span>ע</span></div>
     <div class="live" aria-hidden="true">
       <div class="deck">
         <div class="card card-next">
@@ -443,6 +445,7 @@
       <span class="pb-text"><span class="pb-title">ההצעה התקבלה!</span><span class="pb-body">מאיה קיבל/ה את ההצעה שלך! התחילו לתאם בצ'אט.</span></span>
       <span class="pb-time">עכשיו</span>
     </div>
+    <button type="button" class="demo-toggle" hidden aria-pressed="false" data-pause="עצירת ההדגמה" data-play="הפעלת ההדגמה"><svg class="i-pause" viewBox="0 0 12 12" aria-hidden="true"><rect x="2" y="1.5" width="2.6" height="9" rx="1" fill="currentColor"/><rect x="7.4" y="1.5" width="2.6" height="9" rx="1" fill="currentColor"/></svg><svg class="i-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.6v8.8L10.4 6z" fill="currentColor"/></svg><span class="dt-label">עצירת ההדגמה</span></button>
   </div>
   <div class="scroll-hint">גלו עוד<span>↓</span></div>
 </div>
@@ -525,6 +528,7 @@
     </div>
     <div class="device-shot">
         <img src="screen-hebrew-map.png" class="device-image" alt="תצוגת מפה, סמלים לבקשות עזרה בסביבה">
+        <div class="map-fx" aria-hidden="true"><div class="spot"><div class="melt"></div><svg class="pin" viewBox="0 0 24 30" aria-hidden="true"><path fill="currentColor" d="M12 0C5.4 0 0 5.2 0 11.7 0 20.2 12 30 12 30s12-9.8 12-18.3C24 5.2 18.6 0 12 0z"/><circle cx="12" cy="11.5" r="4.5" fill="#fff"/></svg></div></div>
       </div>
   </div>
 </div>
@@ -713,6 +717,25 @@
     const pct = docHeight > 0 ? (scrollTop / docHeight * 100) : 0;
     document.getElementById('progressBar').style.width = pct + '%';
   });
+
+  // Hero demo: a stop button (WCAG 2.2.2: the story loops), and it rests
+  // while the hero is off screen. Shown only when this script runs.
+  (function () {
+    var hero = document.querySelector('.hero'), btn = document.querySelector('.demo-toggle');
+    if (!hero || !btn) return;
+    btn.hidden = false;
+    var stopped = false, visible = true;
+    function apply() { hero.classList.toggle('demo-paused', stopped || !visible); }
+    btn.addEventListener('click', function () {
+      stopped = !stopped;
+      btn.setAttribute('aria-pressed', String(stopped));
+      btn.querySelector('.dt-label').textContent = stopped ? btn.dataset.play : btn.dataset.pause;
+      apply();
+    });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (e) { visible = e[0].isIntersecting; apply(); }).observe(hero);
+    }
+  })();
 
   // The library loads with `defer`, so it is NOT available yet when this inline
   // script runs; wait for window load (fires after deferred scripts, and still

@@ -15,6 +15,8 @@
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --dir: 1;
+  /* the buzz rides the story's 10s clock; defined once, used by two rules */
+  --buzz: m-buzz 10s linear 1.6s infinite none;
 }
 [dir="rtl"] { --dir: -1; }
 
@@ -33,11 +35,79 @@
 }
 [dir="rtl"] .hero .tagline .mark::after { transform-origin: right center; }
 
+/* ── the neighbourhood behind the hero phone: radius rings (the feed only
+   shows what is near you) and neighbours on them. Two layers, so they can
+   drift at different depths. ── */
+/* the rings never make the page scroll sideways (in Hebrew, overflow on the left is scrollable);
+   they fade out before the hero's edge, so the clip never shows */
+.hero { overflow-x: clip; }
+.hero-shot { isolation: isolate; }
+.hood-rings, .hood-people { position: absolute; z-index: -1; pointer-events: none; }
+.hood-rings {
+  /* centred on the phone: its height is 3.2cqi + the screen (93.6cqi x 1630/750) + 3.2cqi */
+  left: 50%; top: calc(3.2cqi + 93.6cqi * 1630 / 750 / 2); width: 190cqi; aspect-ratio: 1; margin: -95cqi 0 0 -95cqi;
+  background:
+    radial-gradient(closest-side, rgba(79, 70, 229, 0.10), transparent 38%),
+    repeating-radial-gradient(circle, transparent 0 calc(21cqi - 1.5px), rgba(79, 70, 229, 0.16) calc(21cqi - 1.5px) 21cqi);
+  -webkit-mask: radial-gradient(closest-side, #000 35%, transparent 88%);
+  mask: radial-gradient(closest-side, #000 35%, transparent 88%);
+}
+.hood-people { inset: 0; }
+.hood-people span {
+  position: absolute; width: 13cqi; aspect-ratio: 1; border-radius: 50%;
+  display: grid; place-items: center; font: 700 5cqi/1 "Heebo", "Inter", sans-serif;
+  color: #4338ca; background: #e0e7ff; border: 1.2cqi solid #fff;
+  box-shadow: 0 4px 14px rgba(16, 24, 40, 0.14);
+}
+.hood-people span:nth-child(1) { left: -24cqi; top: 14%; }
+.hood-people span:nth-child(2) { left: -34cqi; top: 52%; width: 10cqi; background: #fde68a; color: #92400e; }
+.hood-people span:nth-child(3) { left: -14cqi; top: 82%; width: 11cqi; background: #dcfce7; color: #166534; }
+.hood-people span:nth-child(4) { right: -26cqi; top: 22%; width: 11cqi; background: #fce7f3; color: #9d174d; }
+.hood-people span:nth-child(5) { right: -36cqi; top: 60%; }
+.hood-people span:nth-child(6) { right: -16cqi; top: 90%; width: 9cqi; background: #e0f2fe; color: #075985; }
+@media (max-width: 600px) {
+  /* the hero phone is narrower than the screen: keep the neighbours inside it */
+  .hood-people span:nth-child(2), .hood-people span:nth-child(5) { display: none; }
+  .hood-people span:nth-child(1), .hood-people span:nth-child(3) { left: -15cqi; }
+  .hood-people span:nth-child(4), .hood-people span:nth-child(6) { right: -15cqi; }
+}
+
+/* ── how it works: a route line drawn through the steps (over the grey hairline) ── */
+.flow-number { z-index: 1; }
+.flow-step::after {
+  content: ""; position: absolute; top: -1px; height: 2px;
+  inset-inline-start: 0; inset-inline-end: -28px; background: var(--brand);
+  clip-path: inset(0 0 0 0);
+}
+.flow-step:last-child::after { inset-inline-end: 0; }
+@media (max-width: 960px) {
+  .flow-step::after { top: 0; bottom: 0; height: auto; width: 2px; inset-inline-start: -1px; inset-inline-end: auto; }
+  .flow-step:last-child::after { display: none; }
+}
+
+/* ── the map: an exact point becomes an approximate area (the app's promise) ── */
+#s-map .device-shot { container-type: inline-size; }
+.map-fx { position: absolute; inset: 10px; pointer-events: none; }
+@media (max-width: 600px) { .map-fx { inset: 8px; } }
+/* centre of the app's own approximate circle on screen-*-map.png (750x1630) */
+.map-fx .spot { position: absolute; left: 50.6%; top: 36.1%; width: 0; height: 0; }
+.map-fx .pin {
+  position: absolute; width: 9cqi; height: 11cqi; left: -4.5cqi; top: -11cqi;
+  color: var(--brand); opacity: 0; filter: drop-shadow(0 3px 4px rgba(16, 24, 40, 0.3));
+  transform-origin: 50% 100%;
+}
+.map-fx .melt {
+  position: absolute; width: 26.4cqi; aspect-ratio: 1; left: -13.2cqi; top: -13.2cqi;
+  border-radius: 50%; border: 0.8cqi solid var(--brand); background: rgba(79, 70, 229, 0.22);
+  opacity: 0;
+}
+
 /* ── the live phone: sizes in cqi so it scales with the hero phone ── */
 .hero-shot { position: relative; container-type: inline-size; }
 .hero-shot .device-image { border-width: 3.2cqi; border-radius: 15cqi; }
 .live {
-  position: absolute; inset: 3.2cqi; border-radius: 12cqi;
+  /* sized by the screen's own proportions (750x1630), not the hero box, which also holds the stop button */
+  position: absolute; top: 3.2cqi; left: 3.2cqi; right: 3.2cqi; aspect-ratio: 750 / 1630; border-radius: 12cqi;
   overflow: hidden; pointer-events: none; user-select: none;
   font-family: "Heebo", "Inter", sans-serif;
 }
@@ -99,7 +169,7 @@
 .live .bubble {
   align-self: flex-start; max-width: 78%;
   font-size: 4cqi; line-height: 1.35; padding: 2.4cqi 3.6cqi;
-  border-radius: 4.4cqi; border-end-start-radius: 1.2cqi;
+  border-radius: 4.4cqi; border-bottom-left-radius: 1.2cqi;
   background: #fff; color: #111; box-shadow: 0 1px 2px rgba(16, 24, 40, 0.08);
   opacity: 0;
 }
@@ -148,8 +218,8 @@
   0%, 14% { translate: 0 0; rotate: 0deg; opacity: 1; scale: 1; }
   26% { translate: 16% -1%; rotate: 6deg; }
   38% { translate: 160% -6%; rotate: 24deg; opacity: 1; }
-  39%, 92% { translate: 160% -6%; rotate: 24deg; opacity: 0; }
-  93% { translate: 0 3%; rotate: 0deg; scale: 0.94; opacity: 0; }
+  39%, 93% { translate: 160% -6%; rotate: 24deg; opacity: 0; }
+  94% { translate: 0 3%; rotate: 0deg; scale: 0.94; opacity: 0; }
   100% { translate: 0 0; scale: 1; opacity: 1; }
 }
 @keyframes m-stamp {
@@ -158,15 +228,15 @@
   39%, 100% { opacity: 0; }
 }
 @keyframes m-next {
-  0%, 26% { scale: 0.94; translate: 0 3%; }
-  38%, 90% { scale: 1; translate: 0 0; opacity: 1; }
-  96% { opacity: 0; }
-  97%, 100% { scale: 0.94; translate: 0 3%; opacity: 1; }
+  0%, 26% { scale: 0.94; translate: 0 3%; opacity: 1; }
+  38%, 89% { scale: 1; translate: 0 0; opacity: 1; }
+  92%, 99.9% { scale: 0.94; translate: 0 3%; opacity: 0; }
+  100% { scale: 0.94; translate: 0 3%; opacity: 1; }
 }
 @keyframes m-press {
-  0%, 15% { scale: 1; filter: none; }
-  19% { scale: 0.94; filter: brightness(1.15); }
-  25%, 100% { scale: 1; filter: none; }
+  0%, 15% { scale: 1; }
+  19% { scale: 0.93; }
+  25%, 100% { scale: 1; }
 }
 @keyframes m-push-loop {
   0%, 44% { opacity: 0; translate: 0 -130%; }
@@ -196,6 +266,25 @@
 }
 @keyframes m-dot { 0%, 60%, 100% { translate: 0 0; opacity: 0.5; } 30% { translate: 0 -1.2cqi; opacity: 1; } }
 
+@keyframes m-rings { from { opacity: 0; scale: 0.55; } }
+@keyframes m-person { from { opacity: 0; scale: 0.3; } }
+@keyframes m-float { 0%, 100% { translate: 0 0; } 50% { translate: 0 -1.6cqi; } }
+
+/* ── stop control for the looping demo (WCAG 2.2.2); the page script shows it,
+   toggles .demo-paused, and also pauses the demo while the hero is off screen ── */
+.demo-toggle {
+  display: flex; align-items: center; gap: 6px; margin: 18px auto 0;
+  font: 500 13px/1 var(--font); color: var(--muted);
+  background: none; border: 1px solid var(--line); border-radius: 99px; padding: 7px 12px; cursor: pointer;
+}
+.demo-toggle:hover { color: var(--ink); border-color: #cfd3da; }
+.demo-toggle svg { width: 12px; height: 12px; }
+.demo-toggle .i-play { display: none; }
+.demo-toggle[aria-pressed="true"] .i-play { display: block; }
+.demo-toggle[aria-pressed="true"] .i-pause { display: none; }
+.demo-paused .hero-shot, .demo-paused .hero-shot * { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) { .demo-toggle { display: none; } }
+
 /* ── 3. feedback: fires often, so tiny and fast ── */
 @media (prefers-reduced-motion: no-preference) {
   .store-badge:active { scale: 0.97; }
@@ -210,6 +299,15 @@
   .hero-copy > :nth-child(5) { animation-delay: 280ms; }
   .hero .tagline .mark::after { animation: m-draw 700ms var(--ease-in-out) 650ms both; }
   .hero-shot .device-image, .hero-shot .live { animation: m-phone-in 1100ms var(--ease-out) 180ms both; }
+  /* the neighbourhood opens out from the phone, then the neighbours appear on it, one by one */
+  .hood-rings { animation: m-rings 1600ms var(--ease-out) 300ms both; }
+  .hood-people span { animation: m-person 600ms var(--ease-out) both, m-float 6s ease-in-out infinite; }
+  .hood-people span:nth-child(1) { animation-delay: 900ms, 1500ms; }
+  .hood-people span:nth-child(4) { animation-delay: 1000ms, 2300ms; }
+  .hood-people span:nth-child(2) { animation-delay: 1100ms, 3100ms; }
+  .hood-people span:nth-child(5) { animation-delay: 1200ms, 1900ms; }
+  .hood-people span:nth-child(3) { animation-delay: 1300ms, 2700ms; }
+  .hood-people span:nth-child(6) { animation-delay: 1400ms, 3500ms; }
 
   /* the story loops; it starts once the phone has landed */
   .live .card-top, .live .card-next, .live .stamp, .live .act-help,
@@ -219,7 +317,7 @@
     animation-fill-mode: both;
   }
   /* fill none: no rotate is held during the delay, so the landing tilt of the screen stays its own */
-  .hero-shot { animation: m-buzz 10s linear 1.6s infinite none; }
+  .hero-shot { animation: var(--buzz); }
   .live .card-top { animation-name: m-swipe; }
   .live .card-next { animation-name: m-next; }
   .live .stamp { animation-name: m-stamp; }
@@ -238,15 +336,45 @@
 @keyframes m-s-phone { from { opacity: 0; translate: 0 72px; scale: 0.95; rotate: calc(var(--dir) * var(--tilt, 3deg)); } }
 @keyframes m-s-pop { from { opacity: 0; scale: 0.5; } }
 @keyframes m-s-lift { to { translate: 0 -40px; } }
+@keyframes m-s-sink { to { translate: 0 70px; } }   /* the rings lag behind the phone: depth */
+@keyframes m-s-drift { to { translate: 0 30px; } }  /* the neighbours sit between the two */
+@keyframes m-s-draw-h { from { clip-path: inset(0 100% 0 0); } }
+@keyframes m-s-draw-h-rtl { from { clip-path: inset(0 0 0 100%); } }
+@keyframes m-s-draw-v { from { clip-path: inset(0 0 100% 0); } }
+@keyframes m-s-pin {
+  0% { opacity: 0; translate: 0 -14cqi; }
+  70% { opacity: 1; translate: 0 1cqi; }
+  100% { opacity: 1; translate: 0 0; }
+}
+@keyframes m-s-pin-out { to { opacity: 0; scale: 0.2; } }
+@keyframes m-s-melt {
+  0% { opacity: 0.95; scale: 0.08; }
+  100% { opacity: 0; scale: 1; }
+}
 
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     /* the hero phone drifts up a little as the hero scrolls away */
     .hero-shot {
-      animation: m-buzz 10s linear 1.6s infinite none, m-s-lift linear both;
+      animation: var(--buzz), m-s-lift linear both;
       animation-timeline: auto, scroll(root);
       animation-range: normal, 0 100vh;
     }
+
+    .hood-rings { animation: m-rings 1600ms var(--ease-out) 300ms both, m-s-sink linear both; animation-timeline: auto, scroll(root); animation-range: normal, 0 100vh; }
+    .hood-people { animation: m-s-drift linear both; animation-timeline: scroll(root); animation-range: 0 100vh; }
+
+    /* the route through the five steps draws itself */
+    .flow-step::after { animation: m-s-draw-v linear both; animation-timeline: view(); animation-range: entry 40% cover 45%; }
+
+    /* the map: a pin drops on the exact point, then melts into the approximate area */
+    #s-map .device-shot { view-timeline: --map block; }
+    .map-fx .pin {
+      animation: m-s-pin var(--ease-out) both, m-s-pin-out var(--ease-out) forwards;
+      animation-timeline: --map, --map;
+      animation-range: entry 70% cover 40%, cover 46% cover 54%;
+    }
+    .map-fx .melt { animation: m-s-melt var(--ease-out) forwards; animation-timeline: --map; animation-range: cover 46% cover 62%; }
 
     /* everything below the hero rises in, finishing while still low on screen */
     .flow-section > h2, .flow-section > .section-sub,
@@ -299,6 +427,14 @@
       .flow-step:nth-child(5) .flow-number { animation-range: entry 35% cover 40%; }
       .flow-step:nth-child(7) .flow-number { animation-range: entry 40% cover 44%; }
       .flow-step:nth-child(9) .flow-number { animation-range: entry 45% cover 48%; }
+      /* the line runs from each number to the next */
+      .flow-step::after { animation-name: m-s-draw-h; animation-timeline: --flow; }
+      [dir="rtl"] .flow-step::after { animation-name: m-s-draw-h-rtl; }
+      .flow-step:nth-child(1)::after { animation-range: cover 30% cover 34%; }
+      .flow-step:nth-child(3)::after { animation-range: cover 34% cover 38%; }
+      .flow-step:nth-child(5)::after { animation-range: cover 38% cover 42%; }
+      .flow-step:nth-child(7)::after { animation-range: cover 42% cover 46%; }
+      .flow-step:nth-child(9)::after { animation-range: cover 46% cover 50%; }
     }
   }
 }
