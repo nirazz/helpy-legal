@@ -428,7 +428,7 @@
           <div class="hp-compose"><span></span><i></i></div>
         </div>
       </div>
-      <div class="hp-escape" aria-hidden="true"><div class="hp-card top"><div class="hp-face"><div class="hp-pills"><span class="hp-pill kind">בקשת עזרה</span><span class="hp-pill cat">הובלות</span></div><div class="hp-ctitle">עזרה בסחיבת ספה לקומה 3</div><div class="hp-cdesc">הספה הגיעה, המעלית לא. 10 דקות, מחר בערב.</div><span class="hp-stamp">עזרה</span></div><div class="hp-person"><span class="hp-av">מ</span><span><span class="hp-name">מאיה כהן</span><br><span class="hp-meta">0.8 ק״מ · רמת גן</span></span></div></div></div>
+      <div class="hp-escape" aria-hidden="true"></div>
       <div class="hp-push"><img src="app-icon-512.png" alt=""><span><b>ההצעה התקבלה!</b><span>מאיה קיבלה את ההצעה שלך! התחילו לתאם בצ'אט.</span></span><small>עכשיו</small></div>
     </div>
     <button type="button" class="demo-toggle" hidden aria-pressed="false" aria-label="עצירת ההדגמה" data-pause="עצירת ההדגמה" data-play="הפעלת ההדגמה"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14M15 5v14"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg></button>
@@ -705,6 +705,12 @@
     const pct = docHeight > 0 ? (scrollTop / docHeight * 100) : 0;
     document.getElementById('progressBar').style.width = pct + '%';
   });
+
+  // The card that bursts out of the phone is a copy of the deck's top card (one source).
+  (function () {
+    var top = document.querySelector('.hp-card.top'), esc = document.querySelector('.hp-escape');
+    if (top && esc) esc.appendChild(top.cloneNode(true));
+  })();
 
   // Hero demo: a stop button (WCAG 2.2.2: the story loops), and it rests
   // while the hero is off screen. Shown only when this script runs.
