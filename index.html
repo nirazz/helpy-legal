@@ -754,7 +754,7 @@
       apply();
     });
     if ('IntersectionObserver' in window) {
-      new IntersectionObserver(function (e) { visible = e[0].isIntersecting; apply(); }).observe(hero);
+      new IntersectionObserver(function (e) { visible = e[e.length - 1].isIntersecting; apply(); }).observe(hero);
     }
   })();
 

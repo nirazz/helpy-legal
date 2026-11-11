@@ -40,7 +40,7 @@
    drift at different depths. ── */
 /* the rings never make the page scroll sideways (in Hebrew, overflow on the left is scrollable);
    they fade out before the hero's edge, so the clip never shows */
-.hero { overflow-x: clip; }
+.hero { overflow-x: hidden; overflow-x: clip; } /* hidden = fallback where clip is unknown */
 .hero-shot { isolation: isolate; }
 .hood-rings, .hood-people { position: absolute; z-index: -1; pointer-events: none; }
 .hood-rings {
@@ -74,7 +74,9 @@
 
 /* ── how it works: a route line drawn through the steps (over the grey hairline) ── */
 .flow-number { z-index: 1; }
+/* drawn only where it can be drawn in (see the scroll block); elsewhere the grey hairline stays */
 .flow-step::after {
+  display: none;
   content: ""; position: absolute; top: -1px; height: 2px;
   inset-inline-start: 0; inset-inline-end: -28px; background: var(--brand);
   clip-path: inset(0 0 0 0);
@@ -82,14 +84,14 @@
 .flow-step:last-child::after { inset-inline-end: 0; }
 @media (max-width: 960px) {
   .flow-step::after { top: 0; bottom: 0; height: auto; width: 2px; inset-inline-start: -1px; inset-inline-end: auto; }
-  .flow-step:last-child::after { display: none; }
 }
+@media (max-width: 960px) { .flow-step:last-child::after { visibility: hidden; } }
 
 /* ── the map: an exact point becomes an approximate area (the app's promise) ── */
 #s-map .device-shot { container-type: inline-size; }
 .map-fx { position: absolute; inset: 10px; pointer-events: none; }
 @media (max-width: 600px) { .map-fx { inset: 8px; } }
-/* centre of the app's own approximate circle on screen-*-map.png (750x1630) */
+/* centre of the app's own approximate circle on screen-*-map.png (750x1628) - re-measure if the screenshot is re-shot */
 .map-fx .spot { position: absolute; left: 50.6%; top: 36.1%; width: 0; height: 0; }
 .map-fx .pin {
   position: absolute; width: 9cqi; height: 11cqi; left: -4.5cqi; top: -11cqi;
@@ -282,7 +284,11 @@
 .demo-toggle .i-play { display: none; }
 .demo-toggle[aria-pressed="true"] .i-play { display: block; }
 .demo-toggle[aria-pressed="true"] .i-pause { display: none; }
-.demo-paused .hero-shot, .demo-paused .hero-shot * { animation-play-state: paused !important; }
+.demo-toggle[hidden] { display: none; }
+/* stop pauses the story only; the scroll depth (lift, sink, drift) keeps following the scroll */
+.demo-paused .live, .demo-paused .live *, .demo-paused .push-banner, .demo-paused .hood-people span { animation-play-state: paused !important; }
+.demo-paused .hero-shot { animation-play-state: paused; }
+@supports (animation-timeline: view()) { .demo-paused .hero-shot { animation-play-state: paused, running; } }
 @media (prefers-reduced-motion: reduce) { .demo-toggle { display: none; } }
 
 /* ── 3. feedback: fires often, so tiny and fast ── */
@@ -365,7 +371,7 @@
     .hood-people { animation: m-s-drift linear both; animation-timeline: scroll(root); animation-range: 0 100vh; }
 
     /* the route through the five steps draws itself */
-    .flow-step::after { animation: m-s-draw-v linear both; animation-timeline: view(); animation-range: entry 40% cover 45%; }
+    .flow-step::after { display: block; animation: m-s-draw-v linear both; animation-timeline: view(); animation-range: entry 40% cover 45%; }
 
     /* the map: a pin drops on the exact point, then melts into the approximate area */
     #s-map .device-shot { view-timeline: --map block; }
@@ -437,4 +443,10 @@
       .flow-step:nth-child(9)::after { animation-range: cover 46% cover 50%; }
     }
   }
+}
+
+/* browsers without container units (Safari < 16) would draw the cqi-sized layers at default sizes:
+   they get the plain screenshots instead */
+@supports not (width: 1cqi) {
+  .live, .push-banner, .hood-rings, .hood-people, .map-fx, .demo-toggle { display: none !important; }
 }
