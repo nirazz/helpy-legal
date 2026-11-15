@@ -40,7 +40,9 @@
   /* Visual system: the Stripe / Linear school, light. White and #f6f7f9
      sections on hairlines, one brand indigo for links and actions, real app
      screens as the proof. Inter carries Latin and numerals, Heebo the Hebrew.
-     Content is visible by default; nothing waits on a scroll to appear. */
+     Content is visible by default. motion.css adds scroll reveals only where
+     scroll timelines exist, finishing while still low on screen; without them,
+     or with reduced motion, the page is static and fully visible. */
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
@@ -111,7 +113,7 @@
     background: #000; color: #fff; padding: 10px 18px; border-radius: 10px;
     text-decoration: none; border: 1px solid #000; min-width: 172px; direction: ltr;
     box-shadow: 0 1px 2px rgba(16,24,40,.12);
-    transition: background .15s ease, box-shadow .15s ease;
+    transition: background .15s ease, box-shadow .15s ease, scale 120ms cubic-bezier(0.23, 1, 0.32, 1);
   }
   .store-badge:hover { background: #1f2024; box-shadow: 0 4px 14px rgba(16,24,40,.18); }
   .store-badge svg { width: 26px; height: 26px; flex-shrink: 0; }
@@ -354,6 +356,8 @@
   body.no-icons .flow-emoji, body.no-icons .hero-pill svg { display: none; }
   body.no-icons .feature-list li { gap: 0; }
 </style>
+<link rel="stylesheet" href="motion.css">
+<link rel="stylesheet" href="app-screens.css">
 <noscript>
   <style>
     [data-lucide] { display: none; }
@@ -380,7 +384,7 @@
   <img src="app-icon-512.png" class="hero-icon" alt="Helpy app icon" onerror="this.style.display='none'">
   <h1>Helpy</h1>
   </div>
-  <p class="tagline">Real help, from real neighbors</p>
+  <p class="tagline">Real help, from <span class="mark">real neighbors</span></p>
   <p class="sub-tagline">A free community app for the moments you need a hand, and the moments you can give one.</p>
 
   <div class="hero-pills">
@@ -428,8 +432,29 @@
 
   </div>
   <div class="hero-shot">
-    <img src="screen-browse.png" class="device-image" alt="Browse screen, swipe through nearby help requests">
+    <img src="screen-browse.png" class="device-image" loading="lazy" alt="Browse screen, swipe through nearby help requests">
+    <div class="hp" role="img" aria-label="Browse screen, swipe through nearby help requests">
+      <div class="hp-screen">
+        <div class="hp-status"><span>9:41</span><span class="hp-island"></span><span class="hp-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5" width="3" height="7" rx="1" fill="currentColor"/><rect x="10" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.4 6.8a6.5 6.5 0 0 1 9.2 0l-1.4 1.4a4.5 4.5 0 0 0-6.4 0zM1 4.4a10 10 0 0 1 14 0l-1.4 1.4a8 8 0 0 0-11.2 0z" fill="currentColor"/></svg><svg viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.5" fill="currentColor"/><rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".4"/></svg></span></div>
+        <div class="hp-title">Helpy</div>
+        <div class="hp-seg"><span class="on">Near me</span><span>On the map</span></div>
+        <div class="hp-chips"><span class="on">All</span><span>Moving</span><span>Tutoring</span><span>Rides</span><span>Elderly care</span></div>
+        <div class="hp-deck"><div class="hp-card next"><div class="hp-face"><div class="hp-pills"><span class="hp-pill kind">Asking for help</span><span class="hp-pill cat">Rides</span></div><div class="hp-ctitle">A ride to the train station tomorrow</div><div class="hp-cdesc">Leaving at 7:15, room for a small bag.</div></div><div class="hp-person"><span class="hp-av">N</span><span><span class="hp-name">Noa Shamir</span><br><span class="hp-meta">1.4 km · Givatayim</span></span></div></div><div class="hp-card top"><div class="hp-face"><div class="hp-pills"><span class="hp-pill kind">Asking for help</span><span class="hp-pill cat">Moving</span></div><div class="hp-ctitle">Help carrying a couch up 3 floors</div><div class="hp-cdesc">The couch arrived, the elevator didn't. 10 minutes, tomorrow evening.</div><span class="hp-stamp">HELP</span></div><div class="hp-person"><span class="hp-av">M</span><span><span class="hp-name">Maya Cohen</span><br><span class="hp-meta">0.8 km · Ramat Gan</span></span></div></div></div>
+        <div class="hp-actions"><span class="hp-btn skip">Skip</span><span class="hp-btn help">Happy to help</span></div>
+        <div class="hp-count"><i></i>3 of 24</div>
+        <div class="hp-tabs"><span class="on"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Browse</span><span><svg viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg>Chats</span><span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Post</span><span><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4h6v3H9zM9 11h6M9 15h4"/></svg>My posts</span><span><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Profile</span></div>
+        <div class="hp-chat">
+          <div class="hp-chat-head"><span class="hp-av">M</span><span><span class="hp-name">Maya Cohen</span><br><span class="hp-meta">Online now</span></span></div>
+          <div class="hp-chat-post">Post: Help carrying a couch up 3 floors</div>
+          <div class="hp-msgs"><span class="hp-msg mine">Hi! Happy to help with the couch 🙂</span><span class="hp-reply"><span class="hp-msg theirs typing"><span class="hp-typing"><i></i><i></i><i></i></span></span><span class="hp-msg theirs answer">Amazing, thank you!! Tomorrow at 6?</span></span></div>
+          <div class="hp-compose"><span></span><i></i></div>
+        </div>
+      </div>
+      <div class="hp-push"><img src="app-icon-512.png" alt=""><span><b>Offer Accepted!</b><span>Maya accepted your offer! Start chatting to coordinate.</span></span><small>now</small></div>
+    </div>
+    <button type="button" class="demo-toggle" hidden aria-pressed="false" aria-label="Pause the demo" data-pause="Pause the demo" data-play="Play the demo"><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5v14M15 5v14"/></svg><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"/></svg></button>
   </div>
+  <div class="proof" aria-label="Helpy in numbers"><p>More than <b>2,000</b> neighbors in more than <b>100</b> towns have already reached out to help each other about <b>900</b> times.</p></div>
   <div class="scroll-hint">Explore<span>↓</span></div>
 </div>
 
@@ -441,35 +466,35 @@
   <div class="flow-steps">
     <div class="flow-step">
       <div class="flow-number">1</div>
-      <div class="flow-emoji"><i data-lucide="pen-line"></i></div>
+      <div class="flow-ui" aria-hidden="true"><div class="fu-tiles"><span class="on">Moving</span><span>Repairs</span><span>Tutoring</span></div><div class="fu-row"><span class="fu-input">Help carrying a couch up 3 floors</span><span class="fu-go">Post</span></div></div>
       <h3>Post a request</h3>
       <p>Say what you need - or what you can offer. Photos, urgency, done.</p>
     </div>
     <div class="flow-arrow">→</div>
     <div class="flow-step">
       <div class="flow-number">2</div>
-      <div class="flow-emoji"><i data-lucide="layers"></i></div>
+      <div class="flow-ui" aria-hidden="true"><div class="fu-card"><b>Help carrying a couch up 3 floors</b><small>Maya Cohen · 0.8 km</small></div></div>
       <h3>Neighbors browse</h3>
       <p>By card or on the map, whatever feels right.</p>
     </div>
     <div class="flow-arrow">→</div>
     <div class="flow-step">
       <div class="flow-number">3</div>
-      <div class="flow-emoji"><i data-lucide="hand-helping"></i></div>
+      <div class="flow-ui" aria-hidden="true"><div class="fu-row"><span class="fu-av y">Y</span><span class="fu-who"><b>Yoav Levi</b><small>wants to help</small></span><span class="fu-no"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></span><span class="fu-yes"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></div></div>
       <h3>Someone offers</h3>
       <p>You see who they are. You decide.</p>
     </div>
     <div class="flow-arrow">→</div>
     <div class="flow-step">
       <div class="flow-number">4</div>
-      <div class="flow-emoji"><i data-lucide="message-circle"></i></div>
+      <div class="flow-ui" aria-hidden="true"><span class="fu-bub theirs">I can do tomorrow at 6</span><span class="fu-bub mine">Perfect, thank you!</span></div>
       <h3>Match &amp; chat</h3>
       <p>Real-time messages to coordinate the help.</p>
     </div>
     <div class="flow-arrow">→</div>
     <div class="flow-step">
       <div class="flow-number">5</div>
-      <div class="flow-emoji"><i data-lucide="star"></i></div>
+      <div class="flow-ui" aria-hidden="true"><div class="fu-stars"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg></div><div class="fu-caption">Maya rated Yoav</div></div>
       <h3>Rate &amp; build trust</h3>
       <p>Stars and reviews build a real reputation.</p>
     </div>
@@ -491,7 +516,7 @@
       </ul>
     </div>
     <div class="device-shot">
-        <img src="screen-offer.png" class="device-image" alt="A help offer in the feed, a neighbor offering to help with groceries">
+        <img src="screen-offer.png" class="device-image ui-fallback" loading="lazy" alt="Browse: Yoav offers to hang shelves and assemble furniture"><div class="ui-phone" role="img" aria-label="Browse: Yoav offers to hang shelves and assemble furniture"><div class="ui-screen"><div class="hp-status"><span>9:41</span><span class="hp-island"></span><span class="hp-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5" width="3" height="7" rx="1" fill="currentColor"/><rect x="10" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.4 6.8a6.5 6.5 0 0 1 9.2 0l-1.4 1.4a4.5 4.5 0 0 0-6.4 0zM1 4.4a10 10 0 0 1 14 0l-1.4 1.4a8 8 0 0 0-11.2 0z" fill="currentColor"/></svg><svg viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.5" fill="currentColor"/><rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".4"/></svg></span></div><div class="hp-title">Helpy</div><div class="hp-seg"><span class="on">Near me</span><span>On the map</span></div><div class="hp-chips"><span class="on">All</span><span>Moving</span><span>Handyman</span><span>Tutoring</span><span>Rides</span></div><div class="ui-deck"><div class="hp-card"><div class="hp-face"><div class="hp-pills"><span class="hp-pill offer">Offering help</span><span class="hp-pill cat">Handyman</span></div><div class="hp-ctitle">Hanging shelves, assembling furniture</div><div class="hp-cdesc">I have the tools and a few free evenings.</div></div><div class="hp-person"><span class="hp-av">Y</span><span><span class="hp-name">Yoav Levi</span><br><span class="hp-meta">0.6 km · Ramat Gan</span></span></div></div></div><div class="hp-actions"><span class="hp-btn skip">Skip</span><span class="hp-btn cta">Get help</span></div><div class="hp-count"><i></i>5 of 24</div><div class="hp-tabs"><span class="on"><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Browse</span><span><svg viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg>Chats</span><span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Post</span><span><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4h6v3H9zM9 11h6M9 15h4"/></svg>My posts</span><span><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Profile</span></div></div></div>
       </div>
   </div>
 </div>
@@ -511,6 +536,7 @@
     </div>
     <div class="device-shot">
         <img src="screen-map.png" class="device-image" alt="Map view, pins for nearby help requests">
+        <div class="map-fx" aria-hidden="true"><div class="spot"><div class="melt"></div><svg class="pin" viewBox="0 0 24 30" aria-hidden="true"><path fill="currentColor" d="M12 0C5.4 0 0 5.2 0 11.7 0 20.2 12 30 12 30s12-9.8 12-18.3C24 5.2 18.6 0 12 0z"/><circle cx="12" cy="11.5" r="4.5" fill="#fff"/></svg></div></div>
       </div>
   </div>
 </div>
@@ -531,7 +557,7 @@
       </ul>
     </div>
     <div class="device-shot">
-        <img src="screen-post.png" class="device-image" alt="Post screen, create a help request">
+        <img src="screen-post.png" class="device-image ui-fallback" loading="lazy" alt="Post: Maya asks for help carrying a couch"><div class="ui-phone" role="img" aria-label="Post: Maya asks for help carrying a couch"><div class="ui-screen"><div class="hp-status"><span>9:41</span><span class="hp-island"></span><span class="hp-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5" width="3" height="7" rx="1" fill="currentColor"/><rect x="10" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.4 6.8a6.5 6.5 0 0 1 9.2 0l-1.4 1.4a4.5 4.5 0 0 0-6.4 0zM1 4.4a10 10 0 0 1 14 0l-1.4 1.4a8 8 0 0 0-11.2 0z" fill="currentColor"/></svg><svg viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.5" fill="currentColor"/><rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".4"/></svg></span></div><div class="ui-head"><b>Post</b></div><div class="ui-body"><div class="ui-toggle"><span class="on">Need help</span><span>Want to help</span></div><div class="ui-label">Category</div><div class="ui-tiles"><span class="ui-tile on"><svg viewBox="0 0 24 24"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>Moving</span><span class="ui-tile"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg>Handyman</span><span class="ui-tile"><svg viewBox="0 0 24 24"><path d="M4 4h6a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4zM20 4h-6a3 3 0 0 0-3 3v13a2 2 0 0 1 2-2h7z"/></svg>Tutoring</span><span class="ui-tile"><svg viewBox="0 0 24 24"><path d="M5 17h14v-5l-2-5H7l-2 5z"/><circle cx="8" cy="17" r="2"/><circle cx="16" cy="17" r="2"/></svg>Rides</span><span class="ui-tile"><svg viewBox="0 0 24 24"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg>Borrow</span><span class="ui-tile"><svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v8h14v-8M12 8v13M12 8c-2-4-6-3-5 0M12 8c2-4 6-3 5 0"/></svg>Giveaway</span></div><div class="ui-label">What do you need?</div><div class="ui-field">Help carrying a couch up 3 floors</div><div class="ui-field tall">The couch arrived, the elevator didn't. 10 minutes, tomorrow evening.</div><div class="ui-label">Photos</div><div class="ui-photos"><span class="ui-photo"></span><span class="ui-photo add">+</span></div><div class="ui-go">Post</div></div><div class="hp-tabs"><span><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Browse</span><span><svg viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg>Chats</span><span class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Post</span><span><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4h6v3H9zM9 11h6M9 15h4"/></svg>My posts</span><span><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Profile</span></div></div></div>
       </div>
   </div>
 </div>
@@ -551,7 +577,7 @@
       </ul>
     </div>
     <div class="device-shot">
-        <img src="screen-chat.png" class="device-image" alt="Chat screen, real-time messaging">
+        <img src="screen-chat.png" class="device-image ui-fallback" loading="lazy" alt="Chat between Maya and Yoav, agreeing on tomorrow at 6"><div class="ui-phone" role="img" aria-label="Chat between Maya and Yoav, agreeing on tomorrow at 6"><div class="ui-screen"><div class="hp-status"><span>9:41</span><span class="hp-island"></span><span class="hp-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5" width="3" height="7" rx="1" fill="currentColor"/><rect x="10" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.4 6.8a6.5 6.5 0 0 1 9.2 0l-1.4 1.4a4.5 4.5 0 0 0-6.4 0zM1 4.4a10 10 0 0 1 14 0l-1.4 1.4a8 8 0 0 0-11.2 0z" fill="currentColor"/></svg><svg viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.5" fill="currentColor"/><rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".4"/></svg></span></div><div class="ui-chat-head"><svg class="ui-chevron" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg><span class="hp-av">Y</span><span><span class="hp-name">Yoav Levi</span><br><span class="hp-meta">Online now</span></span></div><div class="ui-msgs"><span class="ui-day">Today</span><span dir="auto" class="ui-msg theirs">Hi Maya! Happy to help with the couch 🙂<small>18:02</small></span><span dir="auto" class="ui-msg mine">Amazing, thank you!! Tomorrow at 6?<small>18:03</small></span><span dir="auto" class="ui-msg theirs">Great. I'll bring a friend, it'll be quick<small>18:04</small></span><span dir="auto" class="ui-msg mine">Perfect, I'm on the 3rd floor<small>18:05</small></span><span dir="auto" class="ui-msg theirs">Deal, see you tomorrow 👍<small>18:05</small></span></div><div class="ui-compose"><span></span><i></i></div></div></div>
       </div>
   </div>
 </div>
@@ -571,7 +597,7 @@
       </ul>
     </div>
     <div class="device-shot">
-        <img src="screen-activity.png" class="device-image" alt="Activity screen, manage your requests">
+        <img src="screen-activity.png" class="device-image ui-fallback" loading="lazy" alt="Chats: a reach-out waiting for an answer and the conversation list"><div class="ui-phone" role="img" aria-label="Chats: a reach-out waiting for an answer and the conversation list"><div class="ui-screen"><div class="hp-status"><span>9:41</span><span class="hp-island"></span><span class="hp-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5" width="3" height="7" rx="1" fill="currentColor"/><rect x="10" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.4 6.8a6.5 6.5 0 0 1 9.2 0l-1.4 1.4a4.5 4.5 0 0 0-6.4 0zM1 4.4a10 10 0 0 1 14 0l-1.4 1.4a8 8 0 0 0-11.2 0z" fill="currentColor"/></svg><svg viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.5" fill="currentColor"/><rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".4"/></svg></span></div><div class="ui-head"><b>Chats</b></div><div class="ui-body"><div class="ui-section">Waiting for your answer</div><div class="ui-row"><span class="hp-av" style="background:#dcfce7;color:#166534">D</span><span class="who"><b>Dana Cohen</b><span>wants to help with your couch</span></span><span class="ui-no"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></span><span class="ui-yes"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span></div><div class="ui-section">Chats</div><div class="ui-row"><span class="hp-av">Y</span><span class="who"><b>Yoav Levi</b><span>Deal, see you tomorrow 👍</span></span><time>18:05</time><span class="ui-badge">1</span></div><div class="ui-row"><span class="hp-av">N</span><span class="who"><b>Noa Shamir</b><span>Thanks so much for the ride!</span></span><time>Yesterday</time></div><div class="ui-row"><span class="hp-av">R</span><span class="who"><b>Ronit Shemesh</b><span>Can I return the ladder on Friday?</span></span><time>Mon</time></div></div><div class="hp-tabs"><span><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Browse</span><span class="on"><svg viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg>Chats</span><span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Post</span><span><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4h6v3H9zM9 11h6M9 15h4"/></svg>My posts</span><span><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Profile</span></div></div></div>
       </div>
   </div>
 </div>
@@ -591,7 +617,7 @@
       </ul>
     </div>
     <div class="device-shot">
-        <img src="screen-profile.png" class="device-image" alt="Profile screen, your community identity">
+        <img src="screen-profile.png" class="device-image ui-fallback" loading="lazy" alt="Maya's profile: 4.9 rating, 12 helps and reviews"><div class="ui-phone" role="img" aria-label="Maya's profile: 4.9 rating, 12 helps and reviews"><div class="ui-screen"><div class="hp-status"><span>9:41</span><span class="hp-island"></span><span class="hp-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5" width="3" height="7" rx="1" fill="currentColor"/><rect x="10" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.4 6.8a6.5 6.5 0 0 1 9.2 0l-1.4 1.4a4.5 4.5 0 0 0-6.4 0zM1 4.4a10 10 0 0 1 14 0l-1.4 1.4a8 8 0 0 0-11.2 0z" fill="currentColor"/></svg><svg viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.5" fill="currentColor"/><rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".4"/></svg></span></div><div class="ui-head"><b>Profile</b></div><div class="ui-body"><div class="ui-me"><span class="hp-av">M</span><b>Maya Cohen</b><span>Ramat Gan · on Helpy since Aug 2026</span></div><div class="ui-stats"><div><b>12</b><span>Helped</span></div><div><b>5</b><span>Got help</span></div><div><b class="star">4.9</b><span>Rating</span></div><div><b>7</b><span>Posted</span></div></div><div class="ui-streak"><svg viewBox="0 0 24 24"><path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-3 2-4 2-7 1 1 2 2 3 2 0-2 0-3 0-5z"/></svg>Helping streak: 4 days</div><div class="ui-section">Reviews</div><div class="ui-review"><div class="top"><span>Yoav Levi</span><span class="ui-stars"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg></span></div><p>Everything was ready when I arrived. Great communication.</p></div><div class="ui-review"><div class="top"><span>Noa Shamir</span><span class="ui-stars"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg></span></div><p>Helped my son with his homework. Recommended!</p></div></div><div class="hp-tabs"><span><svg viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Browse</span><span><svg viewBox="0 0 24 24"><path d="m12 2 9 5-9 5-9-5z"/><path d="m3 12 9 5 9-5"/><path d="m3 17 9 5 9-5"/></svg>Chats</span><span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Post</span><span><svg viewBox="0 0 24 24"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4h6v3H9zM9 11h6M9 15h4"/></svg>My posts</span><span class="on"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Profile</span></div></div></div>
       </div>
   </div>
 </div>
@@ -603,10 +629,10 @@
   <p class="section-sub">Full Hebrew with right-to-left layout, full English. One tap to switch, the app remembers. Light or dark mode - your choice.</p>
   <div class="bilingual-phones">
     <div class="device-shot">
-        <img src="screen-chat-dark.png" class="device-image" alt="A chat in English, dark mode">
+        <img src="screen-chat-dark.png" class="device-image ui-fallback" loading="lazy" alt="A chat in English, dark mode"><div class="ui-phone dark" role="img" aria-label="A chat in English, dark mode"><div class="ui-screen" dir="ltr"><div class="hp-status"><span>9:41</span><span class="hp-island"></span><span class="hp-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5" width="3" height="7" rx="1" fill="currentColor"/><rect x="10" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.4 6.8a6.5 6.5 0 0 1 9.2 0l-1.4 1.4a4.5 4.5 0 0 0-6.4 0zM1 4.4a10 10 0 0 1 14 0l-1.4 1.4a8 8 0 0 0-11.2 0z" fill="currentColor"/></svg><svg viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.5" fill="currentColor"/><rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".4"/></svg></span></div><div class="ui-chat-head"><svg class="ui-chevron" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg><span class="hp-av">Y</span><span><span class="hp-name">Yoav Levi</span><br><span class="hp-meta">Online now</span></span></div><div class="ui-msgs"><span class="ui-day">Today</span><span dir="auto" class="ui-msg theirs">Hi Maya! Happy to help with the couch 🙂<small>18:02</small></span><span dir="auto" class="ui-msg mine">Amazing, thank you!! Tomorrow at 6?<small>18:03</small></span><span dir="auto" class="ui-msg theirs">Great. I'll bring a friend, it'll be quick<small>18:04</small></span><span dir="auto" class="ui-msg mine">Perfect, I'm on the 3rd floor<small>18:05</small></span><span dir="auto" class="ui-msg theirs">Deal, see you tomorrow 👍<small>18:05</small></span></div><div class="ui-compose"><span></span><i></i></div></div></div>
       </div>
     <div class="device-shot">
-        <img src="screen-hebrew-chat-dark.png" class="device-image" alt="A chat in Hebrew (RTL), dark mode">
+        <img src="screen-hebrew-chat-dark.png" class="device-image ui-fallback" loading="lazy" alt="A chat in Hebrew (RTL), dark mode"><div class="ui-phone dark" role="img" aria-label="A chat in Hebrew (RTL), dark mode"><div class="ui-screen" dir="rtl"><div class="hp-status"><span>9:41</span><span class="hp-island"></span><span class="hp-icons"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1" fill="currentColor"/><rect x="5" y="5" width="3" height="7" rx="1" fill="currentColor"/><rect x="10" y="2.5" width="3" height="9.5" rx="1" fill="currentColor"/><rect x="15" y="0" width="3" height="12" rx="1" fill="currentColor"/></svg><svg viewBox="0 0 16 12"><path d="M8 11.5 5.6 9a3.4 3.4 0 0 1 4.8 0zM3.4 6.8a6.5 6.5 0 0 1 9.2 0l-1.4 1.4a4.5 4.5 0 0 0-6.4 0zM1 4.4a10 10 0 0 1 14 0l-1.4 1.4a8 8 0 0 0-11.2 0z" fill="currentColor"/></svg><svg viewBox="0 0 26 12"><rect x="0.5" y="0.5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".4"/><rect x="2.5" y="2.5" width="16" height="7" rx="1.5" fill="currentColor"/><rect x="23.5" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".4"/></svg></span></div><div class="ui-chat-head"><span class="hp-av">י</span><span><span class="hp-name">יואב לוי</span><br><span class="hp-meta">מחובר עכשיו</span></span><span style="margin-inline-start:auto"><svg class="ui-chevron" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></span></div><div class="ui-msgs"><span class="ui-day">היום</span><span dir="auto" class="ui-msg theirs">היי מאיה! אשמח לעזור עם הספה 🙂<small>18:02</small></span><span dir="auto" class="ui-msg mine">איזה כיף, תודה!! מחר ב-18:00 מתאים?<small>18:03</small></span><span dir="auto" class="ui-msg theirs">מעולה. אגיע עם חבר, ככה זה יהיה מהיר<small>18:04</small></span><span dir="auto" class="ui-msg mine">מושלם, אני בקומה 3<small>18:05</small></span><span dir="auto" class="ui-msg theirs">סגור, נתראה מחר 👍<small>18:05</small></span></div><div class="ui-compose"><span></span><i></i></div></div></div>
       </div>
   </div>
 </div>
@@ -642,6 +668,7 @@
 
 <!-- ═══════ FOOTER / FINAL CTA ═══════ -->
 <div class="footer">
+  <div class="done-card" aria-hidden="true"><span class="fu-av y">Y</span><span class="fu-who"><b>Help completed</b><small>Maya &amp; Yoav · couch</small></span><span class="fu-stars"><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg></span></div>
   <h2>Start <span class="gradient">helping</span> today</h2>
   <p class="footer-sub">Free to join, free to help.</p>
 
@@ -700,13 +727,23 @@
     document.getElementById('progressBar').style.width = pct + '%';
   });
 
-  // Reveal sections on scroll
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) entry.target.classList.add('visible');
+  // Hero demo: a stop button (WCAG 2.2.2: the story loops), and it rests
+  // while the hero is off screen. Shown only when this script runs.
+  (function () {
+    var hero = document.querySelector('.hero'), btn = document.querySelector('.demo-toggle');
+    if (!hero || !btn) return;
+    btn.hidden = false;
+    var stopped = false, visible = true;
+    function apply() { hero.classList.toggle('demo-paused', stopped || !visible); }
+    btn.addEventListener('click', function () {
+      stopped = !stopped;
+      btn.setAttribute('aria-pressed', String(stopped));
+      apply();
     });
-  }, { threshold: 0.06 });
-  document.querySelectorAll('.section').forEach(el => observer.observe(el));
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (e) { visible = e[e.length - 1].isIntersecting; apply(); }).observe(hero);
+    }
+  })();
 
   // Render Lucide icons - the library loads with `defer`, so it is NOT available
   // yet when this inline script runs; wait for window load (which fires after
