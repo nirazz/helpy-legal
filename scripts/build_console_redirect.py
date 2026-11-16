@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Writes console/index.html: the redirect left where the founder console used to be.
 
-The console moved (2026-11-04) to its own private site, https://helpy-console.pages.dev.
+The console moved (2026-11-04) to its own private site, https://console.help-y.com (first helpy-console.pages.dev).
 This page:
   - REVOKES the old session this origin still holds (Supabase /auth/v1/logout?scope=local
     with its own token), then removes every helpy_console_auth* key (the session and its
@@ -32,7 +32,7 @@ import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-NEW = "https://helpy-console.pages.dev"
+NEW = "https://console.help-y.com"
 keys_path = os.path.join(HERE, "console-migrate-keys.json")
 if "--keys" in sys.argv:
     keys_path = sys.argv[sys.argv.index("--keys") + 1]
