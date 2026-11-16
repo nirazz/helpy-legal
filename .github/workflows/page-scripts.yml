@@ -25,6 +25,9 @@ jobs:
         with:
           node-version: "20"
       - run: python3 scripts/check_page_scripts.py
+      # console/index.html is GENERATED (its inline script is allowed by hash): a hand edit
+      # or a stale hash must not ship
+      - run: python3 scripts/build_console_redirect.py && git diff --exit-code console/index.html
 
   live:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
