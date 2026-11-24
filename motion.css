@@ -220,10 +220,10 @@
 #s-map .device-shot { container-type: inline-size; }
 .map-fx { position: absolute; inset: 10px; pointer-events: none; }
 @media (max-width: 600px) { .map-fx { inset: 8px; } }
-/* centre of the app's own approximate circle on screen-*-map.png (750x1628) - re-measure if it is re-shot */
-.map-fx .spot { position: absolute; left: 50.6%; top: 36.1%; width: 0; height: 0; }
+/* centre of the app's own approximate circle on screen-*-map.png (750x1628, re-shot 24.11: centre 374.5,561, diameter 131px) - re-measure if it is re-shot */
+.map-fx .spot { position: absolute; left: 49.9%; top: 34.4%; width: 0; height: 0; }
 .map-fx .pin { position: absolute; width: 9cqi; height: 11cqi; left: -4.5cqi; top: -11cqi; color: var(--brand); opacity: 0; filter: drop-shadow(0 3px 4px rgba(16, 24, 40, 0.3)); transform-origin: 50% 100%; }
-.map-fx .melt { position: absolute; width: 26.4cqi; aspect-ratio: 1; left: -13.2cqi; top: -13.2cqi; border-radius: 50%; border: 0.8cqi solid var(--brand); background: rgba(63, 43, 110, 0.22); opacity: 0; }
+.map-fx .melt { position: absolute; width: 21cqi; aspect-ratio: 1; left: -10.5cqi; top: -10.5cqi; border-radius: 50%; border: 0.8cqi solid var(--brand); background: rgba(63, 43, 110, 0.22); opacity: 0; }
 @supports not (width: 1cqi) { .map-fx { display: none; } }
 
 /* ================================================================ keyframes */
