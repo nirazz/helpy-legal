@@ -13,10 +13,10 @@
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   /* the app's own palette, for the built UI */
-  --app-purple: #5450e4; --app-purple-deep: #4338ca; --app-ink: #111827; --app-sub: #6b7280;
+  --app-purple: #3F2B6E; --app-purple-deep: #2F1F55; --app-ink: #111827; --app-sub: #6b7280;
   --app-bg: #f8f8fb; --app-line: #eceef3; --app-card: #efeafc; --app-green: #15803d;
 }
-::selection { background: rgba(79, 70, 229, 0.18); }
+::selection { background: rgba(63, 43, 110, 0.18); }
 
 /* ── the key words of the tagline: a drawn underline, from the start edge ── */
 .hero .tagline .mark { position: relative; white-space: nowrap; }
@@ -78,7 +78,7 @@
 .hp-person { display: flex; align-items: center; gap: 2.6cqi; padding: 3.2cqi 4.2cqi; }
 .hp-av {
   width: 9cqi; height: 9cqi; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center;
-  font-size: 3.8cqi; font-weight: 700; background: #e0e7ff; color: var(--app-purple-deep);
+  font-size: 3.8cqi; font-weight: 700; background: #E6E0F0; color: var(--app-purple-deep);
 }
 .hp-name { font-size: 4cqi; font-weight: 700; line-height: 1.2; }
 .hp-meta { font-size: 3.1cqi; color: var(--app-purple-deep); line-height: 1.3; }
@@ -178,7 +178,7 @@
 .fu-row { display: flex; align-items: center; gap: 8px; }
 .fu-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 .fu-tiles span { padding: 6px 0; border-radius: 8px; background: #f3f4f8; text-align: center; font-size: 11px; color: #4b5563; font-weight: 600; }
-.fu-tiles .on { background: #eef0fd; color: var(--app-purple-deep); box-shadow: inset 0 0 0 1.5px var(--app-purple); }
+.fu-tiles .on { background: #EFECF4; color: var(--app-purple-deep); box-shadow: inset 0 0 0 1.5px var(--app-purple); }
 .fu-input { flex: 1; padding: 7px 10px; border-radius: 8px; background: #f3f4f8; color: #374151; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fu-go { padding: 7px 12px; border-radius: 99px; background: var(--app-purple); color: #fff; font-weight: 700; }
 .flow-ui:has(> .fu-card) { padding: 0; }
@@ -186,7 +186,7 @@
 .fu-card { flex: 1; border-radius: 10px; padding: 9px 10px; background: var(--app-card) url("card-tile.png") 0 0 / 160px repeat; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
 .fu-card b { font-size: 13px; color: #1e1b4b; }
 .fu-card small { color: var(--app-purple-deep); font-size: 11px; }
-.fu-av { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center; font-weight: 700; font-size: 13px; background: #e0e7ff; color: var(--app-purple-deep); }
+.fu-av { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center; font-weight: 700; font-size: 13px; background: #E6E0F0; color: var(--app-purple-deep); }
 .fu-av.y { background: #dcfce7; color: #166534; }
 .fu-who { flex: 1; min-width: 0; line-height: 1.3; }
 .fu-who b { display: block; font-size: 13px; }
@@ -223,7 +223,7 @@
 /* centre of the app's own approximate circle on screen-*-map.png (750x1628) - re-measure if it is re-shot */
 .map-fx .spot { position: absolute; left: 50.6%; top: 36.1%; width: 0; height: 0; }
 .map-fx .pin { position: absolute; width: 9cqi; height: 11cqi; left: -4.5cqi; top: -11cqi; color: var(--brand); opacity: 0; filter: drop-shadow(0 3px 4px rgba(16, 24, 40, 0.3)); transform-origin: 50% 100%; }
-.map-fx .melt { position: absolute; width: 26.4cqi; aspect-ratio: 1; left: -13.2cqi; top: -13.2cqi; border-radius: 50%; border: 0.8cqi solid var(--brand); background: rgba(79, 70, 229, 0.22); opacity: 0; }
+.map-fx .melt { position: absolute; width: 26.4cqi; aspect-ratio: 1; left: -13.2cqi; top: -13.2cqi; border-radius: 50%; border: 0.8cqi solid var(--brand); background: rgba(63, 43, 110, 0.22); opacity: 0; }
 @supports not (width: 1cqi) { .map-fx { display: none; } }
 
 /* ================================================================ keyframes */
