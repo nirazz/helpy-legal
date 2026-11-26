@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://help-y.com/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/index-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/"/>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/index-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/index-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/"/>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/terms.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/terms.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/terms-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/terms.html"/>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/terms-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/terms.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/terms-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/terms.html"/>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/privacy.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/privacy-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/privacy.html"/>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/privacy-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/privacy.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/privacy-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/privacy.html"/>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/delete-account.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/delete-account.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/delete-account-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/delete-account.html"/>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/delete-account-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/delete-account.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/delete-account-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/delete-account.html"/>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/accessibility.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/accessibility.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/accessibility-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/accessibility.html"/>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/accessibility-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/accessibility.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/accessibility-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/accessibility.html"/>
+    <priority>0.3</priority>
+  </url>
+</urlset>
