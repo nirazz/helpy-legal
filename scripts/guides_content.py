@@ -72,18 +72,18 @@ CATEGORIES = [
         "en": {
             "label": "Handyman",
             "title": "A handy neighbor for small jobs around the house | Helpy",
-            "description": "A shelf to hang, a wardrobe to assemble, a dripping tap. Neighbors with tools offer a hand with small home jobs, free, on Helpy.",
+            "description": "A shelf to hang, a wardrobe to assemble, a dripping faucet. Neighbors with tools offer a hand with small home jobs, free, on Helpy.",
             "h1": "A handy neighbor for the small jobs",
             "lede": "The shelf that's been leaning against the wall for a month. The flat-pack wardrobe still in its box. "
                     "Too small to call someone in, too awkward to do alone. On Helpy, neighbors who own a drill and know "
                     "what to do with it offer to help, a few streets away.",
             "examples": ["Hanging shelves, pictures or a TV", "Putting furniture together",
-                         "Swapping a handle, a lock or a bulb you can't reach", "A small fix on a tap or toilet"],
+                         "Swapping a handle, a lock or a bulb you can't reach", "A small fix on a faucet or toilet"],
             "tips": ["Electrics, gas and real plumbing are for a licensed pro.",
                      "Add a photo of the problem so your neighbor knows what to bring.",
                      "Say whether you have tools at home or they should bring theirs."],
             "faq": [("Do helpers get paid?",
-                     "No. People offer help on Helpy as volunteers. You usually buy the parts, like screws or a new tap."),
+                     "No. People offer help on Helpy as volunteers. You usually buy the parts, like screws or a new faucet."),
                     ("What if the fix doesn't hold?",
                      "Helpy doesn't guarantee anyone's work. If you need a warranty, hire a professional.")],
         },
@@ -171,7 +171,7 @@ CATEGORIES = [
             "title": "למסירה בחינם בשכונה: רהיטים, ציוד לתינוקות ועוד | Helpy",
             "description": "ארון, עגלה, ספרים או כלי מטבח. מוסרים בחינם לשכנים קרובים, או מבקשים משהו שחסר, ב-Helpy.",
             "h1": "למסירה בחינם, לשכנים שגרים קרוב",
-            "lede": "ארון שלא נכנס בדירה החדשה, עגלה שכבר לא צריך, ספרים שאף אחד לא קורא. "
+            "lede": "ארון שלא נכנס בדירה החדשה, עגלה שכבר לא צריכים, ספרים שאף אחד לא קורא. "
                     "במקום לזרוק, מפרסמים במסירה ב-Helpy והשכנים הקרובים רואים את זה. ואם מחפשים משהו, אפשר גם לבקש.",
             "examples": ["רהיטים: ארון, שולחן, כיסאות", "ציוד לתינוקות ולילדים",
                          "ספרים, משחקים וכלי מטבח", "מכשירי חשמל קטנים שעובדים"],
@@ -189,7 +189,7 @@ CATEGORIES = [
             "description": "A wardrobe, a stroller, books or kitchenware. Give things away free to people nearby, or ask for something you need, on Helpy.",
             "h1": "Give it away to someone down the street",
             "lede": "The wardrobe that didn't fit in the new place. A stroller you're done with. A shelf of books nobody reads. "
-                    "Rather than bin them, post them on Helpy and the people closest to you see them first. "
+                    "Rather than toss them, post them on Helpy and the people closest to you see them first. "
                     "Looking for something? You can ask, too.",
             "examples": ["Furniture: wardrobes, tables, chairs", "Baby and kids' gear",
                          "Books, games and kitchenware", "Small appliances that still work"],
@@ -226,7 +226,7 @@ CATEGORIES = [
             "description": "A drill, a ladder, a tent or a suitcase. Borrow from people nearby and give it back after, free, on Helpy.",
             "h1": "Borrow it from a neighbor instead of buying it",
             "lede": "A drill for one shelf. A tall ladder once a year. A big suitcase for one trip, a tent for one weekend. "
-                    "Most of these are sitting in a storeroom a few buildings away. On Helpy you ask, borrow, and bring it back.",
+                    "Most of these are sitting in a storage room a few buildings away. On Helpy you ask, borrow, and bring it back.",
             "examples": ["A drill, a ladder or a toolbox", "Camping gear and suitcases",
                          "A travel cot, stroller or car seat for visiting grandkids", "Baking trays and platters for a big gathering"],
             "tips": ["Agree on a return date up front.", "Take a photo of the item when you pick it up.",
@@ -249,7 +249,7 @@ CATEGORIES = [
             "examples": ["מתמטיקה ואנגלית ליסודי ולחטיבה", "הכנה למבחן או לבגרות",
                          "עזרה בכתיבת עבודה או קורות חיים", "אקסל, מצגות ותוכנות"],
             "tips": ["בשיעור לילדים, הורה נמצא בבית, או שהשיעור במקום ציבורי כמו ספרייה.",
-                     "כתבו כיתה, מקצוע ונושא, כך יפנו מי שמתאימים.",
+                     "כתבו כיתה, מקצוע ונושא, כך יפנו אליכם השכנים המתאימים.",
                      "פגישה ראשונה קצרה עוזרת לראות אם יש חיבור."],
             "faq": [("השיעורים בתשלום?",
                      "לא. ב-Helpy שכנים עוזרים בהתנדבות. מורים פרטיים בתשלום מוצאים במקומות אחרים."),
@@ -259,12 +259,12 @@ CATEGORIES = [
         "en": {
             "label": "Tutoring",
             "title": "Free tutoring from neighbors | Helpy",
-            "description": "Maths, English, exam prep or Excel. Neighbors offer to tutor in what they know, as volunteers, on Helpy.",
+            "description": "Math, English, exam prep or Excel. Neighbors offer to tutor in what they know, as volunteers, on Helpy.",
             "h1": "Tutoring from the neighbors, for free",
             "lede": "A kid stuck on fractions. A student a month out from an English exam. An adult who'd finally like to get Excel. "
                     "On Helpy, neighbors offer to help with what they know, as volunteers, with no price list.",
-            "examples": ["Maths and English for primary and middle school", "Getting ready for a test or a final exam",
-                         "Help with an essay or a CV", "Excel, slides and other software"],
+            "examples": ["Math and English for elementary and middle school", "Getting ready for a test or a final exam",
+                         "Help with an essay or a résumé", "Excel, slides and other software"],
             "tips": ["For a child's lesson, a parent stays home, or meet somewhere public like a library.",
                      "Say the grade, the subject and the topic so the right people reach out.",
                      "A short first session shows whether it clicks."],
@@ -297,20 +297,20 @@ CATEGORIES = [
         "en": {
             "label": "Moving",
             "title": "Help moving and lifting, from neighbors | Helpy",
-            "description": "A sofa up three flights, boxes down to storage, an extra pair of hands on moving day. Neighbors help with the heavy lifting, free, on Helpy.",
+            "description": "A couch up three flights, boxes down to storage, an extra pair of hands on moving day. Neighbors help with the heavy lifting, free, on Helpy.",
             "h1": "An extra pair of hands for the heavy lifting",
-            "lede": "A sofa that has to go up three floors with no lift. Wardrobes that need to come down to storage. "
-                    "A small flat moving two streets over. Nobody books movers for ten minutes of carrying. "
+            "lede": "A couch that has to go up three floors with no elevator. Wardrobes that need to come down to storage. "
+                    "A small apartment moving two streets over. Nobody books movers for ten minutes of carrying. "
                     "On Helpy you ask the people closest to you, and whoever has the time and the muscle offers to help.",
-            "examples": ["Getting a sofa or fridge up the stairs", "Carrying boxes down to storage or a car",
+            "examples": ["Getting a couch or fridge up the stairs", "Carrying boxes down to storage or a car",
                          "An extra pair of hands on moving day", "Moving a table or mattress to the next street"],
-            "tips": ["Say how many items, which floor, and whether there's a lift.",
+            "tips": ["Say how many items, which floor, and whether there's an elevator.",
                      "Pianos, safes and anything really heavy: book professional movers.",
                      "Agree on a time in the chat, and let someone close to you know."],
             "faq": [("What if nobody answers?",
                      "Share the post from the app to your neighborhood WhatsApp or Facebook group so more people see it."),
                     ("Can this replace a moving company?",
-                     "Not for a whole flat. Neighbors help with short carries and single items.")],
+                     "Not for a whole apartment. Neighbors help with short carries and single items.")],
         },
     },
     {
@@ -337,11 +337,11 @@ CATEGORIES = [
             "label": "Rides",
             "title": "Rides from neighbors who are going your way | Helpy",
             "description": "To the train in the morning, to a hospital appointment, or to move something bulky. Neighbors already heading there offer a seat, on Helpy.",
-            "h1": "A lift from a neighbor who's going that way anyway",
+            "h1": "A ride from a neighbor who's going that way anyway",
             "lede": "An early train to catch, a hospital appointment, something too big for the bus. "
                     "Someone on your street might be heading there anyway. On Helpy you post where and when, "
                     "and whoever's going that way offers a seat.",
-            "examples": ["A lift to the train or bus station", "Getting to a check-up or appointment",
+            "examples": ["A ride to the train or bus station", "Getting to a check-up or appointment",
                          "Neighbors who commute to the same area every morning", "Moving a parcel or something bulky by car"],
             "tips": ["Tell someone close to you where you're going, with whom, and when.",
                      "Check the driver's ratings and reviews on their profile.",
@@ -362,7 +362,7 @@ CATEGORIES = [
             "lede": "טיול צהריים לכלב כשאתם בעבודה, מישהו שיאכיל את החתול בסוף השבוע, עזרה להביא את הכלב לווטרינר. "
                     "ב-Helpy יש שכנים שאוהבים חיות ומציעים לעזור, קרוב לבית.",
             "examples": ["טיולים עם הכלב", "האכלת חתול או דגים כשאתם לא בבית",
-                         "הסעה לווטרינר", "עצה מבעלי חיים מנוסים"],
+                         "הסעה לווטרינר", "עצה מבעלים מנוסים של כלבים וחתולים"],
             "tips": ["פגישת היכרות קצרה עם החיה, לפני הפעם הראשונה.",
                      "השאירו הוראות כתובות ומספר של וטרינר.",
                      "מפתח לבית: רק למי שאתם מכירים וסומכים עליו/ה."],
@@ -374,17 +374,17 @@ CATEGORIES = [
         "en": {
             "label": "Pets",
             "title": "Pet help from neighbors who love animals | Helpy",
-            "description": "A midday dog walk, feeding the cat over the weekend, a lift to the vet. Animal-loving neighbors offer help, free, on Helpy.",
+            "description": "A midday dog walk, feeding the cat over the weekend, a ride to the vet. Animal-loving neighbors offer help, free, on Helpy.",
             "h1": "Help with your pets, from neighbors who love animals",
             "lede": "A midday walk while you're at work. Someone to feed the cat over the weekend. "
                     "A hand getting a nervous dog to the vet. On Helpy, animal people a few doors down offer to help.",
             "examples": ["Dog walks", "Feeding a cat or fish while you're away",
-                         "A lift to the vet", "Advice from experienced owners"],
+                         "A ride to the vet", "Advice from experienced owners"],
             "tips": ["Do a short meet-and-greet with your pet before the first time.",
                      "Leave written instructions and your vet's number.",
                      "Only give a house key to someone you know and trust."],
             "faq": [("Is this a boarding service?",
-                     "No. Neighbors help for short stretches. For long stays or medical care, use a kennel or a vet."),
+                     "No. Neighbors help for short stretches. For long stays or medical care, use a boarding kennel or a vet."),
                     ("I'd like to help with dogs in my area.",
                      "Post an offer in the Pets category, and dog owners nearby will reach out.")],
         },
@@ -414,11 +414,11 @@ CATEGORIES = [
             "title": "Volunteer near home, whenever you have time | Helpy",
             "description": "Want to volunteer without a course or a fixed shift? On Helpy you see who nearby needs a hand and help when it suits you. Free.",
             "h1": "Volunteer on your own street, on your own time",
-            "lede": "Not every way of giving back needs an induction, an interview and a weekly shift. Sometimes it's carrying a sofa "
+            "lede": "Not every way of giving back needs an orientation, an interview and a weekly shift. Sometimes it's carrying a couch "
                     "with the guy downstairs, sorting out a phone for the woman next door, or walking a kid through fractions. "
                     "Helpy shows you what the people around you need, and you offer when it works for you.",
             "examples": ["Groceries, a visit or phone help for older neighbors", "Carrying, assembling and small fixes",
-                         "Tutoring in a subject you're good at", "A lift for someone going your way"],
+                         "Tutoring in a subject you're good at", "A ride for someone going your way"],
             "tips": ["Start with something small and close by. That's what people keep doing.",
                      "You can post an offer too: say what you can help with, and neighbors will reach out.",
                      "Want a structured program with training? Cities and charities run those, and Helpy doesn't replace them."],
