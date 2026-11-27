@@ -18,7 +18,7 @@ SHARED_FAQ = {
         ("מי רואה את הכתובת שלי?",
          "בפוסט מוצגים אזור משוער ומרחק, אף פעם לא כתובת. המיקום המדויק נחשף רק לשכן/ה שאישרתם."),
         ("איך יודעים שזה בטוח?",
-         "כדי לפנות לשכן/ה או לאשר פנייה, מאמתים מספר טלפון. בפרופיל רואים דירוגים וביקורות, "
+         "לפני שפונים לשכן/ה, מאמתים מספר טלפון. בפרופיל רואים דירוגים וביקורות, "
          "ואפשר לדווח ולחסום בלחיצה. אנחנו לא בודקים רקע של משתמשים, אז ההחלטה להיפגש היא תמיד שלכם."),
     ],
     "en": [
@@ -28,7 +28,7 @@ SHARED_FAQ = {
          "Posts show a rough area and a distance, never an address. Your exact location is only "
          "shared with the neighbor you approve."),
         ("Is it safe?",
-         "Anyone who reaches out, or accepts someone who did, verifies a phone number first. "
+         "Before you reach out to a neighbor, you verify your phone number. "
          "Profiles carry ratings and reviews, and you can report or block anyone in one tap. "
          "We don't run background checks, so whether to meet is always your call."),
     ],
@@ -36,12 +36,12 @@ SHARED_FAQ = {
 
 STEPS = {
     "he": [
-        ("מורידים ונרשמים", "Helpy חינמית לאייפון ולאנדרואיד. נרשמים עם Google או Apple."),
+        ("מורידים ונרשמים", "Helpy חינמית לאייפון ולאנדרואיד. נרשמים עם Google, ובאייפון גם עם Apple."),
         ("מפרסמים או מגלים", "כותבים מה צריך, או גוללים ורואים מי בסביבה מציע עזרה."),
         ("מתאמים בצ'אט", "קובעים איפה ומתי, נפגשים, ובסוף מדרגים זה את זה."),
     ],
     "en": [
-        ("Get the app", "Helpy is free on iPhone and Android. Sign in with Google or Apple."),
+        ("Download Helpy", "It's free on iPhone and Android, and signing in takes one tap with Google (or Apple, on iPhone)."),
         ("Post or browse", "Say what you need, or scroll to see who nearby is offering help."),
         ("Sort it out in chat", "Agree on where and when, meet up, then rate each other."),
     ],
@@ -102,7 +102,7 @@ CATEGORIES = [
                      "בפגישה הראשונה כדאי שעוד מישהו מהמשפחה יהיה שם.",
                      "לא מוסרים לאף אחד כרטיס אשראי, קוד או סיסמה."],
             "faq": [("ההורים שלי לא מסתדרים עם אפליקציות. אפשר לבקש בשבילם?",
-                     "כן. מפרסמים מהטלפון שלכם, בוחרים בפרסום את האזור שבו הם גרים, ומתאמים בצ'אט."),
+                     "כן, כשהם גרים קרוב אליכם. מפרסמים מהטלפון שלכם, כותבים בבקשה מה הם צריכים, ומתאמים בצ'אט. הבקשה מוצגת לשכנים סביב המיקום שלכם באפליקציה."),
                     ("זה מחליף מטפל או מטפלת?",
                      "לא. שכנים עוזרים במשימות קטנות ובחברה. טיפול אישי וסיעודי הם עבודה של אנשי מקצוע.")],
         },
@@ -120,7 +120,7 @@ CATEGORIES = [
                      "For the first meeting, it helps if a relative is there too.",
                      "Never hand over a bank card, a code or a password."],
             "faq": [("My parents don't use apps. Can I ask for them?",
-                     "Yes. Post from your phone, set the area where they live, and arrange it in the chat."),
+                     "Yes, if they live near you. Post from your phone, say what they need, and handle the chat yourself. The request is shown to neighbors around your own location in the app."),
                     ("Is this a replacement for a carer?",
                      "No. Neighbors help with small tasks and company. Personal and nursing care is work for professionals.")],
         },
@@ -129,14 +129,14 @@ CATEGORIES = [
         "slug": "tech-help",
         "he": {
             "label": "עזרה במחשב",
-            "title": "עזרה במחשב ובטלפון משכן שמבין | Helpy",
+            "title": "עזרה במחשב ובטלפון משכנים שמבינים | Helpy",
             "description": "טלפון חדש להגדיר, מדפסת שלא מתחברת, אפליקציה להתקין. שכנים שמבינים במחשבים מציעים עזרה בחינם, ב-Helpy.",
-            "h1": "עזרה במחשב ובטלפון, משכן שמבין בזה",
+            "h1": "עזרה במחשב ובטלפון, משכנים שמבינים בזה",
             "lede": "טלפון חדש שצריך להעביר אליו את התמונות, מדפסת שהפסיקה להתחבר, זום שלא מצליחים להיכנס אליו. "
                     "בדרך כלל זה עניין של חצי שעה עם מישהו שמבין. ב-Helpy השכנים האלה גרים קרוב ומציעים לעזור.",
             "examples": ["להגדיר טלפון חדש ולהעביר אליו תמונות ואנשי קשר", "מדפסת או ראוטר שלא מתחברים",
                          "להתקין אפליקציה או לעדכן את המחשב", "ללמוד להשתמש בזום, בוואטסאפ או בג'ימייל"],
-            "tips": ["אל תמסרו סיסמאות, קודים שמגיעים ב-SMS או פרטי אשראי, גם לא לשכן נחמד.",
+            "tips": ["אל תמסרו סיסמאות, קודים שמגיעים ב-SMS או פרטי אשראי, גם לא לשכן/ה נחמד/ה.",
                      "עדיף שהעזרה תהיה מול העיניים שלכם, ולא בהשתלטות מרחוק.",
                      "לפני שמתקנים משהו, מגבים את מה שחשוב."],
             "faq": [("אפשר לקבל עזרה בשיחת וידאו?",
@@ -313,9 +313,10 @@ CATEGORIES = [
         },
     },
     {
+        # app category key: "transportation" (older posts) / "rides"; both are labelled טרמפ / Rides
         "slug": "rides",
         "he": {
-            "label": "טרמפים",
+            "label": "טרמפ",
             "title": "טרמפים מהשכנים: נסיעה משותפת בשכונה | Helpy",
             "description": "לרכבת בבוקר, לבדיקה בבית החולים, או להעביר משהו גדול. שכנים שנוסעים בכל מקרה מציעים מקום ברכב, ב-Helpy.",
             "h1": "טרמפ מהשכנים, למי שבדרך",

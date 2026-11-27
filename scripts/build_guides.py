@@ -38,17 +38,19 @@ STATIC_PAIRS = [("/", "/index-he.html", "1.0")] + [
 ]
 
 T = {
-    "he": {"dir": "rtl", "home": "/index-he.html", "hub": "/help/index-he.html", "other": "English",
+    "he": {"dir": "rtl", "home": "/index-he.html?lang=he", "hub": "/help/index-he.html", "other": "English",
            "examples": "למשל", "how": "איך זה עובד", "tips": "כדאי לדעת", "faq": "שאלות נפוצות",
            "more": "עוד דרכים שבהן שכנים עוזרים", "cta": "מתחילים עכשיו", "cta_sub": "Helpy חינמית לאייפון ולאנדרואיד.",
            "crumb_home": "Helpy", "crumb_hub": "במה שכנים עוזרים", "privacy": "מדיניות פרטיות", "terms": "תנאי שימוש",
-           "privacy_href": "/privacy-he.html", "terms_href": "/terms-he.html", "a_app": "הורידו את Helpy מ-App Store",
+           "privacy_href": "/privacy-he.html", "terms_href": "/terms-he.html",
+           "a11y": "הצהרת נגישות", "a11y_href": "/accessibility-he.html", "delete": "מחיקת חשבון", "delete_href": "/delete-account-he.html", "a_app": "הורידו את Helpy מ-App Store",
            "a_play": "הורידו את Helpy מ-Google Play", "hub_link": "במה שכנים עוזרים"},
-    "en": {"dir": "ltr", "home": "/", "hub": "/help/", "other": "עברית",
+    "en": {"dir": "ltr", "home": "/?lang=en", "hub": "/help/", "other": "עברית",
            "examples": "For example", "how": "How it works", "tips": "Good to know", "faq": "Questions",
            "more": "More ways neighbors help", "cta": "Get started", "cta_sub": "Helpy is free on iPhone and Android.",
            "crumb_home": "Helpy", "crumb_hub": "Ways neighbors help", "privacy": "Privacy", "terms": "Terms",
-           "privacy_href": "/privacy.html", "terms_href": "/terms.html", "a_app": "Download Helpy on the App Store",
+           "privacy_href": "/privacy.html", "terms_href": "/terms.html",
+           "a11y": "Accessibility", "a11y_href": "/accessibility.html", "delete": "Delete account", "delete_href": "/delete-account.html", "a_app": "Download Helpy on the App Store",
            "a_play": "Get Helpy on Google Play", "hub_link": "Ways neighbors help"},
 }
 
@@ -85,7 +87,8 @@ def badges(lang, campaign):
 
 def head(lang, title, description, en_path, he_path, ld):
     canon = he_path if lang == "he" else en_path
-    lds = "\n".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False, separators=(",", ":"))}</script>' for x in ld)
+    # "</" would close the script tag early; "<\/" is the same string to a JSON parser
+    lds = "\n".join('<script type="application/ld+json">' + json.dumps(x, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/") + "</script>" for x in ld)
     return f"""<!DOCTYPE html>
 <html lang="{lang}" dir="{T[lang]['dir']}">
 <head>
@@ -123,12 +126,13 @@ def footer(lang):
     t = T[lang]
     return (f'<footer class="foot"><a href="{t["home"]}">Helpy</a><a href="{t["hub"]}">{e(t["hub_link"])}</a>'
             f'<a href="{t["privacy_href"]}">{e(t["privacy"])}</a><a href="{t["terms_href"]}">{e(t["terms"])}</a>'
+            f'<a href="{t["delete_href"]}">{e(t["delete"])}</a><a href="{t["a11y_href"]}">{e(t["a11y"])}</a>'
             f'<a href="mailto:support@help-y.com">support@help-y.com</a></footer>\n</body>\n</html>\n')
 
 
 def crumbs_ld(lang, items):
     return {"@context": "https://schema.org", "@type": "BreadcrumbList",
-            "itemListElement": [{"@type": "ListItem", "position": i + 1, "name": n, "item": SITE + p}
+            "itemListElement": [{"@type": "ListItem", "position": i + 1, "name": n, "item": SITE + p.split("?")[0]}
                                 for i, (n, p) in enumerate(items)]}
 
 
@@ -199,6 +203,12 @@ def main():
         for c in CATEGORIES:
             en_path, he_path = page_paths(c["slug"])
             written[he_path if lang == "he" else en_path] = category_page(c, lang)
+    # a page no longer generated (category dropped or renamed) is deleted, so git shows it
+    keep = {file_for(p).resolve() for p in written}
+    for f in (ROOT / "help").glob("*.html"):
+        if f.resolve() not in keep:
+            f.unlink()
+            print("removed stale", f.relative_to(ROOT))
     for path, body in written.items():
         f = file_for(path)
         f.parent.mkdir(parents=True, exist_ok=True)
