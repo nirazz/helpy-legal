@@ -390,6 +390,7 @@ CATEGORIES = [
     },
     {
         "slug": "volunteer",
+        "kind": "guide",  # not an app category: own hub section, not listed among categories
         "he": {
             "label": "התנדבות ליד הבית",
             "title": "התנדבות ליד הבית: לעזור לשכנים כשיש לכם זמן | Helpy",
@@ -444,10 +445,8 @@ HUB = {
 }
 
 
-# City pages: only cities with >= 30 non-mock posts in the last 120 days (snapshot 2026-11-27).
-# `cats` = categories that HAVE a guide page, most posted first, in that city. Aggregate only:
-# no counts, no names, no post text. Add a city when it crosses the bar; re-run the query below.
-#   select city, category, count(*) from help_requests where not is_mock and created_at > now()-'120 days'
+# City pages: cities chosen by recent post volume. `cats` = guide-page categories people there post
+# most, first first. Aggregate only: no counts, no names, no post text. Refreshed by hand.
 CITIES_ASOF = {"he": "נובמבר 2026", "en": "November 2026"}
 CITIES = [
     {"slug": "tel-aviv", "he": "תל אביב-יפו", "en": "Tel Aviv-Yafo",
@@ -467,7 +466,7 @@ CITY_COPY = {
         "title": "עזרה משכנים והתנדבות ב{city} | Helpy",
         "description": "שכנים ב{city} מבקשים ומציעים עזרה: תיקונים, מסירה, עזרה לקשישים ועוד. בחינם, באפליקציית Helpy.",
         "h1": "שכנים עוזרים לשכנים ב{city}",
-        "lede": "ב-Helpy שכנים ב{city} מבקשים עזרה ומציעים אותה, ברחוב שלהם. רוב הפוסטים בעיר הם הצעות עזרה, "
+        "lede": "ב-Helpy שכנים ב{city} מבקשים עזרה ומציעים אותה, ברחוב שלהם. בחודשים האחרונים רוב הפוסטים בעיר היו הצעות עזרה, "
                 "כלומר יש פה שכנים שמחכים שמישהו יבקש.",
         "cats_h2": "מה מבקשים ומציעים ב{city}",
         "cats_note": "לפי הפוסטים בעיר בחודשים האחרונים, נכון ל{asof}.",
@@ -480,7 +479,7 @@ CITY_COPY = {
         "title": "Neighbors helping neighbors in {city} | Helpy",
         "description": "People in {city} ask for and offer help: small fixes, giveaways, help for older neighbors and more. Free, on the Helpy app.",
         "h1": "Neighbors helping neighbors in {city}",
-        "lede": "On Helpy, people in {city} ask for a hand and offer one, on their own streets. Most posts in the city are offers, "
+        "lede": "On Helpy, people in {city} ask for a hand and offer one, on their own streets. In recent months most posts in the city were offers, "
                 "which means there are neighbors here waiting for someone to ask.",
         "cats_h2": "What people in {city} ask for and offer",
         "cats_note": "Based on posts in the city over recent months, as of {asof}.",

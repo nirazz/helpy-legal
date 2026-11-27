@@ -22,6 +22,8 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 from guides_content import CATEGORIES, CITIES, CITIES_ASOF, CITY_COPY, HUB, SHARED_FAQ, STEPS  # noqa: E402
 CAT_BY_SLUG = {c["slug"]: c for c in CATEGORIES}
+APP_CATS = [c for c in CATEGORIES if c.get("kind") != "guide"]   # real app categories
+GUIDES = [c for c in CATEGORIES if c.get("kind") == "guide"]       # e.g. volunteering
 assert not set(CAT_BY_SLUG) & {c["slug"] for c in CITIES}, "a city slug collides with a category slug"
 
 SITE = "https://help-y.com"
@@ -41,6 +43,8 @@ STATIC_PAIRS = [("/", "/index-he.html", "1.0")] + [
 ]
 
 T = {
+    # Home links are plain "/" and "/index-he.html", never ?lang=: the home page stores ?lang=
+    # as a permanent choice, and a click on the logo is not a language choice.
     "he": {"dir": "rtl", "home": "/index-he.html", "hub": "/help/index-he.html", "other": "English",
            "examples": "למשל", "cities_h2": "לפי עיר", "how": "איך זה עובד", "tips": "כדאי לדעת", "faq": "שאלות נפוצות",
            "more": "עוד דרכים שבהן שכנים עוזרים", "cta": "מתחילים עכשיו", "cta_sub": "Helpy חינמית לאייפון ולאנדרואיד.",
@@ -158,7 +162,7 @@ def category_page(cat, lang):
     out.append(f'<section><h2>{e(t["tips"])}</h2><ul class="tips">' + "".join(f"<li>{e(x)}</li>" for x in c["tips"]) + "</ul></section>\n")
     out.append(f'<section><h2>{e(t["faq"])}</h2>' +
                "".join(f'<details><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q, a in faq) + "</section>\n")
-    others = [o for o in CATEGORIES if o["slug"] != cat["slug"]]
+    others = [o for o in APP_CATS if o["slug"] != cat["slug"]]
     out.append(f'<section><h2>{e(t["more"])}</h2><ul class="more">' +
                "".join(f'<li><a href="{page_paths(o["slug"])[1 if lang == "he" else 0]}">{e(o[lang]["label"])}</a></li>' for o in others) +
                "</ul></section>\n")
@@ -174,10 +178,13 @@ def hub_page(lang):
     ld = [crumbs_ld(lang, [(t["crumb_home"], t["home"]), (t["crumb_hub"], me)])]
     out = [head(lang, h["title"], h["description"], en_path, he_path, ld), topbar(lang, en_path, he_path)]
     out.append(f'<main>\n<h1>{e(h["h1"])}</h1>\n<p class="lede">{e(h["lede"])}</p>\n<ul class="cards">')
-    for c in CATEGORIES:
+    for c in APP_CATS:
         p = page_paths(c["slug"])[1 if lang == "he" else 0]
         out.append(f'<li><a href="{p}"><b>{e(c[lang]["label"])}</b><span>{e(c[lang]["description"])}</span></a></li>')
     out.append('</ul>\n')
+    for g in GUIDES:
+        p = page_paths(g["slug"])[1 if lang == "he" else 0]
+        out.append(f'<section><h2>{e(g[lang]["label"])}</h2><p>{e(g[lang]["description"])}</p><p><a href="{p}">{e(g[lang]["h1"])}</a></p></section>\n')
     out.append(f'<section><h2>{e(t["cities_h2"])}</h2><ul class="more">' +
                "".join(f'<li><a href="{page_paths(c["slug"])[1 if lang == "he" else 0]}">{e(c[lang])}</a></li>' for c in CITIES) +
                "</ul></section>\n")
@@ -194,9 +201,8 @@ def city_page(city, lang):
     me = he_path if lang == "he" else en_path
     idx = 1 if lang == "he" else 0
     faq = SHARED_FAQ[lang]
-    ld = [crumbs_ld(lang, [(t["crumb_home"], t["home"]), (t["crumb_hub"], t["hub"]), (name, me)]),
-          {"@context": "https://schema.org", "@type": "FAQPage",
-           "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faq]}]
+    # no FAQPage markup here: the shared FAQ is identical on every city page
+    ld = [crumbs_ld(lang, [(t["crumb_home"], t["home"]), (t["crumb_hub"], t["hub"]), (name, me)])]
     camp = "guide_city_" + city["slug"].replace("-", "_")
     out = [head(lang, f("title"), f("description"), en_path, he_path, ld), topbar(lang, en_path, he_path)]
     out.append(f'<main>\n<nav class="crumbs" aria-label="breadcrumb"><a href="{t["home"]}">Helpy</a> <span aria-hidden="true">/</span> '
@@ -204,7 +210,7 @@ def city_page(city, lang):
     out.append(f'<h1>{e(f("h1"))}</h1>\n<p class="lede">{e(f("lede"))}</p>\n{badges(lang, camp)}\n')
     out.append(f'<section><h2>{e(f("cats_h2"))}</h2><ul class="cards">' +
                "".join(f'<li><a href="{page_paths(s)[idx]}"><b>{e(CAT_BY_SLUG[s][lang]["label"])}</b>'
-                       f'<span>{e(CAT_BY_SLUG[s][lang]["examples"][0])}, {e(CAT_BY_SLUG[s][lang]["examples"][1].lower() if lang == "en" else CAT_BY_SLUG[s][lang]["examples"][1])}</span></a></li>'
+                       f'<span>{e(CAT_BY_SLUG[s][lang]["examples"][0])} · {e(CAT_BY_SLUG[s][lang]["examples"][1])}</span></a></li>'
                        for s in city["cats"]) +
                f'</ul><p class="note">{e(f("cats_note"))}</p></section>\n')
     out.append(f'<section><h2>{e(f("vol_h2"))}</h2><p>{e(f("vol_p"))}</p><p><a href="{page_paths("volunteer")[idx]}">{e(f("vol_link"))}</a></p></section>\n')
@@ -249,12 +255,16 @@ def main():
         for c in CITIES:
             en_path, he_path = page_paths(c["slug"])
             written[he_path if lang == "he" else en_path] = city_page(c, lang)
-    # a page no longer generated (category dropped or renamed) is deleted, so git shows it
+    # a page no longer generated (category dropped or renamed) is deleted, so git shows it;
+    # an unmarked page in help/ stops the build instead of being silently kept or deleted
     keep = {file_for(p).resolve() for p in written}
     for f in (ROOT / "help").glob("*.html"):
-        if f.resolve() not in keep and GENERATED in f.read_text(encoding="utf-8")[:200]:
-            f.unlink()
-            print("removed stale", f.relative_to(ROOT))
+        if f.resolve() in keep:
+            continue
+        if GENERATED not in f.read_text(encoding="utf-8")[:300]:
+            sys.exit(f"help/ holds a page this script does not own: {f.relative_to(ROOT)} - move it or add it here")
+        f.unlink()
+        print("removed stale", f.relative_to(ROOT))
     for path, body in written.items():
         f = file_for(path)
         f.parent.mkdir(parents=True, exist_ok=True)
