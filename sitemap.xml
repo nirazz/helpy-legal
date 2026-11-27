@@ -70,4 +70,144 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/accessibility.html"/>
     <priority>0.3</priority>
   </url>
+  <url>
+    <loc>https://help-y.com/help/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/index-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/index-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/index-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/handyman.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/handyman.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/handyman-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/handyman.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/handyman-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/handyman.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/handyman-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/handyman.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/elderly-care.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/elderly-care.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/elderly-care-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/elderly-care.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/elderly-care-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/elderly-care.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/elderly-care-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/elderly-care.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/tech-help.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/tech-help.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/tech-help-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/tech-help.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/tech-help-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/tech-help.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/tech-help-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/tech-help.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/giveaway.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/giveaway.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/giveaway-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/giveaway.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/giveaway-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/giveaway.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/giveaway-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/giveaway.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/borrow.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/borrow.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/borrow-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/borrow.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/borrow-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/borrow.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/borrow-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/borrow.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/tutoring.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/tutoring.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/tutoring-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/tutoring.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/tutoring-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/tutoring.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/tutoring-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/tutoring.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/moving.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/moving.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/moving-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/moving.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/moving-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/moving.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/moving-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/moving.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/rides.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/rides.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/rides-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/rides.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/rides-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/rides.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/rides-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/rides.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/pets.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/pets.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/pets-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/pets.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/pets-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/pets.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/pets-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/pets.html"/>
+    <priority>0.6</priority>
+  </url>
 </urlset>

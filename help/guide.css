@@ -1,0 +1,100 @@
+/* /help/ guide pages. Same system as the home page: white and #f6f7f9 on hairlines,
+   one brand aubergine, Inter for Latin, Heebo for Hebrew. No script, no icons font. */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --ink: #0f1115; --ink2: #4a505c; --muted: #6b7280;
+  --line: #e3e5e9; --plane: #f6f7f9; --white: #ffffff;
+  --brand: #3F2B6E; --brand-wash: #EFECF4;
+  --font: "Inter", "Heebo", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+body {
+  font-family: var(--font); background: var(--white); color: var(--ink);
+  line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; border-radius: 4px; }
+a { color: var(--brand); }
+
+.top {
+  max-width: 760px; margin: 0 auto; padding: 18px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; color: var(--ink); text-decoration: none; }
+.brand img { border-radius: 8px; box-shadow: 0 0 0 1px rgba(16,24,40,.06); }
+.lang {
+  font-size: 14px; font-weight: 500; color: var(--ink2); text-decoration: none;
+  padding: 6px 12px; border: 1px solid var(--line); border-radius: 8px;
+}
+.lang:hover { color: var(--ink); border-color: #cfd3da; }
+
+main { max-width: 760px; margin: 0 auto; padding: 8px 16px 56px; }
+.crumbs { font-size: 14px; color: var(--muted); margin-bottom: 18px; }
+.crumbs a { color: var(--ink2); text-decoration: none; }
+.crumbs a:hover { color: var(--brand); }
+h1 { font-size: clamp(30px, 6vw, 44px); line-height: 1.12; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 16px; text-wrap: balance; }
+.lede { font-size: 19px; color: var(--ink2); margin-bottom: 28px; text-wrap: pretty; }
+section { padding-top: 36px; margin-top: 36px; border-top: 1px solid var(--line); }
+h2 { font-size: 24px; font-weight: 650; margin-bottom: 14px; }
+
+.ex, .tips, .more { list-style: none; display: grid; gap: 10px; }
+.ex li, .tips li { position: relative; padding-inline-start: 22px; font-size: 17px; }
+.ex li::before { content: ""; position: absolute; inset-inline-start: 2px; top: .62em; width: 8px; height: 8px; border-radius: 50%; background: var(--brand); }
+.tips li::before { content: ""; position: absolute; inset-inline-start: 2px; top: .5em; width: 10px; height: 6px; border-left: 2px solid var(--brand); border-bottom: 2px solid var(--brand); transform: rotate(-45deg); }
+
+.steps { list-style: none; counter-reset: s; display: grid; gap: 14px; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 36px 1fr; column-gap: 14px; align-items: start; }
+.steps li::before {
+  content: counter(s); grid-row: span 2; width: 36px; height: 36px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--brand-wash); color: var(--brand); font-weight: 700;
+}
+.steps b { font-size: 17px; }
+.steps span { color: var(--ink2); }
+
+details { border-bottom: 1px solid var(--line); padding: 14px 0; }
+details:first-of-type { border-top: 1px solid var(--line); }
+summary { cursor: pointer; font-weight: 600; font-size: 17px; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+summary::-webkit-details-marker { display: none; }
+summary::after { content: "+"; color: var(--brand); font-weight: 500; font-size: 22px; line-height: 1; flex-shrink: 0; }
+details[open] summary::after { content: "\2212"; }
+details p { margin-top: 8px; color: var(--ink2); }
+
+.more { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.more a {
+  display: block; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px;
+  text-decoration: none; color: var(--ink); font-weight: 500;
+}
+.more a:hover { border-color: var(--brand); color: var(--brand); }
+
+.cards { list-style: none; display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); margin-bottom: 8px; }
+.cards a {
+  display: block; height: 100%; padding: 18px; border: 1px solid var(--line); border-radius: 14px;
+  text-decoration: none; color: var(--ink); background: var(--white);
+}
+.cards a:hover { border-color: var(--brand); box-shadow: 0 4px 14px rgba(16,24,40,.06); }
+.cards b { display: block; font-size: 19px; margin-bottom: 6px; color: var(--brand); }
+.cards span { color: var(--ink2); font-size: 15px; }
+
+.badges { display: flex; flex-wrap: wrap; gap: 12px; }
+.badge {
+  display: inline-flex; align-items: center; gap: 10px; direction: ltr;
+  background: #000; color: #fff; padding: 9px 16px; border-radius: 10px; text-decoration: none;
+  min-width: 160px; font-size: 17px; font-weight: 600; line-height: 1.1;
+}
+.badge:hover { background: #1f2024; }
+.badge svg { width: 24px; height: 24px; flex-shrink: 0; }
+.badge span { text-align: left; }
+.badge small { display: block; font-size: 11px; font-weight: 400; color: #d4d4d8; }
+
+.cta { background: var(--plane); border: 1px solid var(--line); border-radius: 16px; padding: 28px 24px; }
+.cta p { color: var(--ink2); margin-bottom: 18px; }
+
+.foot {
+  max-width: 760px; margin: 0 auto; padding: 24px 16px 40px; border-top: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 14px;
+}
+.foot a { color: var(--ink2); text-decoration: none; }
+.foot a:hover { color: var(--brand); }
+
+@media (max-width: 480px) {
+  .lede { font-size: 17px; }
+  .badge { flex: 1 1 100%; justify-content: center; }
+}
