@@ -210,4 +210,88 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/pets.html"/>
     <priority>0.6</priority>
   </url>
+  <url>
+    <loc>https://help-y.com/help/volunteer.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/volunteer.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/volunteer-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/volunteer.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/volunteer-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/volunteer.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/volunteer-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/volunteer.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/tel-aviv.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/tel-aviv.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/tel-aviv-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/tel-aviv.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/tel-aviv-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/tel-aviv.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/tel-aviv-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/tel-aviv.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/petah-tikva.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/petah-tikva.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/petah-tikva-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/petah-tikva.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/petah-tikva-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/petah-tikva.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/petah-tikva-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/petah-tikva.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/ramat-gan.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/ramat-gan.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/ramat-gan-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/ramat-gan.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/ramat-gan-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/ramat-gan.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/ramat-gan-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/ramat-gan.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/holon.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/holon.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/holon-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/holon.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/holon-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/holon.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/holon-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/holon.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/netanya.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/netanya.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/netanya-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/netanya.html"/>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://help-y.com/help/netanya-he.html</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://help-y.com/help/netanya.html"/>
+    <xhtml:link rel="alternate" hreflang="he" href="https://help-y.com/help/netanya-he.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://help-y.com/help/netanya.html"/>
+    <priority>0.6</priority>
+  </url>
 </urlset>

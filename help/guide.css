@@ -98,3 +98,4 @@ details p { margin-top: 8px; color: var(--ink2); }
   .lede { font-size: 17px; }
   .badge { flex: 1 1 100%; justify-content: center; }
 }
+.note { font-size: 14px; color: var(--muted); margin-top: 10px; }

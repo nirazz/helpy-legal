@@ -41,7 +41,7 @@ STEPS = {
         ("מתאמים בצ'אט", "קובעים איפה ומתי, נפגשים, ובסוף מדרגים זה את זה."),
     ],
     "en": [
-        ("Download Helpy", "It's free on iPhone and Android, and signing in takes one tap with Google (or Apple, on iPhone)."),
+        ("Download Helpy", "It's free on iPhone and Android. Sign in with Google, or with Apple on iPhone."),
         ("Post or browse", "Say what you need, or scroll to see who nearby is offering help."),
         ("Sort it out in chat", "Agree on where and when, meet up, then rate each other."),
     ],
@@ -53,7 +53,7 @@ CATEGORIES = [
         "slug": "handyman",
         "he": {
             "label": "הנדימן",
-            "title": "הנדימן מהשכונה: עזרה בתיקונים קטנים בבית | Helpy",
+            "title": "הנדימן מהשכונה, בחינם: עזרה בתיקונים קטנים בבית | Helpy",
             "description": "מדף לתלות, ארון להרכיב, ברז שמטפטף. שכנים עם כלים וידיים טובות מציעים עזרה בתיקונים קטנים, בחינם, ב-Helpy.",
             "h1": "הנדימן מהשכונה, לתיקונים הקטנים בבית",
             "lede": "מדף שצריך לתלות, ברז שמטפטף, ארון מאיקאה שעדיין בקרטון. עבודות כאלה לא מצדיקות בעל מקצוע, "
@@ -91,9 +91,9 @@ CATEGORIES = [
         "slug": "elderly-care",
         "he": {
             "label": "עזרה לקשישים",
-            "title": "עזרה לקשישים מהשכנים בסביבה | Helpy",
+            "title": "עזרה לקשישים בהתנדבות, מהשכנים שגרים קרוב | Helpy",
             "description": "קניות, ביקור, עזרה עם הטלפון או ליווי לתור. שכנים מציעים עזרה לקשישים שגרים קרוב, בחינם, ב-Helpy.",
-            "h1": "עזרה לקשישים, מהשכנים שגרים קרוב",
+            "h1": "עזרה לקשישים בהתנדבות, מהשכנים שגרים קרוב",
             "lede": "קניות לסבתא שלא יוצאת הרבה, ביקור קבוע אצל שכן מבוגר שגר לבד, עזרה עם הטלפון או עם טופס. "
                     "ב-Helpy יש שכנים שמחפשים דרך לתת מהזמן שלהם, ורבים מהם בוחרים דווקא בזה.",
             "examples": ["קניות בסופר או בבית המרקחת", "ביקור ושיחה, פעם בשבוע",
@@ -108,7 +108,7 @@ CATEGORIES = [
         },
         "en": {
             "label": "Elderly care",
-            "title": "Help for older neighbors, from people nearby | Helpy",
+            "title": "Volunteer help for older neighbors, from people nearby | Helpy",
             "description": "Groceries, a weekly visit, help with a phone or getting to an appointment. Neighbors offer free help to older people close by, on Helpy.",
             "h1": "Help for older neighbors, from people who live nearby",
             "lede": "Groceries for a grandmother who doesn't get out much. A regular visit to the man upstairs who lives alone. "
@@ -129,9 +129,9 @@ CATEGORIES = [
         "slug": "tech-help",
         "he": {
             "label": "עזרה במחשב",
-            "title": "עזרה במחשב ובטלפון משכנים שמבינים | Helpy",
+            "title": "עזרה במחשבים ובטלפון בחינם, גם למבוגרים | Helpy",
             "description": "טלפון חדש להגדיר, מדפסת שלא מתחברת, אפליקציה להתקין. שכנים שמבינים במחשבים מציעים עזרה בחינם, ב-Helpy.",
-            "h1": "עזרה במחשב ובטלפון, משכנים שמבינים בזה",
+            "h1": "עזרה במחשב ובטלפון בחינם, משכנים שמבינים בזה",
             "lede": "טלפון חדש שצריך להעביר אליו את התמונות, מדפסת שהפסיקה להתחבר, זום שלא מצליחים להיכנס אליו. "
                     "בדרך כלל זה עניין של חצי שעה עם מישהו שמבין. ב-Helpy השכנים האלה גרים קרוב ומציעים לעזור.",
             "examples": ["להגדיר טלפון חדש ולהעביר אליו תמונות ואנשי קשר", "מדפסת או ראוטר שלא מתחברים",
@@ -167,9 +167,9 @@ CATEGORIES = [
         "slug": "giveaway",
         "he": {
             "label": "מסירה",
-            "title": "למסירה בשכונה: חפצים שמחפשים בית חדש | Helpy",
+            "title": "למסירה בחינם בשכונה: רהיטים, ציוד לתינוקות ועוד | Helpy",
             "description": "ארון, עגלה, ספרים או כלי מטבח. מוסרים בחינם לשכנים קרובים, או מבקשים משהו שחסר, ב-Helpy.",
-            "h1": "למסירה: חפצים שמחפשים בית חדש, בשכונה",
+            "h1": "למסירה בחינם, לשכנים שגרים קרוב",
             "lede": "ארון שלא נכנס בדירה החדשה, עגלה שכבר לא צריך, ספרים שאף אחד לא קורא. "
                     "במקום לזרוק, מפרסמים במסירה ב-Helpy והשכנים הקרובים רואים את זה. ואם מחפשים משהו, אפשר גם לבקש.",
             "examples": ["רהיטים: ארון, שולחן, כיסאות", "ציוד לתינוקות ולילדים",
@@ -184,7 +184,7 @@ CATEGORIES = [
         },
         "en": {
             "label": "Giveaway",
-            "title": "Free stuff from neighbors: give away, or ask | Helpy",
+            "title": "Free stuff near you: give away or ask your neighbors | Helpy",
             "description": "A wardrobe, a stroller, books or kitchenware. Give things away free to people nearby, or ask for something you need, on Helpy.",
             "h1": "Give it away to someone down the street",
             "lede": "The wardrobe that didn't fit in the new place. A stroller you're done with. A shelf of books nobody reads. "
@@ -205,9 +205,9 @@ CATEGORIES = [
         "slug": "borrow",
         "he": {
             "label": "השאלה",
-            "title": "להשאיל מהשכנים במקום לקנות | Helpy",
+            "title": "השאלת כלים וציוד מהשכנים, במקום לקנות | Helpy",
             "description": "מקדחה, סולם, אוהל או מזוודה. משאילים מהשכנים הקרובים ומחזירים בסוף, בחינם, ב-Helpy.",
-            "h1": "להשאיל מהשכנים, במקום לקנות",
+            "h1": "השאלת כלים וציוד מהשכנים, במקום לקנות",
             "lede": "מקדחה בשביל מדף אחד, סולם גבוה לפעם בשנה, מזוודה גדולה לטיסה, אוהל לסוף שבוע. "
                     "רוב הדברים האלה עומדים במחסן של מישהו כמה בניינים מכם. ב-Helpy מבקשים, משאילים ומחזירים.",
             "examples": ["מקדחה, סולם או ארגז כלים", "ציוד קמפינג ומזוודות",
@@ -240,7 +240,7 @@ CATEGORIES = [
         "slug": "tutoring",
         "he": {
             "label": "שיעורי עזר",
-            "title": "שיעורי עזר מהשכנים, בהתנדבות | Helpy",
+            "title": "שיעורי עזר בחינם מהשכנים, בהתנדבות | Helpy",
             "description": "מתמטיקה, אנגלית, הכנה לבגרות או עזרה באקסל. שכנים מציעים שיעורי עזר בחומר שהם מכירים, בחינם, ב-Helpy.",
             "h1": "שיעורי עזר מהשכנים, בהתנדבות",
             "lede": "ילד שנתקע בשברים, תלמידה לפני בגרות באנגלית, מבוגר שרוצה סוף סוף להבין אקסל. "
@@ -277,7 +277,7 @@ CATEGORIES = [
         "slug": "moving",
         "he": {
             "label": "הובלות",
-            "title": "עזרה בהובלה ובסחיבה משכנים | Helpy",
+            "title": "עזרה בהובלה בחינם: שכנים עוזרים לסחוב | Helpy",
             "description": "ספה לקומה שלישית, קרטונים למחסן, עוד זוג ידיים ביום המעבר. שכנים מציעים עזרה בסחיבה, בחינם, ב-Helpy.",
             "h1": "עזרה בהובלה ובסחיבה, מהשכנים",
             "lede": "ספה שצריך להעלות לקומה שלישית בלי מעלית, ארונות שצריך להוריד למחסן, דירה קטנה שעוברת שני רחובות. "
@@ -317,7 +317,7 @@ CATEGORIES = [
         "slug": "rides",
         "he": {
             "label": "טרמפ",
-            "title": "טרמפים מהשכנים: נסיעה משותפת בשכונה | Helpy",
+            "title": "טרמפים בשכונה: נסיעה משותפת עם שכנים | Helpy",
             "description": "לרכבת בבוקר, לבדיקה בבית החולים, או להעביר משהו גדול. שכנים שנוסעים בכל מקרה מציעים מקום ברכב, ב-Helpy.",
             "h1": "טרמפ מהשכנים, למי שבדרך",
             "lede": "צריך להגיע לרכבת מוקדם בבוקר, לבדיקה בבית החולים, או להעביר משהו גדול לעיר ליד? "
@@ -355,9 +355,9 @@ CATEGORIES = [
         "slug": "pets",
         "he": {
             "label": "חיות מחמד",
-            "title": "עזרה עם חיות מחמד משכנים שאוהבים חיות | Helpy",
+            "title": "שמירה על כלב וטיולים בעזרת השכנים | Helpy",
             "description": "טיול צהריים לכלב, האכלת חתול בסוף השבוע, הסעה לווטרינר. שכנים שאוהבים חיות מציעים עזרה, בחינם, ב-Helpy.",
-            "h1": "עזרה עם חיות המחמד, משכנים שאוהבים חיות",
+            "h1": "שמירה על הכלב, טיולים ועזרה עם חיות המחמד, משכנים",
             "lede": "טיול צהריים לכלב כשאתם בעבודה, מישהו שיאכיל את החתול בסוף השבוע, עזרה להביא את הכלב לווטרינר. "
                     "ב-Helpy יש שכנים שאוהבים חיות ומציעים לעזור, קרוב לבית.",
             "examples": ["טיולים עם הכלב", "האכלת חתול או דגים כשאתם לא בבית",
@@ -388,6 +388,44 @@ CATEGORIES = [
                      "Post an offer in the Pets category, and dog owners nearby will reach out.")],
         },
     },
+    {
+        "slug": "volunteer",
+        "he": {
+            "label": "התנדבות ליד הבית",
+            "title": "התנדבות ליד הבית: לעזור לשכנים כשיש לכם זמן | Helpy",
+            "description": "רוצים להתנדב בלי קורס ובלי משמרת קבועה? ב-Helpy רואים מי בשכונה צריך עזרה, ועוזרים כשזה מתאים לכם. בחינם.",
+            "h1": "התנדבות ליד הבית, כשיש לכם זמן",
+            "lede": "לא כל התנדבות צריכה קורס, ראיון ומשמרת קבועה. לפעמים זה לסחוב ספה עם שכן, לעזור לשכנה מבוגרת עם הטלפון, "
+                    "או להסביר לילד שברים. ב-Helpy רואים מה צריכים השכנים שגרים קרוב, ומציעים עזרה רק כשזה מתאים לכם.",
+            "examples": ["קניות, ביקור או עזרה עם הטלפון לשכנים מבוגרים", "סחיבה, הרכבה ותיקונים קטנים",
+                         "שיעורי עזר במקצוע שאתם טובים בו", "טרמפ למי שבדרך שלכם"],
+            "tips": ["מתחילים במשהו קטן וקרוב. בזה הכי קל להתמיד.",
+                     "אפשר גם לפרסם הצעה: במה אתם יכולים לעזור, ושכנים יפנו אליכם.",
+                     "מחפשים מסגרת קבועה עם הכשרה וליווי? עיריות ועמותות מפעילות תוכניות כאלה, ו-Helpy לא מחליפה אותן."],
+            "faq": [("צריך להתחייב?",
+                     "לא. עוזרים כשיש זמן, ובוחרים למי להציע עזרה."),
+                    ("זו התנדבות רשמית?",
+                     "לא. Helpy היא קהילה של שכנים, לא ארגון מתנדבים, ואין בה אישורים או שעות התנדבות.")],
+        },
+        "en": {
+            "label": "Volunteer near home",
+            "title": "Volunteer near home, whenever you have time | Helpy",
+            "description": "Want to volunteer without a course or a fixed shift? On Helpy you see who nearby needs a hand and help when it suits you. Free.",
+            "h1": "Volunteer on your own street, on your own time",
+            "lede": "Not every way of giving back needs an induction, an interview and a weekly shift. Sometimes it's carrying a sofa "
+                    "with the guy downstairs, sorting out a phone for the woman next door, or walking a kid through fractions. "
+                    "Helpy shows you what the people around you need, and you offer when it works for you.",
+            "examples": ["Groceries, a visit or phone help for older neighbors", "Carrying, assembling and small fixes",
+                         "Tutoring in a subject you're good at", "A lift for someone going your way"],
+            "tips": ["Start with something small and close by. That's what people keep doing.",
+                     "You can post an offer too: say what you can help with, and neighbors will reach out.",
+                     "Want a structured program with training? Cities and charities run those, and Helpy doesn't replace them."],
+            "faq": [("Do I have to commit to anything?",
+                     "No. Help when you have time, and choose who you offer to help."),
+                    ("Does this count as formal volunteering?",
+                     "No. Helpy is a community of neighbors, not a volunteer organization, so there are no certificates or logged hours.")],
+        },
+    },
 ]
 
 HUB = {
@@ -402,5 +440,53 @@ HUB = {
         "description": "Handyman jobs, help for older neighbors, giveaways, borrowing, tutoring, rides and more. Every way neighbors help each other on Helpy, for free.",
         "h1": "What neighbors help each other with",
         "lede": "On Helpy you ask the people who live nearby for a hand, or offer one. These are the things people ask for and offer most.",
+    },
+}
+
+
+# City pages: only cities with >= 30 non-mock posts in the last 120 days (snapshot 2026-11-27).
+# `cats` = categories that HAVE a guide page, most posted first, in that city. Aggregate only:
+# no counts, no names, no post text. Add a city when it crosses the bar; re-run the query below.
+#   select city, category, count(*) from help_requests where not is_mock and created_at > now()-'120 days'
+CITIES_ASOF = {"he": "נובמבר 2026", "en": "November 2026"}
+CITIES = [
+    {"slug": "tel-aviv", "he": "תל אביב-יפו", "en": "Tel Aviv-Yafo",
+     "cats": ["handyman", "elderly-care", "giveaway", "tech-help", "tutoring", "borrow"]},
+    {"slug": "petah-tikva", "he": "פתח תקווה", "en": "Petah Tikva",
+     "cats": ["handyman", "tech-help", "giveaway", "tutoring", "elderly-care"]},
+    {"slug": "ramat-gan", "he": "רמת גן", "en": "Ramat Gan",
+     "cats": ["handyman", "giveaway", "tech-help", "pets", "tutoring"]},
+    {"slug": "holon", "he": "חולון", "en": "Holon",
+     "cats": ["handyman", "elderly-care", "tutoring", "giveaway"]},
+    {"slug": "netanya", "he": "נתניה", "en": "Netanya",
+     "cats": ["elderly-care", "handyman", "tech-help", "rides", "giveaway"]},
+]
+
+CITY_COPY = {
+    "he": {
+        "title": "עזרה משכנים והתנדבות ב{city} | Helpy",
+        "description": "שכנים ב{city} מבקשים ומציעים עזרה: תיקונים, מסירה, עזרה לקשישים ועוד. בחינם, באפליקציית Helpy.",
+        "h1": "שכנים עוזרים לשכנים ב{city}",
+        "lede": "ב-Helpy שכנים ב{city} מבקשים עזרה ומציעים אותה, ברחוב שלהם. רוב הפוסטים בעיר הם הצעות עזרה, "
+                "כלומר יש פה שכנים שמחכים שמישהו יבקש.",
+        "cats_h2": "מה מבקשים ומציעים ב{city}",
+        "cats_note": "לפי הפוסטים בעיר בחודשים האחרונים, נכון ל{asof}.",
+        "vol_h2": "להתנדב ב{city}, ליד הבית",
+        "vol_p": "בלי קורס ובלי משמרת קבועה: רואים מה צריכים השכנים הקרובים, ומציעים עזרה כשמתאים לכם.",
+        "vol_link": "איך מתנדבים ב-Helpy",
+        "label": "{city}",
+    },
+    "en": {
+        "title": "Neighbors helping neighbors in {city} | Helpy",
+        "description": "People in {city} ask for and offer help: small fixes, giveaways, help for older neighbors and more. Free, on the Helpy app.",
+        "h1": "Neighbors helping neighbors in {city}",
+        "lede": "On Helpy, people in {city} ask for a hand and offer one, on their own streets. Most posts in the city are offers, "
+                "which means there are neighbors here waiting for someone to ask.",
+        "cats_h2": "What people in {city} ask for and offer",
+        "cats_note": "Based on posts in the city over recent months, as of {asof}.",
+        "vol_h2": "Volunteer in {city}, close to home",
+        "vol_p": "No course and no fixed shift: see what the people nearby need, and offer when it suits you.",
+        "vol_link": "How volunteering on Helpy works",
+        "label": "{city}",
     },
 }
