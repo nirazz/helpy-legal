@@ -150,6 +150,8 @@
     .badge-play { height: 52px; display: flex; align-items: center; overflow: visible; }
     .badge-play img { height: 78px; width: auto; display: block; margin: 0 -10px; }
 
+    .ios-hint { font-size: 12px; line-height: 1.5; color: rgba(255,255,255,0.45); max-width: 300px; margin: 0 auto 12px; }
+
     .footer { font-size: 12px; color: rgba(255,255,255,0.18); }
 
     .spinner-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; }
@@ -177,15 +179,64 @@
   <script>
   (function () {
     var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3b21zdHp6bXllZ3BiaWRpYmZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTA1NjksImV4cCI6MjA4ODM4NjU2OX0.sZBrK88ecSJBstXNBa2UUAHhBxNfy9-Ssac1JPY9i2k';
-    var APP_STORE = 'https://apps.apple.com/app/apple-store/id6758919822?pt=128532406&ct=helpy_post&mt=8';
+    // The hash is '<postId>' (the owner shared their own post) or '<postId>/n'
+    // (a neighbor sent someone else's post from the feed). Only the leading UUID
+    // is the id; anything after it is a marker for attribution.
+    var rawHash = window.location.hash.slice(1);
+    var idMatch = rawHash.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+    var id = idMatch ? idMatch[0].toLowerCase() : '';
+    var viaNeighbor = /^[^/]+\/n(?:$|[/?&])/.test(rawHash);
+    var APP_STORE = 'https://apps.apple.com/app/apple-store/id6758919822?pt=128532406&ct='
+      + (viaNeighbor ? 'helpy_post_nb' : 'helpy_post') + '&mt=8';
     // Tagged so an install that starts on this page is attributable. Google Play
     // hands `referrer` to the installed app (Install Referrer API), which the app
     // parses in src/services/acquisition.ts into acquisition_source='post_share'.
     // The App Store has no per-install referrer; APP_STORE carries an App Store
     // Connect campaign token (ct=helpy_post) instead, which shows iOS installs from
     // this page in aggregate under App Analytics > Acquisition > Campaigns.
+    // helpy_post_id rides the Play referrer into the installed app, which opens
+    // this exact post on its first launch (src/utils/parseReferrer.ts). The id is
+    // the post's public UUID - the same one already in this page's URL.
     var PLAY_STORE = 'https://play.google.com/store/apps/details?id=com.neighborlyhelp.app'
-      + '&referrer=' + encodeURIComponent('utm_source=helpy_post&utm_medium=share');
+      + '&referrer=' + encodeURIComponent('utm_source=helpy_post&utm_medium=share'
+        + (viaNeighbor ? '&utm_campaign=neighbor' : '')
+        + (id ? '&helpy_post_id=' + id : ''));
+
+    // iPhone has no install referrer. An App Store tap copies this post's link,
+    // and the new app offers to open it on its first launch (the user taps, then
+    // iOS asks to allow paste) - or the visitor just taps the link again once the
+    // app is installed. Said on the page, never done silently.
+    var IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+      || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    var POST_LINK = 'https://help-y.com/r/#' + id;
+    function copyPostLink() {
+      try {
+        var ta = document.createElement('textarea');
+        ta.value = POST_LINK;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select(); ta.setSelectionRange(0, ta.value.length);
+        document.execCommand('copy');
+        ta.remove();
+      } catch (e) {}
+      try { if (navigator.clipboard) navigator.clipboard.writeText(POST_LINK).catch(function () {}); } catch (e) {}
+    }
+    document.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest && e.target.closest('a.badge-ios');
+      if (a && IS_IOS && id) copyPostLink();
+    });
+    function badgesHtml(isHe) {
+      return '<div class="badges">'
+        + '<a class="badge badge-ios" href="' + APP_STORE + '">'
+        + '<img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" />'
+        + '</a>'
+        + '<a class="badge badge-play" href="' + PLAY_STORE + '">'
+        + '<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" />'
+        + '</a>'
+        + '</div>'
+        + (IS_IOS && id ? '<p class="ios-hint">' + (isHe ? T.he.iosHint : T.en.iosHint) + '</p>' : '');
+    }
 
     // Keys mirror the app's category taxonomy (src/data/sampleData.ts categoryConfig);
     // labels mirror useLocalization.ts category.* strings. The tail entries are
@@ -216,18 +267,19 @@
         closed: 'No longer active',
         lead: 'Answer from the Helpy app',
         leadClosed: 'More neighbors need a hand on Helpy',
-        footer: 'Real neighbors helping each other'
+        footer: 'Real neighbors helping each other',
+        iosHint: 'We copy this post\'s link, so the app can open it after you install. Or just tap the link again once Helpy is installed.'
       },
       he: {
         kindRequest: 'בקשה מהשכונה', kindOffer: 'הצעה מהשכונה',
         closed: 'כבר לא פעיל',
         lead: 'עונים מתוך האפליקציה של Helpy',
         leadClosed: 'עוד שכנים מחכים לעזרה ב-Helpy',
-        footer: 'שכנים אמיתיים עוזרים אחד לשני'
+        footer: 'שכנים אמיתיים עוזרים אחד לשני',
+        iosHint: 'נעתיק את הקישור לפוסט, כדי שהאפליקציה תפתח אותו אחרי ההתקנה. אפשר גם פשוט ללחוץ שוב על הקישור אחרי שהתקנתם.'
       }
     };
 
-    var id = window.location.hash.slice(1);
     if (!id) { window.location.href = 'https://help-y.com'; return; }
 
     fetch('https://lwomstzzmyegpbidibfm.supabase.co/functions/v1/post-page'
@@ -272,26 +324,16 @@
       var city = isHe ? (p.city || p.cityEn) : (p.cityEn || p.city);
       var metaHtml = city ? '<p class="meta">&#128205; ' + esc(city) + '</p>' : '';
 
-      // profiles.avatar holds either an image URL or (some users) a bare emoji.
+      // The open web sees the author's FIRST NAME only, with a letter instead of
+      // a photo and no link to their profile: anyone may now send a post on, not
+      // only its owner, so the author did not choose who sees this page.
       var authorHtml = '';
       if (p.author && p.author.name) {
-        var avatarIsUrl = /^https?:\/\//i.test(p.author.avatar || '');
-        window.__avatarPh = (p.author.avatar && !avatarIsUrl)
-          ? p.author.avatar
-          : ((p.author.name || '').trim().charAt(0) || '👤');
-        window.__avatarFail = function (img) {
-          var ph = document.createElement('div');
-          ph.className = 'author-ph';
-          ph.textContent = window.__avatarPh;
-          img.replaceWith(ph);
-        };
-        var avatarHtml = avatarIsUrl
-          ? '<img class="author-avatar" src="' + esc(p.author.avatar) + '" alt="" onerror="__avatarFail(this)" />'
-          : '<div class="author-ph">' + esc(window.__avatarPh) + '</div>';
-        authorHtml = '<a class="author" href="/p/#' + esc(p.author.id) + '">'
-          + avatarHtml
+        var initial = (p.author.name || '').trim().charAt(0) || '?';
+        authorHtml = '<div class="author">'
+          + '<div class="author-ph">' + esc(initial) + '</div>'
           + '<span class="author-name">' + esc(p.author.name) + '</span>'
-          + '</a>';
+          + '</div>';
       }
 
       document.getElementById('root').innerHTML =
@@ -303,14 +345,7 @@
         + metaHtml
         + authorHtml
         + '<p class="lead">' + (p.isActive ? t.lead : t.leadClosed) + '</p>'
-        + '<div class="badges">'
-        + '<a class="badge" href="' + APP_STORE + '">'
-        + '<img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" />'
-        + '</a>'
-        + '<a class="badge badge-play" href="' + PLAY_STORE + '">'
-        + '<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" />'
-        + '</a>'
-        + '</div>'
+        + badgesHtml(isHe)
         + '<p class="footer">' + t.footer + '</p>';
     }
 
@@ -327,14 +362,7 @@
         '<p class="wordmark">Helpy</p>'
         + '<p class="error-title">' + title + '</p>'
         + '<p class="error-sub">' + sub + '</p>'
-        + '<div class="badges">'
-        + '<a class="badge" href="' + APP_STORE + '">'
-        + '<img src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/en-us?size=250x83" alt="Download on the App Store" />'
-        + '</a>'
-        + '<a class="badge badge-play" href="' + PLAY_STORE + '">'
-        + '<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" />'
-        + '</a>'
-        + '</div>'
+        + badgesHtml(true)
         + '<p class="footer">' + T.he.footer + '</p>';
     }
   })();
