@@ -219,10 +219,11 @@
   <script>
   (function () {
     var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3b21zdHp6bXllZ3BiaWRpYmZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTA1NjksImV4cCI6MjA4ODM4NjU2OX0.sZBrK88ecSJBstXNBa2UUAHhBxNfy9-Ssac1JPY9i2k';
-    var APP_STORE = 'https://apps.apple.com/app/id6758919822';
+    var APP_STORE = 'https://apps.apple.com/app/apple-store/id6758919822?pt=128532406&ct=helpy_profile&mt=8';
     // Tagged so an install started here is attributable (Play Install Referrer
-    // -> acquisition_source='profile_share'). iOS has no equivalent, so
-    // APP_STORE stays bare.
+    // -> acquisition_source='profile_share'). iOS has no per-install referrer;
+    // APP_STORE carries an App Store Connect campaign token (ct=helpy_profile),
+    // counted in aggregate under App Analytics > Acquisition > Campaigns.
     var PLAY_STORE = 'https://play.google.com/store/apps/details?id=com.neighborlyhelp.app'
       + '&referrer=' + encodeURIComponent('utm_source=helpy_profile&utm_medium=share');
 
