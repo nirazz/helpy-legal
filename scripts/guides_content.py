@@ -7,7 +7,8 @@ Rules for anything added here:
     from real posts - this repo is public.
   - Third-person copy about a user keeps the slash (שכן/ה); direct address uses the
     plural, like the home page.
-  - A category gets a page only when it is live in the app's picker.
+  - A category gets a page only when it is live in the app's picker. An entry with
+    "kind": "guide" (volunteering) is not a category: it is listed in its own hub section.
 Build: python3 scripts/build_guides.py
 """
 
@@ -445,19 +446,21 @@ HUB = {
 }
 
 
-# City pages: cities chosen by recent post volume. `cats` = guide-page categories people there post
-# most, first first. Aggregate only: no counts, no names, no post text. Refreshed by hand.
+# City pages: cities with >= 30 real (non-test) posts in the last 120 days, snapshot 27.11.2026.
+# `cats` = categories with a guide page, most posted first. `offers_majority` = most posts there in that
+# window were offers (the lede says so only when True). Aggregate only: no counts, names or post text.
+# Refresh: count posts per city and per category over the last 120 days, excluding test accounts.
 CITIES_ASOF = {"he": "נובמבר 2026", "en": "November 2026"}
 CITIES = [
-    {"slug": "tel-aviv", "he": "תל אביב-יפו", "en": "Tel Aviv-Yafo",
+    {"slug": "tel-aviv", "offers_majority": True, "he": "תל אביב-יפו", "en": "Tel Aviv-Yafo",
      "cats": ["handyman", "elderly-care", "giveaway", "tech-help", "tutoring", "borrow"]},
-    {"slug": "petah-tikva", "he": "פתח תקווה", "en": "Petah Tikva",
+    {"slug": "petah-tikva", "offers_majority": True, "he": "פתח תקווה", "en": "Petah Tikva",
      "cats": ["handyman", "tech-help", "giveaway", "tutoring", "elderly-care"]},
-    {"slug": "ramat-gan", "he": "רמת גן", "en": "Ramat Gan",
+    {"slug": "ramat-gan", "offers_majority": True, "he": "רמת גן", "en": "Ramat Gan",
      "cats": ["handyman", "giveaway", "tech-help", "pets", "tutoring"]},
-    {"slug": "holon", "he": "חולון", "en": "Holon",
+    {"slug": "holon", "offers_majority": True, "he": "חולון", "en": "Holon",
      "cats": ["handyman", "elderly-care", "tutoring", "giveaway"]},
-    {"slug": "netanya", "he": "נתניה", "en": "Netanya",
+    {"slug": "netanya", "offers_majority": True, "he": "נתניה", "en": "Netanya",
      "cats": ["elderly-care", "handyman", "tech-help", "rides", "giveaway"]},
 ]
 
@@ -466,8 +469,8 @@ CITY_COPY = {
         "title": "עזרה משכנים והתנדבות ב{city} | Helpy",
         "description": "שכנים ב{city} מבקשים ומציעים עזרה: תיקונים, מסירה, עזרה לקשישים ועוד. בחינם, באפליקציית Helpy.",
         "h1": "שכנים עוזרים לשכנים ב{city}",
-        "lede": "ב-Helpy שכנים ב{city} מבקשים עזרה ומציעים אותה, ברחוב שלהם. בחודשים האחרונים רוב הפוסטים בעיר היו הצעות עזרה, "
-                "כלומר יש פה שכנים שמחכים שמישהו יבקש.",
+        "lede": "ב-Helpy שכנים ב{city} מבקשים עזרה ומציעים אותה, ברחוב שלהם.",
+        "offers": "בחודשים האחרונים רוב הפוסטים בעיר היו הצעות עזרה, כלומר יש פה שכנים שמחכים שמישהו יבקש.",
         "cats_h2": "מה מבקשים ומציעים ב{city}",
         "cats_note": "לפי הפוסטים בעיר בחודשים האחרונים, נכון ל{asof}.",
         "vol_h2": "להתנדב ב{city}, ליד הבית",
@@ -479,8 +482,8 @@ CITY_COPY = {
         "title": "Neighbors helping neighbors in {city} | Helpy",
         "description": "People in {city} ask for and offer help: small fixes, giveaways, help for older neighbors and more. Free, on the Helpy app.",
         "h1": "Neighbors helping neighbors in {city}",
-        "lede": "On Helpy, people in {city} ask for a hand and offer one, on their own streets. In recent months most posts in the city were offers, "
-                "which means there are neighbors here waiting for someone to ask.",
+        "lede": "On Helpy, people in {city} ask for a hand and offer one, on their own streets.",
+        "offers": "In recent months most posts in the city were offers, which means there are neighbors here waiting for someone to ask.",
         "cats_h2": "What people in {city} ask for and offer",
         "cats_note": "Based on posts in the city over recent months, as of {asof}.",
         "vol_h2": "Volunteer in {city}, close to home",
