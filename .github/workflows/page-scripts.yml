@@ -28,6 +28,8 @@ jobs:
       # console/index.html is GENERATED (its inline script is allowed by hash): a hand edit
       # or a stale hash must not ship
       - run: python3 scripts/build_console_redirect.py && git diff --exit-code console/index.html
+      # help/*.html and sitemap.xml are GENERATED from scripts/guides_content.py
+      - run: python3 scripts/build_guides.py && git diff --exit-code -- help sitemap.xml && test -z "$(git status --porcelain -- help sitemap.xml)"
 
   live:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
