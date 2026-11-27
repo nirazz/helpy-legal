@@ -177,11 +177,13 @@
   <script>
   (function () {
     var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3b21zdHp6bXllZ3BiaWRpYmZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTA1NjksImV4cCI6MjA4ODM4NjU2OX0.sZBrK88ecSJBstXNBa2UUAHhBxNfy9-Ssac1JPY9i2k';
-    var APP_STORE = 'https://apps.apple.com/app/id6758919822';
+    var APP_STORE = 'https://apps.apple.com/app/apple-store/id6758919822?pt=128532406&ct=helpy_post&mt=8';
     // Tagged so an install that starts on this page is attributable. Google Play
     // hands `referrer` to the installed app (Install Referrer API), which the app
     // parses in src/services/acquisition.ts into acquisition_source='post_share'.
-    // The App Store has no equivalent, so APP_STORE stays bare on purpose.
+    // The App Store has no per-install referrer; APP_STORE carries an App Store
+    // Connect campaign token (ct=helpy_post) instead, which shows iOS installs from
+    // this page in aggregate under App Analytics > Acquisition > Campaigns.
     var PLAY_STORE = 'https://play.google.com/store/apps/details?id=com.neighborlyhelp.app'
       + '&referrer=' + encodeURIComponent('utm_source=helpy_post&utm_medium=share');
 
