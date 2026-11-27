@@ -222,9 +222,12 @@
       } catch (e) {}
       try { if (navigator.clipboard) navigator.clipboard.writeText(POST_LINK).catch(function () {}); } catch (e) {}
     }
+    // Only a post that actually rendered is handed over - copying the link of a
+    // closed/missing post would only open a "gone" toast in the new app.
+    var postShown = false;
     document.addEventListener('click', function (e) {
       var a = e.target && e.target.closest && e.target.closest('a.badge-ios');
-      if (a && IS_IOS && id) copyPostLink();
+      if (a && IS_IOS && id && postShown) copyPostLink();
     });
     function badgesHtml(isHe) {
       return '<div class="badges">'
@@ -235,7 +238,7 @@
         + '<img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" />'
         + '</a>'
         + '</div>'
-        + (IS_IOS && id ? '<p class="ios-hint">' + (isHe ? T.he.iosHint : T.en.iosHint) + '</p>' : '');
+        + (IS_IOS && id && postShown ? '<p class="ios-hint">' + (isHe ? T.he.iosHint : T.en.iosHint) + '</p>' : '');
     }
 
     // Keys mirror the app's category taxonomy (src/data/sampleData.ts categoryConfig);
@@ -293,6 +296,7 @@
     }
 
     function render(p) {
+      postShown = true;
       // Page language follows the POST's script (a Hebrew post is shared into a
       // Hebrew-speaking group whatever the author's app language), falling back
       // to the author's app language.
